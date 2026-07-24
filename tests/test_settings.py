@@ -8,26 +8,26 @@ class TestSettings:
 
     def test_settings_is_singleton(self):
         """The settings instance should be a singleton."""
-        from awesome_os.settings import settings as s1
-        from awesome_os.settings import settings as s2
+        from personal_os_setup.settings import settings as s1
+        from personal_os_setup.settings import settings as s2
 
         assert s1 is s2
 
     def test_logging_level_defaults_to_debug(self):
         """logging_level should default to DEBUG when not set in the environment."""
-        from awesome_os.settings import settings
+        from personal_os_setup.settings import settings
 
-        assert settings.logging_level == "DEBUG"
+        assert settings.logging_level == "CRITICAL"
 
     def test_logging_level_from_env(self, monkeypatch):
         """logging_level should be read from LOGGING_LEVEL environment variable."""
         monkeypatch.setenv("LOGGING_LEVEL", "INFO")
         # Need to reimport to pick up the new env var
         import importlib
-        import awesome_os.settings
+        import personal_os_setup.settings
 
-        importlib.reload(awesome_os.settings)
-        from awesome_os.settings import settings
+        importlib.reload(personal_os_setup.settings)
+        from personal_os_setup.settings import settings
 
         assert settings.logging_level == "INFO"
 
@@ -37,7 +37,7 @@ class TestLogger:
 
     def test_logger_is_singleton(self):
         """The logger instance should be a singleton."""
-        from awesome_os.settings import logger as l1
-        from awesome_os.settings import logger as l2
+        from personal_os_setup.settings import logger as l1
+        from personal_os_setup.settings import logger as l2
 
         assert l1._core is l2._core

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 
-from awesome_os.tasks.task import Task, TaskResult, run_tasks
+from personal_os_setup.tasks.task import Task, TaskResult, run_tasks
 
 
 def _make_task(*, ok: bool, already_applied: bool = False) -> Task:

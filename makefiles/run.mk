@@ -5,4 +5,4 @@
 
 run: ## Run the Stremio Addon (Dev Mode)
 	@echo "Starting server..."
-	@$(UV) run python src/awesome_os/frontend/main.py
+	@$(UV) run python src/personal_os_setup/frontend/main.py

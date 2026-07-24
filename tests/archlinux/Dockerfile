@@ -21,11 +21,11 @@ RUN useradd -m -s /bin/bash tester \
 
 USER tester
 
-WORKDIR /home/tester/awesome-os-setup
+WORKDIR /home/tester/personal-os-setup
 
-# COPY --chown=tester:tester . /home/tester/awesome-os-setup
+# COPY --chown=tester:tester . /home/tester/personal-os-setup
 # Mount local repo folder as a volume
-VOLUME /home/tester/awesome-os-setup
+VOLUME /home/tester/personal-os-setup
 
 # Helpful default so running the container drops you into the repo.
 CMD ["bash"]

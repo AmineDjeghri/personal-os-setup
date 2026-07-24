@@ -28,13 +28,13 @@ class TestBrewManager:
 
     def test_is_installed_nonexistent_formula(self):
         """A clearly fake formula should not be reported as installed."""
-        from awesome_os.tasks.managers.darwin_brew import DarwinBrewManager
+        from personal_os_setup.tasks.managers.darwin_brew import DarwinBrewManager
 
         assert DarwinBrewManager().is_installed("this-formula-does-not-exist-xyz") is False
 
     def test_install_and_check_formula(self):
         """Installing wget should succeed and be detectable via is_installed()."""
-        from awesome_os.tasks.managers.darwin_brew import DarwinBrewManager
+        from personal_os_setup.tasks.managers.darwin_brew import DarwinBrewManager
 
         mgr = DarwinBrewManager()
         result = mgr.install("wget")
@@ -43,7 +43,7 @@ class TestBrewManager:
 
     def test_cleanup_succeeds(self):
         """Brew cleanup should succeed."""
-        from awesome_os.tasks.managers.darwin_brew import DarwinBrewManager
+        from personal_os_setup.tasks.managers.darwin_brew import DarwinBrewManager
 
         result = DarwinBrewManager().cleanup()
         assert result.ok is True, f"brew cleanup failed: {result.summary}\n{result.details}"
@@ -54,7 +54,7 @@ class TestBrewCaskManager:
 
     def test_is_installed_nonexistent_cask(self):
         """A clearly fake cask should not be reported as installed."""
-        from awesome_os.tasks.managers.darwin_brew import DarwinBrewCaskManager
+        from personal_os_setup.tasks.managers.darwin_brew import DarwinBrewCaskManager
 
         assert DarwinBrewCaskManager().is_installed("this-cask-does-not-exist-xyz") is False
 
@@ -64,7 +64,7 @@ class TestDetectOS:
 
     def test_detect_os_returns_darwin(self):
         """detect_os() should return family='darwin', distro='darwin' on macOS."""
-        from awesome_os.detect_os import detect_os
+        from personal_os_setup.detect_os import detect_os
 
         info = detect_os()
         assert info.family == "darwin"
@@ -72,7 +72,7 @@ class TestDetectOS:
 
     def test_is_wsl_false_on_macos(self):
         """_is_wsl() must always be False on macOS."""
-        from awesome_os.detect_os import _is_wsl
+        from personal_os_setup.detect_os import _is_wsl
 
         assert _is_wsl() is False
 
@@ -81,11 +81,11 @@ class TestPackagesConfig:
     """Integration tests for packages.yaml loading on macOS."""
 
     def _darwin_packages(self):
-        from awesome_os.detect_os import PackageCatalog, iter_packages
+        from personal_os_setup.detect_os import PackageCatalog, iter_packages
         from importlib import resources
         import yaml
 
-        pkg = resources.files("awesome_os")
+        pkg = resources.files("personal_os_setup")
         data = yaml.safe_load((pkg / "config" / "packages.yaml").read_text(encoding="utf-8")) or {}
         catalog = PackageCatalog(data=data)
         return list(iter_packages(catalog.for_distro("darwin")))
@@ -102,7 +102,7 @@ class TestPackagesConfig:
 
     def test_build_packages_for_os(self):
         """build_packages_for_os() should detect darwin and return a non-empty package list."""
-        from awesome_os.detect_os import build_packages_for_os
+        from personal_os_setup.detect_os import build_packages_for_os
 
         system, distro, info, packages = build_packages_for_os()
         assert system == "darwin"
