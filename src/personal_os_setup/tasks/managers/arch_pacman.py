@@ -13,20 +13,19 @@ from __future__ import annotations
 import shutil
 
 from personal_os_setup.settings import logger
-from personal_os_setup.tasks.commands import join_argv, run
+from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.managers._shared import (
+    format_failed_command,
+    missing_executable_install_result,
+    missing_executable_task_result,
+    sudo_required_install_result,
+    sudo_required_task_result,
+)
 from personal_os_setup.tasks.managers.base import InstallResult
-from personal_os_setup.tasks.sudo import sudo_non_interactive_ok, sudo_required_details
+from personal_os_setup.tasks.sudo import sudo_non_interactive_ok
 from personal_os_setup.tasks.task import TaskResult
 
-
-def _format_failed(argv: list[str], stdout: str, stderr: str) -> str:
-    """Render a failed command's argv and output as human-readable details text."""
-    details = [f"$ {join_argv(argv)}"]
-    if stdout.strip():
-        details.append(stdout.strip())
-    if stderr.strip():
-        details.append(stderr.strip())
-    return "\n".join(details).strip()
+_PACMAN_HINT = "Ensure `pacman` is installed."
 
 
 class ArchPacmanManager:
@@ -42,25 +41,15 @@ class ArchPacmanManager:
         """Run a root-requiring pacman subcommand, reporting failures uniformly."""
         pacman = self._pacman()
         if pacman is None:
-            return TaskResult(
-                ok=False,
-                summary=f"pacman {action}: failed",
-                details="`pacman` not found on PATH.",
-            )
+            return missing_executable_task_result(action, "pacman", _PACMAN_HINT)
         if not sudo_non_interactive_ok():
-            return TaskResult(
-                ok=False,
-                summary=f"pacman {action}: failed (sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
+            return sudo_required_task_result(f"pacman {action}")
 
         res = run(["sudo", "-n", pacman, *args, "--noconfirm"], check=False)
         if res.returncode == 0:
             return TaskResult(ok=True, summary=f"pacman {action}: done")
         return TaskResult(
-            ok=False,
-            summary=f"pacman {action}: failed",
-            details=_format_failed(res.argv, res.stdout, res.stderr),
+            ok=False, summary=f"pacman {action}: failed", details=format_failed_command(res)
         )
 
     def is_installed(self, package: str) -> bool:
@@ -75,17 +64,9 @@ class ArchPacmanManager:
         """Install a package via `pacman -S`."""
         pacman = self._pacman()
         if pacman is None:
-            return InstallResult(
-                ok=False,
-                summary="pacman not found on PATH",
-                details="Ensure `pacman` is installed.",
-            )
+            return missing_executable_install_result("pacman", _PACMAN_HINT)
         if not sudo_non_interactive_ok():
-            return InstallResult(
-                ok=False,
-                summary=f"{package}: install failed (sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
+            return sudo_required_install_result(package)
 
         logger.info(f"Installing {package} via pacman...")
         res = run(
@@ -97,7 +78,7 @@ class ArchPacmanManager:
         return InstallResult(
             ok=False,
             summary=f"{package}: install failed (pacman)",
-            details=_format_failed(res.argv, res.stdout, res.stderr),
+            details=format_failed_command(res),
         )
 
     def update(self) -> TaskResult:

@@ -1,39 +1,31 @@
 from __future__ import annotations
 
-import shutil
-
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.managers._shared import (
+    command_details,
+    missing_executable_install_result,
+    missing_executable_task_result,
+    winget_list_shows_installed,
+    winget_path,
+)
 from personal_os_setup.tasks.managers.base import InstallResult
 from personal_os_setup.tasks.task import TaskResult
+
+_WINGET_HINT = "Install App Installer (winget) from Microsoft Store, then restart the terminal."
 
 
 class WindowsMSStoreManager:
     name = "msstore"
 
-    def _ensure_winget(self) -> str | None:
-        return shutil.which("winget")
-
     def is_installed(self, package: str) -> bool:
-        winget = self._ensure_winget()
-        if winget is None:
-            return False
-
-        # Check if package is installed from msstore source
-        res = run([winget, "list", "-e", "--id", package], check=False)
-        text = (res.stdout + "\n" + res.stderr).lower()
-        if "no installed package" in text or "no package found" in text:
-            return False
-        return package.lower() in text and res.returncode == 0
+        winget = winget_path()
+        return winget is not None and winget_list_shows_installed(winget, package)
 
     def install(self, package: str) -> InstallResult:
-        winget = self._ensure_winget()
+        winget = winget_path()
         if winget is None:
-            return InstallResult(
-                ok=False,
-                summary="winget not found on PATH",
-                details="Install App Installer (winget) from Microsoft Store, then restart the terminal.",
-            )
+            return missing_executable_install_result("winget", _WINGET_HINT)
 
         logger.info(f"Installing {package} via {self.name} (MS Store)...")
         argv = [
@@ -48,49 +40,35 @@ class WindowsMSStoreManager:
         res = run(argv, check=False)
         if res.returncode == 0:
             return InstallResult(ok=True, summary=f"Installed {package} from MS Store")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return InstallResult(ok=False, summary=f"Failed to install {package}", details=details)
+        return InstallResult(
+            ok=False, summary=f"Failed to install {package}", details=command_details(res)
+        )
 
     def update(self) -> TaskResult:
-        winget = self._ensure_winget()
-        if winget is None:
-            return TaskResult(
-                ok=False,
-                summary="msstore update: failed",
-                details="winget not found on PATH (install App Installer).",
-            )
-
-        # `winget source update` refreshes metadata for all sources including msstore
-        res = run([winget, "source", "update"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="msstore source update: done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="msstore source update: failed", details=details)
+        return self._run_winget_subcommand(["source", "update"], action="msstore source update")
 
     def upgrade(self) -> TaskResult:
-        winget = self._ensure_winget()
-        if winget is None:
-            return TaskResult(
-                ok=False,
-                summary="msstore upgrade: failed",
-                details="winget not found on PATH (install App Installer).",
-            )
-
-        # Upgrade all packages from msstore source
-        argv = [
-            winget,
-            "upgrade",
-            "--all",
-            "-s",
-            "msstore",
-            "--accept-package-agreements",
-            "--accept-source-agreements",
-        ]
-        res = run(argv, check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="msstore upgrade --all: done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="msstore upgrade --all: failed", details=details)
+        return self._run_winget_subcommand(
+            [
+                "upgrade",
+                "--all",
+                "-s",
+                "msstore",
+                "--accept-package-agreements",
+                "--accept-source-agreements",
+            ],
+            action="msstore upgrade --all",
+        )
 
     def cleanup(self) -> TaskResult:
         return TaskResult(ok=True, summary="msstore cleanup: no-op")
+
+    def _run_winget_subcommand(self, args: list[str], *, action: str) -> TaskResult:
+        winget = winget_path()
+        if winget is None:
+            return missing_executable_task_result(action, "winget", _WINGET_HINT)
+
+        res = run([winget, *args], check=False)
+        if res.returncode == 0:
+            return TaskResult(ok=True, summary=f"{action}: done")
+        return TaskResult(ok=False, summary=f"{action}: failed", details=command_details(res))

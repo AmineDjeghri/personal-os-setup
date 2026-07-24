@@ -14,9 +14,13 @@ from __future__ import annotations
 
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks.commands import run
-
+from personal_os_setup.tasks.managers._shared import (
+    command_details,
+    sudo_required_install_result,
+    sudo_required_task_result,
+)
 from personal_os_setup.tasks.managers.base import InstallResult
-from personal_os_setup.tasks.sudo import sudo_non_interactive_ok, sudo_required_details
+from personal_os_setup.tasks.sudo import sudo_non_interactive_ok
 from personal_os_setup.tasks.task import TaskResult
 
 
@@ -50,59 +54,34 @@ class UbuntuAptManager:
     def install(self, package: str) -> InstallResult:
         """Install a package using `apt-get`."""
         if not sudo_non_interactive_ok():
-            return InstallResult(
-                ok=False,
-                summary=f"Failed to install {package} (sudo password required). Run an interactive command first to cache your sudo credentials.)",
-                details=sudo_required_details(),
-            )
+            return sudo_required_install_result(package)
+
         logger.info(f"Installing {package} via {self.name}...")
         update_res = run(["sudo", "-n", "apt-get", "update"], check=False)
         install_res = run(["sudo", "-n", "apt-get", "install", "-y", package], check=False)
         if update_res.returncode == 0 and install_res.returncode == 0:
             return InstallResult(ok=True, summary=f"Installed {package}")
 
-        details = (
-            (update_res.stdout + "\n" + update_res.stderr).strip()
-            + "\n"
-            + (install_res.stdout + "\n" + install_res.stderr).strip()
-        ).strip()
+        details = (command_details(update_res) + "\n" + command_details(install_res)).strip()
         return InstallResult(ok=False, summary=f"Failed to install {package}", details=details)
 
     def update(self) -> TaskResult:
-        if not sudo_non_interactive_ok():
-            return TaskResult(
-                ok=False,
-                summary="apt update: sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
-        res = run(["sudo", "-n", "apt-get", "update"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="apt update: done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="apt update: failed", details=details)
+        return self._run_apt_subcommand(["apt-get", "update"], action="apt update")
 
     def upgrade(self) -> TaskResult:
-        if not sudo_non_interactive_ok():
-            return TaskResult(
-                ok=False,
-                summary="apt upgrade: sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
-        res = run(["sudo", "-n", "apt-get", "upgrade", "-y"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="apt upgrade: done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="apt upgrade: failed", details=details)
+        return self._run_apt_subcommand(["apt-get", "upgrade", "-y"], action="apt upgrade")
 
     def cleanup(self) -> TaskResult:
+        return self._run_apt_subcommand(
+            ["apt-get", "autoremove", "-y"], action="apt cleanup (autoremove)"
+        )
+
+    def _run_apt_subcommand(self, argv: list[str], *, action: str) -> TaskResult:
+        """Run an `apt-get` maintenance subcommand under `sudo -n`, reporting failures uniformly."""
         if not sudo_non_interactive_ok():
-            return TaskResult(
-                ok=False,
-                summary="apt cleanup: sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
-        res = run(["sudo", "-n", "apt-get", "autoremove", "-y"], check=False)
+            return sudo_required_task_result(action)
+
+        res = run(["sudo", "-n", *argv], check=False)
         if res.returncode == 0:
-            return TaskResult(ok=True, summary="apt cleanup (autoremove): done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="apt cleanup (autoremove): failed", details=details)
+            return TaskResult(ok=True, summary=f"{action}: done")
+        return TaskResult(ok=False, summary=f"{action}: failed", details=command_details(res))

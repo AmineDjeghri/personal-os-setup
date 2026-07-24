@@ -4,8 +4,15 @@ import shutil
 
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.managers._shared import (
+    command_details,
+    missing_executable_install_result,
+    missing_executable_task_result,
+)
 from personal_os_setup.tasks.managers.base import InstallResult
 from personal_os_setup.tasks.task import TaskResult
+
+_BREW_HINT = "Install Homebrew from https://brew.sh and ensure `brew` is available on your PATH."
 
 
 def _ensure_brew() -> str | None:
@@ -15,6 +22,18 @@ def _ensure_brew() -> str | None:
     is not installed on macOS.
     """
     return shutil.which("brew")
+
+
+def _run_brew_subcommand(args: list[str], *, action: str) -> TaskResult:
+    """Run a `brew` maintenance subcommand, reporting failures uniformly."""
+    brew = _ensure_brew()
+    if brew is None:
+        return missing_executable_task_result(action, "brew", _BREW_HINT)
+
+    res = run([brew, *args], check=False)
+    if res.returncode == 0:
+        return TaskResult(ok=True, summary=f"{action}: done")
+    return TaskResult(ok=False, summary=f"{action}: failed", details=command_details(res))
 
 
 class DarwinBrewManager:
@@ -36,76 +55,24 @@ class DarwinBrewManager:
     def install(self, package: str) -> InstallResult:
         brew = _ensure_brew()
         if brew is None:
-            return InstallResult(
-                ok=False,
-                summary="brew not found on PATH",
-                details=(
-                    "Homebrew is not installed. Install it from https://brew.sh "
-                    "and ensure `brew` is available on your PATH."
-                ),
-            )
+            return missing_executable_install_result("brew", _BREW_HINT)
 
         logger.info(f"Installing {package} via {self.name}...")
         res = run([brew, "install", package], check=False)
         if res.returncode == 0:
             return InstallResult(ok=True, summary=f"Installed {package}")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return InstallResult(ok=False, summary=f"Failed to install {package}", details=details)
+        return InstallResult(
+            ok=False, summary=f"Failed to install {package}", details=command_details(res)
+        )
 
     def update(self) -> TaskResult:
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew update: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "update"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew update: done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew update: failed", details=details)
+        return _run_brew_subcommand(["update"], action="brew update")
 
     def upgrade(self) -> TaskResult:
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew upgrade: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "upgrade"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew upgrade: done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew upgrade: failed", details=details)
+        return _run_brew_subcommand(["upgrade"], action="brew upgrade")
 
     def cleanup(self) -> TaskResult:
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew cleanup: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "cleanup"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew cleanup: done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew cleanup: failed", details=details)
+        return _run_brew_subcommand(["cleanup"], action="brew cleanup")
 
 
 class DarwinBrewCaskManager:
@@ -125,75 +92,23 @@ class DarwinBrewCaskManager:
     def install(self, package: str) -> InstallResult:
         brew = _ensure_brew()
         if brew is None:
-            return InstallResult(
-                ok=False,
-                summary="brew not found on PATH",
-                details=(
-                    "Homebrew is not installed. Install it from https://brew.sh "
-                    "and ensure `brew` is available on your PATH."
-                ),
-            )
+            return missing_executable_install_result("brew", _BREW_HINT)
 
         logger.info(f"Installing cask {package} via brew...")
         res = run([brew, "install", "--cask", package], check=False)
         if res.returncode == 0:
             return InstallResult(ok=True, summary=f"Installed cask {package}")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return InstallResult(ok=False, summary=f"Failed to install cask {package}", details=details)
+        return InstallResult(
+            ok=False, summary=f"Failed to install cask {package}", details=command_details(res)
+        )
 
     def update(self) -> TaskResult:
         # There is no dedicated "cask-only" update; reuse `brew update`.
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew cask update: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "update"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew update (casks): done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew update (casks): failed", details=details)
+        return _run_brew_subcommand(["update"], action="brew update (casks)")
 
     def upgrade(self) -> TaskResult:
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew cask upgrade: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "upgrade", "--cask"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew upgrade --cask: done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew upgrade --cask: failed", details=details)
+        return _run_brew_subcommand(["upgrade", "--cask"], action="brew upgrade --cask")
 
     def cleanup(self) -> TaskResult:
         # `brew cleanup` also covers casks.
-        brew = _ensure_brew()
-        if brew is None:
-            return TaskResult(
-                ok=False,
-                summary="brew cask cleanup: failed",
-                details=(
-                    "brew not found on PATH. Install Homebrew from https://brew.sh and try again."
-                ),
-            )
-
-        res = run([brew, "cleanup"], check=False)
-        if res.returncode == 0:
-            return TaskResult(ok=True, summary="brew cleanup (casks): done")
-
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="brew cleanup (casks): failed", details=details)
+        return _run_brew_subcommand(["cleanup"], action="brew cleanup (casks)")
