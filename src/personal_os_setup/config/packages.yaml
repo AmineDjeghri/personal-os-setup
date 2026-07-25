@@ -6,9 +6,9 @@ packages:
         - curl
         - zsh
         - wget
+        - chezmoi # dotfile manager
       Dev_tools:
         - docker-compose
-        - chezmoi # dotfile manager
       terminal_tools:
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
@@ -37,7 +37,6 @@ packages:
         - git
         - zsh
         - curl
-      Dev_tools:
         - chezmoi # dotfile manager
       terminal_tools:
         - bat # cat clone with syntax highlighting
@@ -118,6 +117,7 @@ packages:
         - wget
         - zsh
         - base-devel
+        - chezmoi # dotfile manager
       Dev_tools:
         - docker
         - docker-compose
@@ -126,7 +126,8 @@ packages:
         - meson # build system used by GNOME/many C/C++ projects
         - zed
         - ghostty
-        - chezmoi # dotfile manager
+        - neovim # modernized vim
+
       terminal_tools:
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
@@ -140,7 +141,6 @@ packages:
         - dua-cli # fast interactive disk usage analyzer (Rust), binary is `dua`, replaces `du`
         - fastfetch # replaces neofetch, which is deprecated upstream
         - tmux # terminal multiplexer
-        - neovim # modernized vim
       apps:
         - wine # runs Windows applications on Linux
         - dolphin # KDE file manager

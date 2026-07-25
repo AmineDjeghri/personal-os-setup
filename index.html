@@ -1370,8 +1370,6 @@
       
         
       
-        
-      
     
     
     
@@ -1422,14 +1420,14 @@
   
   
     <li class="md-nav__item">
-      <a href="package/personal_os_setup/frontend/controller/" class="md-nav__link">
+      <a href="package/personal_os_setup/frontend/app/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    controller
+    app
   
 
     
@@ -1499,34 +1497,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="package/personal_os_setup/frontend/runner/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    runner
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1571,6 +1541,8 @@
   
     
     
+      
+        
       
         
       
@@ -1710,6 +1682,8 @@
       
         
       
+        
+      
     
     
     
@@ -1752,6 +1726,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="package/personal_os_setup/tasks/managers/_shared/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    _shared
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2020,6 +2022,34 @@
   
   
     <li class="md-nav__item">
+      <a href="package/personal_os_setup/tasks/self_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    self_update
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="package/personal_os_setup/tasks/sudo/" class="md-nav__link">
         
   
@@ -2077,10 +2107,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_4_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_4_6" >
         
           
-          <label class="md-nav__link" for="__nav_3_1_4_5" id="__nav_3_1_4_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_1_4_6" id="__nav_3_1_4_6_label" tabindex="0">
             
   
   
@@ -2098,8 +2128,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_1_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_1_4_5">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_1_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_4_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2644,11 +2674,13 @@
 </thead>
 <tbody>
 <tr>
-<td><img alt="Desktop with terminals" src="docs/images/app_showcase.gif" /></td>
+<td><img alt="Desktop with terminals" src="docs/images/app_showcase.png" /></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
+<p>[!TIP]
+<strong>V2 is here</strong> — the terminal UI has been rebuilt with <a href="https://textual.textualize.io/">Textual</a>, bringing tabs, colors, progress bars, and a much nicer look and feel.</p>
 <p>[!NOTE]
 <strong>Update notes</strong></p>
 <table>
@@ -2730,12 +2762,13 @@ You can follow this repository to get a similar setup on Windows 11, Linux, macO
 <p>Get started with one command in bash/zsh:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
 </span></code></pre></div>
+<p>The script installs the repository into <code>~/.personal-os-setup</code> (or reuses/updates it if it already exists there) and links a <code>personal-os-setup</code> command into <code>~/.local/bin</code>, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <p>If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.</p>
 <h4 id="windows-11">Windows 11<a class="headerlink" href="#windows-11" title="Permanent link">&para;</a></h4>
 <p>Get started with one command (run it in PowerShell as administrator):
 <div class="language-powershell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
 </span></code></pre></div></p>
-<p>Run it from the directory where you want the <code>personal-os-setup</code> folder to be created. If the repertory already exists, it will update it.</p>
+<p>The script installs the repository into <code>%USERPROFILE%\.personal-os-setup</code> (or reuses/updates it if it already exists there) and adds a <code>personal-os-setup</code> command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <blockquote>
 <p>[!TIP]
 You can fork this repository and change the apps/packages you need so it reflects what you want to install in your environment.</p>

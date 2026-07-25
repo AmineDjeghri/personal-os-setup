@@ -2,8 +2,13 @@ from __future__ import annotations
 
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.managers._shared import (
+    command_details,
+    sudo_required_install_result,
+    sudo_required_task_result,
+)
 from personal_os_setup.tasks.managers.base import InstallResult
-from personal_os_setup.tasks.sudo import sudo_non_interactive_ok, sudo_required_details
+from personal_os_setup.tasks.sudo import sudo_non_interactive_ok
 from personal_os_setup.tasks.task import TaskResult
 
 
@@ -15,32 +20,25 @@ class UbuntuSnapManager:
         return res.returncode == 0
 
     def install(self, package: str) -> InstallResult:
-        logger.info(f"Installing {package} via {self.name}...")
         if not sudo_non_interactive_ok():
-            return InstallResult(
-                ok=False,
-                summary=f"Failed to install {package} (sudo password required). Run an interactive command first to cache your sudo credentials.)",
-                details=sudo_required_details(),
-            )
-        argv = ["sudo", "-n", "snap", "install", package]
-        res = run(argv, check=False)
+            return sudo_required_install_result(package)
+
+        logger.info(f"Installing {package} via {self.name}...")
+        res = run(["sudo", "-n", "snap", "install", package], check=False)
         if res.returncode == 0:
             return InstallResult(ok=True, summary=f"Installed {package}")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return InstallResult(ok=False, summary=f"Failed to install {package}", details=details)
+        return InstallResult(
+            ok=False, summary=f"Failed to install {package}", details=command_details(res)
+        )
 
     def update(self) -> TaskResult:
         if not sudo_non_interactive_ok():
-            return TaskResult(
-                ok=False,
-                summary="snap refresh: sudo password required). Run an interactive command first to cache your sudo credentials.",
-                details=sudo_required_details(),
-            )
+            return sudo_required_task_result("snap refresh")
+
         res = run(["sudo", "-n", "snap", "refresh"], check=False)
         if res.returncode == 0:
             return TaskResult(ok=True, summary="snap refresh: done")
-        details = (res.stdout + "\n" + res.stderr).strip()
-        return TaskResult(ok=False, summary="snap refresh: failed", details=details)
+        return TaskResult(ok=False, summary="snap refresh: failed", details=command_details(res))
 
     def upgrade(self) -> TaskResult:
         return self.update()
