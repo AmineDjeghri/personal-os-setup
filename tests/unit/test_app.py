@@ -7,11 +7,14 @@ in-memory `run` callables, so nothing on the host system is touched.
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 from textual.widgets import Button, LoadingIndicator, ProgressBar, SelectionList
 
 from personal_os_setup.frontend.app import PersonalOsSetupApp
 from personal_os_setup.tasks.factory import SystemAction
+from personal_os_setup.tasks.managers.base import InstallResult
 from personal_os_setup.tasks.task import TaskResult
 
 pytestmark = pytest.mark.asyncio
@@ -59,18 +62,28 @@ async def test_is_busy_watcher_disables_buttons_and_toggles_indicator():
 
 
 async def test_install_selected_runs_worker_and_advances_progress():
+    """Uses a fake package manager -- never a real apt/brew/winget/etc. subprocess call."""
     app = PersonalOsSetupApp()
+    fake_pm = type(
+        "FakePM",
+        (),
+        {
+            "is_installed": lambda self, name: False,
+            "install": lambda self, name: InstallResult(ok=True, summary=f"Installed {name}"),
+        },
+    )()
     async with app.run_test() as pilot:
         await pilot.pause()
         selection_list = app.query(SelectionList).first()
         selection_list.select(selection_list._options[0])
         await pilot.pause()
 
-        await pilot.click("#btn-install")
-        for _ in range(20):
-            await pilot.pause(0.1)
-            if not app.is_busy:
-                break
+        with patch("personal_os_setup.frontend.app.get_package_manager", return_value=fake_pm):
+            await pilot.click("#btn-install")
+            for _ in range(20):
+                await pilot.pause(0.1)
+                if not app.is_busy:
+                    break
 
         assert app.is_busy is False
         progress = app.query_one("#install-progress", ProgressBar)
