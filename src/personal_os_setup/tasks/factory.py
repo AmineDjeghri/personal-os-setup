@@ -158,13 +158,14 @@ def _help_section() -> Section:
 
 # Section: "Sync dotfiles" — installs default packages/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
 
-# Packages tagged with this category in packages.yaml are treated as the default
-# prerequisites for the dotfiles/zsh setup (e.g. git, zsh, curl).
-_DOTFILES_PREREQ_CATEGORY = "core"
+# Packages tagged with one of these categories in packages.yaml are treated as the
+# default prerequisites for the dotfiles/zsh setup: "core" (git, zsh, curl...) plus
+# "terminal_tools" (fzf, zoxide, eza, bat...), the CLI tools .zshrc/oh-my-zsh wire up.
+_DOTFILES_PREREQ_CATEGORIES = {"core", "terminal_tools"}
 
 
 def _dotfiles_prereq_packages(packages: list[PackageRef]) -> list[PackageRef]:
-    return [p for p in packages if p.category.lower() == _DOTFILES_PREREQ_CATEGORY]
+    return [p for p in packages if p.category.lower() in _DOTFILES_PREREQ_CATEGORIES]
 
 
 def _install_dotfiles_prereqs(packages: list[PackageRef], distro: str) -> TaskResult:

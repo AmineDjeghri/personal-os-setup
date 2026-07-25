@@ -81,25 +81,27 @@ class TestLinuxDarwinSections:
 
 
 class TestDotfilesPrereqPackages:
-    """The dotfiles section's "install default packages" action is driven by packages.yaml's "core" category."""
+    """The dotfiles section's "install default packages" action is driven by packages.yaml's "core"/"terminal_tools" categories."""
 
     def test_action_present_without_packages(self):
         action = _action_in("darwin", "darwin", "Sync dotfiles", "install default packages")
         assert action.confirm is True
         assert "No default packages" in action.confirm_message
 
-    def test_confirm_message_lists_core_packages(self):
+    def test_confirm_message_lists_core_and_terminal_tools_packages(self):
         packages = [
             PackageRef(name="git", manager="apt", category="core"),
             PackageRef(name="curl", manager="apt", category="core"),
             PackageRef(name="bat", manager="apt", category="terminal_tools"),
+            PackageRef(name="docker-compose", manager="apt", category="Dev_tools"),
         ]
         action = _action_in(
             "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
         )
         assert "git" in action.confirm_message
         assert "curl" in action.confirm_message
-        assert "bat" not in action.confirm_message
+        assert "bat" in action.confirm_message
+        assert "docker-compose" not in action.confirm_message
 
     def test_category_match_is_case_insensitive(self):
         packages = [PackageRef(name="git", manager="brew", category="Core")]

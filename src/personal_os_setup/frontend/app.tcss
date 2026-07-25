@@ -31,7 +31,13 @@ Screen {
 }
 
 .package-category {
-    margin-bottom: 1;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.package-category > Contents {
+    padding: 0 0 0 2;
 }
 
 .category-list {

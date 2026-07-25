@@ -1,13 +1,14 @@
 # Personal OS Setup
 
-> [!TIP]
-> **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
-
 ![Logo](docs/images/logo.png)
 
 | App Showcase                                            |
 |---------------------------------------------------------|
-| ![Desktop with terminals](docs/images/app_showcase.gif) |
+| ![Desktop with terminals](docs/images/app_showcase.png) |
+
+
+> [!TIP]
+> **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
 
 
 > [!NOTE]
