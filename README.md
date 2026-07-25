@@ -11,6 +11,44 @@
 > **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
 
 
+### Get started
+
+#### Linux / WSL2 / macOS
+Get started with one command in bash/zsh:
+
+```bash
+sh -c "$(wget https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh -O -)"
+```
+
+The script installs the repository into `~/.personal-os-setup` (or reuses/updates it if it already exists there) and links a `personal-os-setup` command into `~/.local/bin`, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
+
+Once installed, just run:
+
+```bash
+personal-os-setup
+```
+
+#### Windows 11
+Get started with one command (run it in PowerShell as administrator):
+```powershell
+$u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
+```
+
+The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
+
+Once installed, just run:
+
+```bash
+personal-os-setup
+```
+
+> [!NOTE]
+> The app **auto-updates on every launch**: it runs a `git pull` on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.
+
+> [!TIP]
+> You can fork this repository and change the apps/packages you need so it reflects what you want to install in your environment.
+
+
 > [!NOTE]
 > **Update notes**
 >
@@ -33,6 +71,7 @@ Improve your UX and productivity with a reproducible setup for:
 - Window tiling management
 - Home automation (Home Assistant)
 - TV setup (Google TV + Stremio/Nuvio)
+- Also, perfect for servers without a GUI !
 
 The image above is the app that runs on your terminal, it supports multiple OSes (Windows, Linux, macOS, WSL2) and can be used with a mouse to click on the buttons.
 You can follow this repository to get a similar setup on Windows 11, Linux, macOS, or a hybrid workflow (Windows + WSL).
@@ -53,39 +92,10 @@ You can follow this repository to get a similar setup on Windows 11, Linux, macO
   * [What is this repo?](#what-is-this-repo)
     * [Features & Benefits](#features--benefits)
     * [Docs and websites](#docs-and-websites)
-  * [Project TODO / Roadmap](#project-todo--roadmap)
-    * [Docs & site](#docs--site)
-    * [Quality & UX](#quality--ux)
   * [Check the documentation](#check-the-documentation)
   * [Contributing (For developers)](#contributing-for-developers)
 <!-- TOC -->
 
-
-
-
-### Get started
-
-#### Linux / WSL2 / macOS
-Get started with one command in bash/zsh:
-
-```bash
-sh -c "$(wget https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh -O -)"
-```
-
-The script installs the repository into `~/.personal-os-setup` (or reuses/updates it if it already exists there) and links a `personal-os-setup` command into `~/.local/bin`, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
-
-If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.
-
-#### Windows 11
-Get started with one command (run it in PowerShell as administrator):
-```powershell
-$u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
-```
-
-The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
-
-> [!TIP]
-> You can fork this repository and change the apps/packages you need so it reflects what you want to install in your environment.
 
 ## What is this repo?
 
@@ -170,27 +180,6 @@ capabilities, positions Windows-WSL as an enticing platform, ensuring a well-rou
 regardless of their workplace constraints.
 
 Based on your needs, you can choose your OS.
-
-## Project TODO / Roadmap
-- [ ] add missing apps
-- [ ] Some dotfiles integration (GlazeWM, aerospace, raycast...)
-- [ ] Chezmoi integration
-
-### Docs & site
-
-- [ ] Fix broken README one‑liners (curl/wget URLs to this repo) and update URL to main branch
-
-### Quality & UX
-
-- [ ] Update UX/UI.
-  - [ ] Display a checkmark when a package is installed.
-- [ ] Add tests and CI coverage for:
-  - [ ] Parsing `packages.yaml`.
-  - [ ] Package manager factory mapping.
-  - [ ] Windows/WSL command runner behavior.
-  - [x] Docker image to test Arch
-  - [ ] Docker image to test Ubuntu
-  - [ ] Docker image to test macOS
 
 
 ## Check the documentation
