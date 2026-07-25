@@ -1,0 +1,225 @@
+"""Unit tests for the OS-conditional system-action/package-manager factory."""
+
+from __future__ import annotations
+
+from unittest.mock import patch
+
+from personal_os_setup.detect_os import PackageRef
+from personal_os_setup.tasks.factory import get_package_manager, get_system_action_sections
+from personal_os_setup.tasks.managers.base import InstallResult
+
+
+def _section_names(system: str, distro: str, *, info: str | None = None) -> list[str]:
+    return [name for name, _ in get_system_action_sections(system=system, distro=distro, info=info)]
+
+
+def _actions_in(system: str, distro: str, section_name: str) -> list[str]:
+    for name, actions in get_system_action_sections(system=system, distro=distro, info=None):
+        if name == section_name:
+            return [a.label for a in actions]
+    raise AssertionError(f"section {section_name!r} not found")
+
+
+def _action_in(system: str, distro: str, section_name: str, label: str, *, packages=None):
+    for name, actions in get_system_action_sections(
+        system=system, distro=distro, info=None, packages=packages
+    ):
+        if name == section_name:
+            for action in actions:
+                if action.label == label:
+                    return action
+    raise AssertionError(f"action {label!r} not found in section {section_name!r}")
+
+
+class TestPackageManagerSections:
+    """Only the primary manager(s) for each distro should get their own section."""
+
+    def test_ubuntu_shows_only_apt(self):
+        names = _section_names("linux", "ubuntu")
+        assert names[0] == "apt"
+        assert "snap" not in names
+        assert "webinstall" not in names
+
+    def test_darwin_shows_only_brew(self):
+        names = _section_names("darwin", "darwin")
+        assert names[0] == "brew"
+        assert "cask" not in names
+
+    def test_cachyos_shows_both_pacman_and_paru(self):
+        names = _section_names("linux", "cachyos")
+        assert names[:2] == ["pacman", "paru"]
+
+    def test_unsupported_distro_has_no_package_manager_section(self):
+        names = _section_names("linux", "debian")
+        assert "apt" not in names
+        assert "pacman" not in names
+
+    def test_package_manager_section_has_update_upgrade_cleanup(self):
+        labels = _actions_in("darwin", "darwin", "brew")
+        assert labels == ["update", "upgrade", "cleanup"]
+
+
+class TestLinuxDarwinSections:
+    """zsh/chezmoi/help sections should only appear on Linux and macOS."""
+
+    def test_darwin_gets_help_and_zsh_sections(self):
+        names = _section_names("darwin", "darwin")
+        assert "help" in names
+        assert "Sync dotfiles" in names
+        assert "zsh uninstall" in names
+
+    def test_windows_has_no_zsh_sections(self):
+        names = _section_names("windows", "windows")
+        assert "help" not in names
+        assert "Sync dotfiles" not in names
+        assert "zsh uninstall" not in names
+
+    def test_apt_uninstall_action_only_offered_on_ubuntu(self):
+        assert "uninstall zsh (apt)" in _actions_in("linux", "ubuntu", "zsh uninstall")
+        assert "uninstall zsh (apt)" not in _actions_in("darwin", "darwin", "zsh uninstall")
+        assert "uninstall zsh (apt)" not in _actions_in("linux", "cachyos", "zsh uninstall")
+
+
+class TestDotfilesPrereqPackages:
+    """The dotfiles section's "install default packages" action is driven by packages.yaml's "core" category."""
+
+    def test_action_present_without_packages(self):
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "install default packages")
+        assert action.confirm is True
+        assert "No default packages" in action.confirm_message
+
+    def test_confirm_message_lists_core_packages(self):
+        packages = [
+            PackageRef(name="git", manager="apt", category="core"),
+            PackageRef(name="curl", manager="apt", category="core"),
+            PackageRef(name="bat", manager="apt", category="terminal_tools"),
+        ]
+        action = _action_in(
+            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+        )
+        assert "git" in action.confirm_message
+        assert "curl" in action.confirm_message
+        assert "bat" not in action.confirm_message
+
+    def test_category_match_is_case_insensitive(self):
+        packages = [PackageRef(name="git", manager="brew", category="Core")]
+        action = _action_in(
+            "darwin", "darwin", "Sync dotfiles", "install default packages", packages=packages
+        )
+        assert "git" in action.confirm_message
+
+    def test_run_installs_missing_and_skips_installed_packages(self):
+        packages = [
+            PackageRef(name="git", manager="apt", category="core"),
+            PackageRef(name="curl", manager="apt", category="core"),
+        ]
+        action = _action_in(
+            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+        )
+
+        fake_pm = type(
+            "FakePM",
+            (),
+            {
+                "is_installed": lambda self, name: name == "git",
+                "install": lambda self, name: InstallResult(ok=True, summary=f"Installed {name}"),
+            },
+        )()
+
+        with patch("personal_os_setup.tasks.factory.get_package_manager", return_value=fake_pm):
+            result = action.run()
+
+        assert result.ok is True
+        assert "2/2" in result.summary
+        assert "already installed" in result.details
+        assert "Installed curl" in result.details
+
+    def test_run_reports_failure_when_manager_missing(self):
+        packages = [PackageRef(name="git", manager="apt", category="core")]
+        action = _action_in(
+            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+        )
+
+        with patch("personal_os_setup.tasks.factory.get_package_manager", return_value=None):
+            result = action.run()
+
+        assert result.ok is False
+        assert "0/1" in result.summary
+
+
+class TestDockerSection:
+    """Docker post-install is only offered on distros where it's implemented."""
+
+    def test_ubuntu_and_cachyos_get_docker_section(self):
+        assert "docker" in _section_names("linux", "ubuntu")
+        assert "docker" in _section_names("linux", "cachyos")
+
+    def test_darwin_and_windows_have_no_docker_section(self):
+        assert "docker" not in _section_names("darwin", "darwin")
+        assert "docker" not in _section_names("windows", "windows")
+
+
+class TestNvidiaSection:
+    """The single OS-specific "setup nvidia" action should match system/distro/WSL."""
+
+    def test_windows_gets_windows_nvidia_action(self):
+        labels = _actions_in("windows", "windows", "system")
+        assert "setup nvidia (windows)" in labels
+
+    def test_ubuntu_gets_ubuntu_nvidia_action(self):
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=False):
+            labels = _actions_in("linux", "ubuntu", "system")
+        assert "setup nvidia (ubuntu)" in labels
+
+    def test_cachyos_gets_arch_nvidia_action(self):
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=False):
+            labels = _actions_in("linux", "cachyos", "system")
+        assert "setup nvidia (cachyos)" in labels
+
+    def test_wsl_takes_priority_over_distro_specific_action(self):
+        """Inside WSL, the WSL guidance action should win even on Ubuntu."""
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=True):
+            labels = _actions_in("linux", "ubuntu", "system")
+        assert "setup nvidia (wsl)" in labels
+        assert "setup nvidia (ubuntu)" not in labels
+
+    def test_unimplemented_distro_gets_fallback_action(self):
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=False):
+            labels = _actions_in("linux", "debian", "system")
+        assert "setup nvidia (debian)" in labels
+
+    def test_darwin_has_no_nvidia_section(self):
+        assert "system" not in _section_names("darwin", "darwin")
+
+
+class TestWindowsOnlySections:
+    """WSL/Windows-utility sections should only appear on Windows."""
+
+    def test_windows_gets_wsl_sections(self):
+        names = _section_names("windows", "windows")
+        assert "WSL" in names
+        assert "Advanced WSL" in names
+        assert "Windows utilities" in names
+
+    def test_linux_and_darwin_have_no_wsl_sections(self):
+        for system, distro in [("linux", "ubuntu"), ("darwin", "darwin")]:
+            names = _section_names(system, distro)
+            assert "WSL" not in names
+            assert "Advanced WSL" not in names
+            assert "Windows utilities" not in names
+
+
+class TestGetPackageManager:
+    """`get_package_manager` should resolve known (distro, manager) pairs and reject unknown ones."""
+
+    def test_known_pairs_resolve(self):
+        assert get_package_manager(distro="ubuntu", manager="apt") is not None
+        assert get_package_manager(distro="darwin", manager="brew") is not None
+        assert get_package_manager(distro="windows", manager="winget") is not None
+        assert get_package_manager(distro="cachyos", manager="paru") is not None
+
+    def test_unknown_distro_returns_none(self):
+        assert get_package_manager(distro="plan9", manager="apt") is None
+
+    def test_unknown_manager_for_known_distro_returns_none(self):
+        assert get_package_manager(distro="ubuntu", manager="brew") is None

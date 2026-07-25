@@ -6,7 +6,7 @@ from typing import Callable
 
 from pydantic import BaseModel, ConfigDict
 
-from personal_os_setup.detect_os import _is_wsl
+from personal_os_setup.detect_os import PackageRef, _is_wsl
 from personal_os_setup.tasks.managers.arch_pacman import ArchPacmanManager
 from personal_os_setup.tasks.managers.arch_paru import ArchParuManager
 from personal_os_setup.tasks.managers.base import PackageManager
@@ -78,7 +78,7 @@ _PACKAGE_MANAGER_FACTORY_BY_DISTRO: dict[str, dict[str, Callable[[], PackageMana
 
 # Only show primary package managers to avoid duplicate buttons for the same distro
 # (e.g. Ubuntu also has "snap"/"webinstall" backends, but only "apt" is surfaced).
-_PRIMARY_MANAGERS_BY_DISTRO: dict[str, list[str]] = {
+_UI_VISIBLE_MANAGERS_BY_DISTRO: dict[str, list[str]] = {
     "windows": ["winget"],
     "ubuntu": ["apt"],
     "darwin": ["brew"],
@@ -115,10 +115,11 @@ def get_package_manager(*, distro: str, manager: str) -> PackageManager | None:
     return factory() if factory else None
 
 
+# Section: "<manager name>" (one per primary manager, e.g. "apt", "brew") — update/upgrade/cleanup for that package manager.
 def _package_manager_sections(distro: str) -> list[Section]:
     """Build one section per primary package manager for `distro` (update/upgrade/cleanup)."""
     factories = _PACKAGE_MANAGER_FACTORY_BY_DISTRO.get(distro, {})
-    allowed_managers = _PRIMARY_MANAGERS_BY_DISTRO.get(distro, list(factories.keys()))
+    allowed_managers = _UI_VISIBLE_MANAGERS_BY_DISTRO.get(distro, list(factories.keys()))
 
     sections: list[Section] = []
     for manager_name in allowed_managers:
@@ -150,14 +151,66 @@ def _package_manager_sections(distro: str) -> list[Section]:
     return sections
 
 
+# Section: "help" — shows the list of available shell commands installed by this setup.
 def _help_section() -> Section:
     return ("help", [SystemAction(label="show commands", run=show_commands)])
 
 
-def _dotfiles_section() -> Section:
+# Section: "Sync dotfiles" — installs default packages/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
+
+# Packages tagged with this category in packages.yaml are treated as the default
+# prerequisites for the dotfiles/zsh setup (e.g. git, zsh, curl).
+_DOTFILES_PREREQ_CATEGORY = "core"
+
+
+def _dotfiles_prereq_packages(packages: list[PackageRef]) -> list[PackageRef]:
+    return [p for p in packages if p.category.lower() == _DOTFILES_PREREQ_CATEGORY]
+
+
+def _install_dotfiles_prereqs(packages: list[PackageRef], distro: str) -> TaskResult:
+    prereqs = _dotfiles_prereq_packages(packages)
+    if not prereqs:
+        return TaskResult(
+            ok=True, summary="No default packages configured for this distro's dotfiles setup"
+        )
+
+    lines: list[str] = []
+    failures = 0
+    for p in prereqs:
+        pm = get_package_manager(distro=distro, manager=p.manager)
+        if pm is None:
+            failures += 1
+            lines.append(f"{p.name}: no {p.manager} installer available")
+            continue
+        if pm.is_installed(p.name):
+            lines.append(f"{p.name}: already installed")
+            continue
+        res = pm.install(p.name)
+        if not res.ok:
+            failures += 1
+        lines.append(res.summary)
+
+    ok = failures == 0
+    summary = f"Installed {len(prereqs) - failures}/{len(prereqs)} default packages"
+    return TaskResult(ok=ok, summary=summary, details="\n".join(lines))
+
+
+def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
+    prereqs = _dotfiles_prereq_packages(packages)
+    prereq_names = ", ".join(p.name for p in prereqs)
     return (
         "Sync dotfiles",
         [
+            SystemAction(
+                label="install default packages",
+                run=lambda: _install_dotfiles_prereqs(packages, distro),
+                confirm=True,
+                confirm_message=(
+                    f"Install the default packages for dotfiles setup ({prereq_names})?"
+                    if prereqs
+                    else "No default packages are configured for this distro's dotfiles setup."
+                ),
+            ),
             SystemAction(
                 label="install JetBrainsMono Nerd Font",
                 run=install_jetbrainsmono_nerd_font,
@@ -190,6 +243,7 @@ def _dotfiles_section() -> Section:
     )
 
 
+# Section: "zsh uninstall" — removes oh-my-zsh/p10k config and reverts the default shell back to bash.
 def _zsh_uninstall_section(distro: str) -> Section:
     actions: list[SystemAction] = [
         SystemAction(
@@ -220,6 +274,7 @@ def _zsh_uninstall_section(distro: str) -> Section:
     return ("zsh uninstall", actions)
 
 
+# Section: "docker" — post-install step so Docker can be run without sudo.
 def _docker_section() -> Section:
     return (
         "docker",
@@ -272,6 +327,7 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
     )
 
 
+# Section: "system" — detects NVIDIA/CUDA and runs the OS-appropriate NVIDIA driver setup.
 def _nvidia_section(*, system: str, distro: str) -> Section:
     return (
         "system",
@@ -294,6 +350,7 @@ def _windows_terminal_settings_path() -> Path:
     )
 
 
+# Section: "WSL" — everyday WSL operations (list/install distros, update, shutdown, Windows Terminal profile).
 def _wsl_section(settings_path: Path) -> Section:
     return (
         "WSL",
@@ -345,6 +402,7 @@ def _wsl_section(settings_path: Path) -> Section:
     )
 
 
+# Section: "Advanced WSL" — destructive/rarer WSL operations (move, export, import, delete a distro).
 def _advanced_wsl_section() -> Section:
     return (
         "Advanced WSL",
@@ -406,6 +464,7 @@ def _advanced_wsl_section() -> Section:
     )
 
 
+# Section: "Windows utilities" — Nerd Font install, Windows Terminal defaults, and GlazeWM config download.
 def _windows_utilities_section(settings_path: Path) -> Section:
     return (
         "Windows utilities",
@@ -434,12 +493,22 @@ def _windows_utilities_section(settings_path: Path) -> Section:
     )
 
 
-def get_system_action_sections(*, system: str, distro: str, info: str | None) -> list[Section]:
+def get_system_action_sections(
+    *, system: str, distro: str, info: str | None, packages: list[PackageRef] | None = None
+) -> list[Section]:
     """Build the ordered list of `(section_name, [SystemAction])` tuples for this OS/distro.
 
     Sections are assembled conditionally on `system`/`distro`: package-manager
     sections always come first, then zsh/chezmoi/docker (Linux+macOS), NVIDIA
     (Windows+Linux), and WSL/Windows-utility sections (Windows only).
+
+    Args:
+        system: Normalized OS family (e.g. `"windows"`, `"darwin"`, `"linux"`).
+        distro: Normalized distro identifier (e.g. `"ubuntu"`).
+        info: Extra environment info (e.g. WSL detection note), or `None`.
+        packages: The full package catalog for this distro, used to populate the
+            "install default packages" action in the dotfiles section (packages
+            tagged with the `"core"` category in `packages.yaml`).
     """
     sections: list[Section] = []
 
@@ -451,7 +520,7 @@ def get_system_action_sections(*, system: str, distro: str, info: str | None) ->
     #################
     if system in {"darwin", "linux"}:
         sections.append(_help_section())
-        sections.append(_dotfiles_section())
+        sections.append(_dotfiles_section(distro, packages or []))
         sections.append(_zsh_uninstall_section(distro))
 
     ########

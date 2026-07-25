@@ -1,5 +1,8 @@
 # Personal OS Setup
 
+> [!TIP]
+> **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
+
 ![Logo](docs/images/logo.png)
 
 | App Showcase                                            |
@@ -68,6 +71,8 @@ Get started with one command in bash/zsh:
 sh -c "$(wget https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh -O -)"
 ```
 
+The script installs the repository into `~/.personal-os-setup` (or reuses/updates it if it already exists there) and links a `personal-os-setup` command into `~/.local/bin`, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
+
 If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.
 
 #### Windows 11
@@ -76,7 +81,7 @@ Get started with one command (run it in PowerShell as administrator):
 $u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
 ```
 
-Run it from the directory where you want the `personal-os-setup` folder to be created. If the repertory already exists, it will update it.
+The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
 
 > [!TIP]
 > You can fork this repository and change the apps/packages you need so it reflects what you want to install in your environment.

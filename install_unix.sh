@@ -18,25 +18,33 @@ fi
 
 REPO_URL="https://github.com/AmineDjeghri/personal-os-setup.git"
 FOLDER_NAME="personal-os-setup"
-CURRENT_DIR_NAME=$(basename "$PWD")  # Get the current folder name
+INSTALL_DIR="$HOME/.personal-os-setup"
 
 echo "📦 Checking repository setup..."
 
-# Check if we are already inside the repo folder
-if [ "$CURRENT_DIR_NAME" = "$FOLDER_NAME" ]; then
-    echo "✅ You are already inside the repository."
+REPO_ROOT=""
 
-else
-    # Check if the repo folder exists in the current directory
-    if [ -d "$FOLDER_NAME" ]; then
-        echo "✅ Repository found! Entering..."
-        cd "$FOLDER_NAME"
-    else
-        echo "📂 Repository not found. Cloning..."
-        git clone "$REPO_URL"
-        cd "$FOLDER_NAME"
+# If we are already inside an existing git checkout of this repo, use it in place.
+if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    TOPLEVEL=$(git rev-parse --show-toplevel)
+    if [ "$(basename "$TOPLEVEL")" = "$FOLDER_NAME" ]; then
+        echo "✅ You are already inside the repository."
+        REPO_ROOT="$TOPLEVEL"
     fi
 fi
+
+# Otherwise, install/reuse a fixed location in the user's home directory.
+if [ -z "$REPO_ROOT" ]; then
+    if [ -d "$INSTALL_DIR" ]; then
+        echo "✅ Repository found at $INSTALL_DIR. Entering..."
+    else
+        echo "📂 Repository not found. Cloning into $INSTALL_DIR..."
+        git clone "$REPO_URL" "$INSTALL_DIR"
+    fi
+    REPO_ROOT="$INSTALL_DIR"
+fi
+
+cd "$REPO_ROOT"
 
 echo "⬇️ Pulling..."
 git pull
@@ -45,10 +53,29 @@ mkdir -p .logs
 LOGFILE=".logs/install_$(date +%Y%m%d_%H%M%S).log"
 echo "📝 Logging to: $LOGFILE"
 
+link_command() {
+    VENV_BIN="$REPO_ROOT/.venv/bin/personal-os-setup"
+    if [ ! -x "$VENV_BIN" ]; then
+        return
+    fi
+    LOCAL_BIN="$HOME/.local/bin"
+    mkdir -p "$LOCAL_BIN"
+    ln -sf "$VENV_BIN" "$LOCAL_BIN/personal-os-setup"
+    echo "🔗 Linked personal-os-setup -> $LOCAL_BIN/personal-os-setup"
+    case ":$PATH:" in
+        *":$LOCAL_BIN:"*) ;;
+        *)
+            echo "⚠️  $LOCAL_BIN is not on your PATH. Add it to your shell profile to run 'personal-os-setup' from anywhere:"
+            echo "    export PATH=\"$LOCAL_BIN:\$PATH\""
+            ;;
+    esac
+}
+
 # NOTE: The UI requires a real TTY. Piping stdout through `tee` makes stdout a pipe
 # and can break terminal ioctls. We only use `tee` for non-interactive steps.
 if [ -t 1 ]; then
   make install 2>&1 | tee -a "$LOGFILE"
+  link_command
 
   if command -v script >/dev/null 2>&1; then
     OS_NAME=$(uname -s 2>/dev/null)
@@ -66,6 +93,7 @@ if [ -t 1 ]; then
 else
   {
     make install
+    link_command
     make run
   } 2>&1 | tee -a "$LOGFILE"
 fi
