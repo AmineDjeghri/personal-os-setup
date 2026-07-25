@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.0.0 (2026-07-25)
+
+### Features
+
+- New UI V2 (#90) ([#90](https://github.com/AmineDjeghri/personal-os-setup/pull/90),
+  [`0ee8c12`](https://github.com/AmineDjeghri/personal-os-setup/commit/0ee8c1242885aa21cc1dd747030d7f303389a396))
+
+
 ## v1.6.0 (2026-07-20)
 
 ### Documentation
