@@ -10,7 +10,7 @@ test-installation: ## Test installation
 test: ## Run unit tests with pytest
 	@echo "${YELLOW}Running tests...${NC}"
 	@set -e; \
-	$(UV) run pytest tests --ignore=tests/integration || rc=$$?; \
+	$(UV) run pytest tests/unit || rc=$$?; \
 	if [ "$${rc:-0}" -eq 5 ]; then \
 		echo "${YELLOW}No tests collected (pytest exit code 5) — treating as success.${NC}"; \
 	else \

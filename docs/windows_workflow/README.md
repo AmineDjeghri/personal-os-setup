@@ -260,7 +260,6 @@ machine.
   best thing is to combine the power of Windows with WSL.
 
 ### 3.1. Install WSL:
-![windows setup_image](../images/windows_setup_image.jpeg)
 - Automatic installation of WSL available with the Personal-OS-Setup TUI [app](../../README.md#linux--wsl2--macos)
 - Run the script in Windows Terminal
 - Or manual installation: Run this command in PowerShell ``` wsl --install ```. You can also select the drive where you want to install it instead of the default 'C' drive and this is what I recommand doing.

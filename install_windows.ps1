@@ -4,12 +4,6 @@ $ErrorActionPreference = 'Stop'
 
 $RepoFolderName = 'personal-os-setup'
 
-$StartDir = (Get-Location).Path
-
-# destination for cloning
-$ScriptDir = $null
-if ($PSScriptRoot) { $ScriptDir = $PSScriptRoot }
-
 # If we are anywhere inside an existing git checkout of this repo, update it and continue from repo root.
 $git = Get-Command git -ErrorAction SilentlyContinue
 if (-not $git) {
@@ -47,9 +41,10 @@ if ($git) {
     }
 }
 
-# If not already in a checkout, clone (or reuse) into the directory the user invoked the script from.
+# If not already in a checkout, clone (or reuse) a fixed location in the user's profile
+# directory, so the repo lives in a stable place regardless of where the script is invoked from.
 if (-not $RepoRoot) {
-    $destination = Join-Path $StartDir $RepoFolderName
+    $destination = Join-Path $env:USERPROFILE '.personal-os-setup'
     if (Test-Path $destination) {
         if ($git) {
             try {
@@ -74,8 +69,7 @@ if (-not $RepoRoot) {
             throw "Git is required to clone the repo, but 'git' was not found in PATH. Install Git and re-run."
         }
         Write-Host "Cloning repo into: $destination" -ForegroundColor Yellow
-        Set-Location $StartDir
-        & $git.Source clone "https://github.com/AmineDjeghri/personal-os-setup.git" $RepoFolderName
+        & $git.Source clone "https://github.com/AmineDjeghri/personal-os-setup.git" $destination
         $RepoRoot = $destination
         Set-Location $RepoRoot
     }
@@ -188,10 +182,27 @@ function Invoke-Make {
     throw "Failed to execute make with args: $Args"
 }
 
+function Install-CommandShim {
+    $exe = Join-Path $RepoRoot '.venv\Scripts\personal-os-setup.exe'
+    if (-not (Test-Path $exe)) { return }
+
+    $shimDir = Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps'
+    if (Test-Path $shimDir) {
+        $shimPath = Join-Path $shimDir 'personal-os-setup.cmd'
+        Set-Content -Path $shimPath -Value "@echo off`r`n`"$exe`" %*" -Encoding ASCII
+        Write-Host "Linked personal-os-setup -> $shimPath" -ForegroundColor Green
+    } else {
+        $venvScripts = Join-Path $RepoRoot '.venv\Scripts'
+        Add-ToPathIfMissing -Dir $venvScripts -Persist
+    }
+}
+
 $null = Ensure-Make
 
 Write-Host "Running: make install" -ForegroundColor Yellow
 Invoke-Make -Args @('install')
+
+Install-CommandShim
 
 Write-Host "Running: make run" -ForegroundColor Yellow
 Invoke-Make -Args @('run')

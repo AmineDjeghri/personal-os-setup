@@ -1,0 +1,84 @@
+Screen {
+    background: $surface;
+}
+
+#main-tabs {
+    height: 1fr;
+}
+
+#packages-toolbar {
+    height: 3;
+    align: left middle;
+    margin-bottom: 1;
+}
+
+#packages-toolbar Button {
+    margin-right: 1;
+}
+
+#install-status {
+    width: auto;
+    margin-right: 1;
+}
+
+#install-progress {
+    width: 1fr;
+}
+
+#package-list-container {
+    height: 1fr;
+    border: solid $accent;
+}
+
+.package-category {
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.package-category > Contents {
+    padding: 0 0 0 2;
+}
+
+.category-list {
+    height: auto;
+    max-height: 12;
+}
+
+.action-pane {
+    padding: 1 2;
+}
+
+.action-row {
+    height: 3;
+    margin-bottom: 1;
+}
+
+.action-row Button {
+    margin-right: 1;
+    width: auto;
+}
+
+#log-widget {
+    height: 1fr;
+    border: solid $accent;
+    padding: 0 1;
+}
+
+#status-row {
+    dock: bottom;
+    height: 1;
+    background: $panel;
+    color: $text-muted;
+    padding: 0 1;
+}
+
+#busy-indicator {
+    width: 3;
+    height: 1;
+    margin-right: 1;
+}
+
+#status-bar {
+    width: 1fr;
+}
