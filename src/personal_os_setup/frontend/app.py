@@ -12,6 +12,7 @@ import itertools
 import shutil
 from datetime import datetime
 from pathlib import Path
+from typing import Callable
 
 from textual import work
 from textual.app import App, ComposeResult
@@ -41,9 +42,18 @@ from personal_os_setup.tasks.factory import (
     get_package_manager,
     get_system_action_sections,
 )
+from personal_os_setup.tasks.system.chezmoi import (
+    chezmoi_apply,
+    chezmoi_diff,
+    chezmoi_forget,
+    chezmoi_managed_paths,
+    chezmoi_re_add,
+)
+from personal_os_setup.tasks.task import TaskResult
 
 _CSS_PATH = Path(__file__).with_name("app.tcss")
 _LOGS_TAB_LABEL = "📋 Logs"
+_DOTFILES_SECTION_NAME = "Sync dotfiles"
 
 
 class PersonalOsSetupApp(App[None]):
@@ -112,6 +122,21 @@ class PersonalOsSetupApp(App[None]):
             ):
                 with TabPane(section_name, id=f"section-{next(self._button_id_counter)}"):
                     with Vertical(classes="action-pane"):
+                        if section_name == _DOTFILES_SECTION_NAME:
+                            with Horizontal(id="dotfiles-toolbar"):
+                                yield Button("diff selected", id="btn-dotfiles-diff")
+                                yield Button(
+                                    "apply selected", id="btn-dotfiles-apply", variant="success"
+                                )
+                                yield Button("re-add selected", id="btn-dotfiles-readd")
+                                yield Button(
+                                    "forget selected", id="btn-dotfiles-forget", variant="error"
+                                )
+                            with VerticalScroll(id="dotfiles-list-container"):
+                                yield SelectionList[Path](
+                                    *[Selection(str(p), p) for p in chezmoi_managed_paths()],
+                                    id="dotfiles-selection-list",
+                                )
                         for action in actions:
                             button_id = f"action-btn-{next(self._button_id_counter)}"
                             self._action_by_button_id[button_id] = (section_name, action)
@@ -181,7 +206,7 @@ class PersonalOsSetupApp(App[None]):
             return
 
         selected: list[PackageRef] = []
-        for selection_list in self.query(SelectionList):
+        for selection_list in self.query_one("#package-list-container").query(SelectionList):
             selected.extend(selection_list.selected)
         if not selected:
             self.notify("No packages selected", severity="warning")
@@ -310,7 +335,61 @@ class PersonalOsSetupApp(App[None]):
             self.call_from_thread(self.notify, f"{name}: failed", severity="error")
         finally:
             commands.reset_stream_sink(token)
+            if name.startswith(f"{_DOTFILES_SECTION_NAME}:"):
+                self.call_from_thread(self._apply_dotfiles_list, chezmoi_managed_paths())
             self.call_from_thread(setattr, self, "is_busy", False)
+
+    # ── Dotfiles selection (chezmoi) ─────────────────────────────────────────
+    def _dotfiles_action_specs(
+        self,
+    ) -> dict[str, tuple[str, Callable[[list[Path]], TaskResult], bool, str]]:
+        return {
+            "btn-dotfiles-diff": ("chezmoi: diff selected", chezmoi_diff, False, ""),
+            "btn-dotfiles-apply": (
+                "chezmoi: apply selected",
+                chezmoi_apply,
+                True,
+                "This applies the selected dotfile(s) to your home directory. Run 'diff "
+                "selected' first to preview. Proceed?",
+            ),
+            "btn-dotfiles-readd": (
+                "chezmoi: re-add selected",
+                chezmoi_re_add,
+                True,
+                "This pulls the selected dotfile(s) from your home directory back into the "
+                "repo's chezmoi source dir, overwriting the vendored versions there. Proceed?",
+            ),
+            "btn-dotfiles-forget": (
+                "chezmoi: forget selected",
+                chezmoi_forget,
+                True,
+                "This stops tracking the selected dotfile(s) in the repo's chezmoi source dir. "
+                "The live file(s) in your home directory are left untouched. Proceed?",
+            ),
+        }
+
+    def _on_dotfiles_selected_action(
+        self, spec: tuple[str, Callable[[list[Path]], TaskResult], bool, str]
+    ) -> None:
+        label, run_with_targets, confirm, confirm_message = spec
+        selection_list = self.query_one("#dotfiles-selection-list", SelectionList)
+        selected: list[Path] = list(selection_list.selected)
+        if not selected:
+            self.notify("No dotfiles selected", severity="warning")
+            return
+
+        action = SystemAction(
+            label=label,
+            run=lambda: run_with_targets(selected),
+            confirm=confirm,
+            confirm_message=confirm_message or None,
+        )
+        self._on_action_button(_DOTFILES_SECTION_NAME, action)
+
+    def _apply_dotfiles_list(self, paths: list[Path]) -> None:
+        selection_list = self.query_one("#dotfiles-selection-list", SelectionList)
+        selection_list.clear_options()
+        selection_list.add_options([Selection(str(p), p) for p in paths])
 
     # ── Event handlers ───────────────────────────────────────────────────────
 
@@ -318,6 +397,11 @@ class PersonalOsSetupApp(App[None]):
         button_id = event.button.id
         if button_id == "btn-install":
             self._on_install_selected()
+            return
+
+        dotfiles_spec = self._dotfiles_action_specs().get(button_id or "")
+        if dotfiles_spec is not None:
+            self._on_dotfiles_selected_action(dotfiles_spec)
             return
 
         mapped = self._action_by_button_id.get(button_id or "")

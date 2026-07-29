@@ -144,6 +144,7 @@ packages:
       apps:
         - wine # runs Windows applications on Linux
         - dolphin # KDE file manager
+        - partitionmanager # KDE Partition Manager, GUI disk/partition management
       Fonts:
         - ttf-jetbrains-mono-nerd # matches the JetBrainsMono Nerd Font used elsewhere in this project
       Browsers:
@@ -171,11 +172,15 @@ packages:
         - qt6-wayland
         - breeze-gtk
         - kde-gtk-config
+        - udiskie # removable/encrypted-drive automount + password-prompt daemon (Dolphin has no auto-prompt under Hyprland without it); add "udiskie --tray" to Hyprland autostart
       Screenshots:
         - grim
         - slurp
         - satty
         - wl-clipboard
+      Hardware Monitoring:
+        - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
+        - openrgb # RGB lighting control
     paru:
       Utilities:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
@@ -185,6 +190,8 @@ packages:
         - pycharm # Unified edition
       Meetings:
         - zoom
+      Hardware Monitoring:
+        - nct6687d-dkms-git
 
   windows:
     winget:

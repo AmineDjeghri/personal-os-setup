@@ -2,15 +2,26 @@
 
 These tests never exercise real package-manager/system actions (no real `brew`,
 `apt`, `winget`, etc. commands run) -- only synthetic `SystemAction`s built with
-in-memory `run` callables, so nothing on the host system is touched.
+in-memory `run` callables, so nothing on the host system is touched. Tests that
+touch the "Sync dotfiles" tab patch `chezmoi_managed_paths`/`chezmoi_*` at their
+`personal_os_setup.frontend.app` import site so they never shell out to the real
+`chezmoi` binary or depend on this machine's actual tracked dotfiles.
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from textual.widgets import Button, LoadingIndicator, ProgressBar, SelectionList
+from textual.widgets import (
+    Button,
+    LoadingIndicator,
+    ProgressBar,
+    SelectionList,
+    TabbedContent,
+    TabPane,
+)
 
 from personal_os_setup.frontend.app import PersonalOsSetupApp
 from personal_os_setup.tasks.factory import SystemAction
@@ -18,6 +29,23 @@ from personal_os_setup.tasks.managers.base import InstallResult
 from personal_os_setup.tasks.task import TaskResult
 
 pytestmark = pytest.mark.asyncio
+
+_FAKE_MANAGED_PATHS = [Path("/home/user/.p10k.zsh"), Path("/home/user/.zshrc")]
+
+
+async def _activate_dotfiles_tab(app: PersonalOsSetupApp, pilot) -> None:
+    """Switch to the (dynamically-id'd) "Sync dotfiles" TabPane so its buttons are clickable.
+
+    TabbedContent only routes clicks to the active pane; the dotfiles pane's id is
+    assigned from a shared counter (not a fixed id like "packages"), so we find it by
+    walking up from the selection list it contains instead of guessing the id.
+    """
+    node = app.query_one("#dotfiles-selection-list")
+    while node is not None and not isinstance(node, TabPane):
+        node = node.parent
+    assert node is not None, "could not find the 'Sync dotfiles' TabPane"
+    app.query_one("#main-tabs", TabbedContent).active = node.id
+    await pilot.pause()
 
 
 async def test_app_mounts_with_packages_and_logs_tabs():
@@ -39,7 +67,8 @@ async def test_packages_are_grouped_by_category_into_collapsibles():
         categories = app._grouped_packages()
         collapsibles = app.query(".package-category")
         assert len(collapsibles) == len(categories)
-        assert len(app.query(SelectionList)) == len(categories)
+        package_lists = app.query_one("#package-list-container").query(SelectionList)
+        assert len(package_lists) == len(categories)
 
 
 async def test_is_busy_watcher_disables_buttons_and_toggles_indicator():
@@ -74,7 +103,7 @@ async def test_install_selected_runs_worker_and_advances_progress():
     )()
     async with app.run_test() as pilot:
         await pilot.pause()
-        selection_list = app.query(SelectionList).first()
+        selection_list = app.query_one("#package-list-container").query(SelectionList).first()
         selection_list.select(selection_list._options[0])
         await pilot.pause()
 
@@ -146,3 +175,127 @@ async def test_clear_log_action_does_not_raise():
         await pilot.pause()
         await app.run_action("clear_log")
         await pilot.pause()
+
+
+async def test_dotfiles_list_is_populated_with_nothing_pre_selected():
+    """Files are listed but unchecked by default -- the user opts in to what they sync."""
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        return_value=_FAKE_MANAGED_PATHS,
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
+            assert selection_list.option_count == len(_FAKE_MANAGED_PATHS)
+            assert selection_list.selected == []
+
+
+async def test_dotfiles_action_with_nothing_selected_notifies_and_stays_idle():
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        return_value=_FAKE_MANAGED_PATHS,
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            await _activate_dotfiles_tab(app, pilot)
+            await pilot.click("#btn-dotfiles-diff")
+            await pilot.pause()
+            assert app.is_busy is False
+
+
+async def test_dotfiles_diff_selected_runs_with_the_checked_paths_only():
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        return_value=_FAKE_MANAGED_PATHS,
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            await _activate_dotfiles_tab(app, pilot)
+            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
+            selection_list.select(_FAKE_MANAGED_PATHS[0])
+            await pilot.pause()
+
+            mock_diff = TaskResult(ok=True, summary="chezmoi diff: no changes")
+            with patch(
+                "personal_os_setup.frontend.app.chezmoi_diff", return_value=mock_diff
+            ) as fake_diff:
+                await pilot.click("#btn-dotfiles-diff")
+                for _ in range(20):
+                    await pilot.pause(0.1)
+                    if not app.is_busy:
+                        break
+
+            assert app.is_busy is False
+            fake_diff.assert_called_once_with([_FAKE_MANAGED_PATHS[0]])
+
+
+async def test_dotfiles_apply_selected_requires_confirmation():
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        return_value=_FAKE_MANAGED_PATHS,
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            await _activate_dotfiles_tab(app, pilot)
+            app.query_one("#dotfiles-selection-list", SelectionList).select_all()
+            await pilot.pause()
+
+            mock_apply = TaskResult(ok=True, summary="chezmoi apply: ok")
+            with patch(
+                "personal_os_setup.frontend.app.chezmoi_apply", return_value=mock_apply
+            ) as fake_apply:
+                # "No" should dismiss without applying anything.
+                await pilot.click("#btn-dotfiles-apply")
+                await pilot.pause(0.2)
+                await pilot.click("#confirm-no")
+                await pilot.pause(0.2)
+                fake_apply.assert_not_called()
+                assert app.is_busy is False
+
+                # "Yes" should apply the (still fully-selected) list.
+                await pilot.click("#btn-dotfiles-apply")
+                await pilot.pause(0.2)
+                await pilot.click("#confirm-yes")
+                for _ in range(20):
+                    await pilot.pause(0.1)
+                    if not app.is_busy:
+                        break
+
+            fake_apply.assert_called_once_with(_FAKE_MANAGED_PATHS)
+            assert app.is_busy is False
+
+
+async def test_dotfiles_forget_selected_refreshes_the_list():
+    """The checklist should refresh after a mutating action (forget) completes.
+
+    It should reflect the now-current set of chezmoi-managed paths rather than the
+    stale one it mounted with.
+    """
+    refreshed_paths = [_FAKE_MANAGED_PATHS[0]]
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        side_effect=[_FAKE_MANAGED_PATHS, refreshed_paths],
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            await _activate_dotfiles_tab(app, pilot)
+            app.query_one("#dotfiles-selection-list", SelectionList).select_all()
+            await pilot.pause()
+
+            mock_forget = TaskResult(ok=True, summary="chezmoi forget: ok")
+            with patch("personal_os_setup.frontend.app.chezmoi_forget", return_value=mock_forget):
+                await pilot.click("#btn-dotfiles-forget")
+                await pilot.pause(0.2)
+                await pilot.click("#confirm-yes")
+                for _ in range(20):
+                    await pilot.pause(0.1)
+                    if not app.is_busy:
+                        break
+
+            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
+            assert selection_list.option_count == len(refreshed_paths)

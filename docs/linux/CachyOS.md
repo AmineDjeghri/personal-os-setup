@@ -154,11 +154,19 @@ This setup moves to **zsh** with oh-my-zsh and the powerlevel10k prompt. `.zshrc
 `.p10k.zsh`, plus oh-my-zsh itself and all its plugins/theme, are managed via
 [chezmoi](https://www.chezmoi.io/), with its source directory vendored inside this
 repo at `src/personal_os_setup/config/chezmoi/`. oh-my-zsh/plugins/theme are declared as
-`git-repo` externals in `.chezmoiexternal.toml`, so a single `chezmoi: apply` clones
-and applies everything — no separate sync step or ordering to worry about. Use the
-app's `chezmoi: diff` action to preview changes before `chezmoi: apply` — chezmoi has
-no auto-backup, so review the diff first. `set zsh as default shell` remains a
-separate `zsh` action.
+`git-repo` externals in `.chezmoiexternal.toml`.
+
+The app's "Sync dotfiles" tab lists every chezmoi-managed file as a checkbox (none
+checked by default — pick which ones you mean to act on); use **diff selected** to
+preview changes, **apply selected** to write them to your home directory, **re-add
+selected** to pull live edits back into the repo, or **forget selected** to stop
+tracking a file (the live file is left untouched — only the repo's copy is removed).
+Check everything and run the corresponding action to reproduce the old whole-tree
+`chezmoi apply`/`diff`/`re-add` behavior. To start tracking a new file, use
+**chezmoi: track a new file** and enter its path — this copies it into the repo (never
+edit a live dotfile directly and expect it to be under version control). chezmoi has
+no auto-backup, so always run **diff selected** before **apply selected**.
+`set zsh as default shell` remains a separate `zsh` action.
 ---
 
 ## Theming

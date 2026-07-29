@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import patch
 
 from personal_os_setup.detect_os import PackageRef
@@ -147,6 +148,33 @@ class TestDotfilesPrereqPackages:
 
         assert result.ok is False
         assert "0/1" in result.summary
+
+
+class TestDotfilesTrackNewFile:
+    """Whole-tree chezmoi buttons were replaced by a per-file selection list.
+
+    The selection list now lives in the frontend (app.py); this section should only
+    expose a 'track a new file' prompt action that runs chezmoi_add() on the given path.
+    """
+
+    def test_whole_tree_chezmoi_buttons_are_gone(self):
+        labels = _actions_in("darwin", "darwin", "Sync dotfiles")
+        assert "chezmoi: diff" not in labels
+        assert "chezmoi: apply" not in labels
+        assert "chezmoi: re-add" not in labels
+
+    def test_track_a_new_file_action_is_prompted(self):
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "chezmoi: track a new file")
+        assert action.run_with_prompt is not None
+        assert action.prompt_label is not None
+        assert action.confirm is False
+
+    def test_track_a_new_file_calls_chezmoi_add_with_expanded_path(self):
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "chezmoi: track a new file")
+        with patch("personal_os_setup.tasks.factory.chezmoi_add") as mock_add:
+            mock_add.return_value = InstallResult(ok=True, summary="ok")
+            action.run_with_prompt("~/.config/foo/config.toml")
+        mock_add.assert_called_once_with(Path.home() / ".config/foo/config.toml")
 
 
 class TestDockerSection:

@@ -16,7 +16,7 @@ from personal_os_setup.tasks.managers.ubuntu_snap import UbuntuSnapManager
 from personal_os_setup.tasks.managers.webinstall import WebInstallManager
 from personal_os_setup.tasks.managers.windows_msstore import WindowsMSStoreManager
 from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
-from personal_os_setup.tasks.system.chezmoi import chezmoi_apply, chezmoi_diff, chezmoi_re_add
+from personal_os_setup.tasks.system.chezmoi import chezmoi_add
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
 from personal_os_setup.tasks.system.help import show_commands
@@ -218,21 +218,19 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 confirm=True,
                 confirm_message="Install JetBrainsMono Nerd Font for terminals?",
             ),
-            SystemAction(label="chezmoi: diff", run=chezmoi_diff),
             SystemAction(
-                label="chezmoi: apply",
-                run=chezmoi_apply,
-                confirm=True,
-                confirm_message="This applies chezmoi-managed dotfiles (.zshrc, .p10k.zsh) "
-                "and clones oh-my-zsh/plugins/theme (declared in .chezmoiexternal.toml) "
-                "to your home directory. Run 'chezmoi: diff' first to preview. Proceed?",
-            ),
-            SystemAction(
-                label="chezmoi: re-add",
-                run=chezmoi_re_add,
-                confirm=True,
-                confirm_message="This pulls your current dotfiles back into the repo's chezmoi source dir, "
-                "overwriting the vendored versions there. Proceed?",
+                label="chezmoi: track a new file",
+                run=lambda: TaskResult(
+                    ok=True,
+                    summary="Provide the path to a file to start tracking in this repo's "
+                    "chezmoi source dir, e.g. ~/.config/foo/config.toml",
+                ),
+                run_with_prompt=lambda value: chezmoi_add(Path(value).expanduser()),
+                prompt_label=(
+                    "Path to a file to start tracking in this repo's chezmoi source dir "
+                    "(e.g. ~/.config/foo/config.toml)"
+                ),
+                prompt_initial="~/.",
             ),
             SystemAction(
                 label="set zsh as default shell",
