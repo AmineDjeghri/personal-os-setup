@@ -1,15 +1,14 @@
 packages:
   ubuntu:
     apt:
-      core:
+      Dev_tools:
+        - docker-compose
+      terminal_tools:
         - git
         - curl
         - zsh
         - wget
         - chezmoi # dotfile manager
-      Dev_tools:
-        - docker-compose
-      terminal_tools:
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
         - btop # resource monitor (CPU/RAM/disk/net)
@@ -33,12 +32,11 @@ packages:
 
   darwin:
     brew:
-      Core:
+      terminal_tools:
         - git
         - zsh
         - curl
         - chezmoi # dotfile manager
-      terminal_tools:
         - bat # cat clone with syntax highlighting
         - btop # resource monitor (CPU/RAM/disk/net)
         - duf # disk usage/free utility, nicer than `df`
@@ -111,13 +109,6 @@ packages:
 
   cachyos:
     pacman:
-      core:
-        - git
-        - curl
-        - wget
-        - zsh
-        - base-devel
-        - chezmoi # dotfile manager
       Dev_tools:
         - docker
         - docker-compose
@@ -129,6 +120,12 @@ packages:
         - neovim # modernized vim
 
       terminal_tools:
+        - git
+        - curl
+        - wget
+        - zsh
+        - base-devel
+        - chezmoi # dotfile manager
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
         - eza # modern ls replacement (successor to exa)

@@ -83,7 +83,7 @@ class PersonalOsSetupApp(App[None]):
         self._unread_log_count = 0
 
     def _grouped_packages(self) -> list[tuple[str, list[PackageRef]]]:
-        """Group `self._packages` by category, "core" first, then alphabetically."""
+        """Group `self._packages` by category, "terminal_tools" first, then alphabetically."""
         groups: dict[str, list[PackageRef]] = {}
         for p in self._packages:
             groups.setdefault(p.category, []).append(p)
@@ -92,7 +92,7 @@ class PersonalOsSetupApp(App[None]):
         return [
             (category, groups[category])
             for category in sorted(
-                groups, key=lambda c: (0 if c.lower() == "core" else 1, c.lower())
+                groups, key=lambda c: (0 if c.lower() == "terminal_tools" else 1, c.lower())
             )
         ]
 
@@ -109,7 +109,7 @@ class PersonalOsSetupApp(App[None]):
                         for category, pkgs in self._grouped_packages():
                             with Collapsible(
                                 title=f"{category} ({len(pkgs)})",
-                                collapsed=category.lower() != "core",
+                                collapsed=category.lower() != "terminal_tools",
                                 classes="package-category",
                             ):
                                 yield SelectionList[PackageRef](

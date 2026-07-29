@@ -63,61 +63,64 @@ class TestPackageManagerSections:
 class TestLinuxDarwinSections:
     """zsh/chezmoi/help sections should only appear on Linux and macOS."""
 
-    def test_darwin_gets_help_and_zsh_sections(self):
+    def test_darwin_gets_help_and_dotfiles_sections(self):
         names = _section_names("darwin", "darwin")
         assert "help" in names
         assert "Sync dotfiles" in names
-        assert "zsh uninstall" in names
 
-    def test_windows_has_no_zsh_sections(self):
+    def test_windows_has_no_dotfiles_sections(self):
         names = _section_names("windows", "windows")
         assert "help" not in names
         assert "Sync dotfiles" not in names
-        assert "zsh uninstall" not in names
-
-    def test_apt_uninstall_action_only_offered_on_ubuntu(self):
-        assert "uninstall zsh (apt)" in _actions_in("linux", "ubuntu", "zsh uninstall")
-        assert "uninstall zsh (apt)" not in _actions_in("darwin", "darwin", "zsh uninstall")
-        assert "uninstall zsh (apt)" not in _actions_in("linux", "cachyos", "zsh uninstall")
 
 
-class TestDotfilesPrereqPackages:
-    """The dotfiles section's "install default packages" action is driven by packages.yaml's "core"/"terminal_tools" categories."""
+class TestZshPrereqPackages:
+    """The "install zsh setup prerequisites" action is scoped to zsh, not all dotfiles."""
 
     def test_action_present_without_packages(self):
-        action = _action_in("darwin", "darwin", "Sync dotfiles", "install default packages")
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "install zsh setup prerequisites")
         assert action.confirm is True
-        assert "No default packages" in action.confirm_message
+        assert "No zsh setup prerequisites" in action.confirm_message
 
-    def test_confirm_message_lists_core_and_terminal_tools_packages(self):
+    def test_confirm_message_lists_terminal_tools_packages(self):
         packages = [
-            PackageRef(name="git", manager="apt", category="core"),
-            PackageRef(name="curl", manager="apt", category="core"),
+            PackageRef(name="git", manager="apt", category="terminal_tools"),
             PackageRef(name="bat", manager="apt", category="terminal_tools"),
             PackageRef(name="docker-compose", manager="apt", category="Dev_tools"),
         ]
         action = _action_in(
-            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+            "linux",
+            "ubuntu",
+            "Sync dotfiles",
+            "install zsh setup prerequisites",
+            packages=packages,
         )
         assert "git" in action.confirm_message
-        assert "curl" in action.confirm_message
         assert "bat" in action.confirm_message
         assert "docker-compose" not in action.confirm_message
 
     def test_category_match_is_case_insensitive(self):
-        packages = [PackageRef(name="git", manager="brew", category="Core")]
+        packages = [PackageRef(name="git", manager="brew", category="Terminal_Tools")]
         action = _action_in(
-            "darwin", "darwin", "Sync dotfiles", "install default packages", packages=packages
+            "darwin",
+            "darwin",
+            "Sync dotfiles",
+            "install zsh setup prerequisites",
+            packages=packages,
         )
         assert "git" in action.confirm_message
 
     def test_run_installs_missing_and_skips_installed_packages(self):
         packages = [
-            PackageRef(name="git", manager="apt", category="core"),
-            PackageRef(name="curl", manager="apt", category="core"),
+            PackageRef(name="git", manager="apt", category="terminal_tools"),
+            PackageRef(name="curl", manager="apt", category="terminal_tools"),
         ]
         action = _action_in(
-            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+            "linux",
+            "ubuntu",
+            "Sync dotfiles",
+            "install zsh setup prerequisites",
+            packages=packages,
         )
 
         fake_pm = type(
@@ -138,9 +141,13 @@ class TestDotfilesPrereqPackages:
         assert "Installed curl" in result.details
 
     def test_run_reports_failure_when_manager_missing(self):
-        packages = [PackageRef(name="git", manager="apt", category="core")]
+        packages = [PackageRef(name="git", manager="apt", category="terminal_tools")]
         action = _action_in(
-            "linux", "ubuntu", "Sync dotfiles", "install default packages", packages=packages
+            "linux",
+            "ubuntu",
+            "Sync dotfiles",
+            "install zsh setup prerequisites",
+            packages=packages,
         )
 
         with patch("personal_os_setup.tasks.factory.get_package_manager", return_value=None):
