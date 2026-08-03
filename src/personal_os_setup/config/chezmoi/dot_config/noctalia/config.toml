@@ -6,7 +6,7 @@ ui_scale = 1.20
 [bar.default]
 center = [ "workspaces", "spacer_1", "active_window" ]
 concave_edge_corners = true
-end = [ "media", "spacer_1", "tray", "notifications", "keyboard_layout", "network", "nightlight", "volume", "session" ]
+end = [ "media", "spacer_1", "tray", "yuuto/arch-updater:widget", "privacy", "notifications", "keyboard_layout", "network", "nightlight", "volume", "caffeine", "lockscreen-edit", "session" ]
 margin_edge = 0
 margin_ends = 0
 radius_bottom_left = 12
@@ -14,7 +14,7 @@ radius_bottom_right = 12
 radius_top_left = 0
 radius_top_right = 0
 scale = 1.10
-start = [ "launcher", "clock", "weather", "spacer_1", "group:g1" ]
+start = [ "control-center", "vicinae", "blackbartblues/keymap:widget", "clock", "weather", "spacer_1", "group:g1" ]
 thickness = 35
 
     [[bar.default.capsule_group]]
@@ -34,6 +34,10 @@ enabled = true
 pinned = [ "helium", "com.mitchellh.ghostty", "org.kde.dolphin", "nwg-displays" ]
 reserve_space = false
 show_dots = true
+
+[hooks]
+session_locked = "noctalia msg media pause"
+session_unlocked = "noctalia msg media play"
 
 [idle]
     [idle.behavior.lock]
@@ -70,7 +74,7 @@ temperature_night = 6900
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper" ]
+enabled = [ "nzlov/daily-wallpaper", "yuuto/arch-updater", "blackbartblues/keymap" ]
 
 [shell]
 clipboard_image_action_command = "satty -f -"
@@ -124,6 +128,13 @@ settings_show_advanced = true
     shortcut = "5"
     variant = "destructive"
 
+    [[shell.session.actions]]
+    action = "suspend"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "6"
+    variant = "default"
+
 [system.monitor]
 gpu_poll_seconds = 2
 
@@ -134,6 +145,7 @@ wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
     builtin_ids = [ "btop", "gtk3", "gtk4", "kcolorscheme", "kitty", "qt", "alacritty" ]
+    community_ids = [ "vicinae" ]
 
 [weather]
 effects = true
@@ -141,15 +153,15 @@ enabled = true
 refresh_minutes = 30
 unit = "celsius"
 
+[widget.caffeine]
+color = "secondary"
+
 [widget.clock]
 color = "secondary"
 format = "{:%H:%M %A %m/%d/%y}"
 
 [widget.keyboard_layout]
 type = "keyboard_layout"
-
-[widget.launcher]
-color = "secondary"
 
 [widget.media]
 hide_when_no_media = true
@@ -162,6 +174,9 @@ color = "secondary"
 color = "secondary"
 
 [widget.notifications]
+color = "secondary"
+
+[widget.privacy]
 color = "secondary"
 
 [widget.session]
@@ -193,6 +208,22 @@ type = "sysmon"
 [widget.tray]
 capsule = true
 capsule_fill = "on_secondary"
+
+[widget.lockscreen-edit]
+type = "custom_button"
+glyph = "lock"
+tooltip = "Edit lockscreen widgets"
+
+    [widget.lockscreen-edit.actions]
+    left = "exec noctalia msg lockscreen-widgets-toggle-edit"
+
+[widget.vicinae]
+type = "custom_button"
+glyph = "search"
+tooltip = "Vicinae"
+
+    [widget.vicinae.actions]
+    left = "exec vicinae toggle"
 
 [widget.volume]
 color = "secondary"
