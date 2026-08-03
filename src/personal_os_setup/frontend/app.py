@@ -30,11 +30,14 @@ from textual.widgets import (
     SelectionList,
     TabbedContent,
     TabPane,
+    Tree,
 )
 from textual.widgets.selection_list import Selection
+from textual.widgets.tree import TreeNode
 
 from personal_os_setup.detect_os import PackageRef, build_packages_for_os
 from personal_os_setup.frontend.dialogs import ConfirmScreen, PromptScreen
+from personal_os_setup.frontend.dotfiles_tree import DotfileTreeNode, build_dotfiles_tree
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks import commands
 from personal_os_setup.tasks.factory import (
@@ -54,6 +57,10 @@ from personal_os_setup.tasks.task import TaskResult
 _CSS_PATH = Path(__file__).with_name("app.tcss")
 _LOGS_TAB_LABEL = "📋 Logs"
 _DOTFILES_SECTION_NAME = "Sync dotfiles"
+_DOTFILES_TREE_ID = "dotfiles-selection-list"
+_CHECKED_GLYPH = "☑"
+_UNCHECKED_GLYPH = "☐"
+_PARTIAL_GLYPH = "◐"
 
 
 class PersonalOsSetupApp(App[None]):
@@ -81,6 +88,7 @@ class PersonalOsSetupApp(App[None]):
         self._action_by_button_id: dict[str, tuple[str, SystemAction]] = {}
         self._button_id_counter = itertools.count()
         self._unread_log_count = 0
+        self._dotfiles_selected: set[Path] = set()
 
     def _grouped_packages(self) -> list[tuple[str, list[PackageRef]]]:
         """Group `self._packages` by category, "terminal_tools" first, then alphabetically."""
@@ -133,10 +141,11 @@ class PersonalOsSetupApp(App[None]):
                                     "forget selected", id="btn-dotfiles-forget", variant="error"
                                 )
                             with VerticalScroll(id="dotfiles-list-container"):
-                                yield SelectionList[Path](
-                                    *[Selection(str(p), p) for p in chezmoi_managed_paths()],
-                                    id="dotfiles-selection-list",
+                                dotfiles_tree: Tree[DotfileTreeNode] = Tree(
+                                    "~", id=_DOTFILES_TREE_ID
                                 )
+                                self._build_dotfiles_tree(dotfiles_tree, chezmoi_managed_paths())
+                                yield dotfiles_tree
                         for action in actions:
                             button_id = f"action-btn-{next(self._button_id_counter)}"
                             self._action_by_button_id[button_id] = (section_name, action)
@@ -372,8 +381,7 @@ class PersonalOsSetupApp(App[None]):
         self, spec: tuple[str, Callable[[list[Path]], TaskResult], bool, str]
     ) -> None:
         label, run_with_targets, confirm, confirm_message = spec
-        selection_list = self.query_one("#dotfiles-selection-list", SelectionList)
-        selected: list[Path] = list(selection_list.selected)
+        selected: list[Path] = list(self._dotfiles_selected)
         if not selected:
             self.notify("No dotfiles selected", severity="warning")
             return
@@ -387,9 +395,63 @@ class PersonalOsSetupApp(App[None]):
         self._on_action_button(_DOTFILES_SECTION_NAME, action)
 
     def _apply_dotfiles_list(self, paths: list[Path]) -> None:
-        selection_list = self.query_one("#dotfiles-selection-list", SelectionList)
-        selection_list.clear_options()
-        selection_list.add_options([Selection(str(p), p) for p in paths])
+        """Rebuild the dotfiles tree from a fresh path list, pruning stale selections."""
+        self._dotfiles_selected &= set(paths)
+        tree = self.query_one(f"#{_DOTFILES_TREE_ID}", Tree)
+        self._build_dotfiles_tree(tree, paths)
+
+    def _build_dotfiles_tree(self, tree: Tree[DotfileTreeNode], paths: list[Path]) -> None:
+        """(Re)populate `tree` with `paths` grouped into folders under the home dir."""
+        tree.clear()
+        data = build_dotfiles_tree(paths, Path.home())
+        tree.root.data = data
+        self._add_dotfiles_tree_children(tree.root, data)
+        tree.root.expand()
+        self._refresh_dotfiles_labels(tree.root)
+
+    def _add_dotfiles_tree_children(
+        self, tree_node: TreeNode[DotfileTreeNode], data_node: DotfileTreeNode
+    ) -> None:
+        for name in sorted(data_node.children):
+            child_data = data_node.children[name]
+            if child_data.is_file:
+                tree_node.add_leaf(name, data=child_data)
+            else:
+                branch = tree_node.add(name, data=child_data)
+                self._add_dotfiles_tree_children(branch, child_data)
+
+    def _refresh_dotfiles_labels(self, tree_node: TreeNode[DotfileTreeNode]) -> None:
+        """Recompute and set every node's checkbox-glyph label from `_dotfiles_selected`."""
+        if tree_node.data is not None:
+            tree_node.set_label(self._dotfiles_node_label(tree_node.data))
+        for child in tree_node.children:
+            self._refresh_dotfiles_labels(child)
+
+    def _dotfiles_node_label(self, data: DotfileTreeNode) -> str:
+        all_paths = data.all_file_paths()
+        checked = sum(1 for p in all_paths if p in self._dotfiles_selected)
+        if checked == 0:
+            glyph = _UNCHECKED_GLYPH
+        elif checked == len(all_paths):
+            glyph = _CHECKED_GLYPH
+        else:
+            glyph = _PARTIAL_GLYPH
+        return f"{glyph} {data.name}"
+
+    def on_tree_node_selected(self, event: Tree.NodeSelected[DotfileTreeNode]) -> None:
+        """Toggle checkbox selection for a dotfiles-tree node (file or whole folder)."""
+        if event.node.tree.id != _DOTFILES_TREE_ID:
+            return
+        data = event.node.data
+        if data is None:
+            return
+        all_paths = data.all_file_paths()
+        fully_checked = all(p in self._dotfiles_selected for p in all_paths)
+        if fully_checked:
+            self._dotfiles_selected.difference_update(all_paths)
+        else:
+            self._dotfiles_selected.update(all_paths)
+        self._refresh_dotfiles_labels(event.node.tree.root)
 
     # ── Event handlers ───────────────────────────────────────────────────────
 

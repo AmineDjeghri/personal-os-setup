@@ -4,9 +4,18 @@
 ui_scale = 1.20
 
 [bar.default]
-center = [ "workspaces", "spacer_1", "active_window" ]
+start = [ "control-center", "vicinae", "blackbartblues/keymap:widget", "weather", "spacer_1", "group:g1" ]
+center = [ "workspaces", "spacer_1", "active_window" , "media",]
+end = [ "spacer_1", "tray", "privacy", "keyboard_layout", "network", "volume", "caffeine", "lockscreen-edit", "clock", "notifications", "session" ]
+    [[bar.default.capsule_group]]
+        border = ""
+        fill = "on_secondary"
+        id = "g1"
+        members = [ "temp", "sysmon_2", "sysmon_3" ]
+        opacity = 1.0
+        padding = 6.0
+
 concave_edge_corners = true
-end = [ "media", "spacer_1", "tray", "yuuto/arch-updater:widget", "privacy", "notifications", "keyboard_layout", "network", "nightlight", "volume", "caffeine", "lockscreen-edit", "session" ]
 margin_edge = 0
 margin_ends = 0
 radius_bottom_left = 12
@@ -14,16 +23,9 @@ radius_bottom_right = 12
 radius_top_left = 0
 radius_top_right = 0
 scale = 1.10
-start = [ "control-center", "vicinae", "blackbartblues/keymap:widget", "clock", "weather", "spacer_1", "group:g1" ]
 thickness = 35
 
-    [[bar.default.capsule_group]]
-    border = ""
-    fill = "on_secondary"
-    id = "g1"
-    members = [ "temp", "sysmon_2", "sysmon_3" ]
-    opacity = 1.0
-    padding = 6.0
+
 
 [brightness]
 enable_ddcutil = true
@@ -74,7 +76,7 @@ temperature_night = 6900
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "yuuto/arch-updater", "blackbartblues/keymap" ]
+enabled = [ "nzlov/daily-wallpaper", "blackbartblues/keymap" ]
 
 [shell]
 clipboard_image_action_command = "satty -f -"

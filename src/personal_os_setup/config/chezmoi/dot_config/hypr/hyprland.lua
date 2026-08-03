@@ -33,3 +33,6 @@ if noctaliaOk then
 else
     print("noctalia.lua not loaded, skipping Noctalia border-color theme: " .. tostring(noctalia))
 end
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

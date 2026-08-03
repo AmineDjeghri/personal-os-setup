@@ -21,9 +21,11 @@ from textual.widgets import (
     SelectionList,
     TabbedContent,
     TabPane,
+    Tree,
 )
 
 from personal_os_setup.frontend.app import PersonalOsSetupApp
+from personal_os_setup.frontend.dotfiles_tree import DotfileTreeNode
 from personal_os_setup.tasks.factory import SystemAction
 from personal_os_setup.tasks.managers.base import InstallResult
 from personal_os_setup.tasks.task import TaskResult
@@ -46,6 +48,47 @@ async def _activate_dotfiles_tab(app: PersonalOsSetupApp, pilot) -> None:
     assert node is not None, "could not find the 'Sync dotfiles' TabPane"
     app.query_one("#main-tabs", TabbedContent).active = node.id
     await pilot.pause()
+
+
+def _all_leaf_paths(node) -> set[Path]:
+    """Every file path in a dotfiles-tree node's subtree, gathered recursively."""
+    data: DotfileTreeNode | None = node.data
+    paths: set[Path] = set()
+    if data is not None and data.is_file:
+        paths.add(data.path)
+    for child in node.children:
+        paths |= _all_leaf_paths(child)
+    return paths
+
+
+def _find_dotfiles_node(app: PersonalOsSetupApp, path: Path):
+    """Find the leaf tree node for `path` in the mounted dotfiles tree."""
+    tree = app.query_one("#dotfiles-selection-list", Tree)
+
+    def _walk(node):
+        if node.data is not None and node.data.path == path:
+            return node
+        for child in node.children:
+            found = _walk(child)
+            if found is not None:
+                return found
+        return None
+
+    found = _walk(tree.root)
+    assert found is not None, f"no tree node for {path}"
+    return found
+
+
+def _check_dotfiles_path(app: PersonalOsSetupApp, path: Path) -> None:
+    """Simulate the user checking a single file in the dotfiles tree."""
+    node = _find_dotfiles_node(app, path)
+    app.on_tree_node_selected(Tree.NodeSelected(node))
+
+
+def _check_all_dotfiles(app: PersonalOsSetupApp) -> None:
+    """Simulate the user checking the whole dotfiles tree (its root folder)."""
+    tree = app.query_one("#dotfiles-selection-list", Tree)
+    app.on_tree_node_selected(Tree.NodeSelected(tree.root))
 
 
 async def test_app_mounts_with_packages_and_logs_tabs():
@@ -186,9 +229,9 @@ async def test_dotfiles_list_is_populated_with_nothing_pre_selected():
         app = PersonalOsSetupApp()
         async with app.run_test() as pilot:
             await pilot.pause()
-            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
-            assert selection_list.option_count == len(_FAKE_MANAGED_PATHS)
-            assert selection_list.selected == []
+            tree = app.query_one("#dotfiles-selection-list", Tree)
+            assert _all_leaf_paths(tree.root) == set(_FAKE_MANAGED_PATHS)
+            assert app._dotfiles_selected == set()
 
 
 async def test_dotfiles_action_with_nothing_selected_notifies_and_stays_idle():
@@ -214,8 +257,7 @@ async def test_dotfiles_diff_selected_runs_with_the_checked_paths_only():
         async with app.run_test() as pilot:
             await pilot.pause()
             await _activate_dotfiles_tab(app, pilot)
-            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
-            selection_list.select(_FAKE_MANAGED_PATHS[0])
+            _check_dotfiles_path(app, _FAKE_MANAGED_PATHS[0])
             await pilot.pause()
 
             mock_diff = TaskResult(ok=True, summary="chezmoi diff: no changes")
@@ -241,7 +283,7 @@ async def test_dotfiles_apply_selected_requires_confirmation():
         async with app.run_test() as pilot:
             await pilot.pause()
             await _activate_dotfiles_tab(app, pilot)
-            app.query_one("#dotfiles-selection-list", SelectionList).select_all()
+            _check_all_dotfiles(app)
             await pilot.pause()
 
             mock_apply = TaskResult(ok=True, summary="chezmoi apply: ok")
@@ -265,7 +307,9 @@ async def test_dotfiles_apply_selected_requires_confirmation():
                     if not app.is_busy:
                         break
 
-            fake_apply.assert_called_once_with(_FAKE_MANAGED_PATHS)
+            # Selected paths come from a set, so compare unordered.
+            fake_apply.assert_called_once()
+            assert set(fake_apply.call_args.args[0]) == set(_FAKE_MANAGED_PATHS)
             assert app.is_busy is False
 
 
@@ -284,7 +328,7 @@ async def test_dotfiles_forget_selected_refreshes_the_list():
         async with app.run_test() as pilot:
             await pilot.pause()
             await _activate_dotfiles_tab(app, pilot)
-            app.query_one("#dotfiles-selection-list", SelectionList).select_all()
+            _check_all_dotfiles(app)
             await pilot.pause()
 
             mock_forget = TaskResult(ok=True, summary="chezmoi forget: ok")
@@ -297,5 +341,5 @@ async def test_dotfiles_forget_selected_refreshes_the_list():
                     if not app.is_busy:
                         break
 
-            selection_list = app.query_one("#dotfiles-selection-list", SelectionList)
-            assert selection_list.option_count == len(refreshed_paths)
+            tree = app.query_one("#dotfiles-selection-list", Tree)
+            assert _all_leaf_paths(tree.root) == set(refreshed_paths)
