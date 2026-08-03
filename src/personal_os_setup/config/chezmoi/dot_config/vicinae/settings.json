@@ -4,5 +4,12 @@
       "dark": {
          "name": "noctalia"
       }
+   },
+   "providers": {
+      "@tegola/store.raycast.remove-paywall": {
+         "preferences": {
+            "service": "https://archive.is"
+         }
+      }
    }
 }

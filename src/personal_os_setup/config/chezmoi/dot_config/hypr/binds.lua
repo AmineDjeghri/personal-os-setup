@@ -8,7 +8,6 @@ local launchPrefix = "uwsm app -- "
 
 hl.bind(mainMod .. " + Escape",      hl.dsp.exec_cmd("hyprctl kill"))
 -- ALT+C left unbound on purpose (see note below)
-hl.bind(mainMod .. " + ALT + Space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D",           hl.dsp.window.fullscreen({ mode = 1 }))
 hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + J",           hl.dsp.layout("togglesplit")) -- dwindle only
@@ -60,7 +59,7 @@ hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
 hl.bind(mainMod .. " + Z",          hl.dsp.exec_cmd(noctCall .. "settings-toggle"))
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(noctCall .. "panel-toggle control-center"))
-hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd(launchPrefix .. "vicinae toggle"))
+hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd("vicinae toggle"))
 hl.bind(mainMod .. " + period",     hl.dsp.exec_cmd(noctCall .. "panel-toggle launcher /emo"))
 hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd(noctCall .. "session lock"))
 -- session-panel toggle dropped: skel binds this to "mainMod + ALT + C", which collapses to "ALT + ALT + C" once mainMod=ALT
@@ -96,8 +95,8 @@ hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(noctCall .. "screenshot-fullscree
 -- Theming and Wallpaper
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(noctCall .. "panel-toggle wallpaper"))
 
--- Clipboard
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(noctCall .. "panel-toggle clipboard"))
+-- Clipboard (Vicinae's clipboard history if installed, else Noctalia's clipboard panel)
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(CLIPBOARD))
 
 -- Notifications
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(noctCall .. "panel-toggle control-center notifications"))
