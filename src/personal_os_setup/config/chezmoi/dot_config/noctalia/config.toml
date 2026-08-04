@@ -4,17 +4,9 @@
 ui_scale = 1.20
 
 [bar.default]
-start = [ "control-center", "vicinae", "blackbartblues/keymap:widget", "weather", "spacer_1", "group:g1" ]
+start = [ "vicinae", "lockscreen-edit", "blackbartblues/keymap:widget", "weather", "spacer_1", "group:g1" ]
 center = [ "workspaces", "spacer_1", "active_window" , "media",]
-end = [ "spacer_1", "tray", "privacy", "keyboard_layout", "network", "volume", "caffeine", "lockscreen-edit", "clock", "notifications", "session" ]
-    [[bar.default.capsule_group]]
-        border = ""
-        fill = "on_secondary"
-        id = "g1"
-        members = [ "temp", "sysmon_2", "sysmon_3" ]
-        opacity = 1.0
-        padding = 6.0
-
+end = [ "spacer_1", "tray", "privacy", "volume", "clock", "control-center", "notifications", "session" ]
 concave_edge_corners = true
 margin_edge = 0
 margin_ends = 0
@@ -25,11 +17,33 @@ radius_top_right = 0
 scale = 1.10
 thickness = 35
 
-
+[[bar.default.capsule_group]]
+border = ""
+fill = "on_secondary"
+id = "g1"
+members = [ "temp", "sysmon_2", "sysmon_3" ]
+opacity = 1.0
+padding = 6.0
 
 [brightness]
 enable_ddcutil = true
 
+[control_center]
+
+    [[control_center.shortcuts]]
+    type = "notification"
+
+    [[control_center.shortcuts]]
+    type = "power_profile"
+
+    [[control_center.shortcuts]]
+    type = "caffeine"
+
+    [[control_center.shortcuts]]
+    type = "keyboard_layout"
+
+    [[control_center.shortcuts]]
+    type = "mic_mute"
 [dock]
 auto_hide = true
 enabled = true
@@ -45,7 +59,7 @@ session_unlocked = "noctalia msg media play"
     [idle.behavior.lock]
     action = "lock"
     enabled = true
-    timeout = 360
+    timeout = 60
 
     [idle.behavior.lock-and-suspend]
     action = "lock_and_suspend"
@@ -55,7 +69,7 @@ session_unlocked = "noctalia msg media play"
     [idle.behavior.screen-off]
     action = "screen_off"
     enabled = true
-    timeout = 300
+    timeout = 30
 
 [location]
 auto_locate = true
@@ -155,25 +169,13 @@ enabled = true
 refresh_minutes = 30
 unit = "celsius"
 
-[widget.caffeine]
-color = "secondary"
-
 [widget.clock]
 color = "secondary"
 format = "{:%H:%M %A %m/%d/%y}"
 
-[widget.keyboard_layout]
-type = "keyboard_layout"
-
 [widget.media]
 hide_when_no_media = true
 title_scroll = "on_hover"
-
-[widget.network]
-color = "secondary"
-
-[widget.nightlight]
-color = "secondary"
 
 [widget.notifications]
 color = "secondary"

@@ -138,10 +138,6 @@ packages:
         - dua-cli # fast interactive disk usage analyzer (Rust), binary is `dua`, replaces `du`
         - fastfetch # replaces neofetch, which is deprecated upstream
         - tmux # terminal multiplexer
-      apps:
-        - wine # runs Windows applications on Linux
-        - dolphin # KDE file manager
-        - partitionmanager # KDE Partition Manager, GUI disk/partition management
       Fonts:
         - ttf-jetbrains-mono-nerd # matches the JetBrainsMono Nerd Font used elsewhere in this project
       Browsers:
@@ -154,10 +150,19 @@ packages:
         - vesktop # Discord enhanced
       Media:
         - vlc
+        - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
+        - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
       Text Editors:
         - obsidian
       AI:
         - ollama
+      Utilities:
+        - bitwarden # password manager
+        - qbittorrent # BitTorrent client
+        - wine # runs Windows applications on Linux
+        - dolphin # KDE file manager
+        - partitionmanager # KDE Partition Manager, GUI disk/partition management
+        - ark # KDE archive manager, GUI zip/rar/7z extraction (Dolphin's default archive tool)
       Hyprland desktop:
         - hyprpolkitagent
         - noctalia
@@ -165,6 +170,7 @@ packages:
         - wlsunset # night light / blue light filter
         - brightnessctl
         - ddcutil # external monitor brightness over I2C
+        - hyprpicker # color picker
         - qt5-wayland
         - qt6-wayland
         - breeze-gtk
@@ -175,6 +181,8 @@ packages:
         - slurp
         - satty
         - wl-clipboard
+      Screen Recording:
+        - gpu-screen-recorder-ui # fullscreen overlay UI in the style of ShadowPlay; pulls in gpu-screen-recorder + gpu-screen-recorder-notification as hard deps
       Hardware Monitoring:
         - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
         - openrgb # RGB lighting control

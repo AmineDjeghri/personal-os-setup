@@ -131,6 +131,11 @@ class PersonalOsSetupApp(App[None]):
                 with TabPane(section_name, id=f"section-{next(self._button_id_counter)}"):
                     with Vertical(classes="action-pane"):
                         if section_name == _DOTFILES_SECTION_NAME:
+                            with Horizontal(classes="action-row"):
+                                for action in actions:
+                                    button_id = f"action-btn-{next(self._button_id_counter)}"
+                                    self._action_by_button_id[button_id] = (section_name, action)
+                                    yield Button(action.label, id=button_id)
                             with Horizontal(id="dotfiles-toolbar"):
                                 yield Button("diff selected", id="btn-dotfiles-diff")
                                 yield Button(
@@ -146,11 +151,12 @@ class PersonalOsSetupApp(App[None]):
                                 )
                                 self._build_dotfiles_tree(dotfiles_tree, chezmoi_managed_paths())
                                 yield dotfiles_tree
-                        for action in actions:
-                            button_id = f"action-btn-{next(self._button_id_counter)}"
-                            self._action_by_button_id[button_id] = (section_name, action)
-                            with Horizontal(classes="action-row"):
-                                yield Button(action.label, id=button_id)
+                        else:
+                            for action in actions:
+                                button_id = f"action-btn-{next(self._button_id_counter)}"
+                                self._action_by_button_id[button_id] = (section_name, action)
+                                with Horizontal(classes="action-row"):
+                                    yield Button(action.label, id=button_id)
 
             with TabPane(_LOGS_TAB_LABEL, id="logs"):
                 yield RichLog(id="log-widget", markup=False, wrap=True)
