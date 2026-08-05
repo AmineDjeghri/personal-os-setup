@@ -7,6 +7,9 @@
     type = "git-repo"
     url = "https://github.com/marlonrichert/zsh-autocomplete.git"
     refreshPeriod = "168h"
+    # zsh-autocomplete vendors its async completion engine as the `z-async` git submodule;
+    clone.args = ["--recurse-submodules"]
+    pull.args = ["--rebase", "--autostash", "--recurse-submodules"]
 
 [".oh-my-zsh/custom/plugins/zsh-autosuggestions"]
     type = "git-repo"

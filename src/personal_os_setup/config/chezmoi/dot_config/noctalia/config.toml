@@ -53,13 +53,13 @@ show_dots = true
 
 [hooks]
 session_locked = "noctalia msg media pause"
-session_unlocked = "noctalia msg media play"
+#session_unlocked = "noctalia msg media play"
 
 [idle]
     [idle.behavior.lock]
     action = "lock"
     enabled = true
-    timeout = 60
+    timeout = 300
 
     [idle.behavior.lock-and-suspend]
     action = "lock_and_suspend"
@@ -69,13 +69,13 @@ session_unlocked = "noctalia msg media play"
     [idle.behavior.screen-off]
     action = "screen_off"
     enabled = true
-    timeout = 30
+    timeout = 120
 
 [location]
 auto_locate = true
 
 [lockscreen]
-blurred_desktop = true
+blurred_desktop = false
 
 [lockscreen_widgets]
 enabled = true

@@ -31,6 +31,20 @@ The app provides buttons to automate the terminal configuration:
 
 **.env Detection**: The configuration automatically detects and loads `.env` files from your project directories, making environment variables available in your shell session without manual setup.
 
+**How plugin updates actually happen**: oh-my-zsh's own auto-updater
+(`zstyle ':omz:update' mode auto` in `.zshrc`) only keeps the oh-my-zsh
+**core framework** current on shell startup — it never touches custom
+plugins or the theme. Those (oh-my-zsh itself, `zsh-autocomplete`,
+`zsh-autosuggestions`, `zsh-syntax-highlighting`, `fzf-zsh-plugin`,
+`powerlevel10k`) are instead declared as `git-repo` externals in
+[.chezmoiexternal.toml](../../src/personal_os_setup/config/chezmoi/.chezmoiexternal.toml),
+each with a `refreshPeriod = "168h"` (7 days). That refresh isn't tied to
+clicking **Sync zsh plugins/theme** specifically: *any* `chezmoi apply`
+call — even one scoped to a single unrelated dotfile from the "Sync
+dotfiles" tab — rebuilds chezmoi's full target state first, which checks
+every external's cache and silently re-pulls any that are more than 7 days
+stale.
+
 See the [zshrc configuration file](../../src/personal_os_setup/config/unix/.zshrc) for the default configuration used by this project.
 
 If you need to revert changes:

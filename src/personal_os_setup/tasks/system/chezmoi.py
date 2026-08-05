@@ -47,7 +47,13 @@ def chezmoi_diff(targets: list[Path] | None = None) -> TaskResult:
     if chezmoi_path is None:
         return TaskResult(ok=False, summary="chezmoi not found on PATH")
 
-    argv = [chezmoi_path, "--source", str(chezmoi_source_dir()), "diff"]
+    argv = [
+        chezmoi_path,
+        "--source",
+        str(chezmoi_source_dir()),
+        "diff",
+        "--refresh-externals=never",
+    ]
     argv.extend(str(t) for t in targets or [])
     res = run(argv, check=False)
     details = (res.stdout + "\n" + res.stderr).strip()
@@ -59,11 +65,19 @@ def chezmoi_diff(targets: list[Path] | None = None) -> TaskResult:
 
 
 def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
+    """Apply the selected dotfile(s) to the home directory without refreshing git-repo externals."""
     chezmoi_path = _chezmoi_path()
     if chezmoi_path is None:
         return TaskResult(ok=False, summary="chezmoi not found on PATH")
 
-    argv = [chezmoi_path, "--source", str(chezmoi_source_dir()), "apply", "-v"]
+    argv = [
+        chezmoi_path,
+        "--source",
+        str(chezmoi_source_dir()),
+        "apply",
+        "-v",
+        "--refresh-externals=never",
+    ]
     argv.extend(str(t) for t in targets or [])
     res = run(argv, check=False)
     details = (res.stdout + "\n" + res.stderr).strip()
@@ -72,12 +86,44 @@ def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
     return TaskResult(ok=False, summary="chezmoi apply: failed", details=details)
 
 
+def chezmoi_refresh_zsh_externals() -> TaskResult:
+    """Force-refresh oh-my-zsh, its custom plugins, and its theme from upstream.
+
+    https://www.chezmoi.io/user-guide/include-files-from-elsewhere/
+    """
+    chezmoi_path = _chezmoi_path()
+    if chezmoi_path is None:
+        return TaskResult(ok=False, summary="chezmoi not found on PATH")
+
+    argv = [
+        chezmoi_path,
+        "--source",
+        str(chezmoi_source_dir()),
+        "apply",
+        "-v",
+        "--refresh-externals=always",
+        str(Path.home() / ".oh-my-zsh"),
+    ]
+    res = run(argv, check=False)
+    details = (res.stdout + "\n" + res.stderr).strip()
+    if res.returncode == 0:
+        return TaskResult(ok=True, summary="chezmoi: sync zsh plugins/theme: ok", details=details)
+    return TaskResult(ok=False, summary="chezmoi: sync zsh plugins/theme: failed", details=details)
+
+
 def chezmoi_re_add(targets: list[Path] | None = None) -> TaskResult:
     chezmoi_path = _chezmoi_path()
     if chezmoi_path is None:
         return TaskResult(ok=False, summary="chezmoi not found on PATH")
 
-    argv = [chezmoi_path, "--source", str(chezmoi_source_dir()), "re-add", "-v"]
+    argv = [
+        chezmoi_path,
+        "--source",
+        str(chezmoi_source_dir()),
+        "re-add",
+        "-v",
+        "--refresh-externals=never",
+    ]
     argv.extend(str(t) for t in targets or [])
     res = run(argv, check=False)
     details = (res.stdout + "\n" + res.stderr).strip()

@@ -16,7 +16,7 @@ from personal_os_setup.tasks.managers.ubuntu_snap import UbuntuSnapManager
 from personal_os_setup.tasks.managers.webinstall import WebInstallManager
 from personal_os_setup.tasks.managers.windows_msstore import WindowsMSStoreManager
 from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
-from personal_os_setup.tasks.system.chezmoi import chezmoi_add
+from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
 from personal_os_setup.tasks.system.help import show_commands
@@ -232,6 +232,12 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 run=set_zsh_as_default_shell,
                 confirm=True,
                 confirm_message="Set your default shell to zsh? (OS reboot required)",
+            ),
+            SystemAction(
+                label="sync zsh plugins/theme",
+                run=chezmoi_refresh_zsh_externals,
+                confirm=True,
+                confirm_message="Pull oh-my-zsh, its plugins, and its theme from upstream?",
             ),
         ],
     )
