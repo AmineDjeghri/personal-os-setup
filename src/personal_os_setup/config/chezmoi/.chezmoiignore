@@ -3,6 +3,9 @@
 .config/hypr
 .config/noctalia
 .config/vicinae
+.config/mimeapps.list
+.config/gpu-screen-recorder
+.config/kdeglobals
 {{ end -}}
 
 # Config -- macOS and Linux only

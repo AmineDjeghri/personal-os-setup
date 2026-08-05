@@ -6,7 +6,7 @@ ui_scale = 1.20
 [bar.default]
 start = [ "vicinae", "lockscreen-edit", "blackbartblues/keymap:widget", "weather", "spacer_1", "group:g1" ]
 center = [ "workspaces", "spacer_1", "active_window" , "media",]
-end = [ "spacer_1", "tray", "privacy", "volume", "clock", "control-center", "notifications", "session" ]
+end = [ "spacer_1", "privacy", "tray", "volume", "clock", "control-center", "notifications", "session" ]
 concave_edge_corners = true
 margin_edge = 0
 margin_ends = 0
@@ -27,6 +27,7 @@ padding = 6.0
 
 [brightness]
 enable_ddcutil = true
+minimum_brightness = 0.5
 
 [control_center]
 
@@ -44,10 +45,13 @@ enable_ddcutil = true
 
     [[control_center.shortcuts]]
     type = "mic_mute"
+
+    [[control_center.shortcuts]]
+    type = "noctalia/screen_recorder:toggle"
 [dock]
 auto_hide = true
 enabled = true
-pinned = [ "helium", "com.mitchellh.ghostty", "org.kde.dolphin", "nwg-displays" ]
+pinned = [ "helium", "com.mitchellh.ghostty", "org.kde.dolphin", "pycharm" ]
 reserve_space = false
 show_dots = true
 
@@ -86,11 +90,15 @@ force = true
 temperature_day = 7000
 temperature_night = 6900
 
+[plugin_settings."noctalia/screen_recorder"]
+directory = "~/Downloads/Recordings"
+resolution = "1920x1080"
+
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "blackbartblues/keymap" ]
+enabled = [ "nzlov/daily-wallpaper", "blackbartblues/keymap", "noctalia/screen_recorder" ]
 
 [shell]
 clipboard_image_action_command = "satty -f -"
@@ -160,7 +168,7 @@ source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
-    builtin_ids = [ "btop", "gtk3", "gtk4", "kcolorscheme", "kitty", "qt", "alacritty" ]
+    builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "qt" ]
     community_ids = [ "vicinae" ]
 
 [weather]
@@ -173,6 +181,9 @@ unit = "celsius"
 color = "secondary"
 format = "{:%H:%M %A %m/%d/%y}"
 
+[widget.keyboard_layout]
+color = "secondary"
+
 [widget.media]
 hide_when_no_media = true
 title_scroll = "on_hover"
@@ -181,7 +192,10 @@ title_scroll = "on_hover"
 color = "secondary"
 
 [widget.privacy]
+capsule = true
 color = "secondary"
+hide_inactive = true
+scale = 1.05
 
 [widget.session]
 color = "error"
