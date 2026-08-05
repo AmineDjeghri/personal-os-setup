@@ -110,6 +110,12 @@ sudo usermod -aG libvirt $USER
 sudo usermod -aG kvm $USER
 ```
 
+Restart the terminal and run:
+```
+id -nG  # user should be added to the group
+```
+If it is the case, you can run virsh without sudo. 
+
 #### Create a bridge configuration
 A network bridge in KVM allows your virtual machines to appear directly on the same network as your host.
 
