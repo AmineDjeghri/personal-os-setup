@@ -45,9 +45,6 @@ minimum_brightness = 0.5
 
     [[control_center.shortcuts]]
     type = "mic_mute"
-
-    [[control_center.shortcuts]]
-    type = "noctalia/screen_recorder:toggle"
 [dock]
 auto_hide = true
 enabled = true
@@ -60,6 +57,11 @@ session_locked = "noctalia msg media pause"
 #session_unlocked = "noctalia msg media play"
 
 [idle]
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = true
+    timeout = 120
+
     [idle.behavior.lock]
     action = "lock"
     enabled = true
@@ -68,12 +70,8 @@ session_locked = "noctalia msg media pause"
     [idle.behavior.lock-and-suspend]
     action = "lock_and_suspend"
     enabled = true
-    timeout = 1200
+    timeout = 600
 
-    [idle.behavior.screen-off]
-    action = "screen_off"
-    enabled = true
-    timeout = 120
 
 [location]
 auto_locate = true
@@ -90,15 +88,11 @@ force = true
 temperature_day = 7000
 temperature_night = 6900
 
-[plugin_settings."noctalia/screen_recorder"]
-directory = "~/Downloads/Recordings"
-resolution = "1920x1080"
-
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "blackbartblues/keymap", "noctalia/screen_recorder" ]
+enabled = [ "nzlov/daily-wallpaper", "blackbartblues/keymap" ]
 
 [shell]
 clipboard_image_action_command = "satty -f -"

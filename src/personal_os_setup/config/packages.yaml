@@ -163,6 +163,7 @@ packages:
         - dolphin # KDE file manager
         - partitionmanager # KDE Partition Manager, GUI disk/partition management
         - ark # KDE archive manager, GUI zip/rar/7z extraction (Dolphin's default archive tool)
+        - cachy-update # official CachyOS update notifier/applier with a systray applet (icon color signals pending updates); config in ~/.config/arch-update.conf
       Hyprland desktop:
         - hyprpolkitagent
         - noctalia

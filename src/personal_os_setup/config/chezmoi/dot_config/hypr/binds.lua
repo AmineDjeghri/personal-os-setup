@@ -50,14 +50,14 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize())
 ---- LAUNCHER ----
 ------------------
 
-hl.bind(mainMod .. " + Return",     hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
-hl.bind(mainMod .. " + Q",          hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
+hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(launchPrefix .. FILE_MANAGER))
 hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. EDITOR))
 hl.bind("XF86Calculator",           hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
 hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
-hl.bind(mainMod .. " + Z",          hl.dsp.exec_cmd(noctCall .. "settings-toggle"))
+hl.bind(mainMod .. " + G",          hl.dsp.exec_cmd(noctCall .. "settings-toggle"))
+-- ALT+Z intentionally left free: gpu-screen-recorder-ui grabs it globally (ShadowPlay-style
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(noctCall .. "panel-toggle control-center"))
 hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd("vicinae toggle"))
 hl.bind(mainMod .. " + period",     hl.dsp.exec_cmd(noctCall .. "panel-toggle launcher /emo"))
@@ -88,9 +88,9 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(noctCall .. "brightness-down"),
 ---- UTILITIES ----
 -------------------
 
--- ALT+P left unbound on purpose (pseudo-tile vs hyprpicker, undecided)
-hl.bind("Print",               hl.dsp.exec_cmd(noctCall .. "screenshot-region"))
-hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(noctCall .. "screenshot-fullscreen"))
+-- Print left free for gpu-screen-recorder-ui's own fullscreen-capture hotkey
+-- hl.bind("Print", hl.dsp.exec_cmd(noctCall .. "screenshot-region"))
+hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(noctCall .. "screenshot-region"))
 
 -- Theming and Wallpaper
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(noctCall .. "panel-toggle wallpaper"))

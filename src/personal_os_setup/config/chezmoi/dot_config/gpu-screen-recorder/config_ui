@@ -96,15 +96,15 @@ replay.turn_on_replay_automatically_mode dont_turn_on_automatically
 screenshot.change_image_resolution false
 screenshot.custom_script
 screenshot.image_format jpg
-screenshot.image_height 0
+screenshot.image_height 1080
 screenshot.image_quality very_high
-screenshot.image_width 0
+screenshot.image_width 1920
 screenshot.record_area_option focused_monitor
 screenshot.record_cursor true
 screenshot.restore_portal_session true
 screenshot.save_directory ~/Downloads/Recordings
-screenshot.save_screenshot_in_game_folder false
-screenshot.save_screenshot_to_clipboard false
+screenshot.save_screenshot_in_game_folder true
+screenshot.save_screenshot_to_clipboard true
 screenshot.save_screenshot_to_disk true
 screenshot.show_notifications true
 screenshot.take_screenshot_hotkey 102 0
