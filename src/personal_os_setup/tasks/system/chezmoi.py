@@ -76,6 +76,7 @@ def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
         str(chezmoi_source_dir()),
         "apply",
         "-v",
+        "--force",
         "--refresh-externals=never",
     ]
     argv.extend(str(t) for t in targets or [])
@@ -101,6 +102,7 @@ def chezmoi_refresh_zsh_externals() -> TaskResult:
         str(chezmoi_source_dir()),
         "apply",
         "-v",
+        "--force",
         "--refresh-externals=always",
         str(Path.home() / ".oh-my-zsh"),
     ]

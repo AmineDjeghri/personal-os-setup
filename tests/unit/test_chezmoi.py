@@ -110,6 +110,18 @@ class TestChezmoiApply:
         assert result.ok is False
         assert "permission denied" in result.details
 
+    def test_apply_passes_force_flag(self):
+        """apply() must pass --force."""
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        mock_run = MagicMock(return_value=mock_result)
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", mock_run),
+        ):
+            chezmoi_apply()
+        argv = mock_run.call_args[0][0]
+        assert "--force" in argv
+
 
 class TestChezmoiReAdd:
     """Tests for chezmoi_re_add()."""
