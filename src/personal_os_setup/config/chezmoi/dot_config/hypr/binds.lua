@@ -88,8 +88,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(noctCall .. "brightness-down"),
 ---- UTILITIES ----
 -------------------
 
--- Print left free for gpu-screen-recorder-ui's own fullscreen-capture hotkey
--- hl.bind("Print", hl.dsp.exec_cmd(noctCall .. "screenshot-region"))
+hl.bind("Print",               hl.dsp.exec_cmd(noctCall .. "screenshot-fullscreen"))
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(noctCall .. "screenshot-region"))
 
 -- Theming and Wallpaper

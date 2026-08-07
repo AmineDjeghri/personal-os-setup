@@ -26,7 +26,7 @@ record.record_options.record_area_height 1080
 record.record_options.record_area_option portal
 record.record_options.record_area_width 1920
 record.record_options.record_cursor true
-record.record_options.restore_portal_session true
+record.record_options.restore_portal_session false
 record.record_options.show_notifications true
 record.record_options.use_led_indicator false
 record.record_options.video_bitrate 40000
@@ -43,11 +43,11 @@ record.record_options.webcam_video_format auto
 record.record_options.webcam_width 30
 record.record_options.webcam_x 0
 record.record_options.webcam_y 0
-record.save_directory ~/Downloads/Recordings
+record.save_directory /home/amine/Downloads/Recordings
 record.save_video_in_game_folder true
 record.start_stop_hotkey 94 16
-record.start_stop_region_hotkey 94 4
-record.start_stop_window_hotkey 94 1
+record.start_stop_region_hotkey 0 0
+record.start_stop_window_hotkey 0 0
 replay.container mp4
 replay.only_start_replay_if_power_supply_connected false
 replay.record_options.advanced_view false
@@ -85,12 +85,12 @@ replay.record_options.webcam_x 0
 replay.record_options.webcam_y 0
 replay.replay_storage ram
 replay.restart_replay_on_save false
-replay.save_10_min_hotkey 97 16
-replay.save_1_min_hotkey 96 16
-replay.save_directory ~/Downloads/Recordings
-replay.save_hotkey 95 16
+replay.save_10_min_hotkey 0 0
+replay.save_1_min_hotkey 0 0
+replay.save_directory /home/amine/Downloads/Recordings
+replay.save_hotkey 0 0
 replay.save_video_in_game_folder false
-replay.start_stop_hotkey 95 17
+replay.start_stop_hotkey 0 0
 replay.time 60
 replay.turn_on_replay_automatically_mode dont_turn_on_automatically
 screenshot.change_image_resolution false
@@ -102,14 +102,14 @@ screenshot.image_width 1920
 screenshot.record_area_option focused_monitor
 screenshot.record_cursor true
 screenshot.restore_portal_session true
-screenshot.save_directory ~/Downloads/Recordings
+screenshot.save_directory /home/amine/Downloads/Recordings
 screenshot.save_screenshot_in_game_folder true
 screenshot.save_screenshot_to_clipboard true
 screenshot.save_screenshot_to_disk true
 screenshot.show_notifications true
-screenshot.take_screenshot_hotkey 102 0
-screenshot.take_screenshot_region_hotkey 102 4
-screenshot.take_screenshot_window_hotkey 102 1
+screenshot.take_screenshot_hotkey 0 0
+screenshot.take_screenshot_region_hotkey 0 0
+screenshot.take_screenshot_window_hotkey 0 0
 screenshot.use_led_indicator false
 streaming.custom.container flv
 streaming.custom.key
@@ -151,6 +151,6 @@ streaming.record_options.webcam_x 0
 streaming.record_options.webcam_y 0
 streaming.rumble.key
 streaming.service twitch
-streaming.start_stop_hotkey 93 16
+streaming.start_stop_hotkey 0 0
 streaming.twitch.key
 streaming.youtube.key
