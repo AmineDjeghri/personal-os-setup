@@ -23,6 +23,7 @@ Apps configuration and shortcuts
   * [1.10. Bitwarden (All platforms)](#110-bitwarden-all-platforms)
   * [1.11. HWINFO:](#111-hwinfo)
   * [1.12. DisplayFusion (Windows only & paid)](#112-displayfusion-windows-only--paid)
+  * [1.13. Keychron Launcher (All platforms)](#113-keychron-launcher-all-platforms)
 <!-- TOC -->
 
 # 1. Shortcuts and app configurations
@@ -244,7 +245,7 @@ The macOS shortcuts are inverted in my system so i can use the same commands as 
 | delete/cut line                                  | ctrl+x                                       |                                                                                                                    |
 | duplicate line                                   | ctrl+d                                       |                                                                                                                    |
 | **moving**                                       |                                              |
-| Go to declaration or usages	                     | ctrl+B                                       | works as bold typo in markdown files                                                                               |
+| Go to declaration or usages	                      | ctrl+B                                       | works as bold typo in markdown files                                                                               |
 | end of line                                      | :End:                                        |                                                                                                                    |
 | beginning of line                                | Home                                         |                                                                                                                    |
 | next word:                                       | Ctrl+Right                                   |                                                                                                                    |
@@ -331,3 +332,15 @@ Bitwarden is an open-source password manager available on Windows, macOS, Linux,
     - it adds a lot of features to Windows monitor settings.
     - There are four apps available after the installation. The main ones are: DisplayFusion and "monitor settings
       displayfusion"
+
+## 1.13. Keychron Launcher (All platforms)
+
+Keychron Launcher (https://launcher.keychron.com/) is the browser-based configurator for QMK/VIA-compatible Keychron
+keyboards — key remapping, macros, lighting, and firmware updates, all from a web app (WebHID), no install required.
+Works on Linux the same as Windows/macOS: open it in a Chromium-based browser (Chrome, Edge, Opera, Helium, etc.).
+
+- **Keychron K1 Max**: must be connected **via USB-C cable** to be recognized by Launcher — flip the mode switch on
+  the back of the keyboard to cable mode first. It will not be work correctly over the 2.4GHz dongle or Bluetooth.
+- **On Linux, skip the Keychron Toolbox driver install step** — Toolbox is a native Windows/Mac app with no Linux
+  build, and Launcher doesn't need it there. Just click **Next** past that step in the firmware-update flow.
+- My K1 Max keymap's base layer was remapped to media/brightness keys without holding Fn. And the F1-F12 keys need the Fn holded to work.

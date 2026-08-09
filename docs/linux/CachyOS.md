@@ -120,6 +120,22 @@ Enable **View → Show Hidden Files** in Dolphin to see the directory.
 
 Verify the keybindings afterward — for example `ALT+F` for fullscreen.
 
+### Settings owned by Noctalia, not Hyprland
+
+Some desktop behavior that most Hyprland setups configure in `hyprland.conf` (or via
+standalone daemons like `hypridle`/`hyprlock`/`hyprpaper`) is instead configured in
+Noctalia's own `~/.config/noctalia/config.toml`.
+
+- **Idle timeout / screen lock / suspend** — `[idle.behavior.*]`. No `hypridle`/`hyprlock` installed or needed.
+- **Wallpaper** — `[theme] source = "wallpaper"` plus the `nzlov/daily-wallpaper`
+  plugin under `[plugins]`. No `swww`/`hyprpaper`.
+- **Night light / blue light filter** — `[nightlight]`. Note `wlsunset` is still in
+  `packages.yaml` too — check which one is actually active before assuming both run.
+- **Screenshot pipeline** — `[shell.screenshot]` routes through Noctalia's own
+  screenshot action (piped to `satty`).
+- **Session menu** (lock / logout / reboot / shutdown / suspend) — `[[shell.session.actions]]`,
+  each with its own shortcut inside the session menu.
+
 ### Hyprland plugins
 
 `hyprpm` builds plugins from source, so the build tooling above must be

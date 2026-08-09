@@ -197,6 +197,7 @@ packages:
       Hardware Monitoring:
         - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
         - openrgb # RGB lighting control
+        - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
     paru:
       Utilities:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
