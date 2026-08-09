@@ -2,6 +2,39 @@ local mainMod = "ALT"
 local noctCall = "noctalia msg "
 local launchPrefix = "uwsm app -- "
 
+
+-------------------------------
+---- WORKSPACES & MONITORS ----
+-------------------------------
+
+-- Window switching
+hl.bind(mainMod .. " + CONTROL + Right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + CONTROL + Left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + CONTROL + Up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + CONTROL + Down",  hl.dsp.focus({ direction = "down" }))
+
+-- Scroll through existing workspaces & monitors
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "m-1" }))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "m+1" }))
+
+-- Special workspace (scratchpad)
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+
+
+-- Switch workspaces with mainMod + [0-9] and move window with mainMod + SHIFT + [0-9]
+-- AZERTY/QWERTY independent: code:10 = & in azerty or 1 in qwerty, code:19 = à or 0 key
+-- Skel's own "focus on monitor" ALT+1/2/3 keysym binds were dropped: they only fire on the
+-- "us" half of the fr,us layout toggle and collide with this code:-based loop on the same key.
+for workspace = 1, 10 do
+    local keycode = 9 + workspace
+
+    hl.bind(mainMod .. " + code:" .. keycode, hl.dsp.focus({ workspace = workspace }))
+    hl.bind(mainMod .. " + SHIFT + code:" .. keycode, hl.dsp.window.move({ workspace = workspace }))
+end
+
+
+
 ---------------------------
 ---- WINDOW MANAGEMENT ----
  ---------------------------
@@ -12,12 +45,6 @@ hl.bind(mainMod .. " + Q",           hl.dsp.window.close()) -- graceful close; f
 hl.bind(mainMod .. " + D",           hl.dsp.window.fullscreen({ mode = 1 }))
 hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + J",           hl.dsp.layout("togglesplit")) -- dwindle only
-
--- Change focus
-hl.bind(mainMod .. " + Left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + Right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + Up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + Down",  hl.dsp.focus({ direction = "down" }))
 
 -- ALT+Tab: hymission is active; the other two options are here to A/B test, just uncomment one and comment hymission
 -- hl.bind("ALT + Tab",         hl.dsp.window.cycle_next())
@@ -96,31 +123,3 @@ hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(CLIPBOARD))
 
 -- Notifications
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(noctCall .. "panel-toggle control-center notifications"))
-
--------------------------------
----- WORKSPACES & MONITORS ----
--------------------------------
-
--- Switch workspaces with mainMod + [0-9] and move window with mainMod + SHIFT + [0-9]
--- AZERTY/QWERTY independent: code:10 = & in azerty or 1 in qwerty, code:19 = à or 0 key
--- Skel's own "focus on monitor" ALT+1/2/3 keysym binds were dropped: they only fire on the
--- "us" half of the fr,us layout toggle and collide with this code:-based loop on the same key.
-for workspace = 1, 10 do
-    local keycode = 9 + workspace
-
-    hl.bind(mainMod .. " + code:" .. keycode, hl.dsp.focus({ workspace = workspace }))
-    hl.bind(mainMod .. " + SHIFT + code:" .. keycode, hl.dsp.window.move({ workspace = workspace }))
-end
-
--- Window switching
-hl.bind(mainMod .. " + CONTROL + Right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + CONTROL + Left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + CONTROL + Down",  hl.dsp.focus({ workspace = "emptym" })) -- workspace-level: focus first empty workspace on current monitor
-
--- Scroll through existing workspaces & monitors
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "m-1" }))
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "m+1" }))
-
--- Special workspace (scratchpad)
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
