@@ -4,7 +4,6 @@ TERMINAL     = "ghostty"
 FILE_MANAGER = "dolphin"
 BROWSER      = "helium-browser"
 EDITOR       = "gnome-text-editor --new-window"
-CALCULATOR   = "gnome-calculator"
 
 -- Clipboard history: Vicinae's clipboard command if installed, otherwise Noctalia's own clipboard panel
 local function commandExists(path)

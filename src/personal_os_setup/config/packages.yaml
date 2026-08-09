@@ -160,10 +160,22 @@ packages:
         - bitwarden # password manager
         - qbittorrent # BitTorrent client
         - wine # runs Windows applications on Linux
-        - dolphin # KDE file manager
         - partitionmanager # KDE Partition Manager, GUI disk/partition management
-        - ark # KDE archive manager, GUI zip/rar/7z extraction (Dolphin's default archive tool)
         - cachy-update # official CachyOS update notifier/applier with a systray applet (icon color signals pending updates); config in ~/.config/arch-update.conf
+        - ventoy-bin # bootable-USB creator, drag-and-drop multiple ISOs without reflashing
+      Files explorer:
+        - nautilus # GNOME file manager, replaces Dolphin -- no KDE session deps (kwallet/kded/portals) to fight with under Hyprland
+        - ghostty-nautilus # Adds Ghostty terminal for Nautilus context menu
+        - gvfs # virtual filesystem backend Nautilus uses for all mounting (local disks, udisks2, trash, etc.)
+        - gvfs-smb # Windows/SMB network share support (not pulled in by gvfs itself)
+        - gvfs-mtp # Android phone (MTP) support
+        - gvfs-gphoto2 # digital camera (PTP) support
+        - gvfs-nfs # NFS network share support
+        - gvfs-afc # iPhone/iPad support
+        - gvfs-goa # cloud storage backend, pairs with gnome-online-accounts
+        - gnome-online-accounts # Google/Microsoft/Nextcloud account integration for gvfs-goa
+        - sushi # spacebar quick-preview for Nautilus (like macOS Quick Look)
+        - nautilus-python # extension framework required by most python-based Nautilus plugins
       Hyprland desktop:
         - hyprpolkitagent
         - noctalia
@@ -174,9 +186,7 @@ packages:
         - hyprpicker # color picker
         - qt5-wayland
         - qt6-wayland
-        - breeze-gtk
-        - kde-gtk-config
-        - udiskie # removable/encrypted-drive automount + password-prompt daemon (Dolphin has no auto-prompt under Hyprland without it); add "udiskie --tray" to Hyprland autostart
+        - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
       Screenshots:
         - grim
         - slurp

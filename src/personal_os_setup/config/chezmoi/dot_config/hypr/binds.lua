@@ -4,9 +4,10 @@ local launchPrefix = "uwsm app -- "
 
 ---------------------------
 ---- WINDOW MANAGEMENT ----
----------------------------
+ ---------------------------
 
-hl.bind(mainMod .. " + Escape",      hl.dsp.exec_cmd("hyprctl kill"))
+hl.bind(mainMod .. " + Escape",      hl.dsp.exec_cmd("hyprctl kill")) -- interactive force-kill (click a window)
+hl.bind(mainMod .. " + Q",           hl.dsp.window.close()) -- graceful close; freed up once terminal moved to ALT+T
 -- ALT+C left unbound on purpose (see note below)
 hl.bind(mainMod .. " + D",           hl.dsp.window.fullscreen({ mode = 1 }))
 hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen())
@@ -30,9 +31,6 @@ hl.bind(mainMod .. " + SHIFT + Left",                 hl.dsp.window.move({ direc
 hl.bind(mainMod .. " + SHIFT + Down",                 hl.dsp.window.move({ direction = "d" }))
 hl.bind(mainMod .. " + SHIFT + 1",                    hl.dsp.window.move({ monitor = MONITOR1 }))
 hl.bind(mainMod .. " + SHIFT + 2",                    hl.dsp.window.move({ monitor = MONITOR2 }))
-hl.bind(mainMod .. " + SHIFT + 3",                    hl.dsp.window.move({ monitor = MONITOR3 }))
-hl.bind(mainMod .. " + SHIFT + mouse_up",             hl.dsp.window.move({ monitor   = "-1" }))
-hl.bind(mainMod .. " + SHIFT + mouse_down",           hl.dsp.window.move({ monitor   = "+1" }))
 hl.bind(mainMod .. " + CONTROL + SHIFT + Right",      hl.dsp.window.move({ workspace = "m+1" }))
 hl.bind(mainMod .. " + CONTROL + SHIFT + Left",       hl.dsp.window.move({ workspace = "m-1" }))
 hl.bind(mainMod .. " + CONTROL + SHIFT + mouse_up",   hl.dsp.window.move({ workspace = "m-1" }))
@@ -50,10 +48,8 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize())
 ---- LAUNCHER ----
 ------------------
 
-hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
+hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(launchPrefix .. FILE_MANAGER))
-hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. EDITOR))
-hl.bind("XF86Calculator",           hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
 hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
 hl.bind(mainMod .. " + G",          hl.dsp.exec_cmd(noctCall .. "settings-toggle"))
@@ -62,7 +58,8 @@ hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(noctCall .. "panel-toggle co
 hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd("vicinae toggle"))
 hl.bind(mainMod .. " + period",     hl.dsp.exec_cmd(noctCall .. "panel-toggle launcher /emo"))
 hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd(noctCall .. "session lock"))
--- session-panel toggle dropped: skel binds this to "mainMod + ALT + C", which collapses to "ALT + ALT + C" once mainMod=ALT
+hl.bind(mainMod .. " + SHIFT + L",  hl.dsp.exec_cmd(noctCall .. "panel-toggle session")) -- power/session menu; skel's own "mainMod + ALT + C" bind for this collapses to "ALT + ALT + C" once mainMod=ALT, so it's rebound here instead
+hl.bind(mainMod .. " + SHIFT + R",  hl.dsp.exec_cmd("hyprctl reload"))
 
 ---------------------------
 ---- HARDWARE CONTROLS ----
@@ -115,16 +112,14 @@ for workspace = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + code:" .. keycode, hl.dsp.window.move({ workspace = workspace }))
 end
 
--- Move to adjacent workspace on the current monitor (arrow keys, layout-safe)
-hl.bind(mainMod .. " + CONTROL + Right", hl.dsp.focus({ workspace = "m+1" }))
-hl.bind(mainMod .. " + CONTROL + Left",  hl.dsp.focus({ workspace = "m-1" }))
-hl.bind(mainMod .. " + CONTROL + Down",  hl.dsp.focus({ workspace = "emptym" }))
+-- Window switching
+hl.bind(mainMod .. " + CONTROL + Right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + CONTROL + Left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + CONTROL + Down",  hl.dsp.focus({ workspace = "emptym" })) -- workspace-level: focus first empty workspace on current monitor
 
 -- Scroll through existing workspaces & monitors
-hl.bind(mainMod .. " + mouse_down",           hl.dsp.focus({ workspace = "m-1" }))
-hl.bind(mainMod .. " + mouse_up",             hl.dsp.focus({ workspace = "m+1" }))
-hl.bind(mainMod .. " + CONTROL + mouse_up",   hl.dsp.focus({ workspace = "m-1" }))
-hl.bind(mainMod .. " + CONTROL + mouse_down", hl.dsp.focus({ workspace = "m+1" }))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "m-1" }))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "m+1" }))
 
 -- Special workspace (scratchpad)
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))

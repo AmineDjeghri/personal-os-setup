@@ -48,7 +48,7 @@ minimum_brightness = 0.5
 [dock]
 auto_hide = true
 enabled = true
-pinned = [ "helium", "com.mitchellh.ghostty", "org.kde.dolphin", "pycharm" ]
+pinned = [ "helium", "com.mitchellh.ghostty", "org.gnome.Nautilus", "pycharm" ]
 reserve_space = false
 show_dots = true
 
