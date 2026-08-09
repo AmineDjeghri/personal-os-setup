@@ -11,6 +11,8 @@ dependencies = [
     "pydantic-settings==2.14.2",
     "loguru==0.7.3",
     "PyYAML==6.0.3",
+    "build==1.5.1", # For building some aur packages like rivalcfg-gui# For building some aur packages like rivalcfg-gui
+    "installer==1.0.1",
 ]
 
 ############### uv configuration
