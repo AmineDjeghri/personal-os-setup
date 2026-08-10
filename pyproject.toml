@@ -1,6 +1,6 @@
 [project]
 name = "personal-os-setup"
-version = "2.1.0"
+version = "2.2.0"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
 requires-python = ">=3.14,<3.15"

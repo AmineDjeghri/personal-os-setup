@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.2.0 (2026-08-10)
+
+### Features
+
+- Add descriptions to key bindings for improved clarity
+  ([`f6536f0`](https://github.com/AmineDjeghri/personal-os-setup/commit/f6536f0021edf46a30e1a54f1a379ea7b0fea26c))
+
+
 ## v2.1.0 (2026-08-10)
 
 ### Documentation
