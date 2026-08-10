@@ -1361,6 +1361,8 @@
       
         
       
+        
+      
     
     
     
@@ -1447,6 +1449,34 @@
     
   
     dialogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dotfiles_tree
   
 
     
@@ -2663,7 +2693,7 @@
 <p>Each backend (apt, snap, brew/cask, winget, msstore, pacman/paru, webinstall) implements the <code>PackageManager</code> protocol in <code>tasks/managers/base.py</code>: <code>is_installed</code>, <code>install</code>, <code>update</code>, <code>upgrade</code>, <code>cleanup</code>. <code>tasks/factory.py</code> maps <code>(distro, manager_name)</code> → manager class in <code>_PACKAGE_MANAGER_FACTORY_BY_DISTRO</code>, and <code>_PRIMARY_MANAGERS_BY_DISTRO</code> controls which managers are surfaced in the UI per distro (e.g. only <code>apt</code> shown for Ubuntu even though <code>snap</code>/<code>webinstall</code> also exist) to avoid duplicate buttons.</p>
 <p><code>tasks/managers/_shared.py</code> centralizes result-construction boilerplate reused across backends: <code>command_details()</code>/<code>format_failed_command()</code> (stdout/stderr → details text), <code>sudo_required_task_result()</code>/<code>sudo_required_install_result()</code>, <code>missing_executable_task_result()</code>/<code>missing_executable_install_result()</code>, and <code>winget_path()</code>/<code>winget_list_shows_installed()</code> (shared by the winget and msstore backends). Each manager still calls <code>shutil.which(...)</code>/<code>sudo_non_interactive_ok()</code> itself (not through <code>_shared.py</code>) so unit tests can keep patching those checks at the manager's own module path — <code>_shared.py</code> only builds the resulting <code>TaskResult</code>/<code>InstallResult</code> once the check has failed. Follow this pattern (local check, shared result-builder) when adding a new manager rather than re-deriving the boilerplate.</p>
 <h3 id="system-actions-tasksfactorypyget_system_action_sections">System actions (<code>tasks/factory.py::get_system_action_sections</code>)<a class="headerlink" href="#system-actions-tasksfactorypyget_system_action_sections" title="Permanent link">&para;</a></h3>
-<p>This function is the other half of the factory: given <code>(system, distro, info)</code> it builds an ordered list of <code>(section_name, [SystemAction])</code> used to render tabs/buttons in the TUI. It composes small per-domain builder functions (<code>_package_manager_sections</code>, <code>_help_section</code>, <code>_zsh_section</code>, <code>_zsh_uninstall_section</code>, <code>_docker_section</code>, <code>_nvidia_section</code>, <code>_wsl_section</code>, <code>_advanced_wsl_section</code>, <code>_windows_utilities_section</code>), each returning one <code>Section</code> (a <code>(name, [SystemAction])</code> tuple) and independently unit-tested in <code>tests/unit/test_factory.py</code>. Sections are assembled conditionally based on <code>system</code>/<code>distro</code> (e.g. zsh/chezmoi/docker sections only for linux+darwin, WSL sections only for windows, NVIDIA section for windows+linux). <code>SystemAction</code> supports plain actions (<code>run</code>), prompted actions that take free-text input (<code>run_with_prompt</code> + <code>prompt_label</code>/<code>prompt_initial</code>), destructive-action confirmation (<code>confirm</code>/<code>confirm_message</code>), and file backup before mutating config (<code>backup_target</code>). When adding a new system action, add it to (or add a new) per-domain builder function rather than wiring buttons directly in the frontend.</p>
+<p>This function is the other half of the factory: given <code>(system, distro, info)</code> it builds an ordered list of <code>(section_name, [SystemAction])</code> used to render tabs/buttons in the TUI. It composes small per-domain builder functions (<code>_package_manager_sections</code>, <code>_help_section</code>, <code>_dotfiles_section</code>, <code>_docker_section</code>, <code>_nvidia_section</code>, <code>_wsl_section</code>, <code>_advanced_wsl_section</code>, <code>_windows_utilities_section</code>), each returning one <code>Section</code> (a <code>(name, [SystemAction])</code> tuple) and independently unit-tested in <code>tests/unit/test_factory.py</code>. Sections are assembled conditionally based on <code>system</code>/<code>distro</code> (e.g. zsh/chezmoi/docker sections only for linux+darwin, WSL sections only for windows, NVIDIA section for windows+linux). <code>SystemAction</code> supports plain actions (<code>run</code>), prompted actions that take free-text input (<code>run_with_prompt</code> + <code>prompt_label</code>/<code>prompt_initial</code>), destructive-action confirmation (<code>confirm</code>/<code>confirm_message</code>), and file backup before mutating config (<code>backup_target</code>). When adding a new system action, add it to (or add a new) per-domain builder function rather than wiring buttons directly in the frontend.</p>
 <h3 id="task-execution-model">Task execution model<a class="headerlink" href="#task-execution-model" title="Permanent link">&para;</a></h3>
 <p><code>tasks/task.py</code> defines the generic <code>Task</code>/<code>TaskResult</code>/<code>run_tasks()</code> primitives (idempotent check → run, catch-and-report exceptions as failed <code>TaskResult</code>s) used by some system tasks; individual <code>SystemAction.run</code> callables in the factory return <code>TaskResult</code> directly and are invoked from the UI without going through <code>run_tasks</code>.</p>
 <h3 id="frontend-frontend">Frontend (<code>frontend/</code>)<a class="headerlink" href="#frontend-frontend" title="Permanent link">&para;</a></h3>

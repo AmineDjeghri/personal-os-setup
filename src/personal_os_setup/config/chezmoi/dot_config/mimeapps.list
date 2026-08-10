@@ -1,0 +1,13 @@
+[Added Associations]
+application/toml=dev.zed.Zed.desktop;
+application/x-zerosize=dev.zed.Zed.desktop;
+text/x-lua=dev.zed.Zed.desktop;
+
+[Default Applications]
+inode/directory=org.kde.dolphin.desktop;
+application/toml=dev.zed.Zed.desktop;
+application/x-zerosize=dev.zed.Zed.desktop;
+text/x-lua=dev.zed.Zed.desktop;
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/discord=vesktop.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop

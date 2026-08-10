@@ -1767,6 +1767,8 @@
       
         
       
+        
+      
     
     
     
@@ -1853,6 +1855,34 @@
     
   
     dialogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dotfiles_tree
   
 
     
@@ -3438,6 +3468,10 @@
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>libvirt<span class="w"> </span><span class="nv">$USER</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>kvm<span class="w"> </span><span class="nv">$USER</span>
 </span></code></pre></div>
+<p>Restart the terminal and run:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>id -nG  # user should be added to the group
+</span></code></pre></div>
+If it is the case, you can run virsh without sudo.</p>
 <h4 id="create-a-bridge-configuration">Create a bridge configuration<a class="headerlink" href="#create-a-bridge-configuration" title="Permanent link">&para;</a></h4>
 <p>A network bridge in KVM allows your virtual machines to appear directly on the same network as your host.</p>
 <ul>
@@ -3457,19 +3491,19 @@
 <ul>
 <li>
 <p>Create a bridge configuration file in  <code>/etc/netplan/01-bridge.yaml</code>, replace <code>enx001cc253c478</code> with your interface name:
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">network</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">enx001cc253c478</span><span class="p">:</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">bridges</span><span class="p">:</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nt">br0</span><span class="p">:</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">      </span><span class="nt">interfaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">enx001cc253c478</span><span class="p p-Indicator">]</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">        </span><span class="nt">stp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">        </span><span class="nt">forward-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">network</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">enx001cc253c478</span><span class="p">:</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">bridges</span><span class="p">:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="nt">br0</span><span class="p">:</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">      </span><span class="nt">interfaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">enx001cc253c478</span><span class="p p-Indicator">]</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="nt">stp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="nt">forward-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 </span></code></pre></div></p>
 </li>
 <li>
@@ -3478,11 +3512,11 @@
 <li>Your host’s IP will move from enx001cc253c478 to br0</li>
 <li>Apply the configuration:</li>
 </ul>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 </span></code></pre></div>
 If you are connected via SSH, you will be disconnected.
 Go physically to the server and get the new IP address:</p>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ip<span class="w"> </span>addr
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ip<span class="w"> </span>addr
 </span></code></pre></div>
 Your <code>interface name</code> will no longer have a direct IP. All traffic goes through <code>br0</code>.
 To connect to the server via SSH, you will need to use the <code>br0</code> address.</p>
@@ -3495,17 +3529,17 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <p>Download the Home Assistant OS image:</p>
 </li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>wget<span class="w"> </span>https://github.com/home-assistant/operating-system/releases/download/16.3/haos_ova-16.3.qcow2.xz
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>wget<span class="w"> </span>https://github.com/home-assistant/operating-system/releases/download/16.3/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
 <ul>
 <li>Move the image to the libvirt directory:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>mv<span class="w"> </span>haos_ova-16.3.qcow2.xz<span class="w"> </span>/var/lib/libvirt/images/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>mv<span class="w"> </span>haos_ova-16.3.qcow2.xz<span class="w"> </span>/var/lib/libvirt/images/
 </span></code></pre></div>
 <ul>
 <li>Uncompress the image:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
 <ul>
 <li>important: we will use sudo so with all the commands later like <code>virsh list --all</code> should use sudo <code>sudo virsh list --all</code> otherwise it will show nothing.</li>
@@ -3570,7 +3604,7 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <ul>
 <li>Create the VM: ( we are adding --network bridge=br0) to use the bridge.</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Home Assistant OS&quot;</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Home Assistant OS&quot;</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
 </span></code></pre></div>
 <ul>
 <li>
@@ -3752,23 +3786,23 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>Attach to usb port, run <code>usb-devices</code> on ubuntu and get Vendor and ProdID.</li>
 <li>Run:</li>
 </ul>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-device<span class="w"> </span>haos<span class="w"> </span>/dev/stdin<span class="w"> </span>--persistent<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="s">&lt;hostdev mode=&#39;subsystem&#39; type=&#39;usb&#39; managed=&#39;yes&#39;&gt;</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="s">  &lt;source&gt;</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="s">    &lt;vendor id=&#39;0x10c4&#39;/&gt;</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="s">    &lt;product id=&#39;0xea60&#39;/&gt;</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="s">  &lt;/source&gt;</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="s">&lt;/hostdev&gt;</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="s">EOF</span>
-</span></code></pre></div>
-<p>Or using the bus and device:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-device<span class="w"> </span>haos<span class="w"> </span>/dev/stdin<span class="w"> </span>--persistent<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 </span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="s">&lt;hostdev mode=&#39;subsystem&#39; type=&#39;usb&#39; managed=&#39;yes&#39;&gt;</span>
 </span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="s">  &lt;source&gt;</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s">    &lt;address bus=&#39;1&#39; device=&#39;12&#39;/&gt;</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s">  &lt;/source&gt;</span>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s">&lt;/hostdev&gt;</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s">EOF</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s">    &lt;vendor id=&#39;0x10c4&#39;/&gt;</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s">    &lt;product id=&#39;0xea60&#39;/&gt;</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s">  &lt;/source&gt;</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s">&lt;/hostdev&gt;</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="s">EOF</span>
+</span></code></pre></div>
+<p>Or using the bus and device:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-device<span class="w"> </span>haos<span class="w"> </span>/dev/stdin<span class="w"> </span>--persistent<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="s">&lt;hostdev mode=&#39;subsystem&#39; type=&#39;usb&#39; managed=&#39;yes&#39;&gt;</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="s">  &lt;source&gt;</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s">    &lt;address bus=&#39;1&#39; device=&#39;12&#39;/&gt;</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="s">  &lt;/source&gt;</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s">&lt;/hostdev&gt;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="s">EOF</span>
 </span></code></pre></div>
 <ul>
 <li>Run <code>sudo virsh reboot haos</code>.</li>
@@ -4056,8 +4090,8 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>then I use this script in the server to automatically update Adguard home: <a href="../sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a> to automatically resolve IPV6 addresses and clients names. <code>uv run sync_adguard_home_ip_mac.py</code></li>
 <li>
 <p>Make a cronjob for it by adding this line at the end of <code>crontab -e</code> (change the path of uv and the script)
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># For example</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># For example</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
 </span></code></pre></div></p>
 </li>
 <li>

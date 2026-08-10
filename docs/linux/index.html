@@ -1376,6 +1376,8 @@
       
         
       
+        
+      
     
     
     
@@ -1462,6 +1464,34 @@
     
   
     dialogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dotfiles_tree
   
 
     
@@ -2687,6 +2717,19 @@
 </ul>
 <p><strong>Python Management</strong>: The zshrc configuration replaces both <code>python3</code> and <code>python</code> with the alias <code>uv run python</code>, ensuring you always use the <code>uv</code> package manager for Python execution instead of the system Python.</p>
 <p><strong>.env Detection</strong>: The configuration automatically detects and loads <code>.env</code> files from your project directories, making environment variables available in your shell session without manual setup.</p>
+<p><strong>How plugin updates actually happen</strong>: oh-my-zsh's own auto-updater
+(<code>zstyle ':omz:update' mode auto</code> in <code>.zshrc</code>) only keeps the oh-my-zsh
+<strong>core framework</strong> current on shell startup — it never touches custom
+plugins or the theme. Those (oh-my-zsh itself, <code>zsh-autocomplete</code>,
+<code>zsh-autosuggestions</code>, <code>zsh-syntax-highlighting</code>, <code>fzf-zsh-plugin</code>,
+<code>powerlevel10k</code>) are instead declared as <code>git-repo</code> externals in
+<a href="../../src/personal_os_setup/config/chezmoi/.chezmoiexternal.toml">.chezmoiexternal.toml</a>,
+each with a <code>refreshPeriod = "168h"</code> (7 days). That refresh isn't tied to
+clicking <strong>Sync zsh plugins/theme</strong> specifically: <em>any</em> <code>chezmoi apply</code>
+call — even one scoped to a single unrelated dotfile from the "Sync
+dotfiles" tab — rebuilds chezmoi's full target state first, which checks
+every external's cache and silently re-pulls any that are more than 7 days
+stale.</p>
 <p>See the <a href="../../src/personal_os_setup/config/unix/.zshrc">zshrc configuration file</a> for the default configuration used by this project.</p>
 <p>If you need to revert changes:
 - Uninstall Oh My Zsh and Powerlevel10k files

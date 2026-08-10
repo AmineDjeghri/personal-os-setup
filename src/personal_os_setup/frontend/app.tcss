@@ -49,6 +49,23 @@ Screen {
     padding: 1 2;
 }
 
+#dotfiles-toolbar {
+    height: 3;
+    align: left middle;
+    margin-bottom: 1;
+}
+
+#dotfiles-toolbar Button {
+    margin-right: 1;
+}
+
+#dotfiles-list-container {
+    height: auto;
+    max-height: 12;
+    border: solid $accent;
+    margin-bottom: 1;
+}
+
 .action-row {
     height: 3;
     margin-bottom: 1;

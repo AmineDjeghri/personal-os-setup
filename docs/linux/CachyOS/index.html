@@ -1066,23 +1066,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Packages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#manual-fallback" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Manual fallback
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1102,6 +1085,17 @@
     <span class="md-ellipsis">
       
         Configuration files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-owned-by-noctalia-not-hyprland" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings owned by Noctalia, not Hyprland
       
     </span>
   </a>
@@ -1143,34 +1137,6 @@
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#still-to-do" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Still to do
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Still to do">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#applications-to-try" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Applications to try
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1601,6 +1567,8 @@
       
         
       
+        
+      
     
     
     
@@ -1687,6 +1655,34 @@
     
   
     dialogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dotfiles_tree
   
 
     
@@ -2803,23 +2799,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Packages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#manual-fallback" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Manual fallback
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2839,6 +2818,17 @@
     <span class="md-ellipsis">
       
         Configuration files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-owned-by-noctalia-not-hyprland" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings owned by Noctalia, not Hyprland
       
     </span>
   </a>
@@ -2880,34 +2870,6 @@
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#still-to-do" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Still to do
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Still to do">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#applications-to-try" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Applications to try
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -3083,29 +3045,8 @@ other derivatives are not supported.</p>
 <li><strong>pacman</strong> — official repositories</li>
 <li><strong>paru</strong> — AUR. CachyOS ships paru by default;</li>
 </ul>
-<h3 id="manual-fallback">Manual fallback<a class="headerlink" href="#manual-fallback" title="Permanent link">&para;</a></h3>
-<p>If you are setting up before the app is available:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Core CLI</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>ripgrep<span class="w"> </span>fd<span class="w"> </span>fzf<span class="w"> </span>jq<span class="w"> </span>tree<span class="w"> </span>btop<span class="w"> </span>fastfetch<span class="w"> </span>bat<span class="w"> </span>eza<span class="w"> </span>zoxide
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Build tooling (needed for Hyprland plugins)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>base-devel<span class="w"> </span>cmake<span class="w"> </span>meson<span class="w"> </span>cpio<span class="w"> </span>git<span class="w"> </span>nlohmann-json
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Screenshot and annotation (bound to CTRL+Print in the Hyprland config)</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>grim<span class="w"> </span>slurp<span class="w"> </span>satty<span class="w"> </span>wl-clipboard
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Display and brightness</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>wdisplays<span class="w"> </span>brightnessctl<span class="w"> </span>wlsunset<span class="w"> </span>ddcutil
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>sudo<span class="w"> </span>modprobe<span class="w"> </span>i2c-dev<span class="w">            </span><span class="c1"># required by ddcutil for external monitors</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Theming and Wayland integration</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>breeze-gtk<span class="w"> </span>kde-gtk-config<span class="w"> </span>qt5-wayland<span class="w"> </span>qt6-wayland<span class="w"> </span>hyprpolkitagent
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># AUR</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>paru<span class="w"> </span>-S<span class="w"> </span>pycharm
-</span></code></pre></div>
 <p>Vicinae has its own installer:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://vicinae.com/install<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://vicinae.com/install<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
 </span></code></pre></div>
 <hr />
 <h2 id="desktop">Desktop<a class="headerlink" href="#desktop" title="Permanent link">&para;</a></h2>
@@ -3113,24 +3054,38 @@ other derivatives are not supported.</p>
 <p>Copy the personal configuration for Hyprland and Noctalia into <code>~/.config</code>.
 Enable <strong>View → Show Hidden Files</strong> in Dolphin to see the directory.</p>
 <p>Verify the keybindings afterward — for example <code>ALT+F</code> for fullscreen.</p>
+<h3 id="settings-owned-by-noctalia-not-hyprland">Settings owned by Noctalia, not Hyprland<a class="headerlink" href="#settings-owned-by-noctalia-not-hyprland" title="Permanent link">&para;</a></h3>
+<p>Some desktop behavior that most Hyprland setups configure in <code>hyprland.conf</code> (or via
+standalone daemons like <code>hypridle</code>/<code>hyprlock</code>/<code>hyprpaper</code>) is instead configured in
+Noctalia's own <code>~/.config/noctalia/config.toml</code>.</p>
+<ul>
+<li><strong>Idle timeout / screen lock / suspend</strong> — <code>[idle.behavior.*]</code>. No <code>hypridle</code>/<code>hyprlock</code> installed or needed.</li>
+<li><strong>Wallpaper</strong> — <code>[theme] source = "wallpaper"</code> plus the <code>nzlov/daily-wallpaper</code>
+  plugin under <code>[plugins]</code>. No <code>swww</code>/<code>hyprpaper</code>.</li>
+<li><strong>Night light / blue light filter</strong> — <code>[nightlight]</code>. Note <code>wlsunset</code> is still in
+  <code>packages.yaml</code> too — check which one is actually active before assuming both run.</li>
+<li><strong>Screenshot pipeline</strong> — <code>[shell.screenshot]</code> routes through Noctalia's own
+  screenshot action (piped to <code>satty</code>).</li>
+<li><strong>Session menu</strong> (lock / logout / reboot / shutdown / suspend) — <code>[[shell.session.actions]]</code>,
+  each with its own shortcut inside the session menu.</li>
+</ul>
 <h3 id="hyprland-plugins">Hyprland plugins<a class="headerlink" href="#hyprland-plugins" title="Permanent link">&para;</a></h3>
 <p><code>hyprpm</code> builds plugins from source, so the build tooling above must be
 installed first.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>hyprpm<span class="w"> </span>update
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># ALT+TAB window switcher</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/gfhdhytghd/hymission
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hymission
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Title bars: drag, close, maximise</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/hyprwm/hyprland-plugins
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hyprbars
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>hyprpm<span class="w"> </span>reload
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>hyprpm<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hyprpm<span class="w"> </span>update
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># ALT+TAB window switcher</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/gfhdhytghd/hymission
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hymission
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Title bars: drag, close, maximise</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/hyprwm/hyprland-plugins
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hyprbars
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>hyprpm<span class="w"> </span>reload
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>hyprpm<span class="w"> </span>list
 </span></code></pre></div>
-<p>Test <code>ALT+TAB</code> for the switcher, and dragging / closing / maximising windows for
-hyprbars.</p>
+<p>Test <code>ALT+TAB</code> for the switcher, and dragging / closing / maximizing windows for hyprbars.</p>
 <hr />
 <h2 id="shell">Shell<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h2>
 <p>CachyOS defaults to <strong>fish</strong> as the login shell, with <code>cachyos-fish-config</code> and
@@ -3139,37 +3094,24 @@ hyprbars.</p>
 <code>.p10k.zsh</code>, plus oh-my-zsh itself and all its plugins/theme, are managed via
 <a href="https://www.chezmoi.io/">chezmoi</a>, with its source directory vendored inside this
 repo at <code>src/personal_os_setup/config/chezmoi/</code>. oh-my-zsh/plugins/theme are declared as
-<code>git-repo</code> externals in <code>.chezmoiexternal.toml</code>, so a single <code>chezmoi: apply</code> clones
-and applies everything — no separate sync step or ordering to worry about. Use the
-app's <code>chezmoi: diff</code> action to preview changes before <code>chezmoi: apply</code> — chezmoi has
-no auto-backup, so review the diff first. <code>set zsh as default shell</code> remains a
-separate <code>zsh</code> action.</p>
+<code>git-repo</code> externals in <code>.chezmoiexternal.toml</code>.</p>
+<p>The app's "Sync dotfiles" tab lists every chezmoi-managed file as a checkbox (none
+checked by default — pick which ones you mean to act on); use <strong>diff selected</strong> to
+preview changes, <strong>apply selected</strong> to write them to your home directory, <strong>re-add
+selected</strong> to pull live edits back into the repo, or <strong>forget selected</strong> to stop
+tracking a file (the live file is left untouched — only the repo's copy is removed).
+Check everything and run the corresponding action to reproduce the old whole-tree
+<code>chezmoi apply</code>/<code>diff</code>/<code>re-add</code> behavior. To start tracking a new file, use
+<strong>chezmoi: track a new file</strong> and enter its path — this copies it into the repo (never
+edit a live dotfile directly and expect it to be under version control). chezmoi has
+no auto-backup, so always run <strong>diff selected</strong> before <strong>apply selected</strong>.
+<code>set zsh as default shell</code> remains a separate <code>zsh</code> action.</p>
 <hr />
 <h2 id="theming">Theming<a class="headerlink" href="#theming" title="Permanent link">&para;</a></h2>
 <p>Noctalia can set application themes directly (<strong>Noctalia settings → Themes</strong>).
 Personal themes are kept rather than using the bundled ones.</p>
 <p>Do not remove the Qt5/Qt6 theme packages — the Noctalia theme cannot currently
 be removed without affecting them.</p>
-<ul>
-<li><strong>Dolphin</strong>: Menu (hamburger) → Configure → Window Color Scheme → Breeze Dark</li>
-<li><strong>Qt</strong>: run <code>qt6ct</code> (and <code>qt5ct</code>) to configure Qt application theming</li>
-</ul>
-<hr />
-<h2 id="still-to-do">Still to do<a class="headerlink" href="#still-to-do" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Install gaming packages from CachyOS Hello</li>
-<li>Configure Vicinae</li>
-<li>configure Noctalia</li>
-<li>Test desktop integration end to end</li>
-<li>Verify theming consistency across GTK and Qt applications</li>
-<li>Remove Kitty and Alacritty once Ghostty is confirmed</li>
-<li>Remove other unnecessary packages after testing</li>
-</ul>
-<h3 id="applications-to-try">Applications to try<a class="headerlink" href="#applications-to-try" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://apps.kde.org/spectacle/">Spectacle</a> — screenshots</li>
-<li>KDE Connect — phone integration</li>
-</ul>
 
 
 
