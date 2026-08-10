@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v2.1.0 (2026-08-10)
+
+### Documentation
+
+- Create SECURITY.md
+  ([`9ba9e41`](https://github.com/AmineDjeghri/personal-os-setup/commit/9ba9e41e6350bbd7a9c60aa67970eb7c1fa53975))
+
+- Update README with installation instructions for Linux, macOS, and Windows
+  ([`ef962bf`](https://github.com/AmineDjeghri/personal-os-setup/commit/ef962bf3890a766158cbd193130d844a37778b18))
+
+- Update readme.md
+  ([`ae497c2`](https://github.com/AmineDjeghri/personal-os-setup/commit/ae497c2fe28e780c28a66fac5889dce7f81d1d3b))
+
+### Features
+
+- Enhance cachyos (#91) ([#91](https://github.com/AmineDjeghri/personal-os-setup/pull/91),
+  [`7a2c894`](https://github.com/AmineDjeghri/personal-os-setup/commit/7a2c89430259d76de510385033595a4ea5d0546f))
+
+
 ## v2.0.0 (2026-07-25)
 
 ### Features
