@@ -209,7 +209,7 @@ packages:
         - zoom
       Hardware Monitoring:
         - nct6687d-dkms-git
-        - rivalcfg-gui
+        - rivalcfg
 
   windows:
     winget:

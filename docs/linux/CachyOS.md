@@ -77,32 +77,6 @@ Two package managers are used:
 - **pacman** — official repositories
 - **paru** — AUR. CachyOS ships paru by default;
 
-### Manual fallback
-
-If you are setting up before the app is available:
-
-```bash
-# Core CLI
-sudo pacman -S ripgrep fd fzf jq tree btop fastfetch bat eza zoxide
-
-# Build tooling (needed for Hyprland plugins)
-sudo pacman -S base-devel cmake meson cpio git nlohmann-json
-
-# Screenshot and annotation (bound to CTRL+Print in the Hyprland config)
-sudo pacman -S grim slurp satty wl-clipboard
-
-# Display and brightness
-sudo pacman -S wdisplays brightnessctl wlsunset ddcutil
-sudo modprobe i2c-dev            # required by ddcutil for external monitors
-
-# Theming and Wayland integration
-sudo pacman -S breeze-gtk kde-gtk-config qt5-wayland qt6-wayland hyprpolkitagent
-
-# AUR
-paru -S pycharm
-```
-
-
 Vicinae has its own installer:
 
 ```bash
@@ -156,8 +130,7 @@ hyprpm reload
 hyprpm list
 ```
 
-Test `ALT+TAB` for the switcher, and dragging / closing / maximising windows for
-hyprbars.
+Test `ALT+TAB` for the switcher, and dragging / closing / maximizing windows for hyprbars.
 
 ---
 
@@ -192,22 +165,3 @@ Personal themes are kept rather than using the bundled ones.
 
 Do not remove the Qt5/Qt6 theme packages — the Noctalia theme cannot currently
 be removed without affecting them.
-
-- **Dolphin**: Menu (hamburger) → Configure → Window Color Scheme → Breeze Dark
-- **Qt**: run `qt6ct` (and `qt5ct`) to configure Qt application theming
-
----
-
-## Still to do
-- Install gaming packages from CachyOS Hello
-- Configure Vicinae
-- configure Noctalia
-- Test desktop integration end to end
-- Verify theming consistency across GTK and Qt applications
-- Remove Kitty and Alacritty once Ghostty is confirmed
-- Remove other unnecessary packages after testing
-
-### Applications to try
-
-- [Spectacle](https://apps.kde.org/spectacle/) — screenshots
-- KDE Connect — phone integration
