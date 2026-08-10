@@ -66,8 +66,8 @@ jobs:
         uses: ./.github/actions/cleanup-artifacts
 
   integration-ubuntu:
-    name: "🐧 Integration Tests (Ubuntu 24.04)"
-    runs-on: ubuntu-24.04
+    name: "🐧 Integration Tests (Ubuntu 26.04)"
+    runs-on: ubuntu-26.04
     needs: pre-commit
     timeout-minutes: 15
     steps:
