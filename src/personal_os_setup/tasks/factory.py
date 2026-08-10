@@ -16,7 +16,7 @@ from personal_os_setup.tasks.managers.ubuntu_snap import UbuntuSnapManager
 from personal_os_setup.tasks.managers.webinstall import WebInstallManager
 from personal_os_setup.tasks.managers.windows_msstore import WindowsMSStoreManager
 from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
-from personal_os_setup.tasks.system.chezmoi import chezmoi_apply, chezmoi_diff, chezmoi_re_add
+from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
 from personal_os_setup.tasks.system.help import show_commands
@@ -46,12 +46,7 @@ from personal_os_setup.tasks.system.windows_wsl_tasks import (
     wsl_update,
     wsl_version,
 )
-from personal_os_setup.tasks.system.zsh import (
-    set_bash_as_default_shell,
-    set_zsh_as_default_shell,
-    uninstall_oh_my_zsh_and_p10k,
-    uninstall_zsh_apt,
-)
+from personal_os_setup.tasks.system.zsh import set_zsh_as_default_shell
 from personal_os_setup.tasks.task import TaskResult
 
 _PACKAGE_MANAGER_FACTORY_BY_DISTRO: dict[str, dict[str, Callable[[], PackageManager]]] = {
@@ -156,24 +151,22 @@ def _help_section() -> Section:
     return ("help", [SystemAction(label="show commands", run=show_commands)])
 
 
-# Section: "Sync dotfiles" — installs default packages/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
+# Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
 
-# Packages tagged with one of these categories in packages.yaml are treated as the
-# default prerequisites for the dotfiles/zsh setup: "core" (git, zsh, curl...) plus
-# "terminal_tools" (fzf, zoxide, eza, bat...), the CLI tools .zshrc/oh-my-zsh wire up.
-_DOTFILES_PREREQ_CATEGORIES = {"core", "terminal_tools"}
-
-
-def _dotfiles_prereq_packages(packages: list[PackageRef]) -> list[PackageRef]:
-    return [p for p in packages if p.category.lower() in _DOTFILES_PREREQ_CATEGORIES]
+# Packages tagged with this category in packages.yaml (git, zsh, curl, chezmoi, plus
+# CLI tools like fzf/zoxide/eza/bat) are treated as the prerequisites for the zsh
+# setup specifically -- other chezmoi-managed dotfiles (e.g. zed, noctalia) need none.
+_ZSH_PREREQ_CATEGORY = "terminal_tools"
 
 
-def _install_dotfiles_prereqs(packages: list[PackageRef], distro: str) -> TaskResult:
-    prereqs = _dotfiles_prereq_packages(packages)
+def _zsh_prereq_packages(packages: list[PackageRef]) -> list[PackageRef]:
+    return [p for p in packages if p.category.lower() == _ZSH_PREREQ_CATEGORY]
+
+
+def _install_zsh_prereqs(packages: list[PackageRef], distro: str) -> TaskResult:
+    prereqs = _zsh_prereq_packages(packages)
     if not prereqs:
-        return TaskResult(
-            ok=True, summary="No default packages configured for this distro's dotfiles setup"
-        )
+        return TaskResult(ok=True, summary="No zsh setup prerequisites configured for this distro")
 
     lines: list[str] = []
     failures = 0
@@ -192,24 +185,26 @@ def _install_dotfiles_prereqs(packages: list[PackageRef], distro: str) -> TaskRe
         lines.append(res.summary)
 
     ok = failures == 0
-    summary = f"Installed {len(prereqs) - failures}/{len(prereqs)} default packages"
+    summary = f"Installed {len(prereqs) - failures}/{len(prereqs)} zsh setup prerequisites"
     return TaskResult(ok=ok, summary=summary, details="\n".join(lines))
 
 
 def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
-    prereqs = _dotfiles_prereq_packages(packages)
+    prereqs = _zsh_prereq_packages(packages)
     prereq_names = ", ".join(p.name for p in prereqs)
     return (
         "Sync dotfiles",
         [
             SystemAction(
-                label="install default packages",
-                run=lambda: _install_dotfiles_prereqs(packages, distro),
+                label="install zsh setup prerequisites",
+                run=lambda: _install_zsh_prereqs(packages, distro),
                 confirm=True,
                 confirm_message=(
-                    f"Install the default packages for dotfiles setup ({prereq_names})?"
+                    f"Install the zsh setup prerequisites ({prereq_names})? "
+                    "Only needed if you're syncing .zshrc/.p10k.zsh -- other dotfiles "
+                    "(e.g. zed, noctalia) don't need these."
                     if prereqs
-                    else "No default packages are configured for this distro's dotfiles setup."
+                    else "No zsh setup prerequisites are configured for this distro."
                 ),
             ),
             SystemAction(
@@ -218,21 +213,19 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 confirm=True,
                 confirm_message="Install JetBrainsMono Nerd Font for terminals?",
             ),
-            SystemAction(label="chezmoi: diff", run=chezmoi_diff),
             SystemAction(
-                label="chezmoi: apply",
-                run=chezmoi_apply,
-                confirm=True,
-                confirm_message="This applies chezmoi-managed dotfiles (.zshrc, .p10k.zsh) "
-                "and clones oh-my-zsh/plugins/theme (declared in .chezmoiexternal.toml) "
-                "to your home directory. Run 'chezmoi: diff' first to preview. Proceed?",
-            ),
-            SystemAction(
-                label="chezmoi: re-add",
-                run=chezmoi_re_add,
-                confirm=True,
-                confirm_message="This pulls your current dotfiles back into the repo's chezmoi source dir, "
-                "overwriting the vendored versions there. Proceed?",
+                label="chezmoi: track a new file",
+                run=lambda: TaskResult(
+                    ok=True,
+                    summary="Provide the path to a file to start tracking in this repo's "
+                    "chezmoi source dir, e.g. ~/.config/foo/config.toml",
+                ),
+                run_with_prompt=lambda value: chezmoi_add(Path(value).expanduser()),
+                prompt_label=(
+                    "Path to a file to start tracking in this repo's chezmoi source dir "
+                    "(e.g. ~/.config/foo/config.toml)"
+                ),
+                prompt_initial="~/.",
             ),
             SystemAction(
                 label="set zsh as default shell",
@@ -240,39 +233,14 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 confirm=True,
                 confirm_message="Set your default shell to zsh? (OS reboot required)",
             ),
+            SystemAction(
+                label="sync zsh plugins/theme",
+                run=chezmoi_refresh_zsh_externals,
+                confirm=True,
+                confirm_message="Pull oh-my-zsh, its plugins, and its theme from upstream?",
+            ),
         ],
     )
-
-
-# Section: "zsh uninstall" — removes oh-my-zsh/p10k config and reverts the default shell back to bash.
-def _zsh_uninstall_section(distro: str) -> Section:
-    actions: list[SystemAction] = [
-        SystemAction(
-            label="uninstall: oh-my-zsh + p10k files",
-            run=uninstall_oh_my_zsh_and_p10k,
-            confirm=True,
-            confirm_message="This will delete oh-my-zsh and related zsh config files. Proceed?",
-        ),
-    ]
-    # apt-only, so it always fails on Arch/macOS. Only offer it where it can work.
-    if distro == "ubuntu":
-        actions.append(
-            SystemAction(
-                label="uninstall zsh (apt)",
-                run=uninstall_zsh_apt,
-                confirm=True,
-                confirm_message="This will uninstall zsh via apt (sudo required). Proceed?",
-            )
-        )
-    actions.append(
-        SystemAction(
-            label="set bash as default shell",
-            run=set_bash_as_default_shell,
-            confirm=True,
-            confirm_message="Set your default shell to bash?",
-        )
-    )
-    return ("zsh uninstall", actions)
 
 
 # Section: "docker" — post-install step so Docker can be run without sudo.
@@ -508,8 +476,8 @@ def get_system_action_sections(
         distro: Normalized distro identifier (e.g. `"ubuntu"`).
         info: Extra environment info (e.g. WSL detection note), or `None`.
         packages: The full package catalog for this distro, used to populate the
-            "install default packages" action in the dotfiles section (packages
-            tagged with the `"core"` category in `packages.yaml`).
+            "install zsh setup prerequisites" action in the dotfiles section (packages
+            tagged with the `"terminal_tools"` category in `packages.yaml`).
     """
     sections: list[Section] = []
 
@@ -522,7 +490,6 @@ def get_system_action_sections(
     if system in {"darwin", "linux"}:
         sections.append(_help_section())
         sections.append(_dotfiles_section(distro, packages or []))
-        sections.append(_zsh_uninstall_section(distro))
 
     ########
     ## Docker

@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from personal_os_setup.tasks.system.chezmoi import (
+    chezmoi_add,
     chezmoi_apply,
     chezmoi_diff,
+    chezmoi_forget,
+    chezmoi_managed_paths,
     chezmoi_re_add,
     chezmoi_source_dir,
 )
@@ -34,6 +38,15 @@ class TestChezmoiNotFound:
                 assert result.ok is False
                 assert "chezmoi not found" in result.summary
 
+    def test_add_and_forget_fail_when_chezmoi_missing(self):
+        with patch("shutil.which", return_value=None):
+            assert chezmoi_add(Path("~/.bashrc")).ok is False
+            assert chezmoi_forget([Path("~/.bashrc")]).ok is False
+
+    def test_managed_paths_empty_when_chezmoi_missing(self):
+        with patch("shutil.which", return_value=None):
+            assert chezmoi_managed_paths() == []
+
 
 class TestChezmoiDiff:
     """Tests for chezmoi_diff()."""
@@ -60,6 +73,18 @@ class TestChezmoiDiff:
         assert result.ok is True
         assert "no changes" in result.summary
 
+    def test_diff_with_targets_appends_them_to_argv(self):
+        """Passing targets should restrict the chezmoi command to just those paths."""
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        mock_run = MagicMock(return_value=mock_result)
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", mock_run),
+        ):
+            chezmoi_diff([Path("/home/user/.zshrc"), Path("/home/user/.p10k.zsh")])
+        argv = mock_run.call_args[0][0]
+        assert argv[-2:] == ["/home/user/.zshrc", "/home/user/.p10k.zsh"]
+
 
 class TestChezmoiApply:
     """Tests for chezmoi_apply()."""
@@ -85,6 +110,18 @@ class TestChezmoiApply:
         assert result.ok is False
         assert "permission denied" in result.details
 
+    def test_apply_passes_force_flag(self):
+        """apply() must pass --force."""
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        mock_run = MagicMock(return_value=mock_result)
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", mock_run),
+        ):
+            chezmoi_apply()
+        argv = mock_run.call_args[0][0]
+        assert "--force" in argv
+
 
 class TestChezmoiReAdd:
     """Tests for chezmoi_re_add()."""
@@ -108,4 +145,94 @@ class TestChezmoiReAdd:
             patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
         ):
             result = chezmoi_re_add()
+        assert result.ok is False
+
+    def test_re_add_with_targets_appends_them_to_argv(self):
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        mock_run = MagicMock(return_value=mock_result)
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", mock_run),
+        ):
+            chezmoi_re_add([Path("/home/user/.zshrc")])
+        argv = mock_run.call_args[0][0]
+        assert argv[-1] == "/home/user/.zshrc"
+
+
+class TestChezmoiManagedPaths:
+    """Tests for chezmoi_managed_paths()."""
+
+    def test_parses_and_sorts_stdout_lines(self):
+        mock_result = MagicMock(
+            returncode=0, stdout="/home/user/.zshrc\n/home/user/.config/zed/settings.json\n"
+        )
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
+        ):
+            paths = chezmoi_managed_paths()
+        assert paths == [
+            Path("/home/user/.config/zed/settings.json"),
+            Path("/home/user/.zshrc"),
+        ]
+
+    def test_empty_when_command_fails(self):
+        mock_result = MagicMock(returncode=1, stdout="", stderr="boom")
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
+        ):
+            assert chezmoi_managed_paths() == []
+
+
+class TestChezmoiAdd:
+    """Tests for chezmoi_add()."""
+
+    def test_add_success(self):
+        mock_result = MagicMock(returncode=0, stdout="add .config/foo/config.toml", stderr="")
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
+        ):
+            result = chezmoi_add(Path("/home/user/.config/foo/config.toml"))
+        assert result.ok is True
+        assert "now tracked" in result.summary
+
+    def test_add_failure(self):
+        mock_result = MagicMock(returncode=1, stdout="", stderr="no such file")
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
+        ):
+            result = chezmoi_add(Path("/home/user/.config/missing.toml"))
+        assert result.ok is False
+
+
+class TestChezmoiForget:
+    """Tests for chezmoi_forget()."""
+
+    def test_forget_requires_targets(self):
+        result = chezmoi_forget([])
+        assert result.ok is False
+
+    def test_forget_success_passes_force_flag(self):
+        mock_result = MagicMock(returncode=0, stdout="forgot .zshrc", stderr="")
+        mock_run = MagicMock(return_value=mock_result)
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", mock_run),
+        ):
+            result = chezmoi_forget([Path("/home/user/.zshrc")])
+        assert result.ok is True
+        argv = mock_run.call_args[0][0]
+        assert "--force" in argv
+        assert argv[-1] == "/home/user/.zshrc"
+
+    def test_forget_failure(self):
+        mock_result = MagicMock(returncode=1, stdout="", stderr="not managed")
+        with (
+            patch("shutil.which", return_value="/usr/bin/chezmoi"),
+            patch("personal_os_setup.tasks.system.chezmoi.run", return_value=mock_result),
+        ):
+            result = chezmoi_forget([Path("/home/user/.zshrc")])
         assert result.ok is False

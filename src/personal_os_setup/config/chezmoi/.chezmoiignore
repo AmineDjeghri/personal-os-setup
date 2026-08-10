@@ -1,0 +1,16 @@
+# Config -- Linux only
+{{ if ne .chezmoi.os "linux" -}}
+.config/hypr
+.config/noctalia
+.config/vicinae
+.config/mimeapps.list
+.config/gpu-screen-recorder
+.config/kdeglobals
+{{ end -}}
+
+# Config -- macOS and Linux only
+{{ if eq .chezmoi.os "windows" -}}
+.zshrc
+.p10k.zsh
+.config/zed
+{{ end -}}

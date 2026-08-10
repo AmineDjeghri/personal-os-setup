@@ -77,32 +77,6 @@ Two package managers are used:
 - **pacman** — official repositories
 - **paru** — AUR. CachyOS ships paru by default;
 
-### Manual fallback
-
-If you are setting up before the app is available:
-
-```bash
-# Core CLI
-sudo pacman -S ripgrep fd fzf jq tree btop fastfetch bat eza zoxide
-
-# Build tooling (needed for Hyprland plugins)
-sudo pacman -S base-devel cmake meson cpio git nlohmann-json
-
-# Screenshot and annotation (bound to CTRL+Print in the Hyprland config)
-sudo pacman -S grim slurp satty wl-clipboard
-
-# Display and brightness
-sudo pacman -S wdisplays brightnessctl wlsunset ddcutil
-sudo modprobe i2c-dev            # required by ddcutil for external monitors
-
-# Theming and Wayland integration
-sudo pacman -S breeze-gtk kde-gtk-config qt5-wayland qt6-wayland hyprpolkitagent
-
-# AUR
-paru -S pycharm
-```
-
-
 Vicinae has its own installer:
 
 ```bash
@@ -119,6 +93,22 @@ Copy the personal configuration for Hyprland and Noctalia into `~/.config`.
 Enable **View → Show Hidden Files** in Dolphin to see the directory.
 
 Verify the keybindings afterward — for example `ALT+F` for fullscreen.
+
+### Settings owned by Noctalia, not Hyprland
+
+Some desktop behavior that most Hyprland setups configure in `hyprland.conf` (or via
+standalone daemons like `hypridle`/`hyprlock`/`hyprpaper`) is instead configured in
+Noctalia's own `~/.config/noctalia/config.toml`.
+
+- **Idle timeout / screen lock / suspend** — `[idle.behavior.*]`. No `hypridle`/`hyprlock` installed or needed.
+- **Wallpaper** — `[theme] source = "wallpaper"` plus the `nzlov/daily-wallpaper`
+  plugin under `[plugins]`. No `swww`/`hyprpaper`.
+- **Night light / blue light filter** — `[nightlight]`. Note `wlsunset` is still in
+  `packages.yaml` too — check which one is actually active before assuming both run.
+- **Screenshot pipeline** — `[shell.screenshot]` routes through Noctalia's own
+  screenshot action (piped to `satty`).
+- **Session menu** (lock / logout / reboot / shutdown / suspend) — `[[shell.session.actions]]`,
+  each with its own shortcut inside the session menu.
 
 ### Hyprland plugins
 
@@ -140,8 +130,7 @@ hyprpm reload
 hyprpm list
 ```
 
-Test `ALT+TAB` for the switcher, and dragging / closing / maximising windows for
-hyprbars.
+Test `ALT+TAB` for the switcher, and dragging / closing / maximizing windows for hyprbars.
 
 ---
 
@@ -154,11 +143,19 @@ This setup moves to **zsh** with oh-my-zsh and the powerlevel10k prompt. `.zshrc
 `.p10k.zsh`, plus oh-my-zsh itself and all its plugins/theme, are managed via
 [chezmoi](https://www.chezmoi.io/), with its source directory vendored inside this
 repo at `src/personal_os_setup/config/chezmoi/`. oh-my-zsh/plugins/theme are declared as
-`git-repo` externals in `.chezmoiexternal.toml`, so a single `chezmoi: apply` clones
-and applies everything — no separate sync step or ordering to worry about. Use the
-app's `chezmoi: diff` action to preview changes before `chezmoi: apply` — chezmoi has
-no auto-backup, so review the diff first. `set zsh as default shell` remains a
-separate `zsh` action.
+`git-repo` externals in `.chezmoiexternal.toml`.
+
+The app's "Sync dotfiles" tab lists every chezmoi-managed file as a checkbox (none
+checked by default — pick which ones you mean to act on); use **diff selected** to
+preview changes, **apply selected** to write them to your home directory, **re-add
+selected** to pull live edits back into the repo, or **forget selected** to stop
+tracking a file (the live file is left untouched — only the repo's copy is removed).
+Check everything and run the corresponding action to reproduce the old whole-tree
+`chezmoi apply`/`diff`/`re-add` behavior. To start tracking a new file, use
+**chezmoi: track a new file** and enter its path — this copies it into the repo (never
+edit a live dotfile directly and expect it to be under version control). chezmoi has
+no auto-backup, so always run **diff selected** before **apply selected**.
+`set zsh as default shell` remains a separate `zsh` action.
 ---
 
 ## Theming
@@ -168,22 +165,3 @@ Personal themes are kept rather than using the bundled ones.
 
 Do not remove the Qt5/Qt6 theme packages — the Noctalia theme cannot currently
 be removed without affecting them.
-
-- **Dolphin**: Menu (hamburger) → Configure → Window Color Scheme → Breeze Dark
-- **Qt**: run `qt6ct` (and `qt5ct`) to configure Qt application theming
-
----
-
-## Still to do
-- Install gaming packages from CachyOS Hello
-- Configure Vicinae
-- configure Noctalia
-- Test desktop integration end to end
-- Verify theming consistency across GTK and Qt applications
-- Remove Kitty and Alacritty once Ghostty is confirmed
-- Remove other unnecessary packages after testing
-
-### Applications to try
-
-- [Spectacle](https://apps.kde.org/spectacle/) — screenshots
-- KDE Connect — phone integration
