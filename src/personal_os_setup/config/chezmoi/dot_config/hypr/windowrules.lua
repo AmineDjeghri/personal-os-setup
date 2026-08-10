@@ -37,7 +37,7 @@ hl.window_rule({
 -- Workspace Assignments (parity with AeroSpace on macOS / GlazeWM on Windows)
 hl.window_rule({ match = { class = "^(helium|brave-browser)$" }, workspace = "1" }) -- browsers
 hl.window_rule({ match = { class = "^(jetbrains-pycharm)$" }, workspace = "2" }) -- IDE
-hl.window_rule({ match = { class = "^(org\\.kde\\.dolphin)$" }, workspace = "3" }) -- file manager
+hl.window_rule({ match = { class = "^(org\\.kde\\.dolphin|org\\.gnome\\.Nautilus)$" }, workspace = "3" }) -- file manager
 hl.window_rule({ match = { class = "^(dev\\.zed\\.Zed|md\\.Obsidian)$" }, workspace = "4" }) -- editors/notes
 hl.window_rule({ match = { class = "^(vesktop|org\\.telegram\\.desktop)$" }, workspace = "5" }) -- chat
 
