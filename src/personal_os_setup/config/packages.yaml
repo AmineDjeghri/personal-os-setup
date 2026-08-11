@@ -113,7 +113,6 @@ packages:
         - claude-code
         - docker
         - docker-compose
-        - make
         - meson # build system used by GNOME/many C/C++ projects
         - zed
         - ghostty
@@ -126,6 +125,7 @@ packages:
         - zsh
         - base-devel
         - chezmoi # dotfile manager
+        - make
         - cmake
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
@@ -178,7 +178,6 @@ packages:
         - sushi # spacebar quick-preview for Nautilus (like macOS Quick Look)
         - nautilus-python # extension framework required by most python-based Nautilus plugins
       Hyprland desktop:
-        - hyprpolkitagent
         - noctalia
         - wdisplays # GUI monitor configuration
         - wlsunset # night light / blue light filter

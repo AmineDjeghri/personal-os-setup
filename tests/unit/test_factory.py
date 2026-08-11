@@ -88,7 +88,10 @@ class TestLinuxDarwinSections:
 
     def test_doc_section_has_documentation_link(self):
         labels = _actions_in("darwin", "darwin", "Doc")
-        assert labels == ["open documentation site"]
+        assert labels == [
+            "open documentation site",
+            "open apps configuration and shortcuts doc",
+        ]
 
 
 class TestZshPrereqPackages:

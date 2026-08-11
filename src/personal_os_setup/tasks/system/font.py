@@ -16,7 +16,6 @@ from personal_os_setup.tasks.managers.arch_pacman import ArchPacmanManager
 from personal_os_setup.tasks.task import TaskResult
 
 
-
 def _packaged_font_zip() -> Traversable:
     pkg = resources.files("personal_os_setup")
     candidates = [

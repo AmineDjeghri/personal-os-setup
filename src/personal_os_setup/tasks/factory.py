@@ -19,7 +19,7 @@ from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
-from personal_os_setup.tasks.system.help import show_documentation_link
+from personal_os_setup.tasks.system.help import show_apps_config_link, show_documentation_link
 from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_cuda,
     detect_nvidia,
@@ -94,7 +94,9 @@ class SystemAction(BaseModel):
     confirm: bool = False
     confirm_message: str | None = None
     backup_target: Path | None = None
-    group: str | None = None # Actions with the same `group`, if adjacent in a section, render on one shared row.
+    group: str | None = (
+        None  # Actions with the same `group`, if adjacent in a section, render on one shared row.
+    )
 
 
 def get_package_manager(*, distro: str, manager: str) -> PackageManager | None:
@@ -165,6 +167,9 @@ def _doc_section() -> Section:
         "Doc",
         [
             SystemAction(label="open documentation site", run=show_documentation_link),
+            SystemAction(
+                label="open apps configuration and shortcuts doc", run=show_apps_config_link
+            ),
         ],
     )
 

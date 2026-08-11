@@ -114,6 +114,16 @@ if command -v uv >/dev/null 2>&1; then
 fi
 
 # ============================================================================
+# Zed - only set as default editor when a GUI is available
+# ============================================================================
+if command -v zeditor >/dev/null 2>&1 && { [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; }; then
+  export EDITOR='zeditor --wait' # EDITOR: fallback editor CLI tools read (git commit, crontab -e, sudoedit...)
+  export VISUAL='zeditor --wait' # VISUAL: full-screen editor, checked before EDITOR by most tools
+fi
+alias zed='zeditor'
+edit() { zeditor "${1:-.}"; } # `edit` with no args opens the current directory as a workspace
+
+# ============================================================================
 # Aliases for both MacOS and Linux. For a full list of active aliases, run `alias`.
 # ============================================================================
 alias zshrc="pycharm -e ~/.zshrc"

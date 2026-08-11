@@ -25,6 +25,7 @@ Apps configuration and shortcuts
   * [1.12. DisplayFusion (Windows only & paid)](#112-displayfusion-windows-only--paid)
   * [1.13. Keychron Launcher (All platforms)](#113-keychron-launcher-all-platforms)
   * [1.14. Terminal commands cheatsheet (macOS/Linux)](#114-terminal-commands-cheatsheet-macoslinux)
+  * [1.15. Nautilus (Linux)](#115-nautilus-linux)
 <!-- TOC -->
 
 # 1. Shortcuts and app configurations
@@ -76,6 +77,10 @@ shortcuts: You can read more about the shortcuts :
 ## 1.6. Raycast / Vicinae
 TBD
 Raycast plugins work with vicinae.
+
+- **Vicinae — typing a path**: Vicinae ships a built-in "Search Files" command (indexed
+  search with a content preview, reachable from the root search or its own dedicated
+  command).
 
 ## 1.7. Obsidian (All platforms)
 
@@ -366,3 +371,25 @@ These reflect what's actually installed/aliased by this project — see
 - `↑` → standard shell history; `z <name>` (zoxide) jumps straight to a frecent directory instead of `cd`-ing there manually
 - `tldr <command>` (tealdeer) → simplified, example-based man pages
 - `fastfetch` → replaces `neofetch` (deprecated upstream); runs automatically on every new interactive shell
+
+## 1.15. Nautilus (Linux)
+
+Nautilus is the GNOME file manager used on CachyOS/Hyprland (replaces Dolphin — no KDE
+session deps like kwallet/kded/portals to fight with under Hyprland).
+
+Better to install it together with **all** of its extensions from the `Files explorer`
+category in [packages.yaml](../../src/personal_os_setup/config/packages.yaml) rather than
+just the `nautilus` package alone:
+
+- `gvfs` — virtual filesystem backend Nautilus uses for all mounting (local disks, udisks2, trash, etc.)
+- `gvfs-smb` — Windows/SMB network share support
+- `gvfs-nfs` — NFS network share support
+- `gvfs-mtp` — Android phone (MTP) support
+- `gvfs-gphoto2` — digital camera (PTP) support
+- `gvfs-afc` — iPhone/iPad support
+- `gvfs-goa` + `gnome-online-accounts` — cloud storage account integration (Google/Microsoft/Nextcloud)
+- `sushi` — spacebar quick-preview (like macOS Quick Look)
+- `nautilus-python` — extension framework required by most Python-based Nautilus plugins
+- `ghostty-nautilus` — adds Ghostty terminal to the Nautilus context menu
+
+Use personal-setup-os for installing it.

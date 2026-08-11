@@ -40,7 +40,41 @@ Disabled — the CachyOS installer was blocked by Secure Boot.
 ### Keyboard layout defaults to QWERTY on first login
 
 Even if you selected **AZERTY** during installation, Hyprland's login/greeter session
-can still start in **QWERTY**. Type your password using the QWERTY layout to log in,
+(**noctalia-greeter**, run via **greetd** — already the default for this Hyprland+Noctalia
+setup) can still start in **QWERTY**. The layout lives in
+`/var/lib/noctalia-greeter/greeter.toml`:
+
+```toml
+[keyboard]
+layout = "fr,us"
+options = "grp:alt_shift_toggle"  # switch layouts with Alt+Shift
+```
+
+This file is root-owned and lives outside chezmoi's `$HOME` scope, so it isn't managed
+by this repo yet. This command backs up the original, then upserts the `[keyboard]`
+section (replacing it if it already exists, appending it if not) without touching the
+rest of the file:
+
+```bash
+sudo cp /var/lib/noctalia-greeter/greeter.toml /var/lib/noctalia-greeter/greeter.toml.bak 2>/dev/null
+
+sudo awk '
+  /^\[keyboard\]/ { print; print "layout = \"fr,us\""; print "options = \"grp:alt_shift_toggle\""; in_kb=1; done=1; next }
+  /^\[/ && in_kb { in_kb=0 }
+  in_kb && /^(layout|options)[[:space:]]*=/ { next }
+  { print }
+  END { if (!done) print "\n[keyboard]\nlayout = \"fr,us\"\noptions = \"grp:alt_shift_toggle\"" }
+' /var/lib/noctalia-greeter/greeter.toml | sudo tee /var/lib/noctalia-greeter/greeter.toml.new >/dev/null
+
+sudo mv /var/lib/noctalia-greeter/greeter.toml.new /var/lib/noctalia-greeter/greeter.toml
+sudo systemctl restart greetd
+```
+
+There is no on-screen button/icon in the greeter to switch layouts — per the
+[Noctalia greeter docs](https://docs.noctalia.dev/greeter/), switching only works
+through the XKB keybind set in `options` above (Alt+Shift here).
+
+Until `[keyboard]` is set, type your password using the QWERTY layout to log in,
 then:
 
 1. Log in (QWERTY password entry).
@@ -123,6 +157,13 @@ Noctalia's own `~/.config/noctalia/config.toml`.
   screenshot action (piped to `satty`).
 - **Session menu** (lock / logout / reboot / shutdown / suspend) — `[[shell.session.actions]]`,
   each with its own shortcut inside the session menu.
+
+### Editing the lockscreen layout
+
+The lockscreen widget layout is edited live, not through a config file: click the lock
+icon (`lockscreen-edit` in the bar's `start` list, top-left of the Noctalia bar) to
+toggle edit mode. Switch to an empty workspace first — otherwise windows behind the
+lockscreen preview get in the way of seeing the live editing.
 
 ### Hyprland plugins
 
