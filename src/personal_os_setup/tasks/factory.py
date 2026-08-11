@@ -94,6 +94,7 @@ class SystemAction(BaseModel):
     confirm: bool = False
     confirm_message: str | None = None
     backup_target: Path | None = None
+    group: str | None = None # Actions with the same `group`, if adjacent in a section, render on one shared row.
 
 
 def get_package_manager(*, distro: str, manager: str) -> PackageManager | None:
@@ -123,14 +124,16 @@ def _manager_actions(manager_name: str, pm: PackageManager, *, prefix: bool) -> 
             confirm=True,
             confirm_message=f"This will only update the {manager_name} package list/cache. Run the upgrade action to upgrade all packages. "
             f"Proceed?",
+            group=manager_name,
         ),
         SystemAction(
             label=lbl("upgrade"),
             run=pm.upgrade,
             confirm=True,
             confirm_message="This will iterate through packages and upgrade them one by one. You may be prompted to accept installation for some apps. Proceed?",
+            group=manager_name,
         ),
-        SystemAction(label=lbl("cleanup"), run=pm.cleanup),
+        SystemAction(label=lbl("cleanup"), run=pm.cleanup, group=manager_name),
     ]
 
 
@@ -266,6 +269,7 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
             run=setup_nvidia_windows,
             confirm=True,
             confirm_message="This will show NVIDIA setup guidance for Windows. Proceed?",
+            group="nvidia",
         )
     if system == "linux" and _is_wsl():
         return SystemAction(
@@ -273,6 +277,7 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
             run=setup_nvidia_wsl_instructions,
             confirm=True,
             confirm_message="This will show NVIDIA setup guidance for WSL (Windows host driver). Proceed?",
+            group="nvidia",
         )
     if distro == "ubuntu":
         return SystemAction(
@@ -280,6 +285,7 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
             run=setup_nvidia_ubuntu,
             confirm=True,
             confirm_message="This will attempt to install NVIDIA drivers on Ubuntu (reboot required). Proceed?",
+            group="nvidia",
         )
     if distro == "cachyos":
         return SystemAction(
@@ -287,6 +293,7 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
             run=setup_nvidia_arch,
             confirm=True,
             confirm_message="This will report NVIDIA driver status and show the right packages for your kernel. Proceed?",
+            group="nvidia",
         )
     return SystemAction(
         label=f"setup nvidia ({distro})",
@@ -295,22 +302,24 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
         ),
         confirm=True,
         confirm_message=f"NVIDIA setup is not implemented for distro '{distro}'. Proceed to show details?",
+        group="nvidia",
     )
 
 
 # Section: "system" — NVIDIA/CUDA detect+setup, docker post-install (Ubuntu/CachyOS)
 def _system_section(*, system: str, distro: str) -> Section:
     actions = [
-        SystemAction(label="detect nvidia", run=detect_nvidia),
+        SystemAction(label="detect nvidia", run=detect_nvidia, group="nvidia"),
         _nvidia_setup_action(system=system, distro=distro),
-        SystemAction(label="detect cuda", run=detect_cuda),
-        SystemAction(label="setup cuda (advanced)", run=setup_cuda),
+        SystemAction(label="detect cuda", run=detect_cuda, group="cuda"),
+        SystemAction(label="setup cuda (advanced)", run=setup_cuda, group="cuda"),
     ]
     if distro in {"ubuntu", "cachyos"}:
         actions.append(
             SystemAction(
                 label="docker: post-install (run without sudo)",
                 run=docker_post_install_linux,
+                group="docker",
             )
         )
     if distro == "cachyos":
@@ -323,6 +332,7 @@ def _system_section(*, system: str, distro: str) -> Section:
                     details="Run this once to start the Vicinae launcher daemon and keep it "
                     "enabled on login.",
                 ),
+                group="enable",
             )
         )
     return ("system", actions)

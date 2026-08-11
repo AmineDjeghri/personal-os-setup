@@ -36,6 +36,21 @@ Disabled — the CachyOS installer was blocked by Secure Boot.
 - Filesystem: **Btrfs**
 - Encryption: **LUKS**
 
+
+### Keyboard layout defaults to QWERTY on first login
+
+Even if you selected **AZERTY** during installation, Hyprland's login/greeter session
+can still start in **QWERTY**. Type your password using the QWERTY layout to log in,
+then:
+
+1. Log in (QWERTY password entry).
+2. Install this app and sync the hyprland folder (already set to `"fr,us"` in this project's config).
+3. Reboot so the new layout takes effect everywhere, including the login screen.
+4. Install a browser — this project's `packages.yaml` already lists `helium-browser-bin`
+   and `brave-bin` under `cachyos.pacman.Browsers`.
+
+---
+
 ### After first boot
 
 ```bash
@@ -55,7 +70,6 @@ so there is normally nothing to install.
 You can also click the temperature readout in the Noctalia top bar to see CPU
 temperature, GPU name and general system information without opening settings.
 
----
 
 ## Packages
 

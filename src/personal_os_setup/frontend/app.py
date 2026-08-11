@@ -90,6 +90,17 @@ class PersonalOsSetupApp(App[None]):
         self._unread_log_count = 0
         self._dotfiles_selected: set[Path] = set()
 
+    @staticmethod
+    def _group_actions_into_rows(actions: list[SystemAction]) -> list[list[SystemAction]]:
+        """Group adjacent actions sharing a non-`None` `group` onto one row each."""
+        rows: list[list[SystemAction]] = []
+        for action in actions:
+            if action.group is not None and rows and rows[-1][0].group == action.group:
+                rows[-1].append(action)
+            else:
+                rows.append([action])
+        return rows
+
     def _grouped_packages(self) -> list[tuple[str, list[PackageRef]]]:
         """Group `self._packages` by category, "terminal_tools" first, then alphabetically."""
         groups: dict[str, list[PackageRef]] = {}
@@ -153,11 +164,17 @@ class PersonalOsSetupApp(App[None]):
                                 yield dotfiles_tree
                         else:
                             with VerticalScroll(classes="action-list-container"):
-                                for action in actions:
-                                    button_id = f"action-btn-{next(self._button_id_counter)}"
-                                    self._action_by_button_id[button_id] = (section_name, action)
+                                for row in self._group_actions_into_rows(actions):
                                     with Horizontal(classes="action-row"):
-                                        yield Button(action.label, id=button_id)
+                                        for action in row:
+                                            button_id = (
+                                                f"action-btn-{next(self._button_id_counter)}"
+                                            )
+                                            self._action_by_button_id[button_id] = (
+                                                section_name,
+                                                action,
+                                            )
+                                            yield Button(action.label, id=button_id)
 
             with TabPane(_LOGS_TAB_LABEL, id="logs"):
                 yield RichLog(id="log-widget", markup=False, wrap=True)

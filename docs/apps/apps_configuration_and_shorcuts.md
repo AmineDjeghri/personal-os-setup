@@ -10,7 +10,7 @@ Apps configuration and shortcuts
   * [1.3. PowerToys (windows only)](#13-powertoys-windows-only)
   * [1.4. Windows Terminal (windows only)](#14-windows-terminal-windows-only)
   * [1.5. ZED (All platforms)](#15-zed-all-platforms)
-  * [1.6. Raycast](#16-raycast)
+  * [1.6. Raycast / Vicinae](#16-raycast--vicinae)
   * [1.7. Obsidian (All platforms)](#17-obsidian-all-platforms)
     * [Sync Obsidian vaults with iOS:](#sync-obsidian-vaults-with-ios)
   * [1.8. Files](#18-files)
@@ -24,6 +24,7 @@ Apps configuration and shortcuts
   * [1.11. HWINFO:](#111-hwinfo)
   * [1.12. DisplayFusion (Windows only & paid)](#112-displayfusion-windows-only--paid)
   * [1.13. Keychron Launcher (All platforms)](#113-keychron-launcher-all-platforms)
+  * [1.14. Terminal commands cheatsheet (macOS/Linux)](#114-terminal-commands-cheatsheet-macoslinux)
 <!-- TOC -->
 
 # 1. Shortcuts and app configurations
@@ -72,7 +73,9 @@ shortcuts: You can read more about the shortcuts :
 - (TBD)
 
 
-## 1.6. Raycast
+## 1.6. Raycast / Vicinae
+TBD
+Raycast plugins work with vicinae.
 
 ## 1.7. Obsidian (All platforms)
 
@@ -344,3 +347,22 @@ Works on Linux the same as Windows/macOS: open it in a Chromium-based browser (C
 - **On Linux, skip the Keychron Toolbox driver install step** — Toolbox is a native Windows/Mac app with no Linux
   build, and Launcher doesn't need it there. Just click **Next** past that step in the firmware-update flow.
 - My K1 Max keymap's base layer was remapped to media/brightness keys without holding Fn. And the F1-F12 keys need the Fn holded to work.
+
+## 1.14. Terminal commands cheatsheet (macOS/Linux)
+
+These reflect what's actually installed/aliased by this project — see
+[terminal_tools in packages.yaml](../../src/personal_os_setup/config/packages.yaml) and
+[.zshrc](../../src/personal_os_setup/config/chezmoi/dot_zshrc).
+
+- `ls` / `ll` / `lt` → aliased to `eza` (icons, git status, tree view)
+- `cat` → aliased to `bat` (syntax highlighting); also set as the `man` pager
+- `top` → aliased to `btop` (resource monitor)
+- `df` → aliased to `duf`; `du` → aliased to `dua` (`dui` for the interactive TUI)
+- `rg` (ripgrep) and `fd` → faster `grep`/`find`, used directly under their own binary names (not aliased over the originals)
+- Fuzzy search (`fzf-zsh-plugin`): `Ctrl+T` fuzzy-finds a file, `Ctrl+R` fuzzy-searches shell history, `Alt+C` fuzzy-`cd`s into a subdirectory
+- `Tab` / arrow keys → `zsh-autocomplete` shows and lets you navigate a live completion menu as you type, including folder selection while navigating paths
+- Right arrow / `End` → accepts the greyed-out suggestion from `zsh-autosuggestions` (predicted from your history)
+- Commands turn green/red as you type → `zsh-syntax-highlighting`
+- `↑` → standard shell history; `z <name>` (zoxide) jumps straight to a frecent directory instead of `cd`-ing there manually
+- `tldr <command>` (tealdeer) → simplified, example-based man pages
+- `fastfetch` → replaces `neofetch` (deprecated upstream); runs automatically on every new interactive shell

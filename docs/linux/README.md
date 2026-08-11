@@ -2,6 +2,9 @@
 
 If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.
 
+> **Using CachyOS?** This project also has a dedicated [CachyOS Hyprland workstation setup guide](CachyOS.md).
+> Learn more about the distro itself at [cachyos.org](https://cachyos.org).
+
 ## Installation Process
 
 The Personal OS Setup provides a **Terminal UI (TUI) application** that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:
