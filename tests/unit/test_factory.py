@@ -74,22 +74,21 @@ class TestPackageManagerSections:
 
 
 class TestLinuxDarwinSections:
-    """zsh/chezmoi/Doc sections should only appear on Linux and macOS."""
+    """Doc appears on every OS; zsh/chezmoi sections only appear on Linux and macOS."""
 
     def test_darwin_gets_doc_and_dotfiles_sections(self):
         names = _section_names("darwin", "darwin")
         assert "Doc" in names
         assert "Sync dotfiles" in names
 
-    def test_windows_has_no_dotfiles_sections(self):
+    def test_windows_gets_doc_but_no_dotfiles_sections(self):
         names = _section_names("windows", "windows")
-        assert "Doc" not in names
+        assert "Doc" in names
         assert "Sync dotfiles" not in names
 
-    def test_doc_section_has_docs_and_packages_yaml_links(self):
+    def test_doc_section_has_documentation_link(self):
         labels = _actions_in("darwin", "darwin", "Doc")
-        assert "open documentation site" in labels
-        assert "open packages.yaml" in labels
+        assert labels == ["open documentation site"]
 
 
 class TestZshPrereqPackages:

@@ -19,11 +19,7 @@ from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
-from personal_os_setup.tasks.system.help import (
-    show_commands,
-    show_documentation_link,
-    show_packages_yaml_path,
-)
+from personal_os_setup.tasks.system.help import show_documentation_link
 from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_cuda,
     detect_nvidia,
@@ -160,14 +156,12 @@ def _package_manager_sections(distro: str) -> list[Section]:
     return [(distro, actions)]
 
 
-# Section: "Doc" — shell command cheatsheet, and links to the docs site and packages.yaml.
+# Section: "Doc" — link to the docs site.
 def _doc_section() -> Section:
     return (
         "Doc",
         [
-            SystemAction(label="show commands", run=show_commands),
             SystemAction(label="open documentation site", run=show_documentation_link),
-            SystemAction(label="open packages.yaml", run=show_packages_yaml_path),
         ],
     )
 
@@ -493,7 +487,9 @@ def get_system_action_sections(
     """Build the ordered list of `(section_name, [SystemAction])` tuples for this OS/distro.
 
     Sections are assembled conditionally on `system`/`distro`: package-manager
-    sections always come first, then Doc/zsh/chezmoi (Linux+macOS), system, and WSL/Windows-utility sections.
+    sections always come first, then Doc (all OSes), zsh/chezmoi (Linux+macOS),
+    system (NVIDIA/CUDA/docker/vicinae; Windows+Linux), and WSL/Windows-utility
+    sections (Windows only).
 
     Args:
         system: Normalized OS family (e.g. `"windows"`, `"darwin"`, `"linux"`).
@@ -508,11 +504,13 @@ def get_system_action_sections(
     # Package managers (apt, snap, brew...) - at the top for quick access.
     sections.extend(_package_manager_sections(distro))
 
+    # Doc section (documentation link) applies to every OS.
+    sections.append(_doc_section())
+
     #################
     ## Linux & Darwin
     #################
     if system in {"darwin", "linux"}:
-        sections.append(_doc_section())
         sections.append(_dotfiles_section(distro, packages or []))
 
     ########
