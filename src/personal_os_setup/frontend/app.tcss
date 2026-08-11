@@ -46,7 +46,12 @@ Screen {
 }
 
 .action-pane {
+    height: 1fr;
     padding: 1 2;
+}
+
+.action-list-container {
+    height: 1fr;
 }
 
 #dotfiles-toolbar {

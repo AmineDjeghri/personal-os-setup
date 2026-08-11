@@ -152,11 +152,12 @@ class PersonalOsSetupApp(App[None]):
                                 self._build_dotfiles_tree(dotfiles_tree, chezmoi_managed_paths())
                                 yield dotfiles_tree
                         else:
-                            for action in actions:
-                                button_id = f"action-btn-{next(self._button_id_counter)}"
-                                self._action_by_button_id[button_id] = (section_name, action)
-                                with Horizontal(classes="action-row"):
-                                    yield Button(action.label, id=button_id)
+                            with VerticalScroll(classes="action-list-container"):
+                                for action in actions:
+                                    button_id = f"action-btn-{next(self._button_id_counter)}"
+                                    self._action_by_button_id[button_id] = (section_name, action)
+                                    with Horizontal(classes="action-row"):
+                                        yield Button(action.label, id=button_id)
 
             with TabPane(_LOGS_TAB_LABEL, id="logs"):
                 yield RichLog(id="log-widget", markup=False, wrap=True)

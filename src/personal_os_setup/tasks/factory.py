@@ -114,61 +114,62 @@ def get_package_manager(*, distro: str, manager: str) -> PackageManager | None:
     return factory() if factory else None
 
 
-# Section: "<manager name>" (one per primary manager, e.g. "apt", "brew") — update/upgrade/cleanup for that package manager.
+def _manager_actions(manager_name: str, pm: PackageManager, *, prefix: bool) -> list[SystemAction]:
+    """Build the update/upgrade/cleanup actions for one manager, optionally label-prefixed."""
+
+    def lbl(base: str) -> str:
+        return f"{manager_name}: {base}" if prefix else base
+
+    return [
+        SystemAction(
+            label=lbl("update"),
+            run=pm.update,
+            confirm=True,
+            confirm_message=f"This will only update the {manager_name} package list/cache. Run the upgrade action to upgrade all packages. "
+            f"Proceed?",
+        ),
+        SystemAction(
+            label=lbl("upgrade"),
+            run=pm.upgrade,
+            confirm=True,
+            confirm_message="This will iterate through packages and upgrade them one by one. You may be prompted to accept installation for some apps. Proceed?",
+        ),
+        SystemAction(label=lbl("cleanup"), run=pm.cleanup),
+    ]
+
+
+# Section: "<manager name>" (or "<distro>" when a distro has multiple visible managers,
+# e.g. CachyOS's pacman+paru) — update/upgrade/cleanup for each primary package manager.
 def _package_manager_sections(distro: str) -> list[Section]:
-    """Build one section per primary package manager for `distro` (update/upgrade/cleanup)."""
+    """Build the package-manager section(s) for `distro` (update/upgrade/cleanup)."""
     factories = _PACKAGE_MANAGER_FACTORY_BY_DISTRO.get(distro, {})
     allowed_managers = _UI_VISIBLE_MANAGERS_BY_DISTRO.get(distro, list(factories.keys()))
 
-    sections: list[Section] = []
-    for manager_name in allowed_managers:
-        factory = factories.get(manager_name)
-        if factory is None:
-            continue
-        pm = factory()
-        sections.append(
-            (
-                manager_name,
-                [
-                    SystemAction(
-                        label="update",
-                        run=pm.update,
-                        confirm=True,
-                        confirm_message=f"This will only update the {manager_name} package list/cache. Run the upgrade action to upgrade all packages. "
-                        f"Proceed?",
-                    ),
-                    SystemAction(
-                        label="upgrade",
-                        run=pm.upgrade,
-                        confirm=True,
-                        confirm_message="This will iterate through packages and upgrade them one by one. You may be prompted to accept installation for some apps. Proceed?",
-                    ),
-                    SystemAction(label="cleanup", run=pm.cleanup),
-                ],
-            )
-        )
-    return sections
-
-
-def _doc_section(distro: str) -> Section:
-    actions = [
-        SystemAction(label="show commands", run=show_commands),
-        SystemAction(label="open documentation site", run=show_documentation_link),
-        SystemAction(label="open packages.yaml", run=show_packages_yaml_path),
+    managers: list[tuple[str, PackageManager]] = [
+        (name, factories[name]()) for name in allowed_managers if factories.get(name) is not None
     ]
-    if distro == "cachyos":
-        actions.append(
-            SystemAction(
-                label="enable vicinae (copy command)",
-                run=lambda: TaskResult(
-                    ok=True,
-                    summary="systemctl --user enable --now vicinae",
-                    details="Run this once to start the Vicinae launcher daemon and keep it "
-                    "enabled on login.",
-                ),
-            )
-        )
-    return ("Doc", actions)
+    if not managers:
+        return []
+    if len(managers) == 1:
+        name, pm = managers[0]
+        return [(name, _manager_actions(name, pm, prefix=False))]
+
+    actions = [
+        action for name, pm in managers for action in _manager_actions(name, pm, prefix=True)
+    ]
+    return [(distro, actions)]
+
+
+# Section: "Doc" — shell command cheatsheet, and links to the docs site and packages.yaml.
+def _doc_section() -> Section:
+    return (
+        "Doc",
+        [
+            SystemAction(label="show commands", run=show_commands),
+            SystemAction(label="open documentation site", run=show_documentation_link),
+            SystemAction(label="open packages.yaml", run=show_packages_yaml_path),
+        ],
+    )
 
 
 # Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
@@ -263,19 +264,6 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
     )
 
 
-# Section: "docker" — post-install step so Docker can be run without sudo.
-def _docker_section() -> Section:
-    return (
-        "docker",
-        [
-            SystemAction(
-                label="post-install: run docker without sudo",
-                run=docker_post_install_linux,
-            ),
-        ],
-    )
-
-
 def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
     """Return the single OS-specific "setup nvidia" action for the `system`/`nvidia_actions` section."""
     if system == "windows":
@@ -316,17 +304,34 @@ def _nvidia_setup_action(*, system: str, distro: str) -> SystemAction:
     )
 
 
-# Section: "system" — detects NVIDIA/CUDA and runs the OS-appropriate NVIDIA driver setup.
-def _nvidia_section(*, system: str, distro: str) -> Section:
-    return (
-        "system",
-        [
-            SystemAction(label="detect nvidia", run=detect_nvidia),
-            _nvidia_setup_action(system=system, distro=distro),
-            SystemAction(label="detect cuda", run=detect_cuda),
-            SystemAction(label="setup cuda (advanced)", run=setup_cuda),
-        ],
-    )
+# Section: "system" — NVIDIA/CUDA detect+setup, docker post-install (Ubuntu/CachyOS)
+def _system_section(*, system: str, distro: str) -> Section:
+    actions = [
+        SystemAction(label="detect nvidia", run=detect_nvidia),
+        _nvidia_setup_action(system=system, distro=distro),
+        SystemAction(label="detect cuda", run=detect_cuda),
+        SystemAction(label="setup cuda (advanced)", run=setup_cuda),
+    ]
+    if distro in {"ubuntu", "cachyos"}:
+        actions.append(
+            SystemAction(
+                label="docker: post-install (run without sudo)",
+                run=docker_post_install_linux,
+            )
+        )
+    if distro == "cachyos":
+        actions.append(
+            SystemAction(
+                label="enable vicinae (copy command)",
+                run=lambda: TaskResult(
+                    ok=True,
+                    summary="systemctl --user enable --now vicinae",
+                    details="Run this once to start the Vicinae launcher daemon and keep it "
+                    "enabled on login.",
+                ),
+            )
+        )
+    return ("system", actions)
 
 
 def _windows_terminal_settings_path() -> Path:
@@ -488,8 +493,7 @@ def get_system_action_sections(
     """Build the ordered list of `(section_name, [SystemAction])` tuples for this OS/distro.
 
     Sections are assembled conditionally on `system`/`distro`: package-manager
-    sections always come first, then zsh/chezmoi/docker (Linux+macOS), NVIDIA
-    (Windows+Linux), and WSL/Windows-utility sections (Windows only).
+    sections always come first, then Doc/zsh/chezmoi (Linux+macOS), system, and WSL/Windows-utility sections.
 
     Args:
         system: Normalized OS family (e.g. `"windows"`, `"darwin"`, `"linux"`).
@@ -508,20 +512,14 @@ def get_system_action_sections(
     ## Linux & Darwin
     #################
     if system in {"darwin", "linux"}:
-        sections.append(_doc_section(distro))
+        sections.append(_doc_section())
         sections.append(_dotfiles_section(distro, packages or []))
 
     ########
-    ## Docker
-    ########
-    if distro in {"ubuntu", "cachyos"}:
-        sections.append(_docker_section())
-
-    ########
-    ## NVIDIA
+    ## System (NVIDIA/CUDA, docker post-install, vicinae)
     ########
     if system in {"windows", "linux"}:
-        sections.append(_nvidia_section(system=system, distro=distro))
+        sections.append(_system_section(system=system, distro=distro))
 
     ########
     ## Windows

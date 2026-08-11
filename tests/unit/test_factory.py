@@ -46,9 +46,22 @@ class TestPackageManagerSections:
         assert names[0] == "brew"
         assert "cask" not in names
 
-    def test_cachyos_shows_both_pacman_and_paru(self):
+    def test_cachyos_merges_pacman_and_paru_into_one_section(self):
         names = _section_names("linux", "cachyos")
-        assert names[:2] == ["pacman", "paru"]
+        assert names[0] == "cachyos"
+        assert "pacman" not in names
+        assert "paru" not in names
+
+    def test_cachyos_section_has_manager_prefixed_labels(self):
+        labels = _actions_in("linux", "cachyos", "cachyos")
+        assert labels == [
+            "pacman: update",
+            "pacman: upgrade",
+            "pacman: cleanup",
+            "paru: update",
+            "paru: upgrade",
+            "paru: cleanup",
+        ]
 
     def test_unsupported_distro_has_no_package_manager_section(self):
         names = _section_names("linux", "debian")
@@ -72,10 +85,6 @@ class TestLinuxDarwinSections:
         names = _section_names("windows", "windows")
         assert "Doc" not in names
         assert "Sync dotfiles" not in names
-
-    def test_doc_section_has_vicinae_command_only_on_cachyos(self):
-        assert "enable vicinae (copy command)" in _actions_in("linux", "cachyos", "Doc")
-        assert "enable vicinae (copy command)" not in _actions_in("darwin", "darwin", "Doc")
 
     def test_doc_section_has_docs_and_packages_yaml_links(self):
         labels = _actions_in("darwin", "darwin", "Doc")
@@ -193,16 +202,25 @@ class TestDotfilesTrackNewFile:
         mock_add.assert_called_once_with(Path.home() / ".config/foo/config.toml")
 
 
-class TestDockerSection:
-    """Docker post-install is only offered on distros where it's implemented."""
+class TestSystemSectionExtras:
+    """Docker post-install and the vicinae command live in "system", gated by distro."""
 
-    def test_ubuntu_and_cachyos_get_docker_section(self):
-        assert "docker" in _section_names("linux", "ubuntu")
-        assert "docker" in _section_names("linux", "cachyos")
+    def test_ubuntu_and_cachyos_get_docker_action(self):
+        docker_label = "docker: post-install (run without sudo)"
+        assert docker_label in _actions_in("linux", "ubuntu", "system")
+        assert docker_label in _actions_in("linux", "cachyos", "system")
 
-    def test_darwin_and_windows_have_no_docker_section(self):
-        assert "docker" not in _section_names("darwin", "darwin")
-        assert "docker" not in _section_names("windows", "windows")
+    def test_darwin_has_no_system_section_and_windows_has_no_docker_action(self):
+        assert "system" not in _section_names("darwin", "darwin")
+        assert "docker: post-install (run without sudo)" not in _actions_in(
+            "windows", "windows", "system"
+        )
+
+    def test_vicinae_command_only_on_cachyos(self):
+        vicinae_label = "enable vicinae (copy command)"
+        assert vicinae_label in _actions_in("linux", "cachyos", "system")
+        assert vicinae_label not in _actions_in("linux", "ubuntu", "system")
+        assert vicinae_label not in _actions_in("windows", "windows", "system")
 
 
 class TestNvidiaSection:
