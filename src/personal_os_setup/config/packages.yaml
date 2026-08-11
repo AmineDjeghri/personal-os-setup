@@ -110,9 +110,9 @@ packages:
   cachyos:
     pacman:
       Dev_tools:
+        - claude-code
         - docker
         - docker-compose
-        - cmake
         - make
         - meson # build system used by GNOME/many C/C++ projects
         - zed
@@ -126,6 +126,7 @@ packages:
         - zsh
         - base-devel
         - chezmoi # dotfile manager
+        - cmake
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
         - eza # modern ls replacement (successor to exa)

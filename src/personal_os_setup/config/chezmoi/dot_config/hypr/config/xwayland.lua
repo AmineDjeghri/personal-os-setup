@@ -6,8 +6,8 @@
 -- at once. If XWayland blur or wrong-size windows come up again, this is the first place
 -- to check and the tradeoff to re-weigh, not a bug to chase.
 
-hl.config({
-    xwayland = {
-        force_zero_scaling = true,
-    },
-})
+-- hl.config({
+--     xwayland = {
+--         force_zero_scaling = true,
+--     },
+-- })

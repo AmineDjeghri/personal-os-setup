@@ -19,7 +19,11 @@ from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
-from personal_os_setup.tasks.system.help import show_commands
+from personal_os_setup.tasks.system.help import (
+    show_commands,
+    show_documentation_link,
+    show_packages_yaml_path,
+)
 from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_cuda,
     detect_nvidia,
@@ -146,9 +150,25 @@ def _package_manager_sections(distro: str) -> list[Section]:
     return sections
 
 
-# Section: "help" — shows the list of available shell commands installed by this setup.
-def _help_section() -> Section:
-    return ("help", [SystemAction(label="show commands", run=show_commands)])
+def _doc_section(distro: str) -> Section:
+    actions = [
+        SystemAction(label="show commands", run=show_commands),
+        SystemAction(label="open documentation site", run=show_documentation_link),
+        SystemAction(label="open packages.yaml", run=show_packages_yaml_path),
+    ]
+    if distro == "cachyos":
+        actions.append(
+            SystemAction(
+                label="enable vicinae (copy command)",
+                run=lambda: TaskResult(
+                    ok=True,
+                    summary="systemctl --user enable --now vicinae",
+                    details="Run this once to start the Vicinae launcher daemon and keep it "
+                    "enabled on login.",
+                ),
+            )
+        )
+    return ("Doc", actions)
 
 
 # Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
@@ -488,7 +508,7 @@ def get_system_action_sections(
     ## Linux & Darwin
     #################
     if system in {"darwin", "linux"}:
-        sections.append(_help_section())
+        sections.append(_doc_section(distro))
         sections.append(_dotfiles_section(distro, packages or []))
 
     ########
