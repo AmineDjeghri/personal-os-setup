@@ -53,7 +53,10 @@ This section is the same as Linux. Follow the terminal ZSH instructions in [Linu
 
 ## 3. Recommended apps
 
-This repo’s [packages.yaml](../../src/personal_os_setup/config/packages.yaml) includes my macOS `brew` packages and `cask` recommended apps.
+For per-app configuration and shortcuts shared across platforms (PyCharm, Obsidian, Raycast,
+Bitwarden, Zed, the terminal tools cheatsheet), plus a table of what's available on macOS vs.
+Windows/CachyOS and their alternatives, check
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
 
 Here is some config files for some apps:
 ### 3.1. Raycast

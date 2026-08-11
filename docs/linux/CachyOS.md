@@ -220,3 +220,9 @@ Personal themes are kept rather than using the bundled ones.
 
 Do not remove the Qt5/Qt6 theme packages — the Noctalia theme cannot currently
 be removed without affecting them.
+
+## Apps shortcuts
+For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,
+the terminal tools cheatsheet), plus a table of what's available on CachyOS vs. Windows/macOS
+and their alternatives, check
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).

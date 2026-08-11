@@ -5,6 +5,7 @@ Apps configuration and shortcuts
 <!-- TOC -->
 * [Apps configuration and shortcuts](#apps-configuration-and-shortcuts)
 * [1. Shortcuts and app configurations](#1-shortcuts-and-app-configurations)
+  * [App availability & alternatives across OSes](#app-availability--alternatives-across-oses)
   * [1.1. Windows shortcuts](#11-windows-shortcuts)
   * [1.2. GlazeWM and Zebar (windows only)](#12-glazewm-and-zebar-windows-only)
   * [1.3. PowerToys (windows only)](#13-powertoys-windows-only)
@@ -31,6 +32,33 @@ Apps configuration and shortcuts
 # 1. Shortcuts and app configurations
 
 Settings and shortcuts for some apps that I use on Windows 11.
+
+## App availability & alternatives across OSes
+
+Apps/tools documented below are actually installed on each OS (per
+[packages.yaml](../../src/personal_os_setup/config/packages.yaml))
+
+| Section                                                                            |        Windows         |    macOS     |   CachyOS (Linux)   | Alternative(s) on other OSes                                                                         | Key shortcut                                                             |
+|------------------------------------------------------------------------------------|:----------------------:|:------------:|:-------------------:|------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [1.1. Windows shortcuts](#11-windows-shortcuts)                                    |           ✅           |      —       |          —          | See [1.14. Terminal commands cheatsheet](#114-terminal-commands-cheatsheet-macoslinux) (macOS/Linux) | `Win+V` clipboard history, `Win+L` lock                                  |
+| [1.2. GlazeWM and Zebar](#12-glazewm-and-zebar-windows-only)                       |           ✅           |      —       |          —          | Hyprland + Noctalia on CachyOS — see [CachyOS.md](../linux/CachyOS.md#desktop)                       | `Alt+Shift+Q` close window, `Alt+F` maximize                             |
+| [1.3. PowerToys](#13-powertoys-windows-only)                                       |           ✅           |      —       |          —          | none documented                                                                                      | `Alt+Space` search                                                       |
+| [1.4. Windows Terminal](#14-windows-terminal-windows-only)                         |           ✅           |      —       |          —          | Ghostty on macOS/CachyOS (`Dev_tools` in packages.yaml)                                              | —                                                                        |
+| [1.5. ZED](#15-zed-all-platforms)                                                  |           ✅           |      ✅      |         ✅          | —                                                                                                    | —                                                                        |
+| [1.6. Raycast / Vicinae](#16-raycast--vicinae)                                     | ✅ (Raycast, MS Store) | ✅ (Raycast) |    ✅ (Vicinae)     | Vicinae is the Linux-native Raycast alternative; Raycast plugins work with it                        | —                                                                        |
+| [1.7. Obsidian](#17-obsidian-all-platforms)                                        |           ✅           |      ✅      |         ✅          | —                                                                                                    | Settings: `Ctrl+Alt+S` (same as PyCharm)                                 |
+| [1.8. Files](#18-files)                                                            |           ✅           |      —       |          —          | Nautilus on Linux (§[1.15](#115-nautilus-linux)); Finder on macOS                                    | —                                                                        |
+| [1.9. PyCharm](#19-pycharm-all-platforms)                                          |           ✅           |      ✅      |         ✅          | —                                                                                                    | See [1.9.2. Personal PyCharm shortcuts](#192-personal-pycharm-shortcuts) |
+| [1.10. Bitwarden](#110-bitwarden-all-platforms)                                    |          ✅*           |     ✅*      | ✅ (pacman-managed) | iCloud Passwords (Windows/macOS/iOS, built-in 2FA)                                                   | —                                                                        |
+| [1.11. HWiNFO](#111-hwinfo)                                                        |           ✅           |      —       |          —          | CoolerControl + nvtop + OpenRGB on CachyOS (`Hardware Monitoring` in packages.yaml)                  | —                                                                        |
+| [1.12. DisplayFusion](#112-displayfusion-windows-only--paid)                       |       ✅ (paid)        |      —       |          —          | Handled natively by the window manager (GlazeWM on Windows / Hyprland on CachyOS)                    | —                                                                        |
+| [1.13. Keychron Launcher](#113-keychron-launcher-all-platforms)                    |           ✅           |      ✅      |         ✅          | —                                                                                                    | Browser-based (WebHID), no install needed                                |
+| [1.14. Terminal commands cheatsheet](#114-terminal-commands-cheatsheet-macoslinux) |      via WSL only      |      ✅      |         ✅          | —                                                                                                    | `Ctrl+T` / `Ctrl+R` / `Alt+C` (fzf)                                      |
+| [1.15. Nautilus](#115-nautilus-linux)                                              |           —            |      —       |         ✅          | Files on Windows (§[1.8](#18-files)); Finder on macOS                                                | `Space` quick preview (sushi)                                            |
+
+\* Bitwarden itself is cross-platform, but only the CachyOS entry is installed via this project's package manager
+(`pacman`, `Utilities` category in [packages.yaml](../../src/personal_os_setup/config/packages.yaml)). On
+Windows/macOS, install it manually as a browser extension or desktop app.
 
 ## 1.1. Windows shortcuts
 

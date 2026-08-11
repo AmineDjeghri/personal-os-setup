@@ -1,6 +1,9 @@
 Awesome websites & browser extensions
 ==============
 
+> For desktop app configuration/shortcuts (and a table of what's available per OS with
+> alternatives), see [apps_configuration_and_shorcuts.md](apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
+
 <!-- TOC -->
 * [Awesome websites & browser extensions](#awesome-websites--browser-extensions)
   * [1. Browser Extensions](#1-browser-extensions)
@@ -8,7 +11,7 @@ Awesome websites & browser extensions
     * [1.2. ChatGPT Extensions](#12-chatgpt-extensions)
     * [1.3. Privacy & security Extensions](#13-privacy--security-extensions)
     * [1.4. Gaming, movies & other Extensions](#14-gaming-movies--other-extensions)
-    * [1.5. Browser shortcuts:](#15-browser-shortcuts)
+    * [1.5. Browser shortcuts (chromium):](#15-browser-shortcuts-chromium)
   * [2. Useful websites](#2-useful-websites)
     * [2.1. Mainstream website (DEPRECATED)](#21-mainstream-website-deprecated)
     * [2.2. Development websites](#22-development-websites)
@@ -69,7 +72,7 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 - `Trim: IMDB Ratings on Netflix`: Shows IMDB ratings on Netflix.
 - `Youtube-shorts block`
 
-### 1.5. Browser shortcuts:
+### 1.5. Browser shortcuts (chromium):
 - `Tree Style Tab`: Use `Alt+Q` to show it.
 - `Video streaming`: works on a lot of websites
   - Pause/Play: `Space`
@@ -79,6 +82,7 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
   - Mute: `M`
 - Tabs:
   - New tab: `Ctrl+T`
+  - Reopen closed tab/window: `Ctrl+T`
   - Close tab: `Ctrl+W`
   - Switch to the next tab: `Ctrl+Tab`
   - Switch to the previous tab: `Ctrl+Shift+Tab`

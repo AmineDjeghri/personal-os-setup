@@ -18,12 +18,12 @@ You can follow this repository to get a similar setup.
     * [2.5. Image & Video Editing:](#25-image--video-editing)
     * [2.6. Documents, Storage & Editing:](#26-documents-storage--editing)
     * [2.7. Gaming:](#27-gaming)
-    * [2.8. Security & Privacy](#28-security--privacy)
     * [2.9. Utilities](#29-utilities)
     * [2.10. Development & Programming](#210-development--programming)
   * [3. Coding using Linux (WSL) inside Windows](#3-coding-using-linux-wsl-inside-windows)
     * [3.1. Install WSL:](#31-install-wsl)
     * [3.2. Linux/WSL Setup - terminal, shell, Miniconda, CUDA & More:](#32-linuxwsl-setup---terminal-shell-miniconda-cuda--more)
+      * [CUDA on WSL2](#cuda-on-wsl2)
     * [3.3. WSL2 Utilities, Tips & Tricks :](#33-wsl2-utilities-tips--tricks-)
     * [3.4. backup and restore WSL](#34-backup-and-restore-wsl)
     * [3.5. Uninstall WSL:](#35-uninstall-wsl)
@@ -155,7 +155,9 @@ Automatic installation of these apps is available with the Personal-OS-Setup TUI
 
 All the Apps are available at [packages.yaml](../../src/personal_os_setup/config/packages.yaml). Check the Windows section.
 
-For App configuration, check [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md)
+For App configuration, check [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md) —
+see the [app availability & alternatives table](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses)
+for what's available on Windows vs. macOS/CachyOS and their alternatives.
 
 For browser extensions, check [browser_extensions.md](../apps/awesome_websites_browser_extensions.md)
 

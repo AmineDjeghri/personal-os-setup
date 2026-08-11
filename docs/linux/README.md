@@ -21,6 +21,7 @@ The app displays all available packages from [packages.yaml](../../src/personal_
 
 You can multi-select packages using the interactive interface.
 
+
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
 The app provides buttons to automate the terminal configuration:
 
@@ -83,3 +84,8 @@ newgrp docker                 # activate the change in the current shell
 ```
 
 > **Pro Tip:** `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
+
+### Apps shortcuts
+For app configuration, tips, and shortcuts (PyCharm, Obsidian, Bitwarden, Nautilus, the terminal
+tools cheatsheet, and a table of what's available on which OS), check
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md).
