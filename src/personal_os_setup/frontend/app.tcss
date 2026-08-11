@@ -101,6 +101,12 @@ Screen {
     margin-right: 1;
 }
 
+/* Widen the default toast (60 cols)
+Toast {
+    width: auto;
+    max-width: 95;
+}
+
 #status-bar {
     width: 1fr;
 }
