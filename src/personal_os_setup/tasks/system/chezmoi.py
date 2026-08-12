@@ -19,6 +19,8 @@ def _chezmoi_path() -> str | None:
 def chezmoi_managed_paths() -> list[Path]:
     """List the destination paths chezmoi currently manages from this repo's source dir.
 
+    Includes both regular files and scripts (e.g. `run_onchange_*`).
+
     Returns an empty list if chezmoi isn't installed or the command fails, so callers
     (e.g. populating a UI selection list) can degrade gracefully instead of raising.
     """
@@ -32,7 +34,7 @@ def chezmoi_managed_paths() -> list[Path]:
             "--source",
             str(chezmoi_source_dir()),
             "managed",
-            "--include=files",
+            "--include=files,scripts",
             "--path-style=absolute",
         ],
         check=False,

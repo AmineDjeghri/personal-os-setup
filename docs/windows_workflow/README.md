@@ -15,11 +15,6 @@ You can follow this repository to get a similar setup.
       * [🎧Audio settings](#audio-settings)
       * [🖥️ Monitor and Display Settings](#-monitor-and-display-settings)
   * [2. Software](#2-software)
-    * [2.5. Image & Video Editing:](#25-image--video-editing)
-    * [2.6. Documents, Storage & Editing:](#26-documents-storage--editing)
-    * [2.7. Gaming:](#27-gaming)
-    * [2.9. Utilities](#29-utilities)
-    * [2.10. Development & Programming](#210-development--programming)
   * [3. Coding using Linux (WSL) inside Windows](#3-coding-using-linux-wsl-inside-windows)
     * [3.1. Install WSL:](#31-install-wsl)
     * [3.2. Linux/WSL Setup - terminal, shell, Miniconda, CUDA & More:](#32-linuxwsl-setup---terminal-shell-miniconda-cuda--more)
@@ -153,8 +148,6 @@ Other apps, websites and tips: (DEPRECATED)
 
 Automatic installation of these apps is available with the Personal-OS-Setup TUI [app](../../README.md#windows-11)
 
-All the Apps are available at [packages.yaml](../../src/personal_os_setup/config/packages.yaml). Check the Windows section.
-
 For App configuration, check [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md) —
 see the [app availability & alternatives table](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses)
 for what's available on Windows vs. macOS/CachyOS and their alternatives.
@@ -163,7 +156,6 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
 
 - Remember to sync your settings bookmarks...ect.
 - Use two browsers / or two profiles: one for work and the other for personal use.
-
 - **Agenda & Mail**: Google Calendar, Gmail
     - create an app shortcut with brave & add them to the taskbar it will act like an app in windows, and activate the
       notifications.
@@ -173,73 +165,7 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
     - Make Brave the default apps in windows for mailto and agenda (Windows search bar -> type in `Default apps` then
       add brave to 'mail' & 'agenda.' Go to brave://settings/handlers and add gmail and agenda. Open now the gmail
       website and accept brave as the default app.
-
-### 2.5. Image & Video Editing:
-
-- **Software recording**: OBS Studio
-- **Video editing**: Creative Cloud (Adobe première pro), CapCut, Microsoft Clipchamp, Canva
-- **Image editing**: Adobe Photoshop or free alternative [Photopea](https://www.photopea.com/)
-
-### 2.6. Documents, Storage & Editing:
-
-- **Cloud Storage**: Google Drive, Microsoft OneDrive, iCloud, Mega Drive (free 50GB)
-- **Files explorer**: Files (Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md#41-windows-files))
-- **Files editing**: Microsoft 365, Office 2021
-- **PDF Editing**: Adobe Acrobat Reader DC, Sejda (3 free tasks per hour)
-
-### 2.7. Gaming:
-
-- **Games launcher**: Valve Steam, Epic Games Launcher, Nvidia GeForce Experience, Ubisoft Connect, SideQuestVR, Oculus,
-  Xbox Game Pass, EA Desktop
-- **Game streaming**: Parsec, Nvidia GeForce Now
-- **Game recording**: OBS Studio or native Windows screen recorder `⊞ + G` or `⊞ + alt + R`
-- **Game utilities**: DS4Windows, Nvidia GeForce Experience (For Nvidia GPU)
-
-
-### 2.9. Utilities
-
-- **Audio** : EarTrumpet
-- **Screenshot**: ShareX : Screen capturing with regions and GIF recording, use `ctrl + print` (you can also import your
-  settings, follow this [link](https://techunwrapped.com/can-i-take-my-sharex-capture-settings-to-another-pc/))
-- **Password manager**: iCloud Passwords (available on Windows and has even a 2FA that automatically provide you with codes)
-  if you have an iPhone or Bitwarden
-- **Desktop enhancements** :
-    - Microsoft Bing Wallpaper. Change your wallpaper every day with Bing's wallpaper.
-    - GlazeWM (tiling window manager). Check my personal
-      settings [here](../apps/apps_configuration_and_shorcuts.md#21-windows-glazewm-and-zebar)
-    - Wintoys :
-        - You can use this app to access easily the most used settings in Windows.
-        - Set up, debloat, optimize, repair, and tweak your operating system in a simple, time-saving, yet safe
-          approach.
-        - For example, you can use this app to stop and uninstall Windows apps like 'Dev
-          Home.'that can't be uninstalled using Windows or using Revo Uninstaller
-    - Raycast
-    - DisplayFusion. Check my personal
-      settings [here](../apps/apps_configuration_and_shorcuts.md#83-multi-monitor-displayfusion-windows-only--paid)
-    - Revo Uninstaller
-    - HWiNFO (Link to my settings [here](../../src/personal_os_setup/config/windows/HWINFO_settings.reg)
-    - CCleaner
-
-### 2.10. Development & Programming
-
 - WSL (Windows Subsystem for Linux) with Ubuntu 22.04 LTS. Check the WSL section below.
-- Microsoft Windows Terminal: Always use Windows terminal. It contains all the terminals in one place (ubuntu,
-  PowerShell, wsl, cmd...ect). You can right-click on any folder to open it.
-    - My personal shortcuts & tips & settings for this
-      app [here](../apps/apps_configuration_and_shorcuts.md#31-windows-terminal)
-- PowerShell
-  7 :[link](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?WT.mc_id=THOMASMAURER-blog-thmaure&view=powershell-7.3&viewFallbackFrom=powershell-7).
-  Change the default terminal in Windows Terminal, and activate the "run always as administrator in the default profile"
-- JetBrains PyCharm (Community and Professional), IntelliJ IDEA, Webstorm, WriterSide. Check my personal
-  settings [here](../apps/apps_configuration_and_shorcuts.md#51-pycharm-all-platforms)
-- Docker Desktop: Requires WSL (see the WSL section). You can start, stop, delete containers easily, access & edit files
-  right inside the container without the need of a terminal.
-- ZED. Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md#52-zed-all-platforms)
-- Visual Studio Code
-- Obsidian. Link to my settings [here](../apps/apps_configuration_and_shorcuts.md#61-obsidian-all-platforms)
-- Notion
-- Game development: Unity, Unreal Engine, Blender
-- SFTP: Filezilla: for SFTP (work with a private key: add it in edit/connection/sftp or use pageant)
 
 For dev-related websites (Gitmoji, Explainpaper, Detexify, Mathpix, Overleaf), check
 [awesome_websites_browser_extensions.md](../apps/awesome_websites_browser_extensions.md#22-development-websites)
