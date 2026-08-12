@@ -60,7 +60,7 @@ session_locked = "noctalia msg media pause"
     [idle.behavior.screen-off]
     action = "screen_off"
     enabled = true
-    timeout = 120
+    timeout = 600
 
     [idle.behavior.lock]
     action = "lock"
@@ -70,7 +70,7 @@ session_locked = "noctalia msg media pause"
     [idle.behavior.lock-and-suspend]
     action = "lock_and_suspend"
     enabled = true
-    timeout = 600
+    timeout = 1200
 
 
 [location]

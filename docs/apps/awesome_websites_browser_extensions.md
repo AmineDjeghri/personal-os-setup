@@ -102,3 +102,8 @@ Contains a list of awesome websites that are not that popular but useful for eve
 * [Archives.is](https://archive.is/) - Read & Save a webpage for future reference (Used to bypass medium.com paywall for example)
 * [draw.io](https://app.diagrams.net/) - Create diagrams and flowcharts in the browser. Contains many icons & for free.
 * https://simpletex.net/
+* [Gitmoji](https://gitmoji.dev/) - Emoji guide for git commit messages.
+* [Explainpaper](https://www.explainpaper.com/) - Upload a research paper and highlight confusing text to get an AI explanation.
+* [Detexify](https://detexify.kirelabs.org/classify.html) - Draw a symbol to find its LaTeX command (handwriting recognition).
+* [Mathpix](https://mathpix.com/) - Turn handwritten/typed math equations and screenshots into LaTeX code.
+* [Overleaf](https://www.overleaf.com/) - Online collaborative LaTeX editor.

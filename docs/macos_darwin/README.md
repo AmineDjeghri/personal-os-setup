@@ -58,23 +58,6 @@ Bitwarden, Zed, the terminal tools cheatsheet), plus a table of what's available
 Windows/CachyOS and their alternatives, check
 [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
 
-Here is some config files for some apps:
-### 3.1. Raycast
-
-- Use Raycast as a “PowerShell equivalent” launcher.
-- Replace Spotlight:
-  - Remove Spotlight shortcut in macOS keyboard settings.
-  - Configure the same shortcut for Raycast.
-- Finder is still useful for macOS-specific settings and edge cases.
-
-### 3.2. AeroSpace + JankyBorders
-
-- AeroSpace: tiling window manager.
-  - Tutorial: https://www.youtube.com/watch?v=-FoWClVHG5g
-  - Docs: https://nikitabobko.github.io/AeroSpace/
-- JankyBorders: adds window borders (requires AeroSpace).
-- My config : [.aerospace.toml](../../src/personal_os_setup/config/darwin/.aerospace.toml)
-
 
 ## 4. UI/UX tweaks
 

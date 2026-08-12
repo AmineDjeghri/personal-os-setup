@@ -183,7 +183,7 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
 ### 2.6. Documents, Storage & Editing:
 
 - **Cloud Storage**: Google Drive, Microsoft OneDrive, iCloud, Mega Drive (free 50GB)
-- **Files explorer**: Files (Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md##18-files))
+- **Files explorer**: Files (Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md#41-windows-files))
 - **Files editing**: Microsoft 365, Office 2021
 - **PDF Editing**: Adobe Acrobat Reader DC, Sejda (3 free tasks per hour)
 
@@ -206,7 +206,7 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
 - **Desktop enhancements** :
     - Microsoft Bing Wallpaper. Change your wallpaper every day with Bing's wallpaper.
     - GlazeWM (tiling window manager). Check my personal
-      settings [here](../apps/apps_configuration_and_shorcuts.md#12-glazewm-and-zebar-windows-only)
+      settings [here](../apps/apps_configuration_and_shorcuts.md#21-windows-glazewm-and-zebar)
     - Wintoys :
         - You can use this app to access easily the most used settings in Windows.
         - Set up, debloat, optimize, repair, and tweak your operating system in a simple, time-saving, yet safe
@@ -215,7 +215,7 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
           Home.'that can't be uninstalled using Windows or using Revo Uninstaller
     - Raycast
     - DisplayFusion. Check my personal
-      settings [here](../apps/apps_configuration_and_shorcuts.md#111-displayfusion-windows-only--paid)
+      settings [here](../apps/apps_configuration_and_shorcuts.md#83-multi-monitor-displayfusion-windows-only--paid)
     - Revo Uninstaller
     - HWiNFO (Link to my settings [here](../../src/personal_os_setup/config/windows/HWINFO_settings.reg)
     - CCleaner
@@ -226,25 +226,23 @@ For browser extensions, check [browser_extensions.md](../apps/awesome_websites_b
 - Microsoft Windows Terminal: Always use Windows terminal. It contains all the terminals in one place (ubuntu,
   PowerShell, wsl, cmd...ect). You can right-click on any folder to open it.
     - My personal shortcuts & tips & settings for this
-      app [here](../apps/apps_configuration_and_shorcuts.md##14-windows-terminal-windows-only)
+      app [here](../apps/apps_configuration_and_shorcuts.md#31-windows-terminal)
 - PowerShell
   7 :[link](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?WT.mc_id=THOMASMAURER-blog-thmaure&view=powershell-7.3&viewFallbackFrom=powershell-7).
   Change the default terminal in Windows Terminal, and activate the "run always as administrator in the default profile"
 - JetBrains PyCharm (Community and Professional), IntelliJ IDEA, Webstorm, WriterSide. Check my personal
-  settings [here](../apps/apps_configuration_and_shorcuts.md##19-pycharm-all-platforms)
+  settings [here](../apps/apps_configuration_and_shorcuts.md#51-pycharm-all-platforms)
 - Docker Desktop: Requires WSL (see the WSL section). You can start, stop, delete containers easily, access & edit files
   right inside the container without the need of a terminal.
-- Sublime Text 4. Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md##15-sublime-text-4-all-platforms)
+- ZED. Check my personal settings [here](../apps/apps_configuration_and_shorcuts.md#52-zed-all-platforms)
 - Visual Studio Code
-- Obsidian. Link to my settings [here](../apps/apps_configuration_and_shorcuts.md##16-obsidian-all-platforms)
+- Obsidian. Link to my settings [here](../apps/apps_configuration_and_shorcuts.md#61-obsidian-all-platforms)
 - Notion
 - Game development: Unity, Unreal Engine, Blender
 - SFTP: Filezilla: for SFTP (work with a private key: add it in edit/connection/sftp or use pageant)
-- Git emojis: https://gitmoji.dev/
-- explain paper: https://www.explainpaper.com/
-- Latex Handwriting recognition: https://detexify.kirelabs.org/classify.html
-- Turn math equations and snipping to latex code: https://mathpix.com/
-- Overleaf: https://www.overleaf.com/
+
+For dev-related websites (Gitmoji, Explainpaper, Detexify, Mathpix, Overleaf), check
+[awesome_websites_browser_extensions.md](../apps/awesome_websites_browser_extensions.md#22-development-websites)
 
 
 ## 3. Coding using Linux (WSL) inside Windows
