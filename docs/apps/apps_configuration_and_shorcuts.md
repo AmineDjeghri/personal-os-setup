@@ -197,6 +197,11 @@ config documented yet.
 - **Typing a path**: Vicinae ships a built-in "Search Files" command (indexed
   search with a content preview, reachable from the root search or its own dedicated
   command).
+- **Extensions**:  Currently, installed:
+  - `port-killer`, `process-manager` — kill/manage running processes and listening ports
+  - `kill-process`, `port-manager` — Raycast equivalents of the above (process/port management)
+  - `systemd` — start/stop/restart/enable/disable a unit straight from the launcher
+  - and a lot of other extensions in [`run_onchange_after_install-vicinae-extensions.sh.tmpl`](../../src/personal_os_setup/config/chezmoi/dot_config/vicinae/run_onchange_after_install-vicinae-extensions.sh.tmpl)
 
 
 ## 3. Terminal
