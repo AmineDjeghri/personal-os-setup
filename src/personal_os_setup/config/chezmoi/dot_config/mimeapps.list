@@ -22,6 +22,9 @@ text/x-dockerfile=dev.zed.Zed.desktop;
 text/plain=dev.zed.Zed.desktop;
 
 [Default Applications]
+text/html=helium.desktop;
+x-scheme-handler/http=helium.desktop;
+x-scheme-handler/https=helium.desktop;
 inode/directory=org.kde.dolphin.desktop;
 application/toml=dev.zed.Zed.desktop;
 application/x-zerosize=dev.zed.Zed.desktop;

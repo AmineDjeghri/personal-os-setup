@@ -3,8 +3,8 @@
 set -eu
 
 # Re-run whenever these hyprland config files change
-# hyprbars.lua hash: {{ include "dot_config/hypr/config/hyprbars.lua" | sha256sum }}
-# binds.lua hash: {{ include "dot_config/hypr/config/binds.lua" | sha256sum }}
+# hyprbars.lua hash: {{ include "dot_config/hypr/hyprbars.lua" | sha256sum }}
+# binds.lua hash: {{ include "dot_config/hypr/binds.lua" | sha256sum }}
 
 if ! command -v hyprpm >/dev/null 2>&1; then
   echo "hyprpm not found, skipping Hyprland plugin install"

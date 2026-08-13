@@ -150,9 +150,9 @@ packages:
         - telegram-desktop
         - vesktop # Discord enhanced
       Media:
-        - vlc
         - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
         - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
+        - yt-dlp
       Text Editors:
         - obsidian
       AI:
@@ -179,13 +179,6 @@ packages:
         - nautilus-python # extension framework required by most python-based Nautilus plugins
       Hyprland desktop:
         - noctalia
-        - wdisplays # GUI monitor configuration
-        - wlsunset # night light / blue light filter
-        - brightnessctl
-        - ddcutil # external monitor brightness over I2C
-        - hyprpicker # color picker
-        - qt5-wayland
-        - qt6-wayland
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
       Screenshots:
         - grim
@@ -194,20 +187,25 @@ packages:
         - wl-clipboard
       Screen Recording:
         - gpu-screen-recorder-ui # fullscreen overlay UI in the style of ShadowPlay; pulls in gpu-screen-recorder + gpu-screen-recorder-notification as hard deps
-      Hardware Monitoring:
+      Hardware control (require reboot):
+        - ddcutil # external monitor brightness over I2C
+        - wlsunset # night light / blue light filter
+        - brightnessctl
+        - nwg-displays # GUI monitor configuration
         - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
         - openrgb # RGB lighting control
         - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
     paru:
-      Utilities:
+      Hyprland desktop:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
+      Utilities:
         - anydesk-bin
         - nordvpn-bin
       Dev_tools:
         - pycharm # Unified edition
       Meetings:
         - zoom
-      Hardware Monitoring:
+      Hardware control (require reboot):
         - nct6687d-dkms-git
         - rivalcfg
 

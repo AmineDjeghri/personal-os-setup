@@ -45,6 +45,9 @@ minimum_brightness = 0.5
 
     [[control_center.shortcuts]]
     type = "mic_mute"
+
+    [[control_center.shortcuts]]
+    type = "nightlight"
 [dock]
 auto_hide = true
 enabled = true
@@ -86,7 +89,7 @@ enabled = true
 enabled = true
 force = true
 temperature_day = 7000
-temperature_night = 6900
+temperature_night = 7000
 
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
@@ -159,7 +162,7 @@ gpu_poll_seconds = 2
 [theme]
 mode = "dark"
 source = "wallpaper"
-wallpaper_scheme = "m3-tonal-spot"
+wallpaper_scheme = "m3-content"
 
     [theme.templates]
     builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "qt" ]
