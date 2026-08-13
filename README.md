@@ -189,4 +189,4 @@ You can check the documentation (website).
 Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
 **Star History Chart**
-[![Star History Chart](https://api.star-history.com/svg?repos=aminedjeghri/awesomewindows11&type=Date)](https://star-history.com/#aminedjeghri/awesomewindows11&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=aminedjeghri/awesomewindows11&type=Date)](https://star-history.dera.page/#aminedjeghri/awesomewindows11&Date)
