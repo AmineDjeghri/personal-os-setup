@@ -75,6 +75,8 @@ Install the Personal-OS-Setup TUI [app](../../README.md#windows-11)
    - Manage Brightness: High brightness causes eye strain and fatigue over long sessions, making it harder to spot enemies. Instead of maxing out brightness, use the Shadow Boost feature to brighten only dark areas.
      - Use Twinkle Tray to control brightness via the taskbar or keyboard shortcuts during gameplay.
    - HDR settings:
+     - **Quick visual check (two monitors, one HDR + one non-HDR):** Play the same HDR YouTube video (e.g. https://youtu.be/MV5hhbqDNLs?t=145) at 2Min25 in a browser window on each display — one on
+the HDR-enabled monitor, one on a monitor still in SDR (or disable HDR in that monitor). Then drag the SDR video window over onto the HDR display, right next to the other one, and compare them side by side.
      - If your monitor supports HDR, make sure to activate it.
      - Keep the HDR brightness to the maximum value (or to 80% minimum). If you want to reduce the brightness, do it in the games or applications.
      - You can change the brightness of SDR content when HDR is enabled in the Windows HDR settings of your monitor, if it's too bright for you.
