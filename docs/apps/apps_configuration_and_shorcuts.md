@@ -42,6 +42,11 @@ macOS, and CachyOS setups.
   * [10. Screenshots & screen recording](#10-screenshots--screen-recording)
     * [10.1. Screenshots](#101-screenshots)
     * [10.2. Screen recording](#102-screen-recording)
+  * [11. Media players](#11-media-players)
+    * [11.1. mpv (CachyOS)](#111-mpv-cachyos)
+      * [Shortcuts](#shortcuts)
+      * [CLI usage / YouTube playback](#cli-usage--youtube-playback)
+      * [Plugins](#plugins)
 <!-- TOC -->
 
 ## App availability & alternatives across OSes
@@ -75,7 +80,7 @@ table.
 | Browsers                        | Helium, Brave                                                                                               | Helium, Brave, Safari                                  | Helium, Brave                                                                     | → [packages.yaml](../../src/personal_os_setup/config/packages.yaml)                                                                                                                                                                                                                                                              |
 | Messaging                       | Discord, WhatsApp, Viber, Telegram                                                                          | Discord, WhatsApp, Viber, Telegram                     | Telegram, Vesktop (Discord)                                                       | → packages.yaml                                                                                                                                                                                                                                                                                                                  |
 | Meetings                        | Zoom, MS Teams                                                                                              | Zoom, MS Teams                                         | Zoom (paru)                                                                       | → packages.yaml                                                                                                                                                                                                                                                                                                                  |
-| Media players                   | Stremio, VLC, Feishin, Spotify, Apple Music                                                                 | Stremio, VLC                                           | VLC, mpv, gwenview                                                                | → packages.yaml                                                                                                                                                                                                                                                                                                                  |
+| Media players                   | Stremio, VLC, Feishin, Spotify, Apple Music                                                                 | Stremio, VLC                                           | VLC, mpv, gwenview                                                                | → packages.yaml · mpv: [§11.1](#111-mpv-cachyos)                                                                                                                                                                                                                                                                                 |
 | Gaming                          | Steam, Epic, GeForce Experience, Ubisoft Connect, Oculus, SideQuest, Xbox Game Pass, EA Desktop, DS4Windows | —                                                      | Steam                                                                             | → packages.yaml · Xbox Game Pass/EA Desktop/DS4Windows: manual install, not in packages.yaml                                                                                                                                                                                                                                     |
 | Cloud drives                    | Google Drive, OneDrive, iCloud, Mega Drive (free 50GB)                                                      | Google Drive                                           | —                                                                                 | → packages.yaml · Mega Drive: manual install, not in packages.yaml                                                                                                                                                                                                                                                               |
 | Video/photo editing             | OBS, Shotcut, Canva                                                                                         | CapCut, Canva                                          | —                                                                                 | → packages.yaml · OBS also in [§10.2](#102-screen-recording)                                                                                                                                                                                                                                                                     |
@@ -592,3 +597,72 @@ through the window manager — no equivalent paid tool is used there.
 - **macOS**: QuickRecorder (https://github.com/lihaoyun6/QuickRecorder), or OBS Studio.
 - **CachyOS — gpu-screen-recorder-ui**: fullscreen overlay UI in the style of ShadowPlay; pulls
   in `gpu-screen-recorder` + `gpu-screen-recorder-notification` as hard dependencies.
+
+## 11. Media players
+
+### 11.1. mpv (CachyOS)
+
+mpv is the default video/audio player on CachyOS (see
+[mimeapps.list](../../src/personal_os_setup/config/chezmoi/dot_config/mimeapps.list)), running
+under Hyprland with Wayland color management for HDR passthrough.
+
+#### Shortcuts
+Link: https://mpv.io/manual/master/
+Defaults (no custom `input.conf` yet — this repo's `~/.config/mpv` is currently empty, see
+[§Plugins](#plugins)):
+
+| Action                                           | Key                                                                           |
+|--------------------------------------------------|-------------------------------------------------------------------------------|
+| Play / pause                                     | `Space`                                                                       |
+| Seek ±5s / ±1s                                   | `←` `→` / `Shift+←` `Shift+→`                                                 |
+| Seek ±1min                                       | `↑` `↓`                                                                       |
+| Frame step (paused)                              | `.` / `,`                                                                     |
+| Previous/next chapter                            | `Page Up` / `Page Down`                                                       |
+| Seek ±10min                                      | `Shift+Page Up` / `Shift+Page Down`                                           |
+| Previous/next playlist entry                     | `<` / `>`                                                                     |
+| Volume ±                                         | `9` / `0`                                                                     |
+| Mute                                             | `m`                                                                           |
+| Speed ±10% / reset                               | `[` `]` / `Backspace`                                                         |
+| Fullscreen toggle                                | `f`                                                                           |
+| Show progress/time OSD                           | `o`                                                                           |
+| Stats overlay (cycles pages)                     | `i` (page 1) / `I` toggles full stats incl. colorspace/HDR fields (see below) |
+| Cycle subtitles / audio tracks                   | `j` / `#`                                                                     |
+| Subtitle delay ±                                 | `z` / `x`                                                                     |
+| Screenshot                                       | `s` (with subtitles) / `S` (video only, no subtitles)                         |
+| Screenshot as window shows it (with OSD, scaled) | `Ctrl+s`                                                                      |
+| Quit                                             | `q`                                                                           |
+| Quit and remember position                       | `Shift+q`                                                                     |
+
+#### CLI usage / YouTube playback
+
+mpv has built-in `yt-dlp` support (via its bundled `ytdl_hook` script), so YouTube/other
+supported sites play directly without downloading anything first:
+
+```bash
+mpv "https://www.youtube.com/watch?v=njX2bu-_Vw4"
+```
+
+| Goal                                                                                                                  | Command                                                     |
+|-----------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| Force best video+audio quality                                                                                        | `mpv --ytdl-format="bestvideo+bestaudio/best" URL`          |
+| Cap resolution (save bandwidth)                                                                                       | `mpv --ytdl-format="bestvideo[height<=1080]+bestaudio" URL` |
+| Audio-only (music, podcasts)                                                                                          | `mpv --no-video URL` (or `mpv --vid=no`)                    |
+| Start at a timestamp                                                                                                  | `mpv --start=1:23 URL`                                      |
+| Fullscreen on launch                                                                                                  | `mpv --fs URL`                                              |
+| Loop the video                                                                                                        | `mpv --loop URL`                                            |
+| Play a whole playlist                                                                                                 | `mpv --ytdl-raw-options=yes-playlist= "PLAYLIST_URL"`       |
+| Age-restricted/private video (needs your browser's cookies)                                                           | `mpv --ytdl-raw-options=cookies-from-browser=chromium URL`  |
+| Save the stream locally while watching                                                                                | `mpv --stream-record=out.mkv URL`                           |
+| Fetch a specific format id (see `yt-dlp -F URL` first)                                                                | `mpv --ytdl-format=137+140 URL`                             |
+| Playback speed                                                                                                        | `mpv --speed=1.5 URL`                                       |
+| Bigger cache (helps buffering on slow connections)                                                                    | `mpv --cache=yes --demuxer-max-bytes=500M URL`              |
+| Force HDR target negotiation (used for the HDR verification in [CachyOS.md](../linux/CachyOS.md#hdr--10-bit-desktop)) | `mpv --target-colorspace-hint --fs URL`                     |
+
+Flags combine freely, e.g. `mpv --fs --start=2:00 --ytdl-format="bestvideo[height<=1080]+bestaudio" URL`.
+
+`umpv` (AUR package `umpv`, not yet installed — see [§Plugins](#plugins)) reuses one running mpv
+instance instead of opening a new window per video: `umpv URL1 URL2 URL3`.
+
+#### Plugins
+
+- synced via chezmoi the same way as the rest of this repo's dotfiles (`src/personal_os_setup/config/chezmoi/dot_config/mpv/`) — TBD.

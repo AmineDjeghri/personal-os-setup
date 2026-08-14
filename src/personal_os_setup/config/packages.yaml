@@ -150,9 +150,9 @@ packages:
         - telegram-desktop
         - vesktop # Discord enhanced
       Media:
-        - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
         - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
         - yt-dlp
+        - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
       Text Editors:
         - obsidian
       AI:
@@ -192,6 +192,7 @@ packages:
         - wlsunset # night light / blue light filter
         - brightnessctl
         - nwg-displays # GUI monitor configuration
+        - wlopm # Wayland output power management (DPMS via wlr-output-power-management-v1); fixes NVIDIA treating native DPMS-off as a monitor disconnect
         - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
         - openrgb # RGB lighting control
         - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
@@ -203,6 +204,10 @@ packages:
         - nordvpn-bin
       Dev_tools:
         - pycharm # Unified edition
+      Media:
+        - mpv-uosc-git
+        - mpv-thumbfast-git
+        - mpv-sponsorblock-git
       Meetings:
         - zoom
       Hardware control (require reboot):

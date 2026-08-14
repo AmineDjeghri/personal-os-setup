@@ -61,9 +61,11 @@ session_locked = "noctalia msg media pause"
 
 [idle]
     [idle.behavior.screen-off]
-    action = "screen_off"
+    action = "command"
     enabled = true
     timeout = 600
+    command = "wlopm --off '*'"
+    resume_command = "wlopm --on '*'"
 
     [idle.behavior.lock]
     action = "lock"
@@ -74,6 +76,8 @@ session_locked = "noctalia msg media pause"
     action = "lock_and_suspend"
     enabled = true
     timeout = 1200
+    # Testing
+    resume_command = "$HOME/.config/hypr/hdr-resume-fix.sh"
 
 
 [location]
@@ -107,6 +111,9 @@ settings_show_advanced = true
     open_near_click_control_center = true
     session_placement = "floating"
     session_position = "center"
+
+    [shell.greeter_sync]
+    auto_sync = true
 
     [shell.screenshot]
     copy_to_clipboard = false
