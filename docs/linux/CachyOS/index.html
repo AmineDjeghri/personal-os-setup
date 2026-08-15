@@ -1125,6 +1125,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#secret-storage-gnome-keyring-not-kwallet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secret storage (gnome-keyring, not KWallet)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2972,6 +2983,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#secret-storage-gnome-keyring-not-kwallet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secret storage (gnome-keyring, not KWallet)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3354,6 +3376,16 @@ installed first.</p>
 </span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>hyprpm<span class="w"> </span>list
 </span></code></pre></div>
 <p>Test <code>ALT+TAB</code> for the switcher, and dragging / closing / maximizing windows for hyprbars.</p>
+<h3 id="secret-storage-gnome-keyring-not-kwallet">Secret storage (gnome-keyring, not KWallet)<a class="headerlink" href="#secret-storage-gnome-keyring-not-kwallet" title="Permanent link">&para;</a></h3>
+<p>Hyprland has no built-in Secret Service — anything that stores secrets (Nautilus/GVfs unlocking a
+LUKS drive, browsers saving passwords, etc.) talks to <code>org.freedesktop.secrets</code> over D-Bus, and
+nothing provides that name unless something starts a daemon for it. KDE's <code>kwallet</code> isn't advised to be used without plasma.</p>
+<p><strong><code>gnome-keyring</code> is used instead</strong> — password-based, no GPG key needed, and the standard choice on non-KDE Wayland compositors:
+- <strong>Not auto-unlocked with the login password, by choice.</strong> <code>pam_gnome_keyring.so</code> can do this, but it doesn't look at "whichever keyring is currently set as default"
+- Apps using <code>libsecret</code> (Nautilus/GVfs, GTK/GNOME apps, Chromium-based browsers) otherwise just work — the manual prompt above is the only friction point.
+- To view/delete stored secrets: <code>sudo pacman -S seahorse</code> ("Passwords and Keys" GUI), or <code>secret-tool</code> for CLI lookups. <!-- pragma: allowlist secret -->
+- Bitwarden (website/app logins, secure notes, cards) is unrelated and doesn't cover this — it doesn't integrate with the system Secret Service, so it can't store or auto-unlock OS-level secrets like this LUKS passphrase, SSH SFTP, or NetworkManager WiFi keys.</p>
+<p><strong>Troubleshooting: <code>Error storing passphrase in keyring (the sessions wrapping the secret does not exist)</code></strong> when unlocking a drive in Nautilus, and/or drives disappearing from the sidebar — Kill and restart Nautilus after installing <code>gnome-keyring</code></p>
 <hr />
 <h2 id="shell">Shell<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h2>
 <p>CachyOS defaults to <strong>fish</strong> as the login shell, with <code>cachyos-fish-config</code> and

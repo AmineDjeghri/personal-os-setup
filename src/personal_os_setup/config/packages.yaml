@@ -167,6 +167,8 @@ packages:
         - ventoy-bin # bootable-USB creator, drag-and-drop multiple ISOs without reflashing
       Files explorer:
         - nautilus # GNOME file manager, replaces Dolphin -- no KDE session deps (kwallet/kded/portals) to fight with under Hyprland
+        - gnome-keyring # stores passwords for Nautilus network shares (SMB/NFS/FTP/etc.) and other apps
+        - seahorse # GNOME keyring manager
         - ghostty-nautilus # Adds Ghostty terminal for Nautilus context menu
         - gvfs # virtual filesystem backend Nautilus uses for all mounting (local disks, udisks2, trash, etc.)
         - gvfs-smb # Windows/SMB network share support (not pulled in by gvfs itself)
