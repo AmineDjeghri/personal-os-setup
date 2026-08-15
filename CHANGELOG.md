@@ -2,6 +2,21 @@
 
 <!-- version list -->
 
+## v2.3.0 (2026-08-15)
+
+### Documentation
+
+- Fix broken star history chart in README (#92)
+  ([#92](https://github.com/AmineDjeghri/personal-os-setup/pull/92),
+  [`9d93402`](https://github.com/AmineDjeghri/personal-os-setup/commit/9d93402f481d3d4cd6723887171b0ec3b070f8de))
+
+### Features
+
+- Update UX/UI & enhance CachyOS config (#93)
+  ([#93](https://github.com/AmineDjeghri/personal-os-setup/pull/93),
+  [`6b4a2cf`](https://github.com/AmineDjeghri/personal-os-setup/commit/6b4a2cf8a805484ce58efb77701fe530aa2a8356))
+
+
 ## v2.2.0 (2026-08-10)
 
 ### Features
