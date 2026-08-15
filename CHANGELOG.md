@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.4.0 (2026-08-15)
+
+### Features
+
+- Keyring cachyos (#94) ([#94](https://github.com/AmineDjeghri/personal-os-setup/pull/94),
+  [`4af28a0`](https://github.com/AmineDjeghri/personal-os-setup/commit/4af28a01a9fb2890df483dc0c350b487b6051c0b))
+
+
 ## v2.3.0 (2026-08-15)
 
 ### Documentation
