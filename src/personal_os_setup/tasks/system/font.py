@@ -12,6 +12,7 @@ from pathlib import Path
 from personal_os_setup.detect_os import _is_wsl
 
 from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.managers.arch_pacman import ArchPacmanManager
 from personal_os_setup.tasks.task import TaskResult
 
 
@@ -60,6 +61,18 @@ def install_jetbrainsmono_nerd_font() -> TaskResult:
                 ok=False,
                 summary="You are running WSL, JetBrainsMono Nerd Font should be installed on Windows.",
             )
+        if shutil.which("pacman") is not None:
+            _PACMAN_FONT_PACKAGE = "ttf-jetbrains-mono-nerd"
+            pacman = ArchPacmanManager()
+            if pacman.is_installed(_PACMAN_FONT_PACKAGE):
+                return TaskResult(
+                    ok=True,
+                    summary="JetBrainsMono Nerd Font already installed",
+                    details=f"{_PACMAN_FONT_PACKAGE} (pacman)",
+                )
+            res = pacman.install(_PACMAN_FONT_PACKAGE)
+            return TaskResult(ok=res.ok, summary=res.summary, details=res.details)
+
         dest_dir = Path.home() / ".local" / "share" / "fonts" / "JetBrainsMonoNerdFont"
         dest_dir.mkdir(parents=True, exist_ok=True)
 

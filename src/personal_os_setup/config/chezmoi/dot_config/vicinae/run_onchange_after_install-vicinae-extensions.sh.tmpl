@@ -1,0 +1,97 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# Extensions are plain directories with a package.json under this data dir.
+extensions_dir="$HOME/.local/share/vicinae/extensions"
+scratch_dir="$(mktemp -d)"
+trap 'rm -rf "$scratch_dir"' EXIT
+
+# vicinaehq/extensions is a monorepo (one subdir per extension)
+vicinae_repo="https://github.com/vicinaehq/extensions"
+vicinae_clone="$scratch_dir/vicinae-extensions"
+
+install_vicinae_extension() {
+  name="$1"
+  target="$extensions_dir/$name"
+
+  if [ -d "$target" ]; then
+    return 0
+  fi
+
+  if [ ! -d "$vicinae_clone" ]; then
+    git clone --quiet --filter=blob:none --sparse --depth 1 "$vicinae_repo" "$vicinae_clone"
+  fi
+  git -C "$vicinae_clone" sparse-checkout add "extensions/$name"
+
+  # @vicinae/api's build CLI writes its output straight to ~/.local/share/vicinae/extensions/<name>
+  echo "Building vicinae extension: $name"
+  if ! (cd "$vicinae_clone/extensions/$name" && npm install --silent && npm run build --silent); then
+    echo "WARNING: build failed for extension '$name', removing" >&2
+    rm -rf "$target"
+  fi
+}
+
+
+# Raycast Store extensions:
+# install the same way vicinae's own "Install" button does: fetch metadata from
+# Raycast's backend, download the prebuilt zip it points to, and extract it under the
+# store.raycast.<slug> id
+install_raycast_extension() {
+  author="$1"
+  slug="$2"
+  target="$extensions_dir/store.raycast.$slug"
+
+  if [ -d "$target" ]; then
+    return 0
+  fi
+  if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1 || ! command -v unzip >/dev/null 2>&1; then
+    echo "WARNING: curl/jq/unzip required to install raycast extension '$slug', skipping" >&2
+    return 0
+  fi
+
+  echo "Installing raycast extension: $slug"
+  metadata="$(curl --fail --silent "https://backend.raycast.com/api/v1/extensions/$author/$slug")" || {
+    echo "WARNING: failed to fetch metadata for raycast extension '$slug', skipping" >&2
+    return 0
+  }
+  download_url="$(echo "$metadata" | jq -r '.download_url // empty')"
+  if [ -z "$download_url" ]; then
+    echo "WARNING: no download_url for raycast extension '$slug', skipping" >&2
+    return 0
+  fi
+
+  zip_path="$scratch_dir/$slug.zip"
+  if ! curl --fail --silent -o "$zip_path" "$download_url"; then
+    echo "WARNING: failed to download raycast extension '$slug', skipping" >&2
+    return 0
+  fi
+  mkdir -p "$target"
+  unzip -q "$zip_path" -d "$target"
+
+  # Some of these zips wrap the extension in a single "<slug>/" folder instead of extracting flat
+  if [ ! -f "$target/package.json" ] && [ -f "$target/$slug/package.json" ]; then
+    mv "$target/$slug"/* "$target/"
+    rmdir "$target/$slug"
+  fi
+}
+
+
+install_vicinae_extension port-killer
+install_vicinae_extension systemd
+
+install_raycast_extension rolandleth kill-process
+install_raycast_extension thomas color-picker
+install_raycast_extension vimtor video-downloader
+install_raycast_extension josephschmitt gif-search
+install_raycast_extension tegola remove-paywall
+install_raycast_extension destiner cheatsheets
+install_raycast_extension lucaschultz port-manager
+install_raycast_extension joshuaiz password-generator
+install_raycast_extension DanielSinclair base64
+
+# Reload so newly installed commands show up without a manual restart
+if command -v systemctl >/dev/null 2>&1 && systemctl --user is-active --quiet vicinae 2>/dev/null; then
+  systemctl --user restart vicinae
+fi
+{{ end -}}

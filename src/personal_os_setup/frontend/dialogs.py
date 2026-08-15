@@ -33,6 +33,10 @@ class ConfirmScreen(ModalScreen[bool]):
         color: $accent;
         margin-bottom: 1;
     }
+    ConfirmScreen #confirm-text {
+        width: 1fr;
+        height: auto;
+    }
     ConfirmScreen #confirm-buttons {
         margin-top: 1;
         height: auto;
@@ -53,7 +57,7 @@ class ConfirmScreen(ModalScreen[bool]):
     def compose(self) -> ComposeResult:
         with Vertical():
             yield Label(self._title, id="confirm-title")
-            yield Label(self._text)
+            yield Label(self._text, id="confirm-text")
             with Horizontal(id="confirm-buttons"):
                 yield Button("Yes", id="confirm-yes", variant="success")
                 yield Button("No", id="confirm-no", variant="error")

@@ -2,6 +2,9 @@
 
 If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.
 
+> **Using CachyOS?** This project also has a dedicated [CachyOS Hyprland workstation setup guide](CachyOS.md).
+> Learn more about the distro itself at [cachyos.org](https://cachyos.org).
+
 ## Installation Process
 
 The Personal OS Setup provides a **Terminal UI (TUI) application** that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:
@@ -17,6 +20,7 @@ The app displays all available packages from [packages.yaml](../../src/personal_
 - **Apps**: Code editor, messaging apps, media players, etc.
 
 You can multi-select packages using the interactive interface.
+
 
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
 The app provides buttons to automate the terminal configuration:
@@ -80,3 +84,8 @@ newgrp docker                 # activate the change in the current shell
 ```
 
 > **Pro Tip:** `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
+
+### Apps shortcuts
+For app configuration, tips, and shortcuts (PyCharm, Obsidian, Bitwarden, Nautilus, the terminal
+tools cheatsheet, and a table of what's available on which OS), check
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md).
