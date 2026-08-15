@@ -39,6 +39,8 @@ repos:
         -   id: detect-secrets
             args: ['--exclude-files', 'notebook.ipynb',
                    '--exclude-files', 'with-glazewm.html',
+                   '--exclude-files', '\.(png|gif|zip|jpg|jpeg|ico)$',
+                   '--exclude-files', 'uv\.lock',
                    '--exclude-lines','infoHash.*c352d6801679cb6561060988a89458f6728b4377',
             ]
 
