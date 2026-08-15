@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# coolercontrold is a system service (not --user) -- the GUI can't talk to it until this has been enabled once.
+if ! command -v systemctl >/dev/null 2>&1; then
+  echo "WARNING: systemctl not found, skipping coolercontrold enable" >&2
+  exit 0
+fi
+
+if systemctl is-enabled --quiet coolercontrold 2>/dev/null && systemctl is-active --quiet coolercontrold 2>/dev/null; then
+  exit 0
+fi
+
+echo "Enabling coolercontrold..."
+sudo systemctl enable --now coolercontrold
+{{ end -}}

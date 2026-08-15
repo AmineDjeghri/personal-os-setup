@@ -327,19 +327,6 @@ def _system_section(*, system: str, distro: str) -> Section:
                 group="docker",
             )
         )
-    if distro == "cachyos":
-        actions.append(
-            SystemAction(
-                label="enable vicinae (copy command)",
-                run=lambda: TaskResult(
-                    ok=True,
-                    summary="systemctl --user enable --now vicinae",
-                    details="Run this once to start the Vicinae launcher daemon and keep it "
-                    "enabled on login.",
-                ),
-                group="enable",
-            )
-        )
     return ("system", actions)
 
 

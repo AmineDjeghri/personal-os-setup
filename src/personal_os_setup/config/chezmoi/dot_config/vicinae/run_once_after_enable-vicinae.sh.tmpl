@@ -1,0 +1,16 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+if ! command -v systemctl >/dev/null 2>&1; then
+  echo "WARNING: systemctl not found, skipping vicinae enable" >&2
+  exit 0
+fi
+
+if systemctl --user is-enabled --quiet vicinae 2>/dev/null && systemctl --user is-active --quiet vicinae 2>/dev/null; then
+  exit 0
+fi
+
+echo "Enabling vicinae..."
+systemctl --user enable --now vicinae
+{{ end -}}
