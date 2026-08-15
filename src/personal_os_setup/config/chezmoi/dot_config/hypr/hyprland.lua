@@ -11,6 +11,7 @@ require("animations")
 require("misc")
 require("xwayland")
 require("autostart")
+require("inputs")
 require("binds")
 require("hyprbars")
 require("windowrules")
@@ -32,6 +33,3 @@ if noctaliaOk then
 else
     print("noctalia.lua not loaded, skipping Noctalia border-color theme: " .. tostring(noctalia))
 end
-
--- For Noctalia Color templates
-require("noctalia").apply_theme()

@@ -114,9 +114,35 @@ if command -v uv >/dev/null 2>&1; then
 fi
 
 # ============================================================================
+# Zed - binary is `zeditor` on Arch/CachyOS, `zed` on macOS
+# ============================================================================
+if command -v zeditor >/dev/null 2>&1; then
+  ZED_BIN='zeditor'
+elif command -v zed >/dev/null 2>&1; then
+  ZED_BIN='zed'
+elif [ "$IS_MACOS" = true ]; then
+  # Zed.app doesn't put its CLI on PATH until "cli: install cli binary" is run in-app, so use the bundled binary directly
+  if [ -x "/Applications/Zed.app/Contents/MacOS/cli" ]; then
+    ZED_BIN='/Applications/Zed.app/Contents/MacOS/cli'
+  elif [ -x "$HOME/Applications/Zed.app/Contents/MacOS/cli" ]; then
+    ZED_BIN="$HOME/Applications/Zed.app/Contents/MacOS/cli"
+  fi
+fi
+
+if [ -n "$ZED_BIN" ]; then
+  alias zed="$ZED_BIN --existing"
+  edit() { "$ZED_BIN" --existing "${1:-.}"; } # `edit` with no args opens the current directory as a workspace
+
+  if { [ "$IS_MACOS" = true ] && [ -z "$SSH_CONNECTION" ]; } || [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; then
+    export EDITOR="$ZED_BIN --wait --existing" # EDITOR: fallback editor CLI tools read (git commit, crontab -e, sudoedit...)
+    export VISUAL="$ZED_BIN --wait --existing" # VISUAL: full-screen editor, checked before EDITOR by most tools
+  fi
+fi
+
+# ============================================================================
 # Aliases for both MacOS and Linux. For a full list of active aliases, run `alias`.
 # ============================================================================
-alias zshrc="pycharm -e ~/.zshrc"
+alias zshrc="edit ~/.zshrc"
 if command -v bat >/dev/null 2>&1; then
   alias cat="bat"
   export MANROFFOPT="-c"

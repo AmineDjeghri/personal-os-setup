@@ -110,10 +110,9 @@ packages:
   cachyos:
     pacman:
       Dev_tools:
+        - claude-code
         - docker
         - docker-compose
-        - cmake
-        - make
         - meson # build system used by GNOME/many C/C++ projects
         - zed
         - ghostty
@@ -126,6 +125,8 @@ packages:
         - zsh
         - base-devel
         - chezmoi # dotfile manager
+        - make
+        - cmake
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
         - eza # modern ls replacement (successor to exa)
@@ -149,9 +150,10 @@ packages:
         - telegram-desktop
         - vesktop # Discord enhanced
       Media:
-        - vlc
-        - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
         - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
+        - yt-dlp
+        - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
+        - mpv-mpris  # MPRIS plugin for MPV, allows media control via desktop environment (e.g. Noctalia bar)
       Text Editors:
         - obsidian
       AI:
@@ -177,15 +179,7 @@ packages:
         - sushi # spacebar quick-preview for Nautilus (like macOS Quick Look)
         - nautilus-python # extension framework required by most python-based Nautilus plugins
       Hyprland desktop:
-        - hyprpolkitagent
         - noctalia
-        - wdisplays # GUI monitor configuration
-        - wlsunset # night light / blue light filter
-        - brightnessctl
-        - ddcutil # external monitor brightness over I2C
-        - hyprpicker # color picker
-        - qt5-wayland
-        - qt6-wayland
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
       Screenshots:
         - grim
@@ -194,20 +188,31 @@ packages:
         - wl-clipboard
       Screen Recording:
         - gpu-screen-recorder-ui # fullscreen overlay UI in the style of ShadowPlay; pulls in gpu-screen-recorder + gpu-screen-recorder-notification as hard deps
-      Hardware Monitoring:
+      Hardware control (require reboot):
+        - ddcutil # external monitor brightness over I2C
+        - wlsunset # night light / blue light filter
+        - brightnessctl
+        - nwg-displays # GUI monitor configuration
+        - wlopm # Wayland output power management (DPMS via wlr-output-power-management-v1); fixes NVIDIA treating native DPMS-off as a monitor disconnect
         - coolercontrol # fan/pump curves GUI after install: systemctl enable --now coolercontrold
         - openrgb # RGB lighting control
         - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
     paru:
-      Utilities:
+      Hyprland desktop:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
+      Utilities:
         - anydesk-bin
         - nordvpn-bin
       Dev_tools:
         - pycharm # Unified edition
+      Media:
+        - mpv-uosc-git
+        - mpv-thumbfast-git
+        - mpv-sponsorblock-git
+        - ttf-noto-emoji-monochrome # needed for some mpv scripts to display emojis correctly
       Meetings:
         - zoom
-      Hardware Monitoring:
+      Hardware control (require reboot):
         - nct6687d-dkms-git
         - rivalcfg
 

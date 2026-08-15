@@ -1,0 +1,40 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# The greeter runs before any user session -- it needs its own [keyboard] section in greeter.toml (root-owned,
+# outside $HOME, hence this run_onchange script instead of a plain chezmoi dotfile).
+greeter_conf="/var/lib/noctalia-greeter/greeter.toml"
+
+if ! command -v greetd >/dev/null 2>&1; then
+  echo "WARNING: greetd not installed, skipping greeter keyboard layout setup" >&2
+  exit 0
+fi
+
+keyboard_block='[keyboard]
+layout = "fr,us"
+options = "grp:alt_shift_toggle"'
+
+current="$(sudo cat "$greeter_conf" 2>/dev/null || true)"
+
+existing_keyboard="$(printf '%s\n' "$current" | awk '
+  /^\[keyboard\]/ { printing = 1 }
+  /^\[/ && !/^\[keyboard\]/ { printing = 0 }
+  printing { print }
+' | sed -e '$s/[[:space:]]*$//')"
+
+if [ "$existing_keyboard" = "$keyboard_block" ]; then
+  exit 0
+fi
+
+# Drop any existing [keyboard] section, then append the desired one.
+without_keyboard="$(printf '%s\n' "$current" | awk '
+  /^\[keyboard\]/ { skipping = 1; next }
+  /^\[/ { skipping = 0 }
+  !skipping { print }
+')"
+
+echo "Setting Noctalia greeter keyboard layout (fr,us, Alt+Shift to toggle)..."
+sudo mkdir -p "$(dirname "$greeter_conf")"
+{ printf '%s\n' "$without_keyboard"; echo; printf '%s\n' "$keyboard_block"; } | sudo tee "$greeter_conf" >/dev/null
+{{ end -}}

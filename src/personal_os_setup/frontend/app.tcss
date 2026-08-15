@@ -46,7 +46,12 @@ Screen {
 }
 
 .action-pane {
+    height: 1fr;
     padding: 1 2;
+}
+
+.action-list-container {
+    height: 1fr;
 }
 
 #dotfiles-toolbar {
@@ -94,6 +99,11 @@ Screen {
     width: 3;
     height: 1;
     margin-right: 1;
+}
+
+Toast {
+    width: auto;
+    max-width: 95;
 }
 
 #status-bar {

@@ -1,0 +1,36 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# Re-run whenever these hyprland config files change
+# hyprbars.lua hash: {{ include "dot_config/hypr/hyprbars.lua" | sha256sum }}
+# binds.lua hash: {{ include "dot_config/hypr/binds.lua" | sha256sum }}
+
+if ! command -v hyprpm >/dev/null 2>&1; then
+  echo "hyprpm not found, skipping Hyprland plugin install"
+  exit 0
+fi
+
+# hyprpm add/enable both fail (non-zero exit) when already added/enabled, so check
+# `hyprpm list` first -- it's idempotent, safe to re-run every time the script fires.
+install_hyprpm_plugin() {
+  repo_url="$1"
+  repo_name="$2"
+  plugin_name="$3"
+  plugin_list="$(hyprpm list 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g')"
+
+  if ! echo "$plugin_list" | grep -q "Repository $repo_name (by"; then
+    hyprpm add "$repo_url"
+    plugin_list="$(hyprpm list 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g')"
+  fi
+
+  if ! echo "$plugin_list" | grep -A1 "Plugin $plugin_name\$" | grep -q "enabled: true"; then
+    hyprpm enable "$plugin_name"
+  fi
+}
+
+install_hyprpm_plugin https://github.com/gfhdhytghd/hymission hymission hymission
+install_hyprpm_plugin https://github.com/hyprwm/hyprland-plugins hyprland-plugins hyprbars
+
+hyprpm reload
+{{ end -}}
