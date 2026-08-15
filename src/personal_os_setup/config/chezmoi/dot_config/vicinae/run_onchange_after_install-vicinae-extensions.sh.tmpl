@@ -2,6 +2,9 @@
 #!/bin/bash
 set -eu
 
+script_name="run_onchange_after_install-vicinae-extensions.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
 # Extensions are plain directories with a package.json under this data dir.
 extensions_dir="$HOME/.local/share/vicinae/extensions"
 scratch_dir="$(mktemp -d)"
@@ -28,6 +31,7 @@ install_vicinae_extension() {
   echo "Building vicinae extension: $name"
   if ! (cd "$vicinae_clone/extensions/$name" && npm install --silent && npm run build --silent); then
     echo "WARNING: build failed for extension '$name', removing" >&2
+    notify "Vicinae extensions" "Build failed for '$name', skipped"
     rm -rf "$target"
   fi
 }
@@ -47,23 +51,27 @@ install_raycast_extension() {
   fi
   if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1 || ! command -v unzip >/dev/null 2>&1; then
     echo "WARNING: curl/jq/unzip required to install raycast extension '$slug', skipping" >&2
+    notify "Vicinae extensions" "curl/jq/unzip missing, skipped raycast extension '$slug'"
     return 0
   fi
 
   echo "Installing raycast extension: $slug"
   metadata="$(curl --fail --silent "https://backend.raycast.com/api/v1/extensions/$author/$slug")" || {
     echo "WARNING: failed to fetch metadata for raycast extension '$slug', skipping" >&2
+    notify "Vicinae extensions" "Failed to fetch metadata for '$slug', skipped"
     return 0
   }
   download_url="$(echo "$metadata" | jq -r '.download_url // empty')"
   if [ -z "$download_url" ]; then
     echo "WARNING: no download_url for raycast extension '$slug', skipping" >&2
+    notify "Vicinae extensions" "No download URL for '$slug', skipped"
     return 0
   fi
 
   zip_path="$scratch_dir/$slug.zip"
   if ! curl --fail --silent -o "$zip_path" "$download_url"; then
     echo "WARNING: failed to download raycast extension '$slug', skipping" >&2
+    notify "Vicinae extensions" "Download failed for '$slug', skipped"
     return 0
   fi
   mkdir -p "$target"
@@ -94,4 +102,6 @@ install_raycast_extension DanielSinclair base64
 if command -v systemctl >/dev/null 2>&1 && systemctl --user is-active --quiet vicinae 2>/dev/null; then
   systemctl --user restart vicinae
 fi
+
+notify "Vicinae extensions" "Extensions synced"
 {{ end -}}

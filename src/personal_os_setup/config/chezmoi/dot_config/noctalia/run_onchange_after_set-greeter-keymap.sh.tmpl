@@ -2,12 +2,16 @@
 #!/bin/bash
 set -eu
 
+script_name="run_onchange_after_set-greeter-keymap.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
 # The greeter runs before any user session -- it needs its own [keyboard] section in greeter.toml (root-owned,
 # outside $HOME, hence this run_onchange script instead of a plain chezmoi dotfile).
 greeter_conf="/var/lib/noctalia-greeter/greeter.toml"
 
 if ! command -v greetd >/dev/null 2>&1; then
   echo "WARNING: greetd not installed, skipping greeter keyboard layout setup" >&2
+  notify "Greeter keymap" "greetd not installed, skipped"
   exit 0
 fi
 
@@ -37,4 +41,5 @@ without_keyboard="$(printf '%s\n' "$current" | awk '
 echo "Setting Noctalia greeter keyboard layout (fr,us, Alt+Shift to toggle)..."
 sudo mkdir -p "$(dirname "$greeter_conf")"
 { printf '%s\n' "$without_keyboard"; echo; printf '%s\n' "$keyboard_block"; } | sudo tee "$greeter_conf" >/dev/null
+notify "Greeter keymap" "Keyboard layout set to fr,us (Alt+Shift to toggle)"
 {{ end -}}

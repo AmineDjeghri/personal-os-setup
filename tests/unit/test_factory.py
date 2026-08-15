@@ -205,7 +205,7 @@ class TestDotfilesTrackNewFile:
 
 
 class TestSystemSectionExtras:
-    """Docker post-install and the vicinae command live in "system", gated by distro."""
+    """Docker post-install lives in "system", gated by distro."""
 
     def test_ubuntu_and_cachyos_get_docker_action(self):
         docker_label = "docker: post-install (run without sudo)"
@@ -217,12 +217,6 @@ class TestSystemSectionExtras:
         assert "docker: post-install (run without sudo)" not in _actions_in(
             "windows", "windows", "system"
         )
-
-    def test_vicinae_command_only_on_cachyos(self):
-        vicinae_label = "enable vicinae (copy command)"
-        assert vicinae_label in _actions_in("linux", "cachyos", "system")
-        assert vicinae_label not in _actions_in("linux", "ubuntu", "system")
-        assert vicinae_label not in _actions_in("windows", "windows", "system")
 
 
 class TestNvidiaSection:

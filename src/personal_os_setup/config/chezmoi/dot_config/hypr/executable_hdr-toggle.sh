@@ -17,3 +17,9 @@ fi
 
 sed -i "s/cm = \"$current_cm\"/cm = \"$new_cm\"/" "$MONITORS_LUA"
 hyprctl reload
+
+if [ "$new_cm" = "hdr" ]; then
+    notify-send "HDR" "Enabled"
+else
+    notify-send "HDR" "Disabled"
+fi

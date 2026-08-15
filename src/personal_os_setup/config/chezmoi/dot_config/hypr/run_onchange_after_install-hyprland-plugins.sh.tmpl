@@ -6,8 +6,12 @@ set -eu
 # hyprbars.lua hash: {{ include "dot_config/hypr/hyprbars.lua" | sha256sum }}
 # binds.lua hash: {{ include "dot_config/hypr/binds.lua" | sha256sum }}
 
+script_name="run_onchange_after_install-hyprland-plugins.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
 if ! command -v hyprpm >/dev/null 2>&1; then
   echo "hyprpm not found, skipping Hyprland plugin install"
+  notify "Hyprland plugins" "hyprpm not found, skipped"
   exit 0
 fi
 
@@ -33,4 +37,5 @@ install_hyprpm_plugin https://github.com/gfhdhytghd/hymission hymission hymissio
 install_hyprpm_plugin https://github.com/hyprwm/hyprland-plugins hyprland-plugins hyprbars
 
 hyprpm reload
+notify "Hyprland plugins" "hymission and hyprbars installed/enabled"
 {{ end -}}

@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+script_name="run_once_after_enable-coolercontrold.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
+# coolercontrold is a system service (not --user) -- the GUI can't talk to it until this has been enabled once.
+if ! command -v systemctl >/dev/null 2>&1; then
+  echo "WARNING: systemctl not found, skipping coolercontrold enable" >&2
+  notify "coolercontrold" "systemctl not found, skipped enabling"
+  exit 0
+fi
+
+if systemctl is-enabled --quiet coolercontrold 2>/dev/null && systemctl is-active --quiet coolercontrold 2>/dev/null; then
+  exit 0
+fi
+
+echo "Enabling coolercontrold..."
+sudo systemctl enable --now coolercontrold
+notify "coolercontrold" "Daemon enabled and started"
+{{ end -}}

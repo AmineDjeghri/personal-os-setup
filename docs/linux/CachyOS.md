@@ -187,6 +187,20 @@ hyprpm list
 
 Test `ALT+TAB` for the switcher, and dragging / closing / maximizing windows for hyprbars.
 
+### Secret storage (gnome-keyring, not KWallet)
+
+Hyprland has no built-in Secret Service — anything that stores secrets (Nautilus/GVfs unlocking a
+LUKS drive, browsers saving passwords, etc.) talks to `org.freedesktop.secrets` over D-Bus, and
+nothing provides that name unless something starts a daemon for it. KDE's `kwallet` isn't advised to be used without plasma.
+
+**`gnome-keyring` is used instead** — password-based, no GPG key needed, and the standard choice on non-KDE Wayland compositors:
+- **Not auto-unlocked with the login password, by choice.** `pam_gnome_keyring.so` can do this, but it doesn't look at "whichever keyring is currently set as default"
+- Apps using `libsecret` (Nautilus/GVfs, GTK/GNOME apps, Chromium-based browsers) otherwise just work — the manual prompt above is the only friction point.
+- To view/delete stored secrets: `sudo pacman -S seahorse` ("Passwords and Keys" GUI), or `secret-tool` for CLI lookups. <!-- pragma: allowlist secret -->
+- Bitwarden (website/app logins, secure notes, cards) is unrelated and doesn't cover this — it doesn't integrate with the system Secret Service, so it can't store or auto-unlock OS-level secrets like this LUKS passphrase, SSH SFTP, or NetworkManager WiFi keys.
+
+**Troubleshooting: `Error storing passphrase in keyring (the sessions wrapping the secret does not exist)`** when unlocking a drive in Nautilus, and/or drives disappearing from the sidebar — Kill and restart Nautilus after installing `gnome-keyring`
+
 ---
 
 ## Shell
