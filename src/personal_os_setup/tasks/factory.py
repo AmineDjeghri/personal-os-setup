@@ -161,10 +161,10 @@ def _package_manager_sections(distro: str) -> list[Section]:
     return [(distro, actions)]
 
 
-# Section: "Doc" — link to the docs site.
-def _doc_section() -> Section:
+# Section: "🚀 Start" — onboarding walkthrough (rendered by the frontend) plus doc links.
+def _start_section() -> Section:
     return (
-        "Doc",
+        "🚀 Start",
         [
             SystemAction(label="open documentation site", run=show_documentation_link),
             SystemAction(
@@ -489,7 +489,7 @@ def get_system_action_sections(
     """Build the ordered list of `(section_name, [SystemAction])` tuples for this OS/distro.
 
     Sections are assembled conditionally on `system`/`distro`: package-manager
-    sections always come first, then Doc (all OSes), zsh/chezmoi (Linux+macOS),
+    sections always come first, then Start (all OSes), zsh/chezmoi (Linux+macOS),
     system (NVIDIA/CUDA/docker/vicinae; Windows+Linux), and WSL/Windows-utility
     sections (Windows only).
 
@@ -506,8 +506,8 @@ def get_system_action_sections(
     # Package managers (apt, snap, brew...) - at the top for quick access.
     sections.extend(_package_manager_sections(distro))
 
-    # Doc section (documentation link) applies to every OS.
-    sections.append(_doc_section())
+    # Start section (onboarding walkthrough + documentation link) applies to every OS.
+    sections.append(_start_section())
 
     #################
     ## Linux & Darwin

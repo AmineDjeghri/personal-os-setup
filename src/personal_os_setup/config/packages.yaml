@@ -117,6 +117,12 @@ packages:
         - zed
         - ghostty
         - neovim # modernized vim
+        - qemu-full # KVM/QEMU used to run virtual machines
+        - libvirt # VM management daemon/API
+        - virt-manager # GUI for libvirt VMs,
+        - dnsmasq # NAT DHCP/DNS for libvirt's default VM network
+        - edk2-ovmf # UEFI firmware for libvirt VMs
+        - cloud-image-utils # builds cloud-init seed ISOs for unattended VM installs
 
       terminal_tools:
         - git
@@ -180,7 +186,7 @@ packages:
         - gnome-online-accounts # Google/Microsoft/Nextcloud account integration for gvfs-goa
         - sushi # spacebar quick-preview for Nautilus (like macOS Quick Look)
         - nautilus-python # extension framework required by most python-based Nautilus plugins
-      Hyprland desktop:
+      Desktop:
         - noctalia
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
       Screenshots:
@@ -200,7 +206,7 @@ packages:
         - openrgb # RGB lighting control
         - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
     paru:
-      Hyprland desktop:
+      Desktop:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
       Utilities:
         - anydesk-bin

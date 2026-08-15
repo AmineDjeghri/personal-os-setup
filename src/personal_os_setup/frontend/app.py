@@ -25,6 +25,7 @@ from textual.widgets import (
     Header,
     Label,
     LoadingIndicator,
+    Markdown,
     ProgressBar,
     RichLog,
     SelectionList,
@@ -56,11 +57,47 @@ from personal_os_setup.tasks.task import TaskResult
 
 _CSS_PATH = Path(__file__).with_name("app.tcss")
 _LOGS_TAB_LABEL = "📋 Logs"
+_START_SECTION_NAME = "🚀 Start"
 _DOTFILES_SECTION_NAME = "Sync dotfiles"
 _DOTFILES_TREE_ID = "dotfiles-selection-list"
 _CHECKED_GLYPH = "☑"
 _UNCHECKED_GLYPH = "☐"
 _PARTIAL_GLYPH = "◐"
+
+
+def _start_guide_markdown(distro: str) -> str:
+    step4_cachyos_note = (
+        "\n\nOn CachyOS, sync **`hyprland`** and **`noctalia`** first (in their own "
+        "`apply selected` step) before the rest -- noctalia provides the notification "
+        "daemon, so this app's own toast notifications won't show up on Hyprland until "
+        "it's applied."
+        if distro == "cachyos"
+        else ""
+    )
+    return f"""\
+## Welcome — first-time setup walkthrough
+
+**1. Set up zsh** (tab **{_DOTFILES_SECTION_NAME}**), click these buttons in order:
+
+1. `install zsh setup prerequisites`
+2. `install JetBrainsMono Nerd Font`
+3. `sync zsh plugins/theme`
+4. `set zsh as default shell` (requires logging out or rebooting)
+
+**2. Apply your zsh config** (tab **{_DOTFILES_SECTION_NAME}**): in the file tree below \
+the buttons, select `.zshrc` and `.p10k.zsh`, then click `apply selected`.
+
+**3. Install packages** (tab **📦 Packages**): expand the categories, check the \
+packages you want, then click `Install selected`.
+
+**4. Sync the rest of your `~/.config`** (tab **{_DOTFILES_SECTION_NAME}**): select any \
+other entries you want tracked in the file tree, then click `apply selected` again.\
+{step4_cachyos_note}
+
+---
+
+### Documentation
+"""
 
 
 class PersonalOsSetupApp(App[None]):
@@ -115,9 +152,57 @@ class PersonalOsSetupApp(App[None]):
             )
         ]
 
+    def _compose_section_pane(
+        self, section_name: str, actions: list[SystemAction]
+    ) -> ComposeResult:
+        """Render one section's `TabPane` (generic action buttons, or a special-cased layout)."""
+        with TabPane(section_name, id=f"section-{next(self._button_id_counter)}"):
+            with Vertical(classes="action-pane"):
+                if section_name == _DOTFILES_SECTION_NAME:
+                    with Horizontal(classes="action-row"):
+                        for action in actions:
+                            button_id = f"action-btn-{next(self._button_id_counter)}"
+                            self._action_by_button_id[button_id] = (section_name, action)
+                            yield Button(action.label, id=button_id)
+                    with Horizontal(id="dotfiles-toolbar"):
+                        yield Button("diff selected", id="btn-dotfiles-diff")
+                        yield Button("apply selected", id="btn-dotfiles-apply", variant="success")
+                        yield Button("re-add selected", id="btn-dotfiles-readd")
+                        yield Button("forget selected", id="btn-dotfiles-forget", variant="error")
+                    with VerticalScroll(id="dotfiles-list-container"):
+                        dotfiles_tree: Tree[DotfileTreeNode] = Tree("~", id=_DOTFILES_TREE_ID)
+                        self._build_dotfiles_tree(dotfiles_tree, chezmoi_managed_paths())
+                        yield dotfiles_tree
+                elif section_name == _START_SECTION_NAME:
+                    with VerticalScroll(classes="action-list-container"):
+                        yield Markdown(_start_guide_markdown(self._distro))
+                        for row in self._group_actions_into_rows(actions):
+                            with Horizontal(classes="action-row"):
+                                for action in row:
+                                    button_id = f"action-btn-{next(self._button_id_counter)}"
+                                    self._action_by_button_id[button_id] = (section_name, action)
+                                    yield Button(action.label, id=button_id)
+                else:
+                    with VerticalScroll(classes="action-list-container"):
+                        for row in self._group_actions_into_rows(actions):
+                            with Horizontal(classes="action-row"):
+                                for action in row:
+                                    button_id = f"action-btn-{next(self._button_id_counter)}"
+                                    self._action_by_button_id[button_id] = (section_name, action)
+                                    yield Button(action.label, id=button_id)
+
     def compose(self) -> ComposeResult:
         yield Header()
+        sections = get_system_action_sections(
+            system=self._system, distro=self._distro, info=self._info, packages=self._packages
+        )
+        start_section = next((s for s in sections if s[0] == _START_SECTION_NAME), None)
+        other_sections = [s for s in sections if s[0] != _START_SECTION_NAME]
+
         with TabbedContent(id="main-tabs"):
+            if start_section is not None:
+                yield from self._compose_section_pane(*start_section)
+
             with TabPane("📦 Packages", id="packages"):
                 with Vertical():
                     with Horizontal(id="packages-toolbar"):
@@ -136,45 +221,8 @@ class PersonalOsSetupApp(App[None]):
                                     classes="category-list",
                                 )
 
-            for section_name, actions in get_system_action_sections(
-                system=self._system, distro=self._distro, info=self._info, packages=self._packages
-            ):
-                with TabPane(section_name, id=f"section-{next(self._button_id_counter)}"):
-                    with Vertical(classes="action-pane"):
-                        if section_name == _DOTFILES_SECTION_NAME:
-                            with Horizontal(classes="action-row"):
-                                for action in actions:
-                                    button_id = f"action-btn-{next(self._button_id_counter)}"
-                                    self._action_by_button_id[button_id] = (section_name, action)
-                                    yield Button(action.label, id=button_id)
-                            with Horizontal(id="dotfiles-toolbar"):
-                                yield Button("diff selected", id="btn-dotfiles-diff")
-                                yield Button(
-                                    "apply selected", id="btn-dotfiles-apply", variant="success"
-                                )
-                                yield Button("re-add selected", id="btn-dotfiles-readd")
-                                yield Button(
-                                    "forget selected", id="btn-dotfiles-forget", variant="error"
-                                )
-                            with VerticalScroll(id="dotfiles-list-container"):
-                                dotfiles_tree: Tree[DotfileTreeNode] = Tree(
-                                    "~", id=_DOTFILES_TREE_ID
-                                )
-                                self._build_dotfiles_tree(dotfiles_tree, chezmoi_managed_paths())
-                                yield dotfiles_tree
-                        else:
-                            with VerticalScroll(classes="action-list-container"):
-                                for row in self._group_actions_into_rows(actions):
-                                    with Horizontal(classes="action-row"):
-                                        for action in row:
-                                            button_id = (
-                                                f"action-btn-{next(self._button_id_counter)}"
-                                            )
-                                            self._action_by_button_id[button_id] = (
-                                                section_name,
-                                                action,
-                                            )
-                                            yield Button(action.label, id=button_id)
+            for section_name, actions in other_sections:
+                yield from self._compose_section_pane(section_name, actions)
 
             with TabPane(_LOGS_TAB_LABEL, id="logs"):
                 yield RichLog(id="log-widget", markup=False, wrap=True)
