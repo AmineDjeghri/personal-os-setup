@@ -94,6 +94,7 @@ You can follow this repository to get a similar setup on Windows 11, Linux, macO
     * [Docs and websites](#docs-and-websites)
   * [Check the documentation](#check-the-documentation)
   * [Contributing (For developers)](#contributing-for-developers)
+  * [Check the documentation](#check-the-documentation)
 <!-- TOC -->
 
 
@@ -181,12 +182,13 @@ regardless of their workplace constraints.
 
 Based on your needs, you can choose your OS.
 
-
+http://personal-os-setup.aminedjeghri.com/
 ## Check the documentation
-You can check the documentation (website).
+You can check the [documentation website](http://personal-os-setup.aminedjeghri.com/).
 
 ## Contributing (For developers)
 Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
-**Star History Chart**
-[![Star History Chart](https://api.star-history.com/svg?repos=aminedjeghri/awesomewindows11&type=Date)](https://star-history.com/#aminedjeghri/awesomewindows11&Date)
+## Check the documentation
+
+[![Star History Chart](https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup)](https://star-history.dera.page/#AmineDjeghri/personal-os-setup)
