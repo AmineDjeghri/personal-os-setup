@@ -250,6 +250,7 @@ tooltip = "Vicinae"
 [widget.hdr-toggle]
 type = "custom_button"
 glyph = "brightness-high"
+label = "HDR"
 tooltip = "Toggle HDR"
 
     [widget.hdr-toggle.actions]
