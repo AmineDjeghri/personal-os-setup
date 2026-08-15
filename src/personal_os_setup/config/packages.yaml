@@ -153,6 +153,7 @@ packages:
         - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
         - yt-dlp
         - mpv # lightweight, scriptable video/audio player, pairs well with WM keybinds
+        - mpv-mpris  # MPRIS plugin for MPV, allows media control via desktop environment (e.g. Noctalia bar)
       Text Editors:
         - obsidian
       AI:

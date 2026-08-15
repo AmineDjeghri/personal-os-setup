@@ -4,7 +4,7 @@ hl.monitor({
     position = "1920x0",
     scale = 1.6666666,
     bitdepth = 10,
-    cm = "hdr",
+    cm = "auto", -- select "hdr" for HDR mode, or "auto"
     sdrbrightness = 1.5,      -- default is 1.0; try 1.2–2.0 until desktop looks normal
     sdrsaturation = 1.0,
     sdr_min_luminance = 0,
