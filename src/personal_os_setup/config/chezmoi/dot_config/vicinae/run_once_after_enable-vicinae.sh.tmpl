@@ -2,8 +2,12 @@
 #!/bin/bash
 set -eu
 
+script_name="run_once_after_enable-vicinae.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
 if ! command -v systemctl >/dev/null 2>&1; then
   echo "WARNING: systemctl not found, skipping vicinae enable" >&2
+  notify "Vicinae" "systemctl not found, skipped enabling"
   exit 0
 fi
 
@@ -13,4 +17,5 @@ fi
 
 echo "Enabling vicinae..."
 systemctl --user enable --now vicinae
+notify "Vicinae" "Launcher daemon enabled and started"
 {{ end -}}
