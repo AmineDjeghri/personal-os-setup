@@ -209,6 +209,7 @@ packages:
         - mpv-uosc-git
         - mpv-thumbfast-git
         - mpv-sponsorblock-git
+        - ttf-noto-emoji-monochrome # needed for some mpv scripts to display emojis correctly
       Meetings:
         - zoom
       Hardware control (require reboot):

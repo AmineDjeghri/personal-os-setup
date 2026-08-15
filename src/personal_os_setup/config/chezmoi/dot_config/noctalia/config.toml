@@ -21,7 +21,7 @@ thickness = 35
 border = ""
 fill = "on_secondary"
 id = "g1"
-members = [ "temp", "sysmon_2", "sysmon_3" ]
+members = [ "temp", "sysmon_2", "sysmon_3", "hdr-toggle" ]
 opacity = 1.0
 padding = 6.0
 
@@ -246,6 +246,14 @@ tooltip = "Vicinae"
 
     [widget.vicinae.actions]
     left = "exec vicinae toggle"
+
+[widget.hdr-toggle]
+type = "custom_button"
+glyph = "brightness-high"
+tooltip = "Toggle HDR"
+
+    [widget.hdr-toggle.actions]
+    left = "exec $HOME/.config/hypr/hdr-toggle.sh"
 
 [widget.volume]
 color = "secondary"
