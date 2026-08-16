@@ -15,6 +15,13 @@ if ! command -v greetd >/dev/null 2>&1; then
   exit 0
 fi
 
+# Needs a live sudo ticket (even just to read $greeter_conf below) -- can't prompt here (no TTY).
+if ! sudo -n true 2>/dev/null; then
+  echo "WARNING: sudo needs a fresh password prompt -- re-run personal-os-setup and enter your password when it starts, then sync this again." >&2
+  notify "Greeter keymap" "Needs sudo -- re-run personal-os-setup and try again"
+  exit 1
+fi
+
 keyboard_block='[keyboard]
 layout = "fr,us"
 options = "grp:alt_shift_toggle"'
