@@ -7,8 +7,18 @@
 | ![Desktop with terminals](docs/images/app_showcase.png) |
 
 
-> [!TIP]
-> **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
+> ⚠️ If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
+> 
+> Your fork must stay ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
+> Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
+```bash
+git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
+git fetch upstream
+```
+> `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
+> You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
+> This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.
+> review the final diff (`git diff --staged` or the IDE's local changes view) before committing the merge.
 
 
 ### Get started
