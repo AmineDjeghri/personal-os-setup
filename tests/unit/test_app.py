@@ -146,6 +146,8 @@ async def test_install_selected_runs_worker_and_advances_progress():
     )()
     async with app.run_test() as pilot:
         await pilot.pause()
+        app.query_one("#main-tabs", TabbedContent).active = "packages"
+        await pilot.pause()
         selection_list = app.query_one("#package-list-container").query(SelectionList).first()
         selection_list.select(selection_list._options[0])
         await pilot.pause()
@@ -174,6 +176,8 @@ async def test_install_selected_with_nothing_selected_notifies_and_stays_idle():
 async def test_confirm_action_no_does_not_run_and_yes_does():
     app = PersonalOsSetupApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
+        app.query_one("#main-tabs", TabbedContent).active = "packages"
         await pilot.pause()
 
         calls: list[int] = []

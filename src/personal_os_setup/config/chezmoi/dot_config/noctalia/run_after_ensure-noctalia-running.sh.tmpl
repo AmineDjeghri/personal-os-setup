@@ -1,0 +1,23 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# Runs on every `chezmoi apply`.
+
+script_name="run_after_ensure-noctalia-running.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
+if ! command -v noctalia >/dev/null 2>&1; then
+  echo "noctalia not found, skipping"
+  exit 0
+fi
+
+if pgrep -x noctalia >/dev/null 2>&1; then
+  exit 0
+fi
+
+echo "Starting noctalia..."
+setsid noctalia >/tmp/noctalia.log 2>&1 &
+disown
+notify "Noctalia" "Started"
+{{ end -}}

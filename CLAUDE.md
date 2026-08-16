@@ -10,6 +10,15 @@ An "OS setup" project with two parts:
 
 `src/awesome_os/` only contains stale `__pycache__` directories from a prior package name — the real package is `personal_os_setup`. Don't treat it as live code.
 
+## Safety: always confirm before system-mutating actions
+
+This repo's whole purpose is to run commands and apply configs that change the *host* system (package installs, dotfile/config sync, default-shell changes, driver setup, WSL/VM lifecycle, etc.) — treat every one of these as requiring **explicit, per-action user approval before you run it**, not just before you write the code.
+
+- **Never run a package install, `chezmoi apply`, shell-change, driver-setup, or VM command yourself as a side effect of a coding task** (e.g. "verify the fix works") without asking first — write/read code, run the unit test suite, but don't execute the underlying system action.
+- If the user asks you to run one of these directly (not through the TUI), **confirm the specific command and its effect before running it**, even if they already said to do it — a prior "yes" to the feature/task is not standing approval for every mutating command that touches their machine. Re-confirm scope each time (e.g. "install zsh prerequisites" is not blanket approval to also `chezmoi apply` unrelated dotfiles).
+- This applies doubly to anything destructive or hard to reverse: `make vm-clean`, `make deploy-doc-gh` (pushes to `gh-pages`), `chezmoi apply`/`forget`, `set zsh as default shell`, any `sudo`-requiring step (`make vm-deps`), package upgrades/removals.
+- Never disable this by editing `SystemAction.confirm=False` on an existing action, or by scripting around the TUI's own confirm dialogs, to "make things faster."
+
 ## Commands
 
 All common tasks go through `make` (backed by `makefiles/*.mk`, included from the root `Makefile`). Run `make help` to list targets by category.
@@ -43,7 +52,7 @@ Each backend (apt, snap, brew/cask, winget, msstore, pacman/paru, webinstall) im
 
 ### System actions (`tasks/factory.py::get_system_action_sections`)
 
-This function is the other half of the factory: given `(system, distro, info)` it builds an ordered list of `(section_name, [SystemAction])` used to render tabs/buttons in the TUI. It composes small per-domain builder functions (`_package_manager_sections`, `_help_section`, `_dotfiles_section`, `_docker_section`, `_nvidia_section`, `_wsl_section`, `_advanced_wsl_section`, `_windows_utilities_section`), each returning one `Section` (a `(name, [SystemAction])` tuple) and independently unit-tested in `tests/unit/test_factory.py`. Sections are assembled conditionally based on `system`/`distro` (e.g. zsh/chezmoi/docker sections only for linux+darwin, WSL sections only for windows, NVIDIA section for windows+linux). `SystemAction` supports plain actions (`run`), prompted actions that take free-text input (`run_with_prompt` + `prompt_label`/`prompt_initial`), destructive-action confirmation (`confirm`/`confirm_message`), and file backup before mutating config (`backup_target`). When adding a new system action, add it to (or add a new) per-domain builder function rather than wiring buttons directly in the frontend.
+This function is the other half of the factory: given `(system, distro, info)` it builds an ordered list of `(section_name, [SystemAction])` used to render tabs/buttons in the TUI. It composes small per-domain builder functions (`_package_manager_sections`, `_start_section`, `_dotfiles_section`, `_docker_section`, `_nvidia_section`, `_wsl_section`, `_advanced_wsl_section`, `_windows_utilities_section`), each returning one `Section` (a `(name, [SystemAction])` tuple) and independently unit-tested in `tests/unit/test_factory.py`. `_start_section` ("🚀 Start" tab) returns only the two doc-link actions — the onboarding walkthrough text itself is frontend-only markdown (`app.py::_START_GUIDE_MARKDOWN`), special-cased in `compose()` the same way the dotfiles tree is. Sections are assembled conditionally based on `system`/`distro` (e.g. zsh/chezmoi/docker sections only for linux+darwin, WSL sections only for windows, NVIDIA section for windows+linux). `SystemAction` supports plain actions (`run`), prompted actions that take free-text input (`run_with_prompt` + `prompt_label`/`prompt_initial`), destructive-action confirmation (`confirm`/`confirm_message`), and file backup before mutating config (`backup_target`). When adding a new system action, add it to (or add a new) per-domain builder function rather than wiring buttons directly in the frontend.
 
 ### Task execution model
 

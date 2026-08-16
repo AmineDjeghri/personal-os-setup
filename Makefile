@@ -13,6 +13,7 @@ include makefiles/test.mk
 include makefiles/clean.mk
 include makefiles/ci.mk
 include makefiles/build.mk
+include makefiles/vm.mk
 
 .PHONY: all help
 
@@ -40,3 +41,6 @@ help: ## Show this help message
 	@echo ""
 	@echo "Build & Deploy:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/build.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Virtual Machines:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/vm.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

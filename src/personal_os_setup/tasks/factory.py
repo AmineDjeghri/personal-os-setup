@@ -19,7 +19,11 @@ from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
-from personal_os_setup.tasks.system.help import show_apps_config_link, show_documentation_link
+from personal_os_setup.tasks.system.help import (
+    show_apps_config_link,
+    show_documentation_link,
+    show_vm_testing_link,
+)
 from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_cuda,
     detect_nvidia,
@@ -161,17 +165,18 @@ def _package_manager_sections(distro: str) -> list[Section]:
     return [(distro, actions)]
 
 
-# Section: "Doc" — link to the docs site.
-def _doc_section() -> Section:
-    return (
-        "Doc",
-        [
-            SystemAction(label="open documentation site", run=show_documentation_link),
-            SystemAction(
-                label="open apps configuration and shortcuts doc", run=show_apps_config_link
-            ),
-        ],
-    )
+# Section: "🚀 Start" — onboarding walkthrough (rendered by the frontend) plus doc links.
+def _start_section(system: str) -> Section:
+    actions = [
+        SystemAction(label="open documentation site", run=show_documentation_link),
+        SystemAction(label="open apps configuration and shortcuts doc", run=show_apps_config_link),
+    ]
+    # `make vm-*` (scripts/vm.sh) is Linux-host-only -- see docs/linux/CachyOS.md.
+    if system == "linux":
+        actions.append(
+            SystemAction(label="open 'testing this project in a VM' doc", run=show_vm_testing_link)
+        )
+    return ("🚀 Start", actions)
 
 
 # Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
@@ -489,7 +494,7 @@ def get_system_action_sections(
     """Build the ordered list of `(section_name, [SystemAction])` tuples for this OS/distro.
 
     Sections are assembled conditionally on `system`/`distro`: package-manager
-    sections always come first, then Doc (all OSes), zsh/chezmoi (Linux+macOS),
+    sections always come first, then Start (all OSes), zsh/chezmoi (Linux+macOS),
     system (NVIDIA/CUDA/docker/vicinae; Windows+Linux), and WSL/Windows-utility
     sections (Windows only).
 
@@ -506,8 +511,8 @@ def get_system_action_sections(
     # Package managers (apt, snap, brew...) - at the top for quick access.
     sections.extend(_package_manager_sections(distro))
 
-    # Doc section (documentation link) applies to every OS.
-    sections.append(_doc_section())
+    # Start section (onboarding walkthrough + documentation link) applies to every OS.
+    sections.append(_start_section(system))
 
     #################
     ## Linux & Darwin

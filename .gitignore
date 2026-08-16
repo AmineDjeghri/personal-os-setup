@@ -169,3 +169,6 @@ docs/macos_darwin/zed
 bin
 
 *tmp.*
+
+# VM images/ISOs for `make vm-*` targets (scripts/vm.sh)
+.vm/
