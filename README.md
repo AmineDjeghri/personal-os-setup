@@ -10,6 +10,9 @@
 > [!TIP]
 > **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
 
+> [!TIP]
+> **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
+
 
 ### Get started
 
