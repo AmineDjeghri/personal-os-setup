@@ -8,16 +8,18 @@
 
 
 > [!TIP]
+>
 > **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
 
-> ⚠️ If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
+> [!WARNING]
+> If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
 >
-> Your fork must stay ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
+> It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
 > Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
-```bash
-git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
-git fetch upstream
-```
+>  ```bash
+>  git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
+>  git fetch upstream
+>  ```
 > `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
 > You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
 > This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.
