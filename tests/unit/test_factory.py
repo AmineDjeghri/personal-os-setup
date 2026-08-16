@@ -93,6 +93,23 @@ class TestLinuxDarwinSections:
             "open apps configuration and shortcuts doc",
         ]
 
+    def test_cachyos_start_section_has_vm_testing_link(self):
+        labels = _actions_in("linux", "cachyos", "🚀 Start")
+        assert labels == [
+            "open documentation site",
+            "open apps configuration and shortcuts doc",
+            "open 'testing this project in a VM' doc",
+        ]
+
+    def test_ubuntu_start_section_also_has_vm_testing_link(self):
+        """Make vm-* supports any Linux host (pacman/apt/dnf), not just CachyOS."""
+        labels = _actions_in("linux", "ubuntu", "🚀 Start")
+        assert "open 'testing this project in a VM' doc" in labels
+
+    def test_darwin_start_section_has_no_vm_testing_link(self):
+        labels = _actions_in("darwin", "darwin", "🚀 Start")
+        assert "open 'testing this project in a VM' doc" not in labels
+
 
 class TestZshPrereqPackages:
     """The "install zsh setup prerequisites" action is scoped to zsh, not all dotfiles."""

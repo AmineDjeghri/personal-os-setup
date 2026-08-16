@@ -8,7 +8,7 @@
 
 
 > [!TIP]
-> **V2 is here** — the terminal UI has been rebuilt with [Textual](https://textual.textualize.io/), bringing tabs, colors, progress bars, and a much nicer look and feel.
+> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
 
 
 ### Get started

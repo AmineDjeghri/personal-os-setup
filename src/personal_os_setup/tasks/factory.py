@@ -19,7 +19,11 @@ from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
-from personal_os_setup.tasks.system.help import show_apps_config_link, show_documentation_link
+from personal_os_setup.tasks.system.help import (
+    show_apps_config_link,
+    show_documentation_link,
+    show_vm_testing_link,
+)
 from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_cuda,
     detect_nvidia,
@@ -162,16 +166,17 @@ def _package_manager_sections(distro: str) -> list[Section]:
 
 
 # Section: "🚀 Start" — onboarding walkthrough (rendered by the frontend) plus doc links.
-def _start_section() -> Section:
-    return (
-        "🚀 Start",
-        [
-            SystemAction(label="open documentation site", run=show_documentation_link),
-            SystemAction(
-                label="open apps configuration and shortcuts doc", run=show_apps_config_link
-            ),
-        ],
-    )
+def _start_section(system: str) -> Section:
+    actions = [
+        SystemAction(label="open documentation site", run=show_documentation_link),
+        SystemAction(label="open apps configuration and shortcuts doc", run=show_apps_config_link),
+    ]
+    # `make vm-*` (scripts/vm.sh) is Linux-host-only -- see docs/linux/CachyOS.md.
+    if system == "linux":
+        actions.append(
+            SystemAction(label="open 'testing this project in a VM' doc", run=show_vm_testing_link)
+        )
+    return ("🚀 Start", actions)
 
 
 # Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
@@ -507,7 +512,7 @@ def get_system_action_sections(
     sections.extend(_package_manager_sections(distro))
 
     # Start section (onboarding walkthrough + documentation link) applies to every OS.
-    sections.append(_start_section())
+    sections.append(_start_section(system))
 
     #################
     ## Linux & Darwin

@@ -5,6 +5,35 @@
 > This document tracks a migration from Windows to a native Linux development
 > workstation. It is updated as the setup is tested and refined.
 
+
+<!-- TOC -->
+* [CachyOS Hyprland Developer Workstation Setup](#cachyos-hyprland-developer-workstation-setup)
+  * [Goal](#goal)
+  * [Installation](#installation)
+    * [Secure Boot](#secure-boot)
+    * [Bootloader and filesystem](#bootloader-and-filesystem)
+    * [Keyboard layout defaults to QWERTY on first login](#keyboard-layout-defaults-to-qwerty-on-first-login)
+    * [After first boot](#after-first-boot)
+  * [Packages](#packages)
+  * [Desktop](#desktop)
+    * [Configuration files](#configuration-files)
+    * [Settings owned by Noctalia, not Hyprland](#settings-owned-by-noctalia-not-hyprland)
+    * [Editing the lockscreen layout](#editing-the-lockscreen-layout)
+    * [Hyprland plugins](#hyprland-plugins)
+    * [Secret storage (gnome-keyring, not KWallet)](#secret-storage-gnome-keyring-not-kwallet)
+  * [Shell](#shell)
+  * [Theming](#theming)
+  * [Gaming](#gaming)
+    * [Base packages](#base-packages)
+    * [GameMode](#gamemode)
+    * [MangoHud](#mangohud)
+    * [Proton](#proton)
+    * [HDR / 10-bit desktop](#hdr--10-bit-desktop)
+      * [Verifying HDR actually works](#verifying-hdr-actually-works)
+  * [Testing this project in a VM](#testing-this-project-in-a-vm)
+  * [Apps shortcuts](#apps-shortcuts)
+<!-- TOC -->
+
 ## Goal
 
 Replace a Windows 11 + WSL workflow with a fully native Linux environment.
@@ -351,6 +380,46 @@ querying mpv's live negotiated state over its JSON IPC socket rather than trusti
 5. Quick on-screen sanity check without IPC: press `I` in mpv for the full stats overlay,
    which also lists the negotiated colorspace/gamma/luma fields (less detail than the IPC query,
    but fast to eyeball, and stays in view when using windowed test videos).
+
+## Testing this project in a VM
+
+`make vm-*` targets (backed by `scripts/vm.sh`) spin up local KVM/QEMU/libvirt VMs to try
+this project's setup in a disposable environment instead of on your real machine. **Any Linux
+host** — `make vm-deps` auto-detects `pacman`/`apt`/`dnf` and checks the right package names for
+each. On CachyOS and Ubuntu those packages are also in `packages.yaml`, so you can install them
+from the app's own Packages tab instead of manually.
+
+```bash
+make vm-deps            # verify qemu/libvirt/virt-manager/virt-viewer are installed, enable libvirtd
+                         # (install any missing ones from the app's Packages tab first, if available for your distro)
+
+make vm-cachyos          # CachyOS VM -- manual ISO install, GUI console opens automatically
+make vm-ubuntu-server    # Ubuntu Server 26.04 -- unattended autoinstall, no clicking needed
+make vm-ubuntu-server-manual  # same ISO, manual click-through install
+make vm-ubuntu           # Ubuntu Desktop 26.04 -- manual install
+
+make vm-list             # list this project's VMs and their state
+make vm-clean            # destroy/undefine all this project's VMs, wipe disks (keeps cached ISOs)
+make vm-clean-isos       # delete cached install ISOs too (re-downloaded on next make vm-*)
+```
+
+Re-running a `vm-*` target on a VM that already exists just starts it and reopens the GUI
+console instead of recreating it. Everything (ISOs, disk images, cloud-init seeds) is cached
+under `.vm/` (gitignored) — repo-local, so deleting the repo also cleans it all up.
+
+**If a VM has no internet access during install**, it's very likely your host's firewall
+blocking NAT'd VM traffic on libvirt's `virbr0` bridge, even though libvirt sets up its own
+NAT rules for it. On `ufw`-based hosts (Ubuntu's default), fix it with:
+
+```bash
+make vm-ufw-allow   # asks for confirmation, then allows routing for virbr0 specifically
+make vm-ufw-revert  # undoes it, same confirm-first prompt
+```
+
+This only opens routing for `virbr0` — every other interface keeps `ufw`'s default DROP-forward
+policy untouched. If your host uses `firewalld` instead (common on Fedora/RHEL), the equivalent
+is adding `virbr0`'s zone to the trusted zone or an explicit forwarding rule — `vm-ufw-allow`
+doesn't cover that yet.
 
 ## Apps shortcuts
 For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,

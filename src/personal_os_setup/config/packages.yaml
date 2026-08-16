@@ -3,6 +3,17 @@ packages:
     apt:
       Dev_tools:
         - docker-compose
+        # `make vm-*` deps (KVM/QEMU + libvirt for local VM testing):
+        - qemu-system
+        - qemu-utils
+        - libvirt-daemon-system # provides libvirtd
+        - libvirt-clients # provides virsh
+        - virtinst # provides virt-install
+        - virt-manager # provides virt-manager GUI
+        - virt-viewer # provides virt-viewer GUI
+        - dnsmasq-base # provides dnsmasq for libvirt networking
+        - ovmf # provides UEFI firmware for VMs
+        - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
       terminal_tools:
         - git
         - curl
@@ -117,12 +128,14 @@ packages:
         - zed
         - ghostty
         - neovim # modernized vim
-        - qemu-full # KVM/QEMU used to run virtual machines
-        - libvirt # VM management daemon/API
-        - virt-manager # GUI for libvirt VMs,
-        - dnsmasq # NAT DHCP/DNS for libvirt's default VM network
-        - edk2-ovmf # UEFI firmware for libvirt VMs
-        - cloud-image-utils # builds cloud-init seed ISOs for unattended VM installs
+        # `make vm-*` deps (KVM/QEMU + libvirt for local VM testing):
+        - qemu-full
+        - libvirt
+        - virt-manager
+        - virt-viewer
+        - dnsmasq
+        - edk2-ovmf
+        - cloud-image-utils
 
       terminal_tools:
         - git
