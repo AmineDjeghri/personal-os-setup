@@ -3,6 +3,17 @@ packages:
     apt:
       Dev_tools:
         - docker-compose
+        # `make vm-*` deps (KVM/QEMU + libvirt for local VM testing):
+        - qemu-system
+        - qemu-utils
+        - libvirt-daemon-system # provides libvirtd
+        - libvirt-clients # provides virsh
+        - virtinst # provides virt-install
+        - virt-manager # provides virt-manager GUI
+        - virt-viewer # provides virt-viewer GUI
+        - dnsmasq-base # provides dnsmasq for libvirt networking
+        - ovmf # provides UEFI firmware for VMs
+        - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
       terminal_tools:
         - git
         - curl
@@ -117,6 +128,14 @@ packages:
         - zed
         - ghostty
         - neovim # modernized vim
+        # `make vm-*` deps (KVM/QEMU + libvirt for local VM testing):
+        - qemu-full
+        - libvirt
+        - virt-manager
+        - virt-viewer
+        - dnsmasq
+        - edk2-ovmf
+        - cloud-image-utils
 
       terminal_tools:
         - git
@@ -180,7 +199,7 @@ packages:
         - gnome-online-accounts # Google/Microsoft/Nextcloud account integration for gvfs-goa
         - sushi # spacebar quick-preview for Nautilus (like macOS Quick Look)
         - nautilus-python # extension framework required by most python-based Nautilus plugins
-      Hyprland desktop:
+      Desktop:
         - noctalia
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
       Screenshots:
@@ -200,7 +219,7 @@ packages:
         - openrgb # RGB lighting control
         - nvtop # GPU usage/VRAM/temp monitor, complements btop which doesn't show GPU stats
     paru:
-      Hyprland desktop:
+      Desktop:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
       Utilities:
         - anydesk-bin

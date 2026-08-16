@@ -1253,6 +1253,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#testing-this-project-in-a-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing this project in a VM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#apps-shortcuts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3111,6 +3122,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#testing-this-project-in-a-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing this project in a VM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#apps-shortcuts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3210,6 +3232,42 @@
 <p>This document tracks a migration from Windows to a native Linux development
 workstation. It is updated as the setup is tested and refined.</p>
 </blockquote>
+<!-- TOC -->
+<ul>
+<li><a href="#cachyos-hyprland-developer-workstation-setup">CachyOS Hyprland Developer Workstation Setup</a></li>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#installation">Installation</a><ul>
+<li><a href="#secure-boot">Secure Boot</a></li>
+<li><a href="#bootloader-and-filesystem">Bootloader and filesystem</a></li>
+<li><a href="#keyboard-layout-defaults-to-qwerty-on-first-login">Keyboard layout defaults to QWERTY on first login</a></li>
+<li><a href="#after-first-boot">After first boot</a></li>
+</ul>
+</li>
+<li><a href="#packages">Packages</a></li>
+<li><a href="#desktop">Desktop</a><ul>
+<li><a href="#configuration-files">Configuration files</a></li>
+<li><a href="#settings-owned-by-noctalia-not-hyprland">Settings owned by Noctalia, not Hyprland</a></li>
+<li><a href="#editing-the-lockscreen-layout">Editing the lockscreen layout</a></li>
+<li><a href="#hyprland-plugins">Hyprland plugins</a></li>
+<li><a href="#secret-storage-gnome-keyring-not-kwallet">Secret storage (gnome-keyring, not KWallet)</a></li>
+</ul>
+</li>
+<li><a href="#shell">Shell</a></li>
+<li><a href="#theming">Theming</a></li>
+<li><a href="#gaming">Gaming</a><ul>
+<li><a href="#base-packages">Base packages</a></li>
+<li><a href="#gamemode">GameMode</a></li>
+<li><a href="#mangohud">MangoHud</a></li>
+<li><a href="#proton">Proton</a></li>
+<li><a href="#hdr--10-bit-desktop">HDR / 10-bit desktop</a></li>
+<li><a href="#verifying-hdr-actually-works">Verifying HDR actually works</a></li>
+</ul>
+</li>
+<li><a href="#testing-this-project-in-a-vm">Testing this project in a VM</a></li>
+<li><a href="#apps-shortcuts">Apps shortcuts</a></li>
+</ul>
+<!-- TOC -->
+
 <h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
 <p>Replace a Windows 11 + WSL workflow with a fully native Linux environment.</p>
 <table>
@@ -3517,6 +3575,37 @@ querying mpv's live negotiated state over its JSON IPC socket rather than trusti
    which also lists the negotiated colorspace/gamma/luma fields (less detail than the IPC query,
    but fast to eyeball, and stays in view when using windowed test videos).</li>
 </ol>
+<h2 id="testing-this-project-in-a-vm">Testing this project in a VM<a class="headerlink" href="#testing-this-project-in-a-vm" title="Permanent link">&para;</a></h2>
+<p><code>make vm-*</code> targets (backed by <code>scripts/vm.sh</code>) spin up local KVM/QEMU/libvirt VMs to try
+this project's setup in a disposable environment instead of on your real machine. <strong>Any Linux
+host</strong> — <code>make vm-deps</code> auto-detects <code>pacman</code>/<code>apt</code>/<code>dnf</code> and checks the right package names for
+each. On CachyOS and Ubuntu those packages are also in <code>packages.yaml</code>, so you can install them
+from the app's own Packages tab instead of manually.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>make<span class="w"> </span>vm-deps<span class="w">            </span><span class="c1"># verify qemu/libvirt/virt-manager/virt-viewer are installed, enable libvirtd</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">                         </span><span class="c1"># (install any missing ones from the app&#39;s Packages tab first, if available for your distro)</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>make<span class="w"> </span>vm-cachyos<span class="w">          </span><span class="c1"># CachyOS VM -- manual ISO install, GUI console opens automatically</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>make<span class="w"> </span>vm-ubuntu-server<span class="w">    </span><span class="c1"># Ubuntu Server 26.04 -- unattended autoinstall, no clicking needed</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>make<span class="w"> </span>vm-ubuntu-server-manual<span class="w">  </span><span class="c1"># same ISO, manual click-through install</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>make<span class="w"> </span>vm-ubuntu<span class="w">           </span><span class="c1"># Ubuntu Desktop 26.04 -- manual install</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>make<span class="w"> </span>vm-list<span class="w">             </span><span class="c1"># list this project&#39;s VMs and their state</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>make<span class="w"> </span>vm-clean<span class="w">            </span><span class="c1"># destroy/undefine all this project&#39;s VMs, wipe disks (keeps cached ISOs)</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>make<span class="w"> </span>vm-clean-isos<span class="w">       </span><span class="c1"># delete cached install ISOs too (re-downloaded on next make vm-*)</span>
+</span></code></pre></div>
+<p>Re-running a <code>vm-*</code> target on a VM that already exists just starts it and reopens the GUI
+console instead of recreating it. Everything (ISOs, disk images, cloud-init seeds) is cached
+under <code>.vm/</code> (gitignored) — repo-local, so deleting the repo also cleans it all up.</p>
+<p><strong>If a VM has no internet access during install</strong>, it's very likely your host's firewall
+blocking NAT'd VM traffic on libvirt's <code>virbr0</code> bridge, even though libvirt sets up its own
+NAT rules for it. On <code>ufw</code>-based hosts (Ubuntu's default), fix it with:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>make<span class="w"> </span>vm-ufw-allow<span class="w">   </span><span class="c1"># asks for confirmation, then allows routing for virbr0 specifically</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>make<span class="w"> </span>vm-ufw-revert<span class="w">  </span><span class="c1"># undoes it, same confirm-first prompt</span>
+</span></code></pre></div>
+<p>This only opens routing for <code>virbr0</code> — every other interface keeps <code>ufw</code>'s default DROP-forward
+policy untouched. If your host uses <code>firewalld</code> instead (common on Fedora/RHEL), the equivalent
+is adding <code>virbr0</code>'s zone to the trusted zone or an explicit forwarding rule — <code>vm-ufw-allow</code>
+doesn't cover that yet.</p>
 <h2 id="apps-shortcuts">Apps shortcuts<a class="headerlink" href="#apps-shortcuts" title="Permanent link">&para;</a></h2>
 <p>For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,
 the terminal tools cheatsheet), plus a table of what's available on CachyOS vs. Windows/macOS

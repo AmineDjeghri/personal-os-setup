@@ -2820,25 +2820,38 @@
 </tbody>
 </table>
 <blockquote>
+<p>[!TIP]</p>
+<p><strong>Try it in a VM first</strong>: <code>make vm-cachyos</code> / <code>make vm-ubuntu-server</code> / <code>make vm-ubuntu</code> spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see <a href="docs/linux/CachyOS/#testing-this-project-in-a-vm">docs/linux/CachyOS.md</a> for the full command list.</p>
+<p>[!WARNING]
+If you decide to fork the original repository (AmineDjeghri/personal-os-setup):</p>
+<p>It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
+Add the original repo (AmineDjeghri/personal-os-setup) as <code>upstream</code> remote git branch:**
+ <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+</span></code></pre></div>
+<code>fetch</code> only downloads <code>upstream</code>'s history — it never touches your working tree or branch.
+You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
+This will conflict on most shared files (as noted above) plus anything fork-specific that <code>upstream</code> also touched.
+review the final diff (<code>git diff --staged</code> or the IDE's local changes view) before committing the merge.</p>
 <p>[!TIP]
-<strong>V2 is here</strong> — the terminal UI has been rebuilt with <a href="https://textual.textualize.io/">Textual</a>, bringing tabs, colors, progress bars, and a much nicer look and feel.</p>
+<strong>Using Claude Code or an agent?</strong> This repo ships skills under <code>.claude/skills/</code> to help you add features, write tests, and more with this codebase's conventions already baked in.</p>
 </blockquote>
 <h3 id="get-started">Get started<a class="headerlink" href="#get-started" title="Permanent link">&para;</a></h3>
 <h4 id="linux-wsl2-macos">Linux / WSL2 / macOS<a class="headerlink" href="#linux-wsl2-macos" title="Permanent link">&para;</a></h4>
 <p>Get started with one command in bash/zsh:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
 </span></code></pre></div>
 <p>The script installs the repository into <code>~/.personal-os-setup</code> (or reuses/updates it if it already exists there) and links a <code>personal-os-setup</code> command into <code>~/.local/bin</code>, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <p>Once installed, just run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>personal-os-setup
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>personal-os-setup
 </span></code></pre></div>
 <h4 id="windows-11">Windows 11<a class="headerlink" href="#windows-11" title="Permanent link">&para;</a></h4>
 <p>Get started with one command (run it in PowerShell as administrator):
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
 </span></code></pre></div></p>
 <p>The script installs the repository into <code>%USERPROFILE%\.personal-os-setup</code> (or reuses/updates it if it already exists there) and adds a <code>personal-os-setup</code> command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <p>Once installed, just run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>personal-os-setup
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>personal-os-setup
 </span></code></pre></div>
 <blockquote>
 <p>[!NOTE]
