@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.5.2 (2026-08-17)
+
+### Bug Fixes
+
+- Add script to reload hyprland config
+  ([`3a6a0a2`](https://github.com/AmineDjeghri/personal-os-setup/commit/3a6a0a2c76f8d01d6247636bf2bab0a911c9e941))
+
+
 ## v2.5.1 (2026-08-17)
 
 ### Bug Fixes
