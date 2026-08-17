@@ -57,7 +57,7 @@ hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. 
 hl.bind(mainMod .. " + G",          hl.dsp.exec_cmd(noctCall .. "settings-toggle"), { description = "Toggle Noctalia settings" })
 -- ALT+Z intentionally left free: gpu-screen-recorder-ui grabs it globally (ShadowPlay-style
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(noctCall .. "panel-toggle control-center"), { description = "Toggle control center" })
-hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd("vicinae toggle"), { description = "Toggle app launcher" })
+hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd(APP_LAUNCHER), { description = "Toggle app launcher" })
 hl.bind(mainMod .. " + period",     hl.dsp.exec_cmd(noctCall .. "panel-toggle launcher /emo"), { description = "Open emoji picker" })
 hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd(noctCall .. "session lock"), { description = "Lock session" })
 hl.bind(mainMod .. " + SHIFT + L",  hl.dsp.exec_cmd(noctCall .. "panel-toggle session"), { description = "Toggle power/session menu" }) -- power/session menu; skel's own "mainMod + ALT + C" bind for this collapses to "ALT + ALT + C" once mainMod=ALT, so it's rebound here instead

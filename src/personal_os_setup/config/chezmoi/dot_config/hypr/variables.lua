@@ -14,6 +14,9 @@ end
 
 CLIPBOARD = commandExists("/usr/bin/vicinae") and "vicinae cmd launch clipboard:history" or "noctalia msg panel-toggle clipboard"
 
+-- App launcher: Vicinae if installed, otherwise Noctalia's own launcher panel
+APP_LAUNCHER = commandExists("/usr/bin/vicinae") and "vicinae toggle" or "noctalia msg panel-toggle launcher"
+
 -- Monitors
 MONITOR1 = "DP-1"
 MONITOR2 = "DP-2"

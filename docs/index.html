@@ -2512,6 +2512,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features &amp; Benefits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2576,7 +2595,77 @@
 
 
 <h1 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h1>
-<p>Explore the documentation using the vertical navbar.</p>
+<p>Explore the documentation using the vertical navbar, or jump straight to a section:</p>
+<ul>
+<li><strong>Windows/WSL2</strong>: <a href="windows_workflow/">docs/windows_workflow</a></li>
+<li><strong>Linux/WSL2</strong>: <a href="linux/">docs/linux</a></li>
+<li><strong>macOS</strong>: <a href="macos_darwin/">docs/macos_darwin</a></li>
+<li><strong>TV setup</strong> (Google TV + Stremio): <a href="android-tv/readme/">docs/android-tv</a></li>
+<li><strong>Home server / Home Assistant</strong>: <a href="home-server/readme/">docs/home-server</a></li>
+<li><strong>Apps setup &amp; shortcuts</strong>: <a href="apps/apps_configuration_and_shorcuts/">docs/apps</a></li>
+<li><strong>Websites &amp; browser extensions</strong>: <a href="apps/awesome_websites_browser_extensions/">docs/apps</a></li>
+</ul>
+<h2 id="features-benefits">Features &amp; Benefits<a class="headerlink" href="#features-benefits" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p><strong>One-liner installers</strong></p>
+<ul>
+<li>Windows: PowerShell script that installs selected apps via <code>winget</code>, enables WSL, applies Windows Terminal defaults, and fetches GlazeWM config.</li>
+<li>Linux / WSL / macOS: Bash script that installs Zsh/OMZ/P10k, terminal tools, and optional NVIDIA for Linux.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cross-OS Python TUI</strong></p>
+<ul>
+<li>Built with <a href="https://textual.textualize.io/">Textual</a>, with:<ul>
+<li>OS detection (Windows, WSL, Linux, macOS),</li>
+<li>System action sections (WSL tools, Windows utilities, package managers).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Unified package catalog</strong></p>
+<ul>
+<li><code>src/personal_os_setup/config/packages.yaml</code> as a single source of truth for packages.</li>
+<li>Concrete backends implemented:<ul>
+<li>Linux:<ul>
+<li>Ubuntu: <code>UbuntuAptManager</code>, <code>UbuntuSnapManager</code>,</li>
+<li>Arch: <code>ArchLinuxYayManager</code></li>
+</ul>
+</li>
+<li>Windows: <code>WindowsWingetManager</code>,</li>
+<li>macOS: <code>DarwinBrewManager</code>, <code>DarwinBrewCaskManager</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>WSL workflow helpers</strong></p>
+<ul>
+<li>Actions to:<ul>
+<li>List installed / online distros,</li>
+<li>Install a distro with optional custom location,</li>
+<li>Export / import / move / unregister distros,</li>
+<li>Shutdown and update WSL.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Windows Terminal helpers</strong></p>
+<ul>
+<li>Apply consistent defaults (Night Owl scheme, JetBrains Mono font, opacity, elevation).</li>
+<li>Add a dedicated <strong>Ubuntu profile</strong> with an icon.</li>
+</ul>
+</li>
+<li>
+<p><strong>Curated documentation</strong></p>
+<ul>
+<li>Windows &amp; Linux workflows, TV setup (Google TV + Stremio), home server (Ubuntu Server + KVM + Home Assistant), app shortcuts, and browser extensions, mirrored to a static site via <code>properdocs</code>.</li>
+</ul>
+</li>
+</ul>
 
 
 
