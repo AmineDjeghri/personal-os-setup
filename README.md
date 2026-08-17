@@ -9,7 +9,7 @@
 
 > [!TIP]
 >
-> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
+> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [Testing in a VM](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
 
 > [!WARNING]
 > If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
