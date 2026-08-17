@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v2.5.1 (2026-08-17)
+
+### Bug Fixes
+
+- Launcher cachyos (#97) ([#97](https://github.com/AmineDjeghri/personal-os-setup/pull/97),
+  [`be737e3`](https://github.com/AmineDjeghri/personal-os-setup/commit/be737e35b1f3c9d4aa980d20470671bd67953f8b))
+
+### Documentation
+
+- Update README.md
+  ([`1749563`](https://github.com/AmineDjeghri/personal-os-setup/commit/17495632ce7071670f392351a35e799c1391aad2))
+
+
 ## v2.5.0 (2026-08-16)
 
 ### Features
