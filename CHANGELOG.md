@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.5.3 (2026-08-17)
+
+### Bug Fixes
+
+- Reorder UI
+  ([`7906ac1`](https://github.com/AmineDjeghri/personal-os-setup/commit/7906ac170ba26230bcb5b5d8a064bd84809517b1))
+
+
 ## v2.5.2 (2026-08-17)
 
 ### Bug Fixes
