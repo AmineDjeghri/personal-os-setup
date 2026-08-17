@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shutil
+from datetime import datetime
 from importlib import resources
 from pathlib import Path
 
@@ -66,11 +67,39 @@ def chezmoi_diff(targets: list[Path] | None = None) -> TaskResult:
     )
 
 
+def _backup_before_overwrite(targets: list[Path]) -> list[Path]:
+    """Copy each existing target aside before chezmoi overwrites it.
+
+    Uses the same "<name>_<timestamp>_backup<suffix>" convention as the frontend's
+    `backup_target` mechanism (`app.py::_run_action_worker`). Scripts/symlinks (which
+    chezmoi reports as managed paths but don't correspond to a plain destination file)
+    are skipped via the `is_file()` check, not treated as errors.
+    """
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backed_up: list[Path] = []
+    for target in targets:
+        if not target.is_file():
+            continue
+        backup_path = (
+            target.with_name(f"{target.stem}_{ts}_backup{target.suffix}")
+            if target.suffix
+            else target.with_name(f"{target.name}_{ts}_backup")
+        )
+        try:
+            shutil.copy2(target, backup_path)
+        except OSError:
+            continue
+        backed_up.append(backup_path)
+    return backed_up
+
+
 def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
     """Apply the selected dotfile(s) to the home directory without refreshing git-repo externals."""
     chezmoi_path = _chezmoi_path()
     if chezmoi_path is None:
         return TaskResult(ok=False, summary="chezmoi not found on PATH")
+
+    backed_up = _backup_before_overwrite(targets or [])
 
     argv = [
         chezmoi_path,
@@ -85,6 +114,9 @@ def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
     argv.extend(str(t) for t in targets or [])
     res = run(argv, check=False)
     details = (res.stdout + "\n" + res.stderr).strip()
+    if backed_up:
+        backup_note = "Backed up before applying:\n" + "\n".join(str(p) for p in backed_up)
+        details = f"{backup_note}\n\n{details}".strip()
     if res.returncode == 0:
         return TaskResult(ok=True, summary="chezmoi apply: ok", details=details)
     return TaskResult(ok=False, summary="chezmoi apply: failed", details=details)
