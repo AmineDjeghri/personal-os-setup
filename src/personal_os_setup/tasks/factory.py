@@ -242,6 +242,18 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 confirm_message="Install JetBrainsMono Nerd Font for terminals?",
             ),
             SystemAction(
+                label="sync zsh plugins/theme",
+                run=chezmoi_refresh_zsh_externals,
+                confirm=True,
+                confirm_message="Pull oh-my-zsh, its plugins, and its theme from upstream?",
+            ),
+            SystemAction(
+                label="set zsh as default shell",
+                run=set_zsh_as_default_shell,
+                confirm=True,
+                confirm_message="Set your default shell to zsh? (OS reboot required)",
+            ),
+            SystemAction(
                 label="chezmoi: track a new file",
                 run=lambda: TaskResult(
                     ok=True,
@@ -254,18 +266,6 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                     "(e.g. ~/.config/foo/config.toml)"
                 ),
                 prompt_initial="~/.",
-            ),
-            SystemAction(
-                label="set zsh as default shell",
-                run=set_zsh_as_default_shell,
-                confirm=True,
-                confirm_message="Set your default shell to zsh? (OS reboot required)",
-            ),
-            SystemAction(
-                label="sync zsh plugins/theme",
-                run=chezmoi_refresh_zsh_externals,
-                confirm=True,
-                confirm_message="Pull oh-my-zsh, its plugins, and its theme from upstream?",
             ),
         ],
     )

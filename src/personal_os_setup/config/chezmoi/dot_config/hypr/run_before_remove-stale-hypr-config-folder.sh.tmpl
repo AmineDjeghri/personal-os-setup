@@ -2,7 +2,7 @@
 #!/bin/bash
 set -eu
 
-# runs after every sync that touches hypr/: clears Lua's package.loaded
+#  moves aside (backs up, doesn't delete) any leftover skeleton ~/.config/hypr/config/ folder before applying, so future first-time syncs on a new machine never end up with both layouts present at once
 
 script_name="run_before_remove-stale-hypr-config-folder.sh.tmpl"
 notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
