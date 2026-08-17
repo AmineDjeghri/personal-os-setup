@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.5.4 (2026-08-17)
+
+### Bug Fixes
+
+- Enhance setup guide for CachyOS and improve Hyprland reload script
+  ([`69470a1`](https://github.com/AmineDjeghri/personal-os-setup/commit/69470a1bb15f2d6ff4079fecbb5fd0a58ba491f2))
+
+
 ## v2.5.3 (2026-08-17)
 
 ### Bug Fixes
