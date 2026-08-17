@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+# runs after every sync that touches hypr/: clears Lua's package.loaded
+
+script_name="run_before_remove-stale-hypr-config-folder.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
+# Skeleton (e.g. /etc/skel) hyprland.lua nests files under config/ -- this repo's is flat.
+stale_dir="$HOME/.config/hypr/config"
+
+if [ -d "$stale_dir" ]; then
+  backup_dir="$HOME/.config/hypr/config.bak-$(date +%Y%m%d%H%M%S)"
+  mv "$stale_dir" "$backup_dir"
+  notify "Hyprland config" "Moved stale config/ subfolder aside to $(basename "$backup_dir")"
+fi
+{{ end -}}

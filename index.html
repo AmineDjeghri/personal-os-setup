@@ -480,6 +480,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing (For developers)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contributing (For developers)">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#developer-editor-clone-from-source" class="md-nav__link">
     <span class="md-ellipsis">
@@ -501,17 +518,6 @@
     <span class="md-ellipsis">
       
         What is this repo?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#contributing-for-developers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contributing (For developers)
       
     </span>
   </a>
@@ -2664,6 +2670,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing (For developers)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contributing (For developers)">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#developer-editor-clone-from-source" class="md-nav__link">
     <span class="md-ellipsis">
@@ -2685,17 +2708,6 @@
     <span class="md-ellipsis">
       
         What is this repo?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#contributing-for-developers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contributing (For developers)
       
     </span>
   </a>
@@ -2752,69 +2764,6 @@
 </table>
 <p>An opinionated <strong>terminal UI app + documentation hub</strong> for a fast, consistent setup across <strong>Windows</strong>, <strong>Linux</strong>, <strong>macOS</strong>, <strong>WSL2</strong>, your <strong>living room</strong> (Google TV + Stremio), and your <strong>home server</strong> (Home Assistant). Click through the TUI to install packages, configure Zsh/dotfiles/WSL/GPU drivers, and more — one tool for all four OSes.</p>
 <blockquote>
-<p>[!TIP]</p>
-<p><strong>Try it in a VM first</strong>: <code>make vm-cachyos</code> / <code>make vm-ubuntu-server</code> / <code>make vm-ubuntu</code> spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see <a href="docs/linux/CachyOS/#testing-this-project-in-a-vm">docs/linux/CachyOS.md</a> for the full command list.</p>
-<p>[!WARNING]
-If you decide to fork the original repository (AmineDjeghri/personal-os-setup):</p>
-<p>It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
-Add the original repo (AmineDjeghri/personal-os-setup) as <code>upstream</code> remote git branch:**
- <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>fetch<span class="w"> </span>upstream
-</span></code></pre></div>
-<code>fetch</code> only downloads <code>upstream</code>'s history — it never touches your working tree or branch.
-You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
-This will conflict on most shared files (as noted above) plus anything fork-specific that <code>upstream</code> also touched.
-review the final diff (<code>git diff --staged</code> or the IDE's local changes view) before committing the merge.</p>
-<p>[!TIP]
-<strong>Using Claude Code or an agent?</strong> This repo ships skills under <code>.claude/skills/</code> to help you add features, write tests, and more with this codebase's conventions already baked in.</p>
-</blockquote>
-<p><strong>Table of contents</strong></p>
-<!-- TOC -->
-<ul>
-<li><a href="#personal-os-setup">Personal OS Setup</a><ul>
-<li><a href="#get-started">Get started</a></li>
-<li><a href="#linux--wsl2--macos">Linux / WSL2 / macOS</a></li>
-<li><a href="#windows-11">Windows 11</a></li>
-<li><a href="#developer--editor-clone-from-source">Developer / editor (clone from source)</a></li>
-</ul>
-</li>
-<li><a href="#what-is-this-repo">What is this repo?</a></li>
-<li><a href="#contributing-for-developers">Contributing (For developers)</a></li>
-</ul>
-<!-- TOC -->
-
-<h3 id="get-started">Get started<a class="headerlink" href="#get-started" title="Permanent link">&para;</a></h3>
-<h4 id="linux-wsl2-macos">Linux / WSL2 / macOS<a class="headerlink" href="#linux-wsl2-macos" title="Permanent link">&para;</a></h4>
-<p>Get started with one command in bash/zsh:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
-</span></code></pre></div>
-<p>The script installs the repository into <code>~/.personal-os-setup</code> (or reuses/updates it if it already exists there) and links a <code>personal-os-setup</code> command into <code>~/.local/bin</code>, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
-<p>Once installed, just run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>personal-os-setup
-</span></code></pre></div>
-<h4 id="windows-11">Windows 11<a class="headerlink" href="#windows-11" title="Permanent link">&para;</a></h4>
-<p>Get started with one command (run it in PowerShell as administrator):
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
-</span></code></pre></div></p>
-<h4 id="developer-editor-clone-from-source">Developer / editor (clone from source)<a class="headerlink" href="#developer-editor-clone-from-source" title="Permanent link">&para;</a></h4>
-<p>If you want to edit the code or fork and customize this project, clone it instead of using
-the one-liners above:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git<span class="w">   </span><span class="c1"># or your fork&#39;s URL</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">cd</span><span class="w"> </span>personal-os-setup
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./install_unix.sh<span class="w">          </span><span class="c1"># Linux / WSL2 / macOS</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># ./install_windows.ps1    # Windows 11 (PowerShell as administrator)</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># or make install-dev &amp;&amp; make run</span>
-</span></code></pre></div>
-<p>Running the installation script from inside an existing clone updates that checkout in place
-instead of creating a separate <code>~/.personal-os-setup</code> copy, so the <code>personal-os-setup</code>
-command runs your local, editable checkout.</p>
-<p>The script installs the repository into <code>%USERPROFILE%\.personal-os-setup</code> (or reuses/updates it if it already exists there) and adds a <code>personal-os-setup</code> command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
-<p>Once installed, just run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>personal-os-setup
-</span></code></pre></div>
-<blockquote>
-<p>[!NOTE]
-The app <strong>auto-updates on every launch</strong>: it runs a <code>git pull</code> on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.</p>
 <p>[!NOTE]
 <strong>Update notes</strong></p>
 <table>
@@ -2849,6 +2798,79 @@ The app <strong>auto-updates on every launch</strong>: it runs a <code>git pull<
 </tbody>
 </table>
 </blockquote>
+<p><strong>Table of contents</strong></p>
+<!-- TOC -->
+<ul>
+<li><a href="#personal-os-setup">Personal OS Setup</a><ul>
+<li><a href="#get-started">Get started</a></li>
+<li><a href="#linux--wsl2--macos">Linux / WSL2 / macOS</a></li>
+<li><a href="#windows-11">Windows 11</a></li>
+</ul>
+</li>
+<li><a href="#contributing-for-developers">Contributing (For developers)</a><ul>
+<li><a href="#developer--editor-clone-from-source">Developer / editor (clone from source)</a></li>
+</ul>
+</li>
+<li><a href="#what-is-this-repo">What is this repo?</a></li>
+</ul>
+<!-- TOC -->
+
+<h3 id="get-started">Get started<a class="headerlink" href="#get-started" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>[!TIP]
+Want to edit the code, or fork and customize this project? See <a href="#developer--editor-clone-from-source">Developer / editor (clone from source)</a> below.</p>
+</blockquote>
+<h4 id="linux-wsl2-macos">Linux / WSL2 / macOS<a class="headerlink" href="#linux-wsl2-macos" title="Permanent link">&para;</a></h4>
+<p>Get started with one command in bash/zsh:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<p>The script installs the repository into <code>~/.personal-os-setup</code> (or reuses/updates it if it already exists there) and links a <code>personal-os-setup</code> command into <code>~/.local/bin</code>, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
+<p>Once installed, just run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>personal-os-setup
+</span></code></pre></div>
+<h4 id="windows-11">Windows 11<a class="headerlink" href="#windows-11" title="Permanent link">&para;</a></h4>
+<p>Get started with one command (run it in PowerShell as administrator):
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
+</span></code></pre></div></p>
+<p>The script installs the repository into <code>%USERPROFILE%\.personal-os-setup</code> (or reuses/updates it if it already exists there) and adds a <code>personal-os-setup</code> command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
+<p>Once installed, just run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>personal-os-setup
+</span></code></pre></div>
+<blockquote>
+<p>[!NOTE]
+The app <strong>auto-updates on every launch</strong>: it runs a <code>git pull</code> on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.</p>
+</blockquote>
+<h2 id="contributing-for-developers">Contributing (For developers)<a class="headerlink" href="#contributing-for-developers" title="Permanent link">&para;</a></h2>
+<h3 id="developer-editor-clone-from-source">Developer / editor (clone from source)<a class="headerlink" href="#developer-editor-clone-from-source" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>[!WARNING]
+If you decide to fork the original repository (AmineDjeghri/personal-os-setup):</p>
+<p>It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
+Add the original repo (AmineDjeghri/personal-os-setup) as <code>upstream</code> remote git branch:**
+ <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+</span></code></pre></div>
+<code>fetch</code> only downloads <code>upstream</code>'s history — it never touches your working tree or branch.
+You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
+This will conflict on most shared files (as noted above) plus anything fork-specific that <code>upstream</code> also touched.
+review the final diff (<code>git diff --staged</code> or the IDE's local changes view) before committing the merge.</p>
+<p>[!TIP]
+<strong>Try it in a VM first</strong>: <code>make vm-cachyos</code> / <code>make vm-ubuntu-server</code> / <code>make vm-ubuntu</code> spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see <a href="docs/linux/CachyOS/#testing-this-project-in-a-vm">docs/linux/CachyOS.md</a> for the full command list.</p>
+<p>[!TIP]
+<strong>Using Claude Code or an agent?</strong> This repo ships skills under <code>.claude/skills/</code> to help you add features, write tests, and more with this codebase's conventions already baked in.</p>
+</blockquote>
+<p>If you want to edit the code or fork and customize this project, clone it instead of using
+the one-liners above:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git<span class="w">   </span><span class="c1"># or your fork&#39;s URL</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>personal-os-setup
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>./install_unix.sh<span class="w">          </span><span class="c1"># Linux / WSL2 / macOS</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># ./install_windows.ps1    # Windows 11 (PowerShell as administrator)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># or make install-dev &amp;&amp; make run</span>
+</span></code></pre></div>
+<p>Running the installation script from inside an existing clone updates that checkout in place
+instead of creating a separate <code>~/.personal-os-setup</code> copy, so the <code>personal-os-setup</code>
+command runs your local, editable checkout.</p>
+<p>Check the <a href="CONTRIBUTING/">CONTRIBUTING.md</a> file for more information.</p>
 <h2 id="what-is-this-repo">What is this repo?<a class="headerlink" href="#what-is-this-repo" title="Permanent link">&para;</a></h2>
 <p>A cross-OS Python <strong>TUI app</strong> (Windows, Linux, macOS, WSL2) for installing packages and running system actions — Zsh/Oh-My-Zsh, WSL management, GPU drivers, dotfiles sync (chezmoi), Windows Terminal config, Docker post-install, and more — plus a <strong>documentation hub</strong> covering the same platforms, TV setup (Google TV + Stremio), and a home server (Home Assistant).</p>
 <p>Full feature list, supported package managers, and the docs index: <strong><a href="http://personal-os-setup.aminedjeghri.com/">personal-os-setup.aminedjeghri.com</a></strong></p>
@@ -2888,8 +2910,6 @@ support on Linux. This flexibility, coupled with the ability to handle resource-
 capabilities, positions Windows-WSL as an enticing platform, ensuring a well-rounded computing experience for all users,
 regardless of their workplace constraints.</p>
 <p>Based on your needs, you can choose your OS.</p>
-<h2 id="contributing-for-developers">Contributing (For developers)<a class="headerlink" href="#contributing-for-developers" title="Permanent link">&para;</a></h2>
-<p>Check the <a href="CONTRIBUTING/">CONTRIBUTING.md</a> file for more information.</p>
 <p><a href="https://star-history.dera.page/#AmineDjeghri/personal-os-setup"><img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup" /></a></p>
 
 
