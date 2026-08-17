@@ -2,22 +2,14 @@
 #!/bin/bash
 set -eu
 
-# runs after every sync that touches hypr/: clears Lua's package.loaded
-
 script_name="run_after_reload-hyprland.sh.tmpl"
 notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
 
 command -v hyprctl >/dev/null 2>&1 || exit 0
 hyprctl monitors >/dev/null 2>&1 || exit 0
 
-modules=(variables colors environment decorations animations misc xwayland autostart inputs binds hyprbars windowrules monitors workspaces noctalia)
-
-# One clear+reload pass doesn't reliably stick -- a second pass is what fixes it in practice.
-for _ in 1 2; do
-  for m in "${modules[@]}"; do
-    hyprctl eval "package.loaded[\"$m\"] = nil" >/dev/null 2>&1 || true
-  done
-  hyprctl reload >/dev/null 2>&1 || true
-done
+# Give the just-written files time to settle before Hyprland re-reads them.
+sleep 2
+hyprctl reload >/dev/null 2>&1 || true
 notify "Hyprland config" "Reloaded after dotfiles sync"
 {{ end -}}
