@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.5.5 (2026-08-17)
+
+### Bug Fixes
+
+- Add backup mechanism before overwriting files and simplify Hyprland reload script
+  ([`f6ad40f`](https://github.com/AmineDjeghri/personal-os-setup/commit/f6ad40f72da45514ac543b21f0432be3f8479cbf))
+
+
 ## v2.5.4 (2026-08-17)
 
 ### Bug Fixes
