@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.5.0 (2026-08-16)
+
+### Features
+
+- Add script for checking and loading Hyprland plugins (#96)
+  ([#96](https://github.com/AmineDjeghri/personal-os-setup/pull/96),
+  [`292bb9e`](https://github.com/AmineDjeghri/personal-os-setup/commit/292bb9e5e5d586e82028b0d3529f0f553eb42fd3))
+
+
 ## v2.4.0 (2026-08-15)
 
 ### Features
