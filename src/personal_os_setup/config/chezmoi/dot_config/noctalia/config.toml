@@ -242,10 +242,10 @@ tooltip = "Edit lockscreen widgets"
 [widget.vicinae]
 type = "custom_button"
 glyph = "search"
-tooltip = "Vicinae"
+tooltip = "Search"
 
     [widget.vicinae.actions]
-    left = "exec vicinae toggle"
+    left = "exec sh -c 'command -v vicinae >/dev/null 2>&1 && vicinae toggle || noctalia msg panel-toggle launcher'"
 
 [widget.hdr-toggle]
 type = "custom_button"

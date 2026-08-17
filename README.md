@@ -1,11 +1,23 @@
 # Personal OS Setup
 
+![Windows 11](https://img.shields.io/badge/Windows%2011-%230079d5.svg?style=for-the-badge&logo=Windows%2011&logoColor=white)
+![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)
+[![Linux](https://img.shields.io/badge/-Linux-grey?style=for-the-badge&logo=linux)](https://www.microsoft.com/en-in/windows)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+![Arch](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
+
+[![CI](https://github.com/AmineDjeghri/personal-os-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/AmineDjeghri/personal-os-setup/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/AmineDjeghri/personal-os-setup)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-website-blue)](http://personal-os-setup.aminedjeghri.com/)
+[![Stars](https://img.shields.io/github/stars/AmineDjeghri/personal-os-setup?style=social)](https://github.com/AmineDjeghri/personal-os-setup)
+
 ![Logo](docs/images/logo.png)
 
 | App Showcase                                            |
 |---------------------------------------------------------|
-| ![Desktop with terminals](docs/images/app_showcase.png) |
+| ![Desktop with terminals](docs/images/app_showcase.gif) |
 
+An opinionated **terminal UI app + documentation hub** for a fast, consistent setup across **Windows**, **Linux**, **macOS**, **WSL2**, your **living room** (Google TV + Stremio), and your **home server** (Home Assistant). Click through the TUI to install packages, configure Zsh/dotfiles/WSL/GPU drivers, and more — one tool for all four OSes.
 
 > [!TIP]
 >
@@ -29,6 +41,16 @@
 > [!TIP]
 > **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
 
+**Table of contents**
+<!-- TOC -->
+* [Personal OS Setup](#personal-os-setup)
+    * [Get started](#get-started)
+      * [Linux / WSL2 / macOS](#linux--wsl2--macos)
+      * [Windows 11](#windows-11)
+      * [Developer / editor (clone from source)](#developer--editor-clone-from-source)
+  * [What is this repo?](#what-is-this-repo)
+  * [Contributing (For developers)](#contributing-for-developers)
+<!-- TOC -->
 
 ### Get started
 
@@ -53,6 +75,23 @@ Get started with one command (run it in PowerShell as administrator):
 $u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
 ```
 
+#### Developer / editor (clone from source)
+
+If you want to edit the code or fork and customize this project, clone it instead of using
+the one-liners above:
+
+```bash
+git clone https://github.com/AmineDjeghri/personal-os-setup.git   # or your fork's URL
+cd personal-os-setup
+./install_unix.sh          # Linux / WSL2 / macOS
+# ./install_windows.ps1    # Windows 11 (PowerShell as administrator)
+# or make install-dev && make run
+```
+
+Running the installation script from inside an existing clone updates that checkout in place
+instead of creating a separate `~/.personal-os-setup` copy, so the `personal-os-setup`
+command runs your local, editable checkout.
+
 The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
 
 Once installed, just run:
@@ -64,122 +103,22 @@ personal-os-setup
 > [!NOTE]
 > The app **auto-updates on every launch**: it runs a `git pull` on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.
 
-> [!TIP]
-> You can fork this repository and change the apps/packages you need so it reflects what you want to install in your environment.
-
-
 > [!NOTE]
 > **Update notes**
 >
-> | Platform           | Version / Details       | Updated   |
-> |--------------------|-------------------------|-----------|
-> | macOS              | 26                      | July 2026 |
-> | CachyOS            | Linux `7.1.3-2-cachyos` | July 2026 |
-> | Ubuntu (server)    | 24/26                   | June 2026 |
-> | Windows 11 / WSL 2 | 11                      | May 2026  |
-
-
-An opinionated setup **app + documentation hub** for building a fast, clean, and consistent environment across **Windows**, **Linux**, **macOS**, **WSL2**, and even your **living room stack** (**Google TV** + **Stremio**) and **home server** (**Home Assistant**).
-
-Improve your UX and productivity with a reproducible setup for:
-
-- Development tools and package management
-- WSL2 workflows
-- GPU drivers
-- Terminal UX (Zsh/Oh-My-Zsh/Powerlevel10k)
-- Window tiling management
-- Home automation (Home Assistant)
-- TV setup (Google TV + Stremio/Nuvio)
-- Also, perfect for servers without a GUI !
-
-The image above is the app that runs on your terminal, it supports multiple OSes (Windows, Linux, macOS, WSL2) and can be used with a mouse to click on the buttons.
-You can follow this repository to get a similar setup on Windows 11, Linux, macOS, or a hybrid workflow (Windows + WSL).
-
-
-![Windows 11](https://img.shields.io/badge/Windows%2011-%230079d5.svg?style=for-the-badge&logo=Windows%2011&logoColor=white)
-![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)
-[![Linux](https://img.shields.io/badge/-Linux-grey?style=for-the-badge&logo=linux)](https://www.microsoft.com/en-in/windows)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
-![Arch](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
-
-**Table of contents**
-<!-- TOC -->
-* [Personal OS Setup](#personal-os-setup)
-    * [Get started](#get-started)
-      * [Linux / WSL2 / macOS](#linux--wsl2--macos)
-      * [Windows 11](#windows-11)
-  * [What is this repo?](#what-is-this-repo)
-    * [Features & Benefits](#features--benefits)
-    * [Docs and websites](#docs-and-websites)
-  * [Check the documentation](#check-the-documentation)
-  * [Contributing (For developers)](#contributing-for-developers)
-  * [Check the documentation](#check-the-documentation)
-<!-- TOC -->
+> | Platform           | Version / Details       | Updated     |
+> |--------------------|-------------------------|-------------|
+> | macOS              | 26                      | July 2026   |
+> | CachyOS            | Linux `7.1.8-1-cachyos` | August 2026 |
+> | Ubuntu (server)    | 24/26                   | June 2026   |
+> | Windows 11 / WSL 2 | 11                      | May 2026    |
 
 
 ## What is this repo?
 
-This repo is a personal “OS setup Terminal UI App”:
+A cross-OS Python **TUI app** (Windows, Linux, macOS, WSL2) for installing packages and running system actions — Zsh/Oh-My-Zsh, WSL management, GPU drivers, dotfiles sync (chezmoi), Windows Terminal config, Docker post-install, and more — plus a **documentation hub** covering the same platforms, TV setup (Google TV + Stremio), and a home server (Home Assistant).
 
-### Features & Benefits
-
-- **One‑liner installers**
-  - Windows: PowerShell script that installs selected apps via `winget`, enables WSL, applies Windows Terminal defaults, and fetches GlazeWM config.
-  - Linux / WSL/ macOS: Bash script that installs Zsh/OMZ/P10k, terminal tools, and optional NVIDIA for Linux.
-
-- **Cross‑OS Python TUI**
-  - TermTk‑based app (`main.py`) with:
-    - OS detection (Windows, WSL, Linux, macOS),
-    - System action sections (WSL tools, Windows utilities, package managers).
-
-- **Unified package catalog**
-  - `src/personal_os_setup/config/packages.yaml` as a single source of truth for packages.
-  - Concrete backends implemented:
-    - Linux:
-      - Ubuntu: `UbuntuAptManager`, `UbuntuSnapManager`,
-      - Arch: `ArchLinuxYayManager`
-    - Windows: `WindowsWingetManager`,
-    - macOS: `DarwinBrewManager`, `DarwinBrewCaskManager`.
-
-- **WSL workflow helpers**
-  - Actions to:
-    - List installed / online distros,
-    - Install a distro with optional custom location,
-    - Export / import / move / unregister distros,
-    - Shutdown and update WSL.
-
-- **Windows Terminal helpers**
-  - Apply consistent defaults (Night Owl scheme, JetBrains Mono font, opacity, elevation).
-  - Add a dedicated **Ubuntu profile** with an icon.
-
-- **Curated documentation**
-  - Windows & Linux workflows, TV setup (Google TV + Stremio), home server (Ubuntu Server + KVM + Home Assistant), app shortcuts, and browser extensions, mirrored to a static site via `properdocs`.
-
-
-### Docs and websites
-
-- **Windows/WSL2 docs**:
-  here: [LINK](docs/windows_workflow/README.md)
-
-- **Linux/WSL2 docs**:
-  here: [LINK](docs/linux/README.md)
-
-- **macOS docs**:
-  here: [LINK](docs/macos_darwin/README.md)
-
-- **TV setup docs**: Read me about it
-  here: [LINK](docs/android-tv/readme.md)
-
-- **Home server / Home Assistant docs**:
-  here: [LINK](docs/home-server/readme.md)
-
-- **Apps setup docs**:
-  [LINK](docs/apps/apps_configuration_and_shorcuts.md)
-
-- **Websites & Browser extensions docs**:
-  [LINK](docs/apps/awesome_websites_browser_extensions.md)
-
-
+Full feature list, supported package managers, and the docs index: **[personal-os-setup.aminedjeghri.com](http://personal-os-setup.aminedjeghri.com/)**
 
 **For Windows users: Why you should use WSL2?**
 WSL2 enables users to run Linux applications and use command-line tools natively on their Windows machines.
@@ -201,13 +140,7 @@ regardless of their workplace constraints.
 
 Based on your needs, you can choose your OS.
 
-http://personal-os-setup.aminedjeghri.com/
-## Check the documentation
-You can check the [documentation website](http://personal-os-setup.aminedjeghri.com/).
-
 ## Contributing (For developers)
 Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
-
-## Check the documentation
 
 [![Star History Chart](https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup)](https://star-history.dera.page/#AmineDjeghri/personal-os-setup)
