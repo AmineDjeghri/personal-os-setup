@@ -19,27 +19,16 @@
 
 An opinionated **terminal UI app + documentation hub** for a fast, consistent setup across **Windows**, **Linux**, **macOS**, **WSL2**, your **living room** (Google TV + Stremio), and your **home server** (Home Assistant). Click through the TUI to install packages, configure Zsh/dotfiles/WSL/GPU drivers, and more — one tool for all four OSes.
 
-> [!TIP]
+> [!NOTE]
+> **Update notes**
 >
-> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
+> | Platform           | Version / Details       | Updated     |
+> |--------------------|-------------------------|-------------|
+> | macOS              | 26                      | July 2026   |
+> | CachyOS            | Linux `7.1.8-1-cachyos` | August 2026 |
+> | Ubuntu (server)    | 24/26                   | June 2026   |
+> | Windows 11 / WSL 2 | 11                      | May 2026    |
 
-> [!WARNING]
-> If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
->
-> It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
-> Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
->  ```bash
->  git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
->  git fetch upstream
->  ```
-> `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
-> You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
-> This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.
-> review the final diff (`git diff --staged` or the IDE's local changes view) before committing the merge.
-
-
-> [!TIP]
-> **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
 
 **Table of contents**
 <!-- TOC -->
@@ -47,12 +36,15 @@ An opinionated **terminal UI app + documentation hub** for a fast, consistent se
     * [Get started](#get-started)
       * [Linux / WSL2 / macOS](#linux--wsl2--macos)
       * [Windows 11](#windows-11)
-      * [Developer / editor (clone from source)](#developer--editor-clone-from-source)
-  * [What is this repo?](#what-is-this-repo)
   * [Contributing (For developers)](#contributing-for-developers)
+    * [Developer / editor (clone from source)](#developer--editor-clone-from-source)
+  * [What is this repo?](#what-is-this-repo)
 <!-- TOC -->
 
 ### Get started
+
+> [!TIP]
+> Want to edit the code, or fork and customize this project? See [Developer / editor (clone from source)](#developer--editor-clone-from-source) below.
 
 #### Linux / WSL2 / macOS
 Get started with one command in bash/zsh:
@@ -75,7 +67,40 @@ Get started with one command (run it in PowerShell as administrator):
 $u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
 ```
 
-#### Developer / editor (clone from source)
+The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
+
+Once installed, just run:
+
+```bash
+personal-os-setup
+```
+
+> [!NOTE]
+> The app **auto-updates on every launch**: it runs a `git pull` on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.
+
+## Contributing (For developers)
+### Developer / editor (clone from source)
+
+> [!WARNING]
+> If you decide to fork the original repository (AmineDjeghri/personal-os-setup):
+>
+> It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
+> Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
+>  ```bash
+>  git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
+>  git fetch upstream
+>  ```
+> `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
+> You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
+> This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.
+> review the final diff (`git diff --staged` or the IDE's local changes view) before committing the merge.
+
+
+> [!TIP]
+> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
+
+> [!TIP]
+> **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
 
 If you want to edit the code or fork and customize this project, clone it instead of using
 the one-liners above:
@@ -92,26 +117,9 @@ Running the installation script from inside an existing clone updates that check
 instead of creating a separate `~/.personal-os-setup` copy, so the `personal-os-setup`
 command runs your local, editable checkout.
 
-The script installs the repository into `%USERPROFILE%\.personal-os-setup` (or reuses/updates it if it already exists there) and adds a `personal-os-setup` command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.
+Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
-Once installed, just run:
 
-```bash
-personal-os-setup
-```
-
-> [!NOTE]
-> The app **auto-updates on every launch**: it runs a `git pull` on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.
-
-> [!NOTE]
-> **Update notes**
->
-> | Platform           | Version / Details       | Updated     |
-> |--------------------|-------------------------|-------------|
-> | macOS              | 26                      | July 2026   |
-> | CachyOS            | Linux `7.1.8-1-cachyos` | August 2026 |
-> | Ubuntu (server)    | 24/26                   | June 2026   |
-> | Windows 11 / WSL 2 | 11                      | May 2026    |
 
 
 ## What is this repo?
@@ -140,7 +148,5 @@ regardless of their workplace constraints.
 
 Based on your needs, you can choose your OS.
 
-## Contributing (For developers)
-Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
 [![Star History Chart](https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup)](https://star-history.dera.page/#AmineDjeghri/personal-os-setup)
