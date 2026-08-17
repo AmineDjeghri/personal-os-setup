@@ -2,7 +2,7 @@
 #!/bin/bash
 set -eu
 
-#  moves aside (backs up, doesn't delete) any leftover skeleton ~/.config/hypr/config/ folder before applying, so future first-time syncs on a new machine never end up with both layouts present at once
+# runs after every sync that touches hypr/: clears Lua's package.loaded
 
 script_name="run_after_reload-hyprland.sh.tmpl"
 notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
