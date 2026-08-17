@@ -65,15 +65,19 @@ _UNCHECKED_GLYPH = "☐"
 _PARTIAL_GLYPH = "◐"
 
 
+def _start_guide_distro_substep(distro: str) -> str:
+    """Per-distro extra sub-step inserted as `2.1` between the zsh-config and packages steps."""
+    if distro == "cachyos":
+        return f"""
+**2.1. Sync `noctalia`, then `hyprland`** (tab **{_DOTFILES_SECTION_NAME}**): in the file tree \
+below the buttons, select `noctalia` and click `apply selected` \
+then select `hyprland` and click `apply selected`. Add the hyprland plugins like mentioned in \
+the notifications or logs,, then click `apply selected` on the `hypr` folder again to enable them.
+"""
+    return ""
+
+
 def _start_guide_markdown(distro: str) -> str:
-    step4_cachyos_note = (
-        "\n\nOn CachyOS, sync **`hyprland`** and **`noctalia`** first (in their own "
-        "`apply selected` step) before the rest -- noctalia provides the notification "
-        "daemon, so this app's own toast notifications won't show up on Hyprland until "
-        "it's applied."
-        if distro == "cachyos"
-        else ""
-    )
     return f"""\
 ## Welcome — first-time setup walkthrough
 
@@ -86,13 +90,12 @@ def _start_guide_markdown(distro: str) -> str:
 
 **2. Apply your zsh config** (tab **{_DOTFILES_SECTION_NAME}**): in the file tree below \
 the buttons, select `.zshrc` and `.p10k.zsh`, then click `apply selected`.
-
+{_start_guide_distro_substep(distro)}
 **3. Install packages** (tab **📦 Packages**): expand the categories, check the \
 packages you want, then click `Install selected`.
 
 **4. Sync the rest of your `~/.config`** (tab **{_DOTFILES_SECTION_NAME}**): select any \
-other entries you want tracked in the file tree, then click `apply selected` again.\
-{step4_cachyos_note}
+other entries you want tracked in the file tree, then click `apply selected` again.
 
 ---
 
