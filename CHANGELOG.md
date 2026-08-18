@@ -2,6 +2,59 @@
 
 <!-- version list -->
 
+## v2.5.6 (2026-08-18)
+
+### Bug Fixes
+
+- Add backup mechanism before overwriting files and simplify Hyprland reload script
+  ([`e481ee7`](https://github.com/AmineDjeghri/personal-os-setup/commit/e481ee77c889ccb57551e03679d54e4a65d6a333))
+
+
+## v2.5.5 (2026-08-17)
+
+### Bug Fixes
+
+- Add backup mechanism before overwriting files and simplify Hyprland reload script
+  ([`f6ad40f`](https://github.com/AmineDjeghri/personal-os-setup/commit/f6ad40f72da45514ac543b21f0432be3f8479cbf))
+
+
+## v2.5.4 (2026-08-17)
+
+### Bug Fixes
+
+- Enhance setup guide for CachyOS and improve Hyprland reload script
+  ([`69470a1`](https://github.com/AmineDjeghri/personal-os-setup/commit/69470a1bb15f2d6ff4079fecbb5fd0a58ba491f2))
+
+
+## v2.5.3 (2026-08-17)
+
+### Bug Fixes
+
+- Reorder UI
+  ([`7906ac1`](https://github.com/AmineDjeghri/personal-os-setup/commit/7906ac170ba26230bcb5b5d8a064bd84809517b1))
+
+
+## v2.5.2 (2026-08-17)
+
+### Bug Fixes
+
+- Add script to reload hyprland config
+  ([`3a6a0a2`](https://github.com/AmineDjeghri/personal-os-setup/commit/3a6a0a2c76f8d01d6247636bf2bab0a911c9e941))
+
+
+## v2.5.1 (2026-08-17)
+
+### Bug Fixes
+
+- Launcher cachyos (#97) ([#97](https://github.com/AmineDjeghri/personal-os-setup/pull/97),
+  [`be737e3`](https://github.com/AmineDjeghri/personal-os-setup/commit/be737e35b1f3c9d4aa980d20470671bd67953f8b))
+
+### Documentation
+
+- Update README.md
+  ([`1749563`](https://github.com/AmineDjeghri/personal-os-setup/commit/17495632ce7071670f392351a35e799c1391aad2))
+
+
 ## v2.5.0 (2026-08-16)
 
 ### Features

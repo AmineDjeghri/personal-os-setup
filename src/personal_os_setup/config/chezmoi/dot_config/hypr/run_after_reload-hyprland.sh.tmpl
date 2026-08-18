@@ -1,0 +1,14 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+script_name="run_after_reload-hyprland.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
+command -v hyprctl >/dev/null 2>&1 || exit 0
+hyprctl monitors >/dev/null 2>&1 || exit 0
+
+# Give the just-written files time to settle before Hyprland re-reads them.
+hyprctl reload >/dev/null 2>&1 || true
+notify "Hyprland config" "Reloaded after dotfiles sync"
+{{ end -}}
