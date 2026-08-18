@@ -9,7 +9,6 @@ command -v hyprctl >/dev/null 2>&1 || exit 0
 hyprctl monitors >/dev/null 2>&1 || exit 0
 
 # Give the just-written files time to settle before Hyprland re-reads them.
-sleep 2
 hyprctl reload >/dev/null 2>&1 || true
 notify "Hyprland config" "Reloaded after dotfiles sync"
 {{ end -}}
