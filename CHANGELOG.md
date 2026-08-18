@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v2.6.0 (2026-08-18)
+
+### Bug Fixes
+
+- Launcher cachyos (#97) ([#97](https://github.com/AmineDjeghri/personal-os-setup/pull/97),
+  [`be737e3`](https://github.com/AmineDjeghri/personal-os-setup/commit/be737e35b1f3c9d4aa980d20470671bd67953f8b))
+
+### Documentation
+
+- Update README.md
+  ([`1749563`](https://github.com/AmineDjeghri/personal-os-setup/commit/17495632ce7071670f392351a35e799c1391aad2))
+
+### Features
+
+- Enhance CachyOS setup guide and add backup mechanism for file overwrites
+  ([`aa944c3`](https://github.com/AmineDjeghri/personal-os-setup/commit/aa944c34471d3b0dc3d794bfcb16b1fc69f71438))
+
+
 ## v2.5.6 (2026-08-18)
 
 ### Bug Fixes
