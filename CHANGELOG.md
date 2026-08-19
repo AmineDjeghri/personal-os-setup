@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.7.0 (2026-08-19)
+
+### Features
+
+- Add auto-install extensions to ZED editor
+  ([`a50b405`](https://github.com/AmineDjeghri/personal-os-setup/commit/a50b4055fac91fc31db1802a22f002e715e31f0c))
+
+
 ## v2.6.0 (2026-08-18)
 
 ### Bug Fixes
