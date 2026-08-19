@@ -202,6 +202,7 @@ packages:
       Desktop:
         - noctalia
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
+        - xorg-xrdb # provides `xrdb`; sets Xft.dpi so XWayland apps (e.g. Steam) scale correctly under xwayland.force_zero_scaling
       Screenshots:
         - grim
         - slurp
