@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.8.0 (2026-08-19)
+
+### Features
+
+- Update XWayland scaling configuration and add xrdb dependency for Steam
+  ([`7e2c3a1`](https://github.com/AmineDjeghri/personal-os-setup/commit/7e2c3a126ea0d978aac625c1014e048e1baa47e9))
+
+
 ## v2.7.0 (2026-08-19)
 
 ### Features
