@@ -11,5 +11,18 @@
     "mode": "dark",
     "light": "One Light",
     "dark": "One Dark"
+  },
+  "auto_install_extensions": {
+    "docker-compose": true,
+    "dockerfile": true,
+    "html": true,
+    "ini": true,
+    "log": true,
+    "lua": true,
+    "make": true,
+    "material-icon-theme": true,
+    "pylsp": true,
+    "scss": true,
+    "toml": true
   }
 }
