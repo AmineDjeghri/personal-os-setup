@@ -1,6 +1,8 @@
 -- Auto-start config
 
 hl.on("hyprland.start", function ()
+    -- Steam's new XWayland UI reads scale from Xft.dpi, 160 = 96 * DP-1's 1.6666667 scale from xwayland.lua)
+    hl.exec_cmd("echo 'Xft.dpi: 160' | xrdb -merge -")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("kded6")
