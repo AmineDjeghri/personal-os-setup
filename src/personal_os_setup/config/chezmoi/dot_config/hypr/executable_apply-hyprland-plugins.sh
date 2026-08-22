@@ -7,7 +7,7 @@
 #   - autostart.lua's hyprland.start hook (every fresh Hyprland session)
 set -eu
 
-script_name="load-plugins.sh"
+script_name="apply-hyprland-plugins.sh"
 notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
 
 command -v hyprctl >/dev/null 2>&1 || exit 0

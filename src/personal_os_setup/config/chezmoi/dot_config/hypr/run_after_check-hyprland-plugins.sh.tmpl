@@ -2,6 +2,7 @@
 #!/bin/bash
 set -eu
 
-# Plugin list/load logic lives in load-plugins.sh (shared with autostart.lua's hyprland.start hook)
-exec "$HOME/.config/hypr/load-plugins.sh"
+# Plugin list/load logic lives in apply-hyprland-plugins.sh (shared with autostart.lua's hyprland.start hook).
+# Named to sort alphabetically before this script's own target name (check-hyprland-plugins.sh)
+exec "$HOME/.config/hypr/apply-hyprland-plugins.sh"
 {{ end -}}
