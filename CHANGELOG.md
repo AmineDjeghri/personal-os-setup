@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.9.0 (2026-08-22)
+
+### Features
+
+- Refactor Hyprland plugin loading logic into a separate script
+  ([`69e7a63`](https://github.com/AmineDjeghri/personal-os-setup/commit/69e7a63e11b4cdf511705916c52146806111b248))
+
+
 ## v2.8.0 (2026-08-19)
 
 ### Features
