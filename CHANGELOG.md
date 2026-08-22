@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.10.0 (2026-08-22)
+
+### Features
+
+- Rename and update plugin loading script for clarity and consistency
+  ([`05623ff`](https://github.com/AmineDjeghri/personal-os-setup/commit/05623ff4931340cdcf49fa6d7ca7bb129fd4380e))
+
+
 ## v2.9.0 (2026-08-22)
 
 ### Features
