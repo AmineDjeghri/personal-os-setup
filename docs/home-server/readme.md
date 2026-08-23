@@ -497,12 +497,6 @@ How to setup Sonoff MG24:
 
 * **Samba Backup**
 
-* **Samba Share**
-    * Docs: https://github.com/home-assistant/addons/tree/master/samba
-    * How to install: https://github.com/home-assistant/addons/blob/master/samba/DOCS.md
-    * Useful video example: https://www.youtube.com/watch?v=Vu_oxefjd0I
-    * Common tasks: https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-samba-add-on
-
 * [Advanced SSH & Web Terminal](https://github.com/hassio-addons/addon-ssh) (replaces the official Terminal & SSH add-on)
   * Add-on repository to add in HA: https://github.com/hassio-addons/repository
   * Docs: https://github.com/hassio-addons/addon-ssh/blob/main/ssh/DOCS.md
