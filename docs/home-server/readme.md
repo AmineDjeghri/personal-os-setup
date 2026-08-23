@@ -501,7 +501,11 @@ How to setup Sonoff MG24:
     * Useful video example: https://www.youtube.com/watch?v=Vu_oxefjd0I
     * Common tasks: https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-samba-add-on
 
-* [Terminal & SSH](https://lazyadmin.nl/smart-home/enable-ssh-home-assistant/)
+* [Advanced SSH & Web Terminal](https://github.com/hassio-addons/addon-ssh) (replaces the official Terminal & SSH add-on)
+  * Add-on repository to add in HA: https://github.com/hassio-addons/repository
+  * Docs: https://github.com/hassio-addons/addon-ssh/blob/main/ssh/DOCS.md
+  * Web terminal in the sidebar + SSH server, with Docker CLI and Docker socket access built in
+  * Note: disable **Protection mode** to use Docker; set a `password` and/or `authorized_keys` in the configuration to log in
 
 This next section is about controllers / routers add-ons :
 
