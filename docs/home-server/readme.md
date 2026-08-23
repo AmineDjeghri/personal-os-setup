@@ -62,6 +62,8 @@ sudo apt update && sudo apt upgrade
 ssh username@192.168.x.x
 ```
 
+- SSH authentication: SSH always requires login, even on your own network. With a `password`, you are prompted to type it on every connection. With an SSH key (`ssh-keygen -t ed25519 -a 100`, then `ssh-copy-id username@192.168.x.x`), no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app connects to SFTP with a password only (SSH keys are not supported) — for key-based connections use Termius (or another SSH/SFTP client) instead.
+
 - I customized the shell environment by installing Zsh and tools from the [Personal OS Setup](../../README.md) to improve usability and productivity.
 
 ### Lid closed (Laptop)
