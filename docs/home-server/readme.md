@@ -62,6 +62,8 @@ sudo apt update && sudo apt upgrade
 ssh username@192.168.x.x
 ```
 
+- SSH authentication: SSH always requires login, even on your own network. With a `password`, you are prompted to type it on every connection. With an SSH key (`ssh-keygen -t ed25519 -a 100`, then `ssh-copy-id username@192.168.x.x`), no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app supports SMB only (no SFTP) — for SFTP/SSH use Termius (or another SSH/SFTP client) instead.
+
 - I customized the shell environment by installing Zsh and tools from the [Personal OS Setup](../../README.md) to improve usability and productivity.
 
 ### Lid closed (Laptop)
@@ -495,13 +497,12 @@ How to setup Sonoff MG24:
 
 * **Samba Backup**
 
-* **Samba Share**
-    * Docs: https://github.com/home-assistant/addons/tree/master/samba
-    * How to install: https://github.com/home-assistant/addons/blob/master/samba/DOCS.md
-    * Useful video example: https://www.youtube.com/watch?v=Vu_oxefjd0I
-    * Common tasks: https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-samba-add-on
-
-* [Terminal & SSH](https://lazyadmin.nl/smart-home/enable-ssh-home-assistant/)
+* [Advanced SSH & Web Terminal](https://github.com/hassio-addons/addon-ssh) (replaces the official Terminal & SSH add-on)
+  * Add-on repository to add in HA: https://github.com/hassio-addons/repository
+  * Docs: https://github.com/hassio-addons/addon-ssh/blob/main/ssh/DOCS.md
+  * Web terminal in the sidebar + SSH server, with Docker CLI and Docker socket access built in
+  * Note: disable **Protection mode** to use Docker; set a `password` and/or `authorized_keys` in the configuration to log in; for SFTP file access, set the username to `root` and enable `sftp: true`
+  * Authentication: SSH always requires login, even on your own network. With a `password`, you are prompted to type it on every connection (`ssh hassio@<ha-ip>`). With an `authorized_keys` entry, no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app supports SMB only (no SFTP) — for SFTP/SSH use Termius (or another SSH/SFTP client) instead.
 
 This next section is about controllers / routers add-ons :
 
