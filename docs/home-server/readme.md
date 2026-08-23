@@ -506,7 +506,7 @@ How to setup Sonoff MG24:
   * Docs: https://github.com/hassio-addons/addon-ssh/blob/main/ssh/DOCS.md
   * Web terminal in the sidebar + SSH server, with Docker CLI and Docker socket access built in
   * Note: disable **Protection mode** to use Docker; set a `password` and/or `authorized_keys` in the configuration to log in
-  * Authentication: SSH always requires login, even on your own network. With a `password`, you are prompted to type it on every connection (`ssh hassio@<ha-ip>`). With an `authorized_keys` entry, no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback.
+  * Authentication: SSH always requires login, even on your own network. With a `password`, you are prompted to type it on every connection (`ssh hassio@<ha-ip>`). With an `authorized_keys` entry, no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app connects to SFTP with a password only (SSH keys are not supported) — for key-based connections use Termius (or another SSH/SFTP client) instead.
 
 This next section is about controllers / routers add-ons :
 
