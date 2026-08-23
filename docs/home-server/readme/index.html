@@ -3409,7 +3409,12 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh<span class="w"> </span>username@192.168.x.x
 </span></code></pre></div>
 <ul>
-<li>I customized the shell environment by installing Zsh and tools from the <a href="../../../">Personal OS Setup</a> to improve usability and productivity.</li>
+<li>
+<p>SSH authentication: SSH always requires login, even on your own network. With a <code>password</code>, you are prompted to type it on every connection. With an SSH key (<code>ssh-keygen -t ed25519 -a 100</code>, then <code>ssh-copy-id username@192.168.x.x</code>), no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app supports SMB only (no SFTP) — for SFTP/SSH use Termius (or another SSH/SFTP client) instead.</p>
+</li>
+<li>
+<p>I customized the shell environment by installing Zsh and tools from the <a href="../../../">Personal OS Setup</a> to improve usability and productivity.</p>
+</li>
 </ul>
 <h3 id="lid-closed-laptop">Lid closed (Laptop)<a class="headerlink" href="#lid-closed-laptop" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3873,17 +3878,13 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <p><strong>Samba Backup</strong></p>
 </li>
 <li>
-<p><strong>Samba Share</strong></p>
-<ul>
-<li>Docs: https://github.com/home-assistant/addons/tree/master/samba</li>
-<li>How to install: https://github.com/home-assistant/addons/blob/master/samba/DOCS.md</li>
-<li>Useful video example: https://www.youtube.com/watch?v=Vu_oxefjd0I</li>
-<li>Common tasks: https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-samba-add-on</li>
-</ul>
+<p><a href="https://github.com/hassio-addons/addon-ssh">Advanced SSH &amp; Web Terminal</a> (replaces the official Terminal &amp; SSH add-on)</p>
 </li>
-<li>
-<p><a href="https://lazyadmin.nl/smart-home/enable-ssh-home-assistant/">Terminal &amp; SSH</a></p>
-</li>
+<li>Add-on repository to add in HA: https://github.com/hassio-addons/repository</li>
+<li>Docs: https://github.com/hassio-addons/addon-ssh/blob/main/ssh/DOCS.md</li>
+<li>Web terminal in the sidebar + SSH server, with Docker CLI and Docker socket access built in</li>
+<li>Note: disable <strong>Protection mode</strong> to use Docker; set a <code>password</code> and/or <code>authorized_keys</code> in the configuration to log in; for SFTP file access, set the username to <code>root</code> and enable <code>sftp: true</code></li>
+<li>Authentication: SSH always requires login, even on your own network. With a <code>password</code>, you are prompted to type it on every connection (<code>ssh hassio@&lt;ha-ip&gt;</code>). With an <code>authorized_keys</code> entry, no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app supports SMB only (no SFTP) — for SFTP/SSH use Termius (or another SSH/SFTP client) instead.</li>
 </ul>
 <p>This next section is about controllers / routers add-ons :</p>
 <ul>
