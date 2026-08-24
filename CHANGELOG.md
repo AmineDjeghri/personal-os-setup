@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v2.11.0 (2026-08-24)
+
+### Documentation
+
+- **home-server**: Replace Terminal & SSH with Advanced SSH & Web Terminal (#99)
+  ([#99](https://github.com/AmineDjeghri/personal-os-setup/pull/99),
+  [`c903eeb`](https://github.com/AmineDjeghri/personal-os-setup/commit/c903eeb3e4c5634444c9f1982ff33ead28b1cc92))
+
+### Features
+
+- Add signal-desktop to messaging apps and update window rules for chat applications
+  ([`a42d987`](https://github.com/AmineDjeghri/personal-os-setup/commit/a42d9878262046a300dc3115a44d5dc36696e036))
+
+
 ## v2.10.0 (2026-08-22)
 
 ### Features
