@@ -68,10 +68,9 @@ It extends your music library by using **TIDAL** when a song is missing for free
 
 
 ### 5. (optional) Beets
-- [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata. `uv pip install "beets[fetchart,lastgenre,embedart,titlecase,chroma]"`
+- [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata.
 
-  - beet import /home/amine/haos_media/music  -> interactive mode
-  - beet import -q /home/amine/haos_media/music -> quiet mode
+  **It now runs as a Home Assistant add-on** — install it from the [Beets add-on](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets) (see its [README](https://github.com/AmineDjeghri/ha-addons/blob/main/addons/beets/README.md) for all options, the manual interactive review command, and the docker notes). It watches `/media/music` (the Octo-Fiesta download folder), tags new files automatically, and replaces the host cronjobs below.
 
 The following section summarizes the key concepts and behaviors of **Beets** regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.
@@ -136,27 +135,7 @@ What I advise to play with is:
 - finally full auto silently: `autotag: yes` and  `timid: no` and `quiet: yes`.  Quiet will skip (check quiet_fallback) tracks bellow the threshold.
 - You can also play with  incremental and incremental_skip_later to skip some albums and tracks
 
-#### Manual validation (review each album yourself)
-
-Beets now runs in the **HA Beets addon**, so run the interactive review from the **Advanced SSH & Web Terminal** addon (web terminal — it has docker access). This overrides `quiet`/`timid` for this run only; the addon's automatic imports stay quiet/headless:
-
-```bash
-docker exec -it app_ffaaaf16_beets sh -c \
-  'printf "import:\n  quiet: no\n  timid: yes\n" > /tmp/interactive.yaml && \
-   /usr/local/bin/beet -c /data/beets/config.yaml -c /tmp/interactive.yaml import /media/music'
-```
-
-What you get, per album:
-
-- The match with every change highlighted: `≠ Album: … -> …`, `≠ (#1) Title -> Title` (green = added, red = removed)
-- The choice prompt: `[A]pply, More candidates, Skip, Use as-is, as Tracks, Group albums`
-- Perfect to manually validate titles/artists/genres before accepting — press `a` to apply, `s` to skip
-
-Notes:
-
-- Container name is `app_ffaaaf16_beets` — the new supervisor names app containers `app_` (not `addon_`)
-- Use the full path `/usr/local/bin/beet` — bare `beet` is not on PATH in docker exec shells
-- After reviewing, the automatic quiet import keeps handling new downloads as usual
+> The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:
 
 Add these commands to your crontab with `crontab -e`  to run it:
 **Run every day (incremental import)**
