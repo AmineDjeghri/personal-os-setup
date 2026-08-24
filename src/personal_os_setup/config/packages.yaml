@@ -168,6 +168,7 @@ packages:
       Messaging:
         - telegram-desktop
         - vesktop # Discord enhanced
+        - signal-desktop
       Media:
         - gwenview # KDE image viewer, integrates with Dolphin's preview pane and "Open With"
         - yt-dlp
@@ -188,7 +189,6 @@ packages:
         - nautilus # GNOME file manager, replaces Dolphin -- no KDE session deps (kwallet/kded/portals) to fight with under Hyprland
         - gnome-keyring # stores passwords for Nautilus network shares (SMB/NFS/FTP/etc.) and other apps
         - seahorse # GNOME keyring manager
-        - ghostty-nautilus # Adds Ghostty terminal for Nautilus context menu
         - gvfs # virtual filesystem backend Nautilus uses for all mounting (local disks, udisks2, trash, etc.)
         - gvfs-smb # Windows/SMB network share support (not pulled in by gvfs itself)
         - gvfs-mtp # Android phone (MTP) support
@@ -222,6 +222,8 @@ packages:
     paru:
       Desktop:
         - vicinae-bin # Raycast-style launcher https://vicinae.com
+      Files explorer:
+        - nautilus-open-any-terminal # "Open Terminal" context menu for Nautilus; supports Ghostty, and can SSH into sftp:// locations instead of just cd-ing into the gvfs mount
       Utilities:
         - anydesk-bin
         - nordvpn-bin

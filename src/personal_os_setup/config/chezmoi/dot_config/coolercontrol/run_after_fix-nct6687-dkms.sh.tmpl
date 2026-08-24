@@ -21,32 +21,13 @@ if modinfo nct6687 >/dev/null 2>&1; then
 fi
 
 pkgver=$(pacman -Q nct6687d-dkms-git | awk '{print $2}' | sed 's/-[0-9]*$//')
-src_dir="/usr/src/nct6687d-dkms-git-${pkgver}"
 kver="$(uname -r)"
-
-if [ ! -d "$src_dir" ]; then
-  exit 0
-fi
 
 # Needs a live sudo ticket -- can't prompt here (no TTY), so fail fast instead of hanging.
 if ! sudo -n true 2>/dev/null; then
   echo "WARNING: sudo needs a fresh password prompt -- re-run personal-os-setup and enter your password when it starts, then sync this again." >&2
   notify "nct6687 dkms" "Needs sudo -- re-run personal-os-setup and try again"
   exit 1
-fi
-
-# Upstream nct6687d-dkms-git ships without a "Kbuild" file (PKGBUILD packaging bug),
-# so DKMS's default build invocation compiles nothing -- make.log shows only
-# "MODPOST Module.symvers" with no CC/LD steps, and dkms reports a failed build
-# with exit code 0. Prefer the real Kbuild from paru's build cache; fall back to
-# writing the equivalent one-liner if that cache was pruned.
-if [ ! -f "${src_dir}/Kbuild" ]; then
-  kbuild_src=$(find "$HOME/.cache/paru/clone/nct6687d-dkms-git" -maxdepth 3 -iname Kbuild 2>/dev/null | head -1)
-  if [ -n "$kbuild_src" ]; then
-    sudo cp "$kbuild_src" "${src_dir}/Kbuild"
-  else
-    echo "obj-m += nct6687.o" | sudo tee "${src_dir}/Kbuild" >/dev/null
-  fi
 fi
 
 echo "Building nct6687 DKMS module for kernel ${kver}..."

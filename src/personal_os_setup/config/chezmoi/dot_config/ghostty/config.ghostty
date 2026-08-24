@@ -1,0 +1,2 @@
+# Auto-copies Ghostty's terminfo to remote hosts on `ssh`
+shell-integration-features = ssh-terminfo

@@ -1,0 +1,30 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -eu
+
+script_name="run_once_after_set-open-any-terminal.sh.tmpl"
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send "$1" "[$script_name] $2"; }
+
+if ! command -v gsettings >/dev/null 2>&1 || ! command -v nautilus >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! command -v ghostty >/dev/null 2>&1; then
+  echo "ghostty not found, skipping (install it first)"
+  exit 0
+fi
+
+schema="com.github.stunkymonkey.nautilus-open-any-terminal"
+if ! gsettings list-schemas 2>/dev/null | grep -qx "$schema"; then
+  echo "nautilus-open-any-terminal schema not found, skipping (install the package first)"
+  exit 0
+fi
+
+gsettings set "$schema" terminal ghostty
+notify "Nautilus" "Open Terminal context menu set to Ghostty"
+
+# Restart Nautilus so the context menu reflects the new terminal without a re-login.
+if pgrep -x nautilus >/dev/null 2>&1; then
+  nautilus -q
+fi
+{{ end -}}
