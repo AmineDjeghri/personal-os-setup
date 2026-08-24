@@ -68,10 +68,9 @@ It extends your music library by using **TIDAL** when a song is missing for free
 
 
 ### 5. (optional) Beets
-- [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata. `uv pip install "beets[fetchart,lastgenre,embedart,titlecase,chroma]"`
+- [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata.
 
-  - beet import /home/amine/haos_media/music  -> interactive mode
-  - beet import -q /home/amine/haos_media/music -> quiet mode
+  **It now runs as a Home Assistant add-on** — install it from the [Beets add-on](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets) (see its [README](https://github.com/AmineDjeghri/ha-addons/blob/main/addons/beets/README.md) for all options, the manual interactive review command, and the docker notes). It watches `/media/music` (the Octo-Fiesta download folder), tags new files automatically, and replaces the host cronjobs below.
 
 The following section summarizes the key concepts and behaviors of **Beets** regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.
@@ -135,6 +134,8 @@ What I advise to play with is:
 - Use `autotag: yes` with `write: yes` , `timid: yes` and `quiet: no`  to validate manually when using the autotag the recommendations that are below the threshold
 - finally full auto silently: `autotag: yes` and  `timid: no` and `quiet: yes`.  Quiet will skip (check quiet_fallback) tracks bellow the threshold.
 - You can also play with  incremental and incremental_skip_later to skip some albums and tracks
+
+> The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:
 
 Add these commands to your crontab with `crontab -e`  to run it:
 **Run every day (incremental import)**
