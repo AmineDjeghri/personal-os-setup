@@ -2932,14 +2932,9 @@
 </ul>
 <h3 id="5-optional-beets">5. (optional) Beets<a class="headerlink" href="#5-optional-beets" title="Permanent link">&para;</a></h3>
 <ul>
-<li>
-<p><a href="https://beets.readthedocs.io/en/stable/index.html">Beets</a>: a music library manager that can import your music files, organize them, and add metadata. <code>uv pip install "beets[fetchart,lastgenre,embedart,titlecase,chroma]"</code></p>
-</li>
-<li>
-<p>beet import /home/amine/haos_media/music  -&gt; interactive mode</p>
-</li>
-<li>beet import -q /home/amine/haos_media/music -&gt; quiet mode</li>
+<li><a href="https://beets.readthedocs.io/en/stable/index.html">Beets</a>: a music library manager that can import your music files, organize them, and add metadata.</li>
 </ul>
+<p><strong>It now runs as a Home Assistant add-on</strong> — install it from the <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets">Beets add-on</a> (see its <a href="https://github.com/AmineDjeghri/ha-addons/blob/main/addons/beets/README.md">README</a> for all options, the manual interactive review command, and the docker notes). It watches <code>/media/music</code> (the Octo-Fiesta download folder), tags new files automatically, and replaces the host cronjobs below.</p>
 <p>The following section summarizes the key concepts and behaviors of <strong>Beets</strong> regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.</p>
 <p>in the <a href="../../../src/personal_os_setup/config/unix/beets/config.yaml">config.yaml</a> file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :</p>
@@ -2994,6 +2989,9 @@ What I advise to play with is:</li>
 <li>finally full auto silently: <code>autotag: yes</code> and  <code>timid: no</code> and <code>quiet: yes</code>.  Quiet will skip (check quiet_fallback) tracks bellow the threshold.</li>
 <li>You can also play with  incremental and incremental_skip_later to skip some albums and tracks</li>
 </ul>
+<blockquote>
+<p>The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:</p>
+</blockquote>
 <p>Add these commands to your crontab with <code>crontab -e</code>  to run it:
 <strong>Run every day (incremental import)</strong>
 <code>0 3 * * * flock -n /tmp/beets.lock ~/.venv/bin/beet -vv import ~/haos_media/music --incremental &gt; ~/beets-cron.log 2&gt;&amp;1</code></p>
