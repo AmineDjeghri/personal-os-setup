@@ -41,7 +41,7 @@ hl.window_rule({ match = { class = "^(dev\\.zed\\.Zed|md\\.Obsidian)$" }, worksp
 hl.window_rule({ match = { class = "^(vesktop|org\\.telegram\\.desktop|signal)$" }, workspace = "5" }) -- chat
 
 -- Gaming
-local gamingApps = "^(steam_app.*|gamescope)$"
+local gamingApps = "^(steam_app.*|gamescope|cs2)$"
 local gamingWorkspace = "6"
 
 hl.window_rule({ match = { content = "game" }, workspace = gamingWorkspace })

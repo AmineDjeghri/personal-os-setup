@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../music_server/">
+        <link rel="prev" href="../../apps/awesome_websites_browser_extensions/">
       
       
-        <link rel="next" href="../../linux/">
+        <link rel="next" href="../music/music_server/">
       
       
         
@@ -793,34 +793,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../music_server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Music server
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1225,11 +1197,118 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="AdGuard Home address naming resolution using the router (Freebox)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-topology-dns-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network topology &amp; DNS flows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_2" id="__nav_2_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Music
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Music
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../music/music_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Music server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -3253,6 +3332,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="AdGuard Home address naming resolution using the router (Freebox)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-topology-dns-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network topology &amp; DNS flows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -3316,7 +3412,7 @@
     
     
       <li class="md-path__item">
-        <a href="../music_server/" class="md-path__link">
+        <a href="./" class="md-path__link">
           
   <span class="md-ellipsis">
     Home server
@@ -3375,7 +3471,10 @@
 <li><a href="#automations-scenes-script-helpers-and-entities">Automations, Scenes, Script, Helpers and Entities</a></li>
 </ul>
 </li>
-<li><a href="#adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)</a></li>
+<li><a href="#adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)</a><ul>
+<li><a href="#network-topology--dns-flows">Network topology &amp; DNS flows</a></li>
+</ul>
+</li>
 <li><a href="#todo">todo:</a></li>
 </ul>
 <!-- TOC -->
@@ -3861,7 +3960,7 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 </li>
 <li>Auto tagger : Beets</li>
 <li>
-<p>You can check this <a href="../music_server/">music server setup</a></p>
+<p>You can check this <a href="../music/music_server/">music server setup</a></p>
 </li>
 <li>
 <p><strong>Vaultwarden</strong> (self-hosted Bitwarden backend)</p>
@@ -4064,12 +4163,12 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>Steps:</li>
 <li>In the addon configuration in HA: open the port 8082, you should access the dashboard without authentication on <code>HA-IP:8082</code>. the username and password are your Home assistant username and password (you can create a user named 'adguard' for it).</li>
 <li>Put the following scripts in the server:<ul>
-<li><a href="../freebox_auth.py">freebox_auth.py</a></li>
-<li><a href="../sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a></li>
+<li><a href="../adguard_freebox/freebox_auth.py">freebox_auth.py</a></li>
+<li><a href="../adguard_freebox/sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a></li>
 </ul>
 </li>
-<li>I am using Freebox pop as a router, so I use the script <a href="../freebox_auth.py">freebox_auth.py</a> to get the token <code>uv run freebox_auth.py</code></li>
-<li>then I use this script in the server to automatically update Adguard home: <a href="../sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a> to automatically resolve IPV6 addresses and clients names. <code>uv run sync_adguard_home_ip_mac.py</code></li>
+<li>I am using Freebox pop as a router, so I use the script <a href="../adguard_freebox/freebox_auth.py">freebox_auth.py</a> to get the token <code>uv run freebox_auth.py</code></li>
+<li>then I use this script in the server to automatically update Adguard home: <a href="../adguard_freebox/sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a> to automatically resolve IPV6 addresses and clients names. <code>uv run sync_adguard_home_ip_mac.py</code></li>
 <li>
 <p>Make a cronjob for it by adding this line at the end of <code>crontab -e</code> (change the path of uv and the script)
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># For example</span>
@@ -4080,6 +4179,64 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <p>Check Settings -&gt; Client settings -&gt; <strong>Persistent clients settings</strong> .</p>
 </li>
 <li>This script will run every minute. If it discovers a new device, it will update the log file <code>sync_agh.log</code> with the latest sync information.</li>
+</ul>
+<h3 id="network-topology-dns-flows">Network topology &amp; DNS flows<a class="headerlink" href="#network-topology-dns-flows" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>graph TB
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    subgraph FreeboxLAN[&quot;🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)&quot;]
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>        Freebox[&quot;Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway / DHCP server&quot;]
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>        LANDevice[&quot;LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x&quot;]
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    end
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    subgraph KVMServer[&quot;🖥️ KVM Server (Ubuntu host) — 192.168.1.123&quot;]
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>        br0[&quot;br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)&quot;]
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        virbr0[&quot;virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached&quot;]
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        docker0[&quot;docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running&quot;]
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    end
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    subgraph NATVMs[&quot;libvirt NAT — 192.168.122.0/24&quot;]
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        natVM[&quot;KVM VM in NAT mode&lt;br/&gt;192.168.122.x&quot;]
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>    end
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    subgraph HAVM[&quot;🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)&quot;]
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        AdGuard[&quot;AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI&quot;]
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        subgraph Hassio1[&quot;hassio network — 172.30.32.0/23&quot;]
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>            hassioGw[&quot;gateway&lt;br/&gt;172.30.32.1&quot;]
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            hassioDns[&quot;hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy&quot;]
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>            haAddons[&quot;other addons&lt;br/&gt;172.30.32.4+&quot;]
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>        end
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>        subgraph Hassio2[&quot;2nd HAOS network — 172.30.33.0/23&quot;]
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            hermes[&quot;Hermes Agent addon&lt;br/&gt;172.30.33.10&quot;]
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        end
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>    end
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>    %% DNS flows
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>    LANDevice --&gt;|&quot;direct DNS query&quot;| AdGuard
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>    haAddons --&gt;|&quot;internal query&quot;| hassioDns
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    hermes --&gt;|&quot;internal query&quot;| hassioDns
+</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    hassioDns --&gt;|&quot;forwarded DNS query&quot;| AdGuard
+</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    natVM --&gt;|&quot;query&quot;| virbr0
+</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    virbr0 --&gt;|&quot;forwarded DNS query&quot;| AdGuard
+</span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>
+</span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>    %% topology / carrier links (not DNS)
+</span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>    Freebox -.-&gt;|LAN| br0
+</span><span id="__span-17-41"><a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>    br0 -.-&gt;|bridged NIC vnet2| AdGuard
+</span><span id="__span-17-42"><a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>
+</span><span id="__span-17-43"><a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>    classDef visible stroke:#2e7d32,stroke-width:2px;
+</span><span id="__span-17-44"><a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
+</span><span id="__span-17-45"><a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>
+</span><span id="__span-17-46"><a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a>    class Freebox,LANDevice,br0,AdGuard visible;
+</span><span id="__span-17-47"><a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a>    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
+</span></code></pre></div>
+<p><strong>Legend</strong></p>
+<ul>
+<li><strong>Solid border</strong> = IP visible to the Freebox API (DHCP leases / ARP table), i.e. any <code>192.168.1.x</code> address on the physical LAN.</li>
+<li><strong>Dashed border</strong> = IP invisible to the Freebox API — it never appears in Freebox DHCP/ARP, only inside the server (<code>172.17.0.0/16</code> <code>docker0</code>, <code>192.168.122.0/24</code> libvirt NAT) or inside the HA VM (<code>172.30.32.0/23</code>, <code>172.30.33.0/23</code> hassio networks). This is why containers/VMs on these ranges show up as "unknown"/"FREE SAS" in AdGuard until resolved another way.</li>
+<li><strong><code>br0</code></strong> — Linux bridge on the KVM host; makes the host and the bridged HA VM appear as regular devices on the Freebox LAN (<code>192.168.1.0/24</code>).</li>
+<li><strong><code>virbr0</code></strong> — libvirt's default NAT network (<code>192.168.122.0/24</code>); runs a <code>dnsmasq</code> on <code>.1</code> that forwards DNS upstream to AdGuard for any VM placed in NAT mode instead of bridged mode.</li>
+<li><strong><code>docker0</code></strong> — Docker's default bridge network (<code>172.17.0.0/16</code>) on the server. Confirmed via <code>docker network ls</code>/<code>docker ps -a</code>: only the default <code>bridge</code>/<code>host</code>/<code>none</code> networks exist and no containers are running, so this interface is currently unused (DOWN).</li>
+<li><strong>Direct vs forwarded</strong> — "direct" means the querying host talks straight to AdGuard (<code>192.168.1.119:53</code>); "forwarded" means an intermediate resolver (<code>hassio_dns</code> or libvirt's <code>dnsmasq</code>) receives the query first and relays it to AdGuard.</li>
 </ul>
 <h1 id="todo">todo:<a class="headerlink" href="#todo" title="Permanent link">&para;</a></h1>
 <ul>
