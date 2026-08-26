@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # /// script
-# requires-python = ">=3.14"
+# requires-python = ">=3.11"
 # dependencies = [
 #     "yt-dlp",
 #     "mutagen",
@@ -70,8 +70,9 @@ except ImportError:
 # ---------------------------------------------------------------- config ---
 LIBRARY_ROOT = Path("/media/music")  # beets library root (watched)
 YOUTUBE_DIR = "YouTube"  # subfolder for downloads
-ARCHIVE_FILE = Path("/config/workspace/youtube_ai_download/.archive.txt")
-STAGING_DIR = Path("/config/workspace/youtube_ai_download/.staging")  # OUTSIDE the watch root
+_SCRIPT_DIR = Path(__file__).resolve().parent
+ARCHIVE_FILE = _SCRIPT_DIR / ".archive.txt"
+STAGING_DIR = _SCRIPT_DIR / ".staging"  # OUTSIDE the watch root
 SINGLES_NAME = "Singles"  # folder for single-video links
 OTHER_NAME = "Other"  # folder for non-music clips
 
@@ -325,10 +326,9 @@ def download_mode(urls: list, overrides: dict, max_items: int) -> int:
                 track = str(idx) if idx else "1"
                 date = meta["year"]
                 prefix = f"{int(idx):03d} - " if idx else ""
-                fname = (
-                    f"{prefix}{sanitize_filename(meta['artist'])} - "
-                    f"{sanitize_filename(meta['title'])}.%(ext)s"
-                )
+                # Unique per entry even without a playlist index
+                stem = f"{prefix}{sanitize_filename(meta['artist'])} - {sanitize_filename(meta['title'])}"
+                fname = f"{stem}.%(ext)s"
                 e["title"] = meta["title"]
                 e["artist"] = meta["artist"]
                 e["track"] = track
@@ -349,10 +349,7 @@ def download_mode(urls: list, overrides: dict, max_items: int) -> int:
                 if want_split:
                     tmpl["default"] = str(staging_dir / "_full" / fname)
                     tmpl["chapter"] = str(
-                        staging_dir / f"{prefix}"
-                        f"{sanitize_filename(meta['artist'])} - "
-                        f"{sanitize_filename(meta['title'])} - "
-                        f"%(section_number)02d - %(section_title)s.%(ext)s"
+                        staging_dir / f"{stem} - %(section_number)02d - %(section_title)s.%(ext)s"
                     )
                 ydl.params["outtmpl"] = tmpl
                 try:
@@ -360,12 +357,12 @@ def download_mode(urls: list, overrides: dict, max_items: int) -> int:
                 except Exception as exc:  # noqa: BLE001
                     # postprocessors (e.g. thumbnail embed on opus) can fail
                     # AFTER a good download — keep the file if it's there.
-                    if not find_downloaded(staging_dir, prefix):
+                    if not find_downloaded(staging_dir, stem):
                         print(f"  ERROR: {vid} {e.get('title')}: {str(exc).splitlines()[0]}")
                         failed.append((vid, e.get("title"), str(exc)))
                         continue
                     print(f"  WARN: {vid} {e.get('title')}: {str(exc).splitlines()[0]} (file kept)")
-                found = find_downloaded(staging_dir, prefix)
+                found = find_downloaded(staging_dir, stem)
                 if not found:
                     # yt-dlp default is no-overwrites: same artist+title twice
                     # silently skips — don't archive so the next run retries
