@@ -30,6 +30,7 @@
     * [Dashboard & Cards](#dashboard--cards)
     * [Automations, Scenes, Script, Helpers and Entities](#automations-scenes-script-helpers-and-entities)
   * [AdGuard Home address naming resolution using the router (Freebox)](#adguard-home-address-naming-resolution-using-the-router-freebox)
+    * [Network topology & DNS flows](#network-topology--dns-flows)
 * [todo:](#todo)
 <!-- TOC -->
 
@@ -485,7 +486,7 @@ How to setup Sonoff MG24:
   * Clients : https://www.navidrome.org/apps/
     * For example Narjo for iOS
   * Auto tagger : Beets
-  * You can check this [music server setup](music_server.md)
+  * You can check this [music server setup](music/music_server.md)
 
 
 * **Vaultwarden** (self-hosted Bitwarden backend)
@@ -626,10 +627,10 @@ This next section is about controllers / routers add-ons :
 - Steps:
   - In the addon configuration in HA: open the port 8082, you should access the dashboard without authentication on ``HA-IP:8082``. the username and password are your Home assistant username and password (you can create a user named 'adguard' for it).
   - Put the following scripts in the server:
-    - [freebox_auth.py](freebox_auth.py)
-    - [sync_adguard_home_ip_mac.py](sync_adguard_home_ip_mac.py)
-  - I am using Freebox pop as a router, so I use the script [freebox_auth.py](freebox_auth.py) to get the token ``uv run freebox_auth.py``
-  - then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](sync_adguard_home_ip_mac.py) to automatically resolve IPV6 addresses and clients names. ``uv run sync_adguard_home_ip_mac.py``
+    - [freebox_auth.py](adguard_freebox/freebox_auth.py)
+    - [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py)
+  - I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token ``uv run freebox_auth.py``
+  - then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to automatically resolve IPV6 addresses and clients names. ``uv run sync_adguard_home_ip_mac.py``
   - Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the path of uv and the script)
 ````sh
 # For example
@@ -638,6 +639,67 @@ This next section is about controllers / routers add-ons :
 
 - Check Settings -> Client settings -> **Persistent clients settings** .
 - This script will run every minute. If it discovers a new device, it will update the log file ``sync_agh.log`` with the latest sync information.
+
+### Network topology & DNS flows
+
+```mermaid
+graph TB
+    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)"]
+        Freebox["Freebox router<br/>192.168.1.254<br/>gateway / DHCP server"]
+        LANDevice["LAN device (phone, laptop...)<br/>192.168.1.x"]
+    end
+
+    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
+        br0["br0 (Linux bridge)<br/>192.168.1.123/24<br/>carries LAN + HA VM (vnet2)"]
+        virbr0["virbr0 (libvirt NAT gw)<br/>192.168.122.1/24<br/>DOWN when no VM attached"]
+        docker0["docker0 (default bridge network)<br/>172.17.0.1/16<br/>unused, DOWN — no containers running"]
+    end
+
+    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
+        natVM["KVM VM in NAT mode<br/>192.168.122.x"]
+    end
+
+    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)"]
+        AdGuard["AdGuard Home (addon, host network)<br/>192.168.1.119:53 DNS · :8082 web UI"]
+
+        subgraph Hassio1["hassio network — 172.30.32.0/23"]
+            hassioGw["gateway<br/>172.30.32.1"]
+            hassioDns["hassio_dns<br/>172.30.32.3<br/>HAOS internal DNS proxy"]
+            haAddons["other addons<br/>172.30.32.4+"]
+        end
+
+        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
+            hermes["Hermes Agent addon<br/>172.30.33.10"]
+        end
+    end
+
+    %% DNS flows
+    LANDevice -->|"direct DNS query"| AdGuard
+    haAddons -->|"internal query"| hassioDns
+    hermes -->|"internal query"| hassioDns
+    hassioDns -->|"forwarded DNS query"| AdGuard
+    natVM -->|"query"| virbr0
+    virbr0 -->|"forwarded DNS query"| AdGuard
+
+    %% topology / carrier links (not DNS)
+    Freebox -.->|LAN| br0
+    br0 -.->|bridged NIC vnet2| AdGuard
+
+    classDef visible stroke:#2e7d32,stroke-width:2px;
+    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class Freebox,LANDevice,br0,AdGuard visible;
+    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
+```
+
+**Legend**
+
+- **Solid border** = IP visible to the Freebox API (DHCP leases / ARP table), i.e. any `192.168.1.x` address on the physical LAN.
+- **Dashed border** = IP invisible to the Freebox API — it never appears in Freebox DHCP/ARP, only inside the server (`172.17.0.0/16` `docker0`, `192.168.122.0/24` libvirt NAT) or inside the HA VM (`172.30.32.0/23`, `172.30.33.0/23` hassio networks). This is why containers/VMs on these ranges show up as "unknown"/"FREE SAS" in AdGuard until resolved another way.
+- **`br0`** — Linux bridge on the KVM host; makes the host and the bridged HA VM appear as regular devices on the Freebox LAN (`192.168.1.0/24`).
+- **`virbr0`** — libvirt's default NAT network (`192.168.122.0/24`); runs a `dnsmasq` on `.1` that forwards DNS upstream to AdGuard for any VM placed in NAT mode instead of bridged mode.
+- **`docker0`** — Docker's default bridge network (`172.17.0.0/16`) on the server. Confirmed via `docker network ls`/`docker ps -a`: only the default `bridge`/`host`/`none` networks exist and no containers are running, so this interface is currently unused (DOWN).
+- **Direct vs forwarded** — "direct" means the querying host talks straight to AdGuard (`192.168.1.119:53`); "forwarded" means an intermediate resolver (`hassio_dns` or libvirt's `dnsmasq`) receives the query first and relays it to AdGuard.
 
 # todo:
 - backup vm
