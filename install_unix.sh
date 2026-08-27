@@ -16,6 +16,23 @@ if [ "$(uname -s 2>/dev/null)" = "Linux" ]; then
     fi
 fi
 
+if ! command -v chezmoi >/dev/null 2>&1; then
+    echo "🔧 'chezmoi' not found. Installing..."
+    CHEZMOI_BIN_DIR="$HOME/.local/bin"
+    mkdir -p "$CHEZMOI_BIN_DIR"
+    if command -v curl >/dev/null 2>&1; then
+        sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$CHEZMOI_BIN_DIR"
+    elif command -v wget >/dev/null 2>&1; then
+        sh -c "$(wget -qO- get.chezmoi.io)" -- -b "$CHEZMOI_BIN_DIR"
+    else
+        echo "❌ Neither curl nor wget found; cannot install chezmoi automatically. Please install it manually and re-run."
+    fi
+    case ":$PATH:" in
+        *":$CHEZMOI_BIN_DIR:"*) ;;
+        *) PATH="$CHEZMOI_BIN_DIR:$PATH" ;;
+    esac
+fi
+
 REPO_URL="https://github.com/AmineDjeghri/personal-os-setup.git"
 FOLDER_NAME="personal-os-setup"
 INSTALL_DIR="$HOME/.personal-os-setup"
