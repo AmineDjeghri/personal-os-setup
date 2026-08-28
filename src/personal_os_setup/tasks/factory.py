@@ -59,6 +59,9 @@ _PACKAGE_MANAGER_FACTORY_BY_DISTRO: dict[str, dict[str, Callable[[], PackageMana
         "snap": UbuntuSnapManager,
         "webinstall": WebInstallManager,
     },
+    "debian": {
+        "apt": UbuntuAptManager,
+    },
     "darwin": {
         "brew": DarwinBrewManager,
         "cask": DarwinBrewCaskManager,
@@ -80,6 +83,7 @@ _PACKAGE_MANAGER_FACTORY_BY_DISTRO: dict[str, dict[str, Callable[[], PackageMana
 _UI_VISIBLE_MANAGERS_BY_DISTRO: dict[str, list[str]] = {
     "windows": ["winget"],
     "ubuntu": ["apt"],
+    "debian": ["apt"],
     "darwin": ["brew"],
     "cachyos": ["pacman", "paru"],
 }
