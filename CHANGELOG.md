@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v2.11.1 (2026-08-28)
+
+### Bug Fixes
+
+- Add chezmoi (#102) ([#102](https://github.com/AmineDjeghri/personal-os-setup/pull/102),
+  [`4509478`](https://github.com/AmineDjeghri/personal-os-setup/commit/45094789f447f5c1bcb54616475efe8aecedcdda))
+
+### Documentation
+
+- **home-server**: Add AI-assisted YouTube downloader for the music library (#101)
+  ([#101](https://github.com/AmineDjeghri/personal-os-setup/pull/101),
+  [`45282eb`](https://github.com/AmineDjeghri/personal-os-setup/commit/45282ebbcd64d88bfd554e58411a3595fe356ef9))
+
+- **home-server**: Point beets section to the HA addon (#100)
+  ([#100](https://github.com/AmineDjeghri/personal-os-setup/pull/100),
+  [`5639e7d`](https://github.com/AmineDjeghri/personal-os-setup/commit/5639e7dea13ad32801329a233f891b508986aab6))
+
+### Refactoring
+
+- Rename files and update links in documentation
+  ([`9836289`](https://github.com/AmineDjeghri/personal-os-setup/commit/98362891ebde94593da857137f677a9c199c136a))
+
+
 ## v2.11.0 (2026-08-24)
 
 ### Documentation
