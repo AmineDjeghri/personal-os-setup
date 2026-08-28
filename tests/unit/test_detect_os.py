@@ -9,6 +9,13 @@ ID_LIKE=arch
 BUILD_ID=rolling
 """
 
+DEBIAN_RELEASE = """PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+ID=debian
+"""
+
 
 def _detect_with_release(text: str, tmp_path):
     """Run the real detect_os() against a real os-release file on disk."""
@@ -27,6 +34,12 @@ class TestDetectOS:
         info = _detect_with_release(CACHYOS_RELEASE, tmp_path)
         assert info.family == "linux"
         assert info.distro == "cachyos"
+
+    def test_debian_is_detected_directly(self, tmp_path):
+        """Debian's own /etc/os-release ID is used as-is -- no normalization needed."""
+        info = _detect_with_release(DEBIAN_RELEASE, tmp_path)
+        assert info.family == "linux"
+        assert info.distro == "debian"
 
 
 class TestPackageCatalog:
@@ -78,7 +91,7 @@ class TestPackagesYaml:
         from personal_os_setup.tasks.factory import get_package_manager
 
         catalog = self._catalog()
-        for distro in ("ubuntu", "darwin", "windows", "cachyos"):
+        for distro in ("ubuntu", "debian", "darwin", "windows", "cachyos"):
             for manager in catalog.for_distro(distro):
                 assert get_package_manager(distro=distro, manager=manager) is not None, (
                     f"no backend registered for {distro}/{manager}"

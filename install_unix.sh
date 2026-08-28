@@ -16,6 +16,35 @@ if [ "$(uname -s 2>/dev/null)" = "Linux" ]; then
     fi
 fi
 
+if ! command -v chezmoi >/dev/null 2>&1; then
+    echo "🔧 'chezmoi' not found. Installing..."
+    CHEZMOI_BIN_DIR="$HOME/.local/bin"
+    mkdir -p "$CHEZMOI_BIN_DIR"
+
+    CHEZMOI_INSTALL_SCRIPT=""
+    if command -v curl >/dev/null 2>&1; then
+        CHEZMOI_INSTALL_SCRIPT="$(curl -fsSL https://get.chezmoi.io)" || CHEZMOI_INSTALL_SCRIPT=""
+    elif command -v wget >/dev/null 2>&1; then
+        CHEZMOI_INSTALL_SCRIPT="$(wget -qO- https://get.chezmoi.io)" || CHEZMOI_INSTALL_SCRIPT=""
+    fi
+
+    if [ -z "$CHEZMOI_INSTALL_SCRIPT" ]; then
+        echo "⚠️  Could not download the chezmoi install script (get.chezmoi.io not reachable, or neither curl nor wget found)."
+        echo "    Install it manually (https://www.chezmoi.io/install/) and re-run this script."
+    else
+        sh -c "$CHEZMOI_INSTALL_SCRIPT" -- -b "$CHEZMOI_BIN_DIR" || true
+        if [ ! -x "$CHEZMOI_BIN_DIR/chezmoi" ]; then
+            echo "⚠️  chezmoi install script ran but chezmoi wasn't found at $CHEZMOI_BIN_DIR/chezmoi."
+            echo "    Install it manually (https://www.chezmoi.io/install/) and re-run this script."
+        fi
+    fi
+
+    case ":$PATH:" in
+        *":$CHEZMOI_BIN_DIR:"*) ;;
+        *) PATH="$CHEZMOI_BIN_DIR:$PATH" ;;
+    esac
+fi
+
 REPO_URL="https://github.com/AmineDjeghri/personal-os-setup.git"
 FOLDER_NAME="personal-os-setup"
 INSTALL_DIR="$HOME/.personal-os-setup"

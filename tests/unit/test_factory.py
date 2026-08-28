@@ -64,7 +64,7 @@ class TestPackageManagerSections:
         ]
 
     def test_unsupported_distro_has_no_package_manager_section(self):
-        names = _section_names("linux", "debian")
+        names = _section_names("linux", "fedora")
         assert "apt" not in names
         assert "pacman" not in names
 
@@ -291,6 +291,7 @@ class TestGetPackageManager:
 
     def test_known_pairs_resolve(self):
         assert get_package_manager(distro="ubuntu", manager="apt") is not None
+        assert get_package_manager(distro="debian", manager="apt") is not None
         assert get_package_manager(distro="darwin", manager="brew") is not None
         assert get_package_manager(distro="windows", manager="winget") is not None
         assert get_package_manager(distro="cachyos", manager="paru") is not None

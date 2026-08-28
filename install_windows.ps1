@@ -182,6 +182,32 @@ function Invoke-Make {
     throw "Failed to execute make with args: $Args"
 }
 
+function Ensure-Chezmoi {
+    $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+    if ($chezmoi) {
+        Write-Host "Found chezmoi at $($chezmoi.Source)" -ForegroundColor Green
+        return $chezmoi.Source
+    }
+    $wingetPath = Ensure-Winget
+    if ($wingetPath) {
+        try {
+            Write-Host "Attempting: winget install -e --id twpayne.chezmoi" -ForegroundColor DarkYellow
+            & $wingetPath install -e --id twpayne.chezmoi --accept-source-agreements --accept-package-agreements
+            $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+        } catch {
+            Write-Host "winget install twpayne.chezmoi failed: $_" -ForegroundColor DarkYellow
+        }
+    } else {
+        Write-Host "winget not available; skipping winget install attempts" -ForegroundColor DarkYellow
+    }
+
+    if (-not $chezmoi) {
+        Write-Host "Unable to find or install 'chezmoi'. Install it manually (https://www.chezmoi.io/install/) if you need it." -ForegroundColor DarkYellow
+        return $null
+    }
+    return $chezmoi.Source
+}
+
 function Install-CommandShim {
     $exe = Join-Path $RepoRoot '.venv\Scripts\personal-os-setup.exe'
     if (-not (Test-Path $exe)) { return }
@@ -198,6 +224,7 @@ function Install-CommandShim {
 }
 
 $null = Ensure-Make
+$null = Ensure-Chezmoi
 
 Write-Host "Running: make install" -ForegroundColor Yellow
 Invoke-Make -Args @('install')

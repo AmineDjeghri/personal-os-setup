@@ -19,7 +19,6 @@ packages:
         - curl
         - zsh
         - wget
-        - chezmoi # dotfile manager
         - bat # cat clone with syntax highlighting
         - fzf # fuzzy finder
         - btop # resource monitor (CPU/RAM/disk/net)
@@ -40,6 +39,37 @@ packages:
     snap:
       apps:
         - code
+
+  debian:
+    apt:
+      Dev_tools:
+        - docker-compose
+        # `make vm-*` deps (KVM/QEMU + libvirt for local VM testing):
+        - qemu-system
+        - qemu-utils
+        - libvirt-daemon-system # provides libvirtd
+        - libvirt-clients # provides virsh
+        - virtinst # provides virt-install
+        - virt-manager # provides virt-manager GUI
+        - virt-viewer # provides virt-viewer GUI
+        - dnsmasq-base # provides dnsmasq for libvirt networking
+        - ovmf # provides UEFI firmware for VMs
+        - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
+      terminal_tools:
+        - git
+        - curl
+        - zsh
+        - wget
+        - bat # cat clone with syntax highlighting
+        - fzf # fuzzy finder
+        - btop # resource monitor (CPU/RAM/disk/net)
+        - duf # disk usage/free utility, nicer than `df`
+        - ripgrep # fast recursive grep, binary is `rg`
+        - fd-find # fast find replacement; binary is installed as `fdfind`, not `fd`
+        - tealdeer # fast tldr client (Rust), simplified example-based man pages
+        - zoxide # smarter `cd` that learns your habits
+        - tmux # terminal multiplexer
+        - neovim # modernized vim
 
   darwin:
     brew:
