@@ -27,8 +27,11 @@ help: ## Show this help message
 	@echo "Installation:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/install.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
-	@echo "Development:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/dev.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "Checkers & formatters:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/check_format.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Running the Application:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/run.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Testing:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/test.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

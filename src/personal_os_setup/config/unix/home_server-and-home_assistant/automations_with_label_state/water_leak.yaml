@@ -1,0 +1,50 @@
+alias: 💦Détection de fuite d'eau
+description: Alerte répétée si fuite d'eau détectée
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.klippbok_water_leak_sensor_fuite_d_eau
+      - binary_sensor.klippbok_water_leak_sensor_fuite_d_eau_2
+    to: "on"
+    for: "00:00:10"
+actions:
+  - repeat:
+      while:
+        - condition: template
+          value_template: "{{ is_state(trigger.entity_id, 'on') }}"
+      sequence:
+        - data:
+            title: 🚨 Fuite d'eau détectée
+            message: "{{ trigger.to_state.name }} a été declanché"
+          action: notify.notify
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 20
+            milliseconds: 0
+mode: restart
+variables:
+  _cafe_metadata:
+    version: 1
+    strategy: native
+    nodes:
+      trigger_1771188901237_0_0:
+        x: 12
+        "y": 32.5
+      condition_1771188901240_1_1:
+        x: 360
+        "y": 60
+      action_1771188901241_2_2:
+        x: 735
+        "y": 30
+      action_1771188901241_3_3:
+        x: 735
+        "y": 150
+      action_1771188901241_4_4:
+        x: 735
+        "y": 270
+      delay_1771188901241_5_5:
+        x: 1080
+        "y": 180
+    graph_id: 5fe1b0f8-0f01-4ca9-8c22-e5bf0d76deeb
+    graph_version: 1

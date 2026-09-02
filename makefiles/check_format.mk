@@ -1,8 +1,7 @@
-# Development targets
-# This file contains targets for running and developing the application
+# Check Format targets
+# This file contains targets for checking code format
 
 .PHONY: pre-commit-install pre-commit lint format
-
 
 pre-commit-install: install-dev
 	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
