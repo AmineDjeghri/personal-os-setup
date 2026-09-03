@@ -9,9 +9,19 @@
 .config/kdeglobals
 {{ end -}}
 
+# Config -- macOS and Windows only
+{{ if eq .chezmoi.os "linux" -}}
+.aerospace.toml
+{{ end -}}
+
 # Config -- macOS and Linux only
 {{ if eq .chezmoi.os "windows" -}}
 .zshrc
 .p10k.zsh
 .config/zed
+{{ end -}}
+
+# Config -- Windows only
+{{ if ne .chezmoi.os "windows" -}}
+.glzr
 {{ end -}}

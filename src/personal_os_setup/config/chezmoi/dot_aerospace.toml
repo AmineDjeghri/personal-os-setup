@@ -69,7 +69,7 @@ outer.right = 5
 
 [workspace-to-monitor-force-assignment]
 # values can be
-# 1 Monitor sequence number from left to right. 1-based indexing
+# 1 Monitor sequence number from left to right. 1-based indexing (if a monitor, is under a monitor, the monitor that is wider on the left is number 1)
 # 'main' Main monitor
 # 'built-in' Case insensitive regex substring
 # '^built-in retina display$' Case insensitive regex match
@@ -79,7 +79,7 @@ outer.right = 5
 3 = ['T24m-29', 1]
 4 = ['T24m-29', 3, 1]
 5 = '^built-in retina display$'
-6 = ['secondary', 'dell']
+6 = [1]
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -211,7 +211,7 @@ run = 'move-node-to-workspace 2'
 if.app-id = 'com.apple.finder'
 run = 'move-node-to-workspace 3'
 
-# workspace 4 apps : editos (zed, office, obsidian)
+# workspace 4 apps : editors (zed, office, obsidian)
 [[on-window-detected]]
 if.app-id = 'dev.zed.Zed'
 run = 'move-node-to-workspace 4'
@@ -229,11 +229,9 @@ if.app-id = 'com.microsoft.Powerpoint'
 run = 'move-node-to-workspace 4'
 
 # workspace 5 apps (chats, mails, calendar)
-
 [[on-window-detected]]
-if.app-id = 'com.hnc.Discord'
+if.app-id = 'com.openai.chat'
 run = 'move-node-to-workspace 5'
-
 
 [[on-window-detected]]
 if.app-id = 'app.mindmac.macos'
@@ -243,10 +241,10 @@ run = 'move-node-to-workspace 5'
 if.app-id = 'com.microsoft.teams2'
 run = 'move-node-to-workspace 5'
 
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Outlook'
-run = 'move-node-to-workspace 5'
 
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.facebook.archon'
@@ -261,22 +259,15 @@ if.app-id = 'com.apple.mail'
 run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
-if.app-id = 'com.anythingllm'
-run = 'move-node-to-workspace 5'
-
-[[on-window-detected]]
-if.app-id = 'com.openai.chat'
+if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.anythingllm'
 run = 'move-node-to-workspace 5'
+
 
 # workspace 6 apps (games & movies)
-[[on-window-detected]]
-if.app-id = 'com.valvesoftware.steam.helper'
-run = ['layout tiling', 'move-node-to-workspace 6']
-
 [[on-window-detected]]
 if.app-id = 'com.valvesoftware.steam.helper'
 run = ['layout tiling', 'move-node-to-workspace 6']
@@ -289,9 +280,4 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
-run = 'layout floating'
-
-
-[[on-window-detected]]
-if.app-id = 'com.colliderli.iina'
 run = 'layout floating'
