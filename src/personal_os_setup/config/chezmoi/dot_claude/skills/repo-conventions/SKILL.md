@@ -13,7 +13,7 @@ Run BEFORE every push. Skipping these caused real incidents (wrong commit attrib
 
 1. **Verify git author identity BEFORE committing.** GitHub attributes commits by email only; a wrong email links your commit to a different account and pollutes PR participants (unfixable once merged).
    - Check: `git config user.name` / `git config user.email`
-   - Email MUST be `<numeric-id>+<username>@users.noreply.github.com` — get the id via `gh api user -q .id`. **Never guess** (e.g. `amine@users.noreply...` ≠ `32715913+AmineDjeghri@users.noreply.github.com`).
+   - Email MUST be `<numeric-id>+<username>@users.noreply.github.com` — get the id via `gh api user -q .id`. **Never guess** (e.g. `example@users.noreply...` ≠ `32715913+example_example@users.noreply.github.com`).
    - Fix before pushing: `git commit --amend --author="Real Name <id+username@users.noreply.github.com>" --no-edit`
 2. **Run pre-commit on changed files** (if `.pre-commit-config.yaml` exists): `pre-commit run --files <files...>`. Hooks must pass; if one auto-fixes, re-add and re-commit.
 3. **Conventional commit + conventional PR title.** Squash-merge makes the PR title the commit on main; CI often validates it against `(feat|fix|docs|chore|ci|...)(scope)?: ...`.
@@ -48,7 +48,6 @@ Run BEFORE every push. Skipping these caused real incidents (wrong commit attrib
 
 ## Global rules (all repos)
 
-- Commit email ALWAYS `32715913+AmineDjeghri@users.noreply.github.com`.
 - gh OAuth device flow preferred over PATs for interactive auth (PATs only for CI secrets).
 - Approval prompts often time out → prefer approval-free git ops (regular push, new commit, merge over rebase, no force-push/remote deletes).
 - Re-check `gh pr` state before assuming — PRs get merged fast.
