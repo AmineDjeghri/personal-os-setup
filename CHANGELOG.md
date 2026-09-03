@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.11.2 (2026-09-03)
+
+### Bug Fixes
+
+- Add missing configs
+  ([`060a8c4`](https://github.com/AmineDjeghri/personal-os-setup/commit/060a8c4d279984ae3f82738781b07df0368e4ab9))
+
+
 ## v2.11.1 (2026-08-28)
 
 ### Bug Fixes
