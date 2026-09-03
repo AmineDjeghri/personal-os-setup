@@ -52,6 +52,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Tests & coverage | `.claude/skills/run-tests` |
 | Docs site gotchas | `.claude/skills/docs-site` |
 | Contributor guide | `CONTRIBUTING.md` |
+| Repo skill layout / adding skills | `.claude/skills/skill-layout` |
 
 ## Known drift (trust nothing blindly)
 
