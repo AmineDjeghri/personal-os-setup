@@ -1,6 +1,6 @@
 ---
 name: coding-workflow
-description: Use when starting any coding work across Amine's repos. Division of labor between Hermes and Claude Code, plan-first workflow, confirm-before-mutate, review, and per-repo PR flows (see repo-conventions).
+description: Use when starting any coding work across the repos. Division of labor between Hermes and Claude Code, plan-first workflow, confirm-before-mutate, review, and per-repo PR flows (see repo-conventions).
 ---
 
 # Coding Workflow — Hermes & Claude Code
