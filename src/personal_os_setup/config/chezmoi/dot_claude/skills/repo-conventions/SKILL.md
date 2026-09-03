@@ -1,6 +1,6 @@
 ---
 name: repo-conventions
-description: Use before committing, pushing, or opening a PR in any of Amine's repos. Per-repo matrices (personal-os-setup vs ha-addons) for branching, commits, PRs, release, and CI, plus the mandatory pre-push checklist.
+description: Use before committing, pushing, or opening a PR in any of the repos. Per-repo matrices (personal-os-setup vs ha-addons) for branching, commits, PRs, release, and CI, plus the mandatory pre-push checklist.
 ---
 
 # Repo Conventions
@@ -13,7 +13,7 @@ Run BEFORE every push. Skipping these caused real incidents (wrong commit attrib
 
 1. **Verify git author identity BEFORE committing.** GitHub attributes commits by email only; a wrong email links your commit to a different account and pollutes PR participants (unfixable once merged).
    - Check: `git config user.name` / `git config user.email`
-   - Email MUST be `<numeric-id>+<username>@users.noreply.github.com` — get the id via `gh api user -q .id`. **Never guess** (e.g. `example@users.noreply...` ≠ `32715913+example_example@users.noreply.github.com`).
+   - Email MUST be `<numeric-id>+<username>@users.noreply.github.com` — get the id via `gh api user -q .id`. **Never guess** (e.g. `example@users.noreply...` ≠ `12345678+example_user@users.noreply.github.com`).
    - Fix before pushing: `git commit --amend --author="Real Name <id+username@users.noreply.github.com>" --no-edit`
 2. **Run pre-commit on changed files** (if `.pre-commit-config.yaml` exists): `pre-commit run --files <files...>`. Hooks must pass; if one auto-fixes, re-add and re-commit.
 3. **Conventional commit + conventional PR title.** Squash-merge makes the PR title the commit on main; CI often validates it against `(feat|fix|docs|chore|ci|...)(scope)?: ...`.
