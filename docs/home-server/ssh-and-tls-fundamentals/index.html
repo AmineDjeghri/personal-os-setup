@@ -1,0 +1,3637 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation">
+      
+      
+        <meta name="author" content="Amine DJEGHRI">
+      
+      
+      
+        <link rel="prev" href="../readme/">
+      
+      
+        <link rel="next" href="../music/music_server/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/logo.png">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>SSH & TLS/SSL fundamentals - Personal OS Setup</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ssh-tlsssl-fundamentals" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Personal OS Setup" class="md-header__button md-logo" aria-label="Personal OS Setup" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Personal OS Setup
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SSH &amp; TLS/SSL fundamentals
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../examples/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../package/personal_os_setup/detect_os/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../CHANGELOG/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../CONTRIBUTING/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Personal OS Setup" class="md-nav__button md-logo" aria-label="Personal OS Setup" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    Personal OS Setup
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Android tv
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Android tv
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../android-tv/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TV Setup (googletv / android tv)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apps
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Apps
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apps/apps_configuration_and_shorcuts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apps configuration and shortcuts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apps/awesome_websites_browser_extensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Awesome websites &amp; browser extensions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home server
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Home server
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home server (Ubuntu Server, KVM, Home Assistant OS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH &amp; TLS/SSL fundamentals
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH &amp; TLS/SSL fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-bother-understanding-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why bother understanding this
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-two-separate-trust-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH: two separate trust directions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH: two separate trust directions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-client-verifies-the-server-known_hosts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Client verifies the server (known_hosts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-server-verifies-the-client-authorized_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Server verifies the client (authorized_keys)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-actually-happening-underneath-key-exchange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's actually happening underneath (key exchange)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-multiplexing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session multiplexing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tlsssl-trust-at-internet-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS/SSL: trust at internet scale
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TLS/SSL: trust at internet scale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-tls-solves-that-ssh-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The problem TLS solves that SSH doesn't
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-a-tls-certificate-is-verified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a TLS certificate is verified
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutual-tls-mtls-tlss-version-of-authorized_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutual TLS (mTLS) — TLS's version of authorized_keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-corporate-laptops-have-their-own-ca-tls-interception" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why corporate laptops have their own CA (TLS interception)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-vs-tls-side-by-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH vs TLS — side by side
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applying-this-to-the-home-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying this to the home server
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Applying this to the home server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssh-into-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH into the server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls-for-anything-exposed-via-cloudflare-tunnel-a-reverse-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS for anything exposed via Cloudflare Tunnel / a reverse proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#self-signed-certs-on-the-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-signed certs on the LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-errors-and-what-they-actually-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common errors and what they actually mean
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Music
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Music
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../music/music_server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Music server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../music/youtube_ai_download/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Youtube ai download
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5_3_2" id="__nav_2_5_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_5_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Youtube ai download
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3_2_2" id="__nav_2_5_3_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skill
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_5_3_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Skill
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3_2_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3_2_2_1" id="__nav_2_5_3_2_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yt dlp music downloads
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="6" aria-labelledby="__nav_2_5_3_2_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3_2_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Yt dlp music downloads
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../music/youtube_ai_download/skill/yt-dlp-music-downloads/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YouTube → Music Library (yt-dlp → Navidrome)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../linux/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../linux/CachyOS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CachyOS Hyprland Developer Workstation Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../macos_darwin/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Macos darwin
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Macos darwin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../windows_workflow/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows workflow
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../examples/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    personal_os_setup
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    personal_os_setup
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/detect_os/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    detect_os
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/dialogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dialogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dotfiles_tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/frontend/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    main
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_4" id="__nav_4_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tasks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    tasks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_4_3" id="__nav_4_1_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    managers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    managers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/_shared/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    _shared
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/arch_pacman/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    arch_pacman
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/arch_paru/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    arch_paru
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/darwin_brew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    darwin_brew
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/ubuntu_apt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ubuntu_apt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/ubuntu_snap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ubuntu_snap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/webinstall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    webinstall
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/windows_msstore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    windows_msstore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/managers/windows_winget/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    windows_winget
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/self_update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    self_update
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/sudo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sudo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_4_6" id="__nav_4_1_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    system
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    system
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/chezmoi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    chezmoi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/docker_tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    docker_tasks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/font/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/help/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    help
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/nvidia_tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    nvidia_tasks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/windows_tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    windows_tasks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/windows_wsl_tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    windows_wsl_tasks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/zsh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    zsh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/task/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    task
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CONTRIBUTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-bother-understanding-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why bother understanding this
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-two-separate-trust-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH: two separate trust directions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SSH: two separate trust directions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-client-verifies-the-server-known_hosts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Client verifies the server (known_hosts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-server-verifies-the-client-authorized_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Server verifies the client (authorized_keys)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-actually-happening-underneath-key-exchange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's actually happening underneath (key exchange)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-multiplexing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session multiplexing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tlsssl-trust-at-internet-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS/SSL: trust at internet scale
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TLS/SSL: trust at internet scale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-tls-solves-that-ssh-doesnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The problem TLS solves that SSH doesn't
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-a-tls-certificate-is-verified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a TLS certificate is verified
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutual-tls-mtls-tlss-version-of-authorized_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutual TLS (mTLS) — TLS's version of authorized_keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-corporate-laptops-have-their-own-ca-tls-interception" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why corporate laptops have their own CA (TLS interception)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-vs-tls-side-by-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH vs TLS — side by side
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applying-this-to-the-home-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying this to the home server
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Applying this to the home server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssh-into-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH into the server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls-for-anything-exposed-via-cloudflare-tunnel-a-reverse-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS for anything exposed via Cloudflare Tunnel / a reverse proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#self-signed-certs-on-the-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-signed certs on the LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-errors-and-what-they-actually-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common errors and what they actually mean
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../readme/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Home server
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ssh-tlsssl-fundamentals">SSH &amp; TLS/SSL fundamentals<a class="headerlink" href="#ssh-tlsssl-fundamentals" title="Permanent link">&para;</a></h1>
+<!-- TOC -->
+<ul>
+<li><a href="#ssh--tlsssl-fundamentals">SSH &amp; TLS/SSL fundamentals</a></li>
+<li><a href="#why-bother-understanding-this">Why bother understanding this</a></li>
+<li><a href="#ssh-two-separate-trust-directions">SSH: two separate trust directions</a><ul>
+<li><a href="#1-client-verifies-the-server-known_hosts">1. Client verifies the server (known_hosts)</a></li>
+<li><a href="#2-server-verifies-the-client-authorized_keys">2. Server verifies the client (authorized_keys)</a></li>
+<li><a href="#whats-actually-happening-underneath-key-exchange">What's actually happening underneath (key exchange)</a></li>
+<li><a href="#session-multiplexing">Session multiplexing</a></li>
+</ul>
+</li>
+<li><a href="#tlsssl-trust-at-internet-scale">TLS/SSL: trust at internet scale</a><ul>
+<li><a href="#the-problem-tls-solves-that-ssh-doesnt">The problem TLS solves that SSH doesn't</a></li>
+<li><a href="#how-a-tls-certificate-is-verified">How a TLS certificate is verified</a></li>
+<li><a href="#mutual-tls-mtls--tlss-version-of-authorized_keys">Mutual TLS (mTLS) — TLS's version of authorized_keys</a></li>
+<li><a href="#why-corporate-laptops-have-their-own-ca-tls-interception">Why corporate laptops have their own CA (TLS interception)</a></li>
+</ul>
+</li>
+<li><a href="#ssh-vs-tls--side-by-side">SSH vs TLS — side by side</a></li>
+<li><a href="#applying-this-to-the-home-server">Applying this to the home server</a><ul>
+<li><a href="#ssh-into-the-server">SSH into the server</a></li>
+<li><a href="#tls-for-anything-exposed-via-cloudflare-tunnel--a-reverse-proxy">TLS for anything exposed via Cloudflare Tunnel / a reverse proxy</a></li>
+<li><a href="#self-signed-certs-on-the-lan">Self-signed certs on the LAN</a></li>
+</ul>
+</li>
+<li><a href="#common-errors-and-what-they-actually-mean">Common errors and what they actually mean</a></li>
+</ul>
+<!-- TOC -->
+
+<h2 id="why-bother-understanding-this">Why bother understanding this<a class="headerlink" href="#why-bother-understanding-this" title="Permanent link">&para;</a></h2>
+<p>Both SSH and TLS solve the same underlying problem — "how do two computers that have never met agree to trust each other, and encrypt what they say?" — but they solve it differently, and mixing up the mental models is where most confusion (and misconfiguration) comes from. This doc lays out both, side by side, so config choices on the home server (SSH hardening, Cloudflare Tunnel, any local HTTPS service) make sense instead of being cargo-culted.</p>
+<h2 id="ssh-two-separate-trust-directions">SSH: two separate trust directions<a class="headerlink" href="#ssh-two-separate-trust-directions" title="Permanent link">&para;</a></h2>
+<p>SSH does <strong>two independent checks</strong>, in opposite directions. It's easy to only think about one of them.</p>
+<h3 id="1-client-verifies-the-server-known_hosts">1. Client verifies the server (known_hosts)<a class="headerlink" href="#1-client-verifies-the-server-known_hosts" title="Permanent link">&para;</a></h3>
+<p>The first time you <code>ssh</code> into a new host, you get a prompt like:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>The authenticity of host &#39;homeserver (192.168.1.50)&#39; can&#39;t be established.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ED25519 key fingerprint is SHA256:xxxxx.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Are you sure you want to continue connecting (yes/no)?
+</span></code></pre></div>
+<p>The server has a keypair of its own (usually generated once, at <code>/etc/ssh/ssh_host_ed25519_key</code> etc.). It proves it holds the private key; your client checks the matching public key against <code>~/.ssh/known_hosts</code>. This is <strong>trust on first use (TOFU)</strong> — you manually vouch for the server the first time, and every future connection is checked against that pinned fingerprint. If the fingerprint ever changes unexpectedly, SSH refuses to connect and warns loudly — that's what catches a man-in-the-middle or a wiped/reinstalled host.</p>
+<p><strong>The <code>known_hosts</code> line format:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;host&gt; &lt;key-type&gt; &lt;base64-public-key&gt; [comment]
+</span></code></pre></div>
+<ul>
+<li><code>&lt;host&gt;</code> — hostname or IP (or <code>hostname,ip</code> for both). If <code>HashKnownHosts yes</code> is set, this is instead an opaque <code>|1|salt|hash</code> string rather than plaintext — a privacy option so a leaked file doesn't reveal which hosts you connect to.</li>
+<li><code>&lt;key-type&gt;</code> — the algorithm: <code>ssh-ed25519</code>, <code>ssh-rsa</code>, <code>ecdsa-sha2-nistp256</code>, etc.</li>
+<li><code>&lt;base64-public-key&gt;</code> — the server's actual public key bytes, not a hash of it.</li>
+</ul>
+<p>It's normal to see the <em>same host</em> on several lines, one per algorithm — a server generates one host keypair per algorithm it supports, and your client records whichever ones it has actually negotiated over time.</p>
+<p><strong>What happens during the handshake, step by step:</strong></p>
+<ol>
+<li>Client and server negotiate a key-exchange algorithm and start a Diffie-Hellman exchange (see <a href="#whats-actually-happening-underneath-key-exchange">key exchange</a> below).</li>
+<li>As part of that exchange, the server signs the handshake data with its host <em>private</em> key and sends the signature plus its public key.</li>
+<li>The client verifies the signature against the public key just presented — proving the server holds the private key matching whatever public key it's claiming (self-consistency check, doesn't touch <code>known_hosts</code> yet).</li>
+<li>The client looks up <code>&lt;host&gt;</code> in <code>known_hosts</code> for a matching key type, and compares the presented public key <strong>byte-for-byte</strong> against the stored one.</li>
+<li>Match → connection proceeds silently, no prompt. This all happens before you type a password or your own key is challenged.</li>
+</ol>
+<p><strong>Why "unknown" and "changed" are handled so differently:</strong> if the host isn't in <code>known_hosts</code> at all, you get the "authenticity can't be established" prompt, and answering yes appends a new line. But if the host <em>is</em> present and the key bytes don't match what's stored, SSH doesn't prompt — it refuses outright with a loud <code>REMOTE HOST IDENTIFICATION HAS CHANGED!</code> warning and exits. This asymmetry is deliberate: if a changed key only triggered the same "are you sure?" prompt people click through by habit, a man-in-the-middle could simply substitute their own key and rely on users clicking yes anyway.</p>
+<h3 id="2-server-verifies-the-client-authorized_keys">2. Server verifies the client (authorized_keys)<a class="headerlink" href="#2-server-verifies-the-client-authorized_keys" title="Permanent link">&para;</a></h3>
+<p>This is the direction most people think of as "SSH keys": you generate a keypair (<code>ssh-keygen -t ed25519</code>), keep the private key secret on your laptop, and put the <strong>public</strong> key in <code>~/.ssh/authorized_keys</code> on the server. On login, the server challenges your client to sign some random data with the private key — proving you hold it, without the private key ever leaving your machine.</p>
+<p>These two checks are independent and happen in opposite directions — the server never needs your public key to prove <em>its own</em> identity, and you never need to trust the server's key to <em>authenticate yourself</em> to it.</p>
+<h3 id="whats-actually-happening-underneath-key-exchange">What's actually happening underneath (key exchange)<a class="headerlink" href="#whats-actually-happening-underneath-key-exchange" title="Permanent link">&para;</a></h3>
+<p>Before either trust check completes, SSH does a <strong>Diffie-Hellman key exchange</strong>: client and server use math to agree on a shared symmetric session key, without ever transmitting that key over the wire. Public-key crypto (RSA/Ed25519) is comparatively slow, so it's only used briefly during this handshake — the actual data of your session (commands, file transfers) is encrypted with the fast symmetric key it produced. Host key verification and authentication both happen <em>after</em> this, i.e. already inside an encrypted tunnel.</p>
+<h3 id="session-multiplexing">Session multiplexing<a class="headerlink" href="#session-multiplexing" title="Permanent link">&para;</a></h3>
+<p>Once authenticated, a single SSH connection can carry multiple logical "channels" — your interactive shell, but also <code>scp</code>/<code>sftp</code> transfers, port forwards (<code>-L</code>/<code>-R</code>, handy for reaching services on the home server without exposing them publicly), and X11 forwarding, all inside the one encrypted connection.</p>
+<h2 id="tlsssl-trust-at-internet-scale">TLS/SSL: trust at internet scale<a class="headerlink" href="#tlsssl-trust-at-internet-scale" title="Permanent link">&para;</a></h2>
+<h3 id="the-problem-tls-solves-that-ssh-doesnt">The problem TLS solves that SSH doesn't<a class="headerlink" href="#the-problem-tls-solves-that-ssh-doesnt" title="Permanent link">&para;</a></h3>
+<p>SSH's TOFU model works because you personally manage a short list of servers you connect to. TLS was designed for browsers connecting to millions of websites they've never seen, with zero manual setup per site. That requires delegating trust to third parties instead of pinning it yourself.</p>
+<h3 id="how-a-tls-certificate-is-verified">How a TLS certificate is verified<a class="headerlink" href="#how-a-tls-certificate-is-verified" title="Permanent link">&para;</a></h3>
+<ol>
+<li>A server has a private key and a <strong>certificate</strong>: its public key + identity ("I am <code>example.com</code>"), digitally signed by a <strong>Certificate Authority (CA)</strong>.</li>
+<li>On connecting, the server sends this certificate.</li>
+<li>Your OS/browser ships with a <strong>trust store</strong> — the public keys of ~100+ root CAs it already trusts (Let's Encrypt, DigiCert, etc.).</li>
+<li>If the certificate's signature chains back to something in that trust store, the connection proceeds silently. If not: <code>CERTIFICATE_VERIFY_FAILED</code>.</li>
+</ol>
+<p>This is the same <em>shape</em> of problem as SSH's known_hosts (client verifying server identity), just automated via a hierarchy of signers instead of manual fingerprint-pinning.</p>
+<p>One subtlety worth knowing: <strong>different programs on the same machine can keep separate trust stores</strong>. macOS/Windows have a system-level keychain that browsers and <code>curl</code> typically use; but many language runtimes (Python's <code>ssl</code>/<code>urllib</code>, sometimes Node's <code>https</code>) ship or reference their <em>own</em> separate CA bundle file, independent of the OS keychain. Installing a CA into "the system" doesn't always mean every tool on that machine will trust it — this is exactly what causes the corporate-proxy cert error covered in the <a href="#common-errors-and-what-they-actually-mean">Common errors</a> section below, and it can bite in a homelab context too (e.g. running your own internal CA for LAN services, but only importing it into the browser and not into <code>curl</code>/Python/Docker's trust store).</p>
+<h3 id="mutual-tls-mtls-tlss-version-of-authorized_keys">Mutual TLS (mTLS) — TLS's version of authorized_keys<a class="headerlink" href="#mutual-tls-mtls-tlss-version-of-authorized_keys" title="Permanent link">&para;</a></h3>
+<p>By default TLS only does the SSH-known_hosts-equivalent direction: client verifies server. Browsers never "register" a key with a website first. But TLS <em>can</em> do the other direction too — <strong>mutual TLS (mTLS)</strong>: the server also demands and verifies a client certificate. This is the direct analogue of SSH's <code>authorized_keys</code> step, and it's how a lot of service-to-service auth works (it's conceptually similar to how AWS SigV4-signed requests authenticate a caller, too). Cloudflare Tunnel's <code>cloudflared</code> client authenticating to Cloudflare's edge is effectively this pattern.</p>
+<h3 id="why-corporate-laptops-have-their-own-ca-tls-interception">Why corporate laptops have their own CA (TLS interception)<a class="headerlink" href="#why-corporate-laptops-have-their-own-ca-tls-interception" title="Permanent link">&para;</a></h3>
+<p>TLS's entire design goal is "nobody in the middle can read or tamper with this, not even the network it travels over." A company's security team, however, often <em>wants</em> to see inside that traffic — scanning downloads for malware, blocking data exfiltration, enforcing content policy, logging for compliance. TLS was built specifically to prevent exactly this kind of interception by an untrusted third party. So a company that wants it anyway has only one option: stop being an untrusted third party, by making itself a <strong>trusted</strong> one.</p>
+<p><strong>How that actually works, mechanically:</strong></p>
+<ol>
+<li>IT generates its own private root CA (a keypair, just like any CA — it's not fundamentally different from a public one, just never handed to a public trust program).</li>
+<li>That CA's <em>public</em> half gets pushed to every managed device via MDM, into the OS-level trust store — the same one holding DigiCert, Let's Encrypt, etc.</li>
+<li>All outbound traffic is routed through a <strong>forward proxy</strong> (via system network settings, a PAC file, or a client agent). This is a real, physical man-in-the-middle — deliberately.</li>
+<li>When you visit <code>https://example.com</code>, the proxy intercepts the connection before it reaches the real internet. It opens its <em>own</em> separate TLS connection to the real <code>example.com</code> (verifying the real certificate itself, on your behalf), and separately, it generates a <strong>fresh certificate for <code>example.com</code> on the fly</strong>, signed by the company's own CA — not the site's real one — and hands that to you.</li>
+<li>Your browser checks that certificate's signature chain: does it lead back to something in the trust store? Yes — because step 2 planted the company's CA there. No warning, padlock shows normally.</li>
+<li>The proxy now sits in the middle with two separate decrypted TLS sessions (you↔proxy, proxy↔real site), and can read, log, or block anything passing through in plaintext, before re-encrypting each direction.</li>
+</ol>
+<p>This category of product is usually called <strong>TLS/SSL inspection</strong> or a <strong>secure web gateway</strong> (well-known commercial examples include Zscaler, Netskope, Palo Alto, and similar — any given company's MDM CA cert is typically visible in macOS Keychain Access under a name like <code>&lt;Company&gt; Proxy CA</code> if you go looking).</p>
+<p><strong>Two otherwise-identical MacBooks, side by side:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Personal Mac</th>
+<th>Corporate Mac</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trust store</td>
+<td>Only public CAs (Apple's default bundle)</td>
+<td>Public CAs <strong>+</strong> the company's own root CA</td>
+</tr>
+<tr>
+<td>Route to the internet</td>
+<td>Direct</td>
+<td>Through the company's forward proxy</td>
+</tr>
+<tr>
+<td>Certificate you actually receive for <code>example.com</code></td>
+<td>The real one, signed by a public CA</td>
+<td>A substitute, signed by the company's CA, for the <em>same</em> domain</td>
+</tr>
+<tr>
+<td>Who can read your HTTPS traffic in plaintext</td>
+<td>Nobody in transit</td>
+<td>The proxy, for anything routed through it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why some sites fail only on the corporate machine — two different causes:</strong></p>
+<ul>
+<li><strong>Certificate pinning.</strong> Some apps and services don't trust "whatever's in the OS trust store" — they hardcode ("pin") the exact certificate or CA they expect, specifically as a defense <em>against</em> this kind of interception. Banking apps, some enterprise SaaS, and certain package registries do this. When pinning is present, the proxy's substitute certificate is rejected outright, no matter what's installed in your trust store — this is the one case TLS inspection categorically cannot work around, by design.</li>
+<li><strong>Separate trust stores per tool</strong>, the same issue covered earlier in this doc: MDM only installs the company CA into the <em>OS-level</em> store. Tools that ship or reference their own CA bundle instead of consulting the OS store (Python's <code>urllib</code>/<code>ssl</code>, sometimes Docker, older Java runtimes) never see that CA and fail with the exact <code>CERTIFICATE_VERIFY_FAILED: self-signed certificate</code> error, even though Safari/Chrome — reading the same request against the same site, on the same machine — work fine.</li>
+</ul>
+<p><strong>The consequence worth being deliberate about:</strong> any personal account you use on a corporate, MDM-managed machine (personal email, banking, messaging) has its HTTPS traffic technically decryptable by whatever's running on that proxy, for the duration it's routed through it — policy may restrict what's actually logged or inspected, but the technical capability exists at the network layer regardless of policy. It's generally worth keeping fully personal browsing on a personal device instead.</p>
+<h2 id="ssh-vs-tls-side-by-side">SSH vs TLS — side by side<a class="headerlink" href="#ssh-vs-tls-side-by-side" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>SSH</th>
+<th>TLS/SSL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client verifies server</td>
+<td><code>known_hosts</code>, manual TOFU pinning</td>
+<td>CA-signed certificate chain, trust store</td>
+</tr>
+<tr>
+<td>Server verifies client</td>
+<td><code>authorized_keys</code> (public key you placed there)</td>
+<td>Optional — mutual TLS (mTLS), rarely used by default</td>
+</tr>
+<tr>
+<td>Session encryption</td>
+<td>Diffie-Hellman → symmetric session key</td>
+<td>Same handshake pattern (TLS handshake → symmetric session key)</td>
+</tr>
+<tr>
+<td>Trust model</td>
+<td>You decide who to trust, per-host</td>
+<td>Delegated to third-party CAs, scales to millions of unknown servers</td>
+</tr>
+<tr>
+<td>Typical failure mode</td>
+<td>"Host key verification failed" (fingerprint changed)</td>
+<td>"Certificate verify failed" (signer not in trust store)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="applying-this-to-the-home-server">Applying this to the home server<a class="headerlink" href="#applying-this-to-the-home-server" title="Permanent link">&para;</a></h2>
+<h3 id="ssh-into-the-server">SSH into the server<a class="headerlink" href="#ssh-into-the-server" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The server's host key lives under <code>/etc/ssh/ssh_host_*_key</code> — back it up if you ever reinstall the OS but want to keep the same fingerprint (otherwise every client that already has it in <code>known_hosts</code> will refuse to connect until you manually remove the stale entry).</li>
+<li>Prefer key-based auth (<code>authorized_keys</code>) over password auth; disable password auth entirely in <code>/etc/ssh/sshd_config</code> (<code>PasswordAuthentication no</code>) once your key is confirmed working, to remove brute-force risk if the server is ever reachable from outside the LAN.</li>
+<li>If exposing SSH outside the LAN (not recommended without a good reason), consider putting it behind the same Cloudflare Tunnel used for Home Assistant rather than port-forwarding it directly on the router.</li>
+</ul>
+<h3 id="tls-for-anything-exposed-via-cloudflare-tunnel-a-reverse-proxy">TLS for anything exposed via Cloudflare Tunnel / a reverse proxy<a class="headerlink" href="#tls-for-anything-exposed-via-cloudflare-tunnel-a-reverse-proxy" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Cloudflare Tunnel terminates TLS at Cloudflare's edge using a certificate Cloudflare manages — you don't need to run your own cert for the public hostname. This is why it "just works" from a browser with a padlock and no warnings.</li>
+<li>If you add your own reverse proxy in front of a service (nginx/Caddy/Traefik) for internal access instead of going through the tunnel, that's where you'd manage your own cert — Let's Encrypt via ACME is the standard free option for anything with a real public DNS name.</li>
+</ul>
+<h3 id="self-signed-certs-on-the-lan">Self-signed certs on the LAN<a class="headerlink" href="#self-signed-certs-on-the-lan" title="Permanent link">&para;</a></h3>
+<ul>
+<li>For services only reached over the local network (e.g. <code>https://homeserver.local</code>), a public CA can't issue you a cert (no public DNS validation possible), so the common options are: a self-signed cert (browser will warn every time unless you import it into each device's trust store — same "which trust store" issue mentioned above), or running your own tiny local CA (e.g. <code>mkcert</code> or <code>step-ca</code>) and importing <em>that</em> CA's root into each device once — after which every cert it issues is trusted silently, no more warnings.</li>
+</ul>
+<h2 id="common-errors-and-what-they-actually-mean">Common errors and what they actually mean<a class="headerlink" href="#common-errors-and-what-they-actually-mean" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>Host key verification failed</code></strong> (SSH) — the server's fingerprint doesn't match what's in your <code>known_hosts</code>. Either the server was reinstalled/its key regenerated (expected, just remove the old entry with <code>ssh-keygen -R &lt;host&gt;</code>), or — rarely — something is intercepting the connection. Don't blindly remove-and-reconnect on a network you don't fully trust without checking why it changed.</li>
+<li><strong><code>CERTIFICATE_VERIFY_FAILED: self-signed certificate in certificate chain</code></strong> (TLS) — the certificate's signer isn't in the trust store the connecting program is using. On a corporate laptop this is usually a TLS-inspecting proxy whose CA is trusted by the OS/browser but not by whatever CA bundle the failing tool reads (Python's <code>urllib</code>/<code>ssl</code> module is a common offender, since it doesn't consult the OS keychain the way <code>curl</code> does). Fix: get the relevant CA cert(s) into the trust store the failing tool actually consults (e.g. Python's <code>SSL_CERT_FILE</code> env var), not just the OS-level one.</li>
+<li><strong><code>certificate has expired</code></strong> — self-explanatory, but note Let's Encrypt certs are short-lived (90 days) by design to force automation (<code>certbot</code>/ACME renewal) rather than manual, error-prone renewal.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["search.suggest", "search.highlight", "search.share", "navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.indexes", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

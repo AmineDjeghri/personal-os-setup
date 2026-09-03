@@ -1,0 +1,15 @@
+{
+  "$schema": "https://github.com/glzr-io/zebar/raw/v3.1.1/resources/settings-schema.json",
+  "startupConfigs": [
+    {
+      "pack": "starter",
+      "widget": "with-glazewm",
+      "preset": "default"
+    },
+    {
+      "pack": "amine-zebar",
+      "widget": "with-glazewm",
+      "preset": "default"
+    }
+  ]
+}

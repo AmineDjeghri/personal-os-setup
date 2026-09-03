@@ -1,0 +1,162 @@
+/**
+ * Import the Nerdfonts icon font.
+ * Ref https://www.nerdfonts.com/cheat-sheet for a cheatsheet of available Nerdfonts icons.
+ */
+@import 'https://www.nerdfonts.com/assets/css/webfont.css';
+
+i {
+  color: rgb(115 130 175 / 95%);
+  margin-right: 7px;
+}
+
+body {
+  color: rgb(255 255 255 / 90%);
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+#root {
+  border-bottom: 1px solid rgb(255 255 255 / 5%);
+  background: transparent;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px 4px;
+}
+
+.left,
+.center,
+.right {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap; /* Prevent items from wrapping to a new line */
+
+  /* These styles create the "widget" look */
+  background: rgb(9, 34, 42);
+  border: 1px solid rgb(255 255 255 / 5%);
+  border-radius: 0 0 12px 12px; /* Top-left, top-right, bottom-right, bottom-left */
+  padding: 2px 12px;
+  height: 28px;
+}
+
+.center {
+  justify-self: center;
+}
+
+.right {
+  justify-self: end;
+}
+
+.right > * {
+  margin-left: 12px;
+}
+
+.logo,
+.binding-mode,
+.tiling-direction,
+.network,
+.memory,
+.cpu,
+.battery {
+  margin-right: 20px;
+}
+
+.workspaces {
+  display: flex;
+  align-items: center;
+}
+
+.workspace {
+  background: rgb(255 255 255 / 5%);
+  margin-right: 4px;
+  padding: 4px 8px;
+  color: rgb(255 255 255 / 90%);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &.displayed {
+    background: rgb(255 255 255 / 15%);
+  }
+
+  &.focused,
+  &:hover {
+    background: rgb(75 115 255 / 50%);
+  }
+}
+
+.binding-mode,
+.tiling-direction {
+  background: rgb(255 255 255 / 15%);
+  color: rgb(255 255 255 / 90%);
+  border-radius: 2px;
+  line-height: 1;
+  padding: 4px 8px;
+  border: 0;
+  cursor: pointer;
+}
+
+.binding-mode {
+  margin-right: 4px;
+}
+
+.systray {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.systray-icon {
+  height: 18px;
+}
+
+.media-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.media-button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.media-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.media-info {
+  font-size: 0.9em;
+  opacity: 0.8;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cpu .high-usage {
+  color: #900029;
+}
+
+.battery .charging-icon {
+  position: absolute;
+  font-size: 11px;
+  left: 7px;
+  top: 2px;
+}
