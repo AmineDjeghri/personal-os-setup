@@ -5,7 +5,7 @@
 
 test-installation: ## Test installation
 	@echo "${YELLOW}=========> Testing installation...${NC}"
-	@$(UV) run --directory . hello
+	@$(UV) run --directory . awesome-os
 
 test: ## Run unit tests with pytest
 	@echo "${YELLOW}Running tests...${NC}"

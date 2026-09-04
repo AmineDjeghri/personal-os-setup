@@ -1,0 +1,59 @@
+# Requires HA Label State
+# Contains a bug because of IKEA water leak & door sensors. These entities have a state of 'off' when they are in 'dry' state and 'unavailable' when they are in off state.
+# So this automation for now always shows the IKEA water leak & door sensors as offline.
+alias: 📵Entité hors-ligne
+description: Notification quand une entité surveillée est hors-ligne
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.entity_status_off
+      - binary_sensor.entity_status_unavailable
+      - binary_sensor.entity_status_unknown
+      - binary_sensor.entity_status_away
+    to:
+      - "on"
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+conditions: []
+actions:
+  - parallel:
+      - data:
+          title: 🚨 Service hors ligne
+          message: >
+            Entités hors-ligne: {{
+            (state_attr('binary_sensor.entity_status_off', 'entity_names') |
+            list + state_attr('binary_sensor.entity_status_unavailable',
+            'entity_names') | list +
+            state_attr('binary_sensor.entity_status_unknown', 'entity_names') |
+            list + state_attr('binary_sensor.entity_status_away',
+            'entity_names') | list) | unique | join(', ') }}
+        action: notify.notify
+      - data:
+          message: >
+            Entités hors-ligne: {{
+            (state_attr('binary_sensor.entity_status_off', 'entity_names') |
+            list + state_attr('binary_sensor.entity_status_unavailable',
+            'entity_names') | list +
+            state_attr('binary_sensor.entity_status_unknown', 'entity_names') |
+            list + state_attr('binary_sensor.entity_status_away',
+            'entity_names') | list) | unique | join(', ') }}
+        action: notify.alexa_media_echo_dot_amine
+mode: single
+variables:
+  _cafe_metadata:
+    version: 1
+    strategy: native
+    nodes:
+      trigger_1778269411170_0_0:
+        x: -195
+        "y": 165
+      action_1778269411172_1_1:
+        x: 330
+        "y": 60
+      action_1778269411172_2_2:
+        x: 330
+        "y": 255
+    graph_id: d6a18d1e-3d77-4c36-8efe-50c9c83dec4c
+    graph_version: 1

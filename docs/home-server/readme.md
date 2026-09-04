@@ -2,11 +2,11 @@
 
 <!-- TOC -->
 * [Home server (Ubuntu Server, KVM, Home Assistant OS)](#home-server-ubuntu-server-kvm-home-assistant-os)
-  * [Ubuntu Server 24.04](#ubuntu-server-2404)
+  * [1. Ubuntu Server 26.04](#1-ubuntu-server-2604)
     * [Setup](#setup)
     * [First checks / updates](#first-checks--updates)
     * [Lid closed (Laptop)](#lid-closed-laptop)
-  * [Home Assistant](#home-assistant)
+  * [2. Home Assistant](#2-home-assistant)
     * [Virtualization](#virtualization)
     * [Install KVM (Kernel-based Virtual Machine) and libvirt](#install-kvm-kernel-based-virtual-machine-and-libvirt)
       * [Create a bridge configuration](#create-a-bridge-configuration)
@@ -35,15 +35,18 @@
 <!-- TOC -->
 
 
-## Ubuntu Server 24.04
+## 1. Ubuntu Server 26.04
+
+Before everything.
+If this server was your DHCP Server, activate temporarily the DHCP of your router so the machine can get an IP address.
 
 ### Setup
 
 - Set up an Ubuntu Server on a laptop.
-  - You  better have Ethernet connection. If you only have wifi, buy a usb  ethernet adapter. It's worth it and you will be able to use the bridge mode which is not available with wifi.
+  - You  better have Ethernet connection. If you only have Wi-Fi, buy a usb  Ethernet adapter. It's worth it, and you will be able to use the bridge mode which is not available with wifi.
   - boot up ubuntu from an usb drive, select the language, keyboard layout, and timezone. In the network section, select the Ethernet connection, an IP 192.168.x.x will be assigned.
   - Wait for mirror to be configured.
-  - Assign some partitions : `ext4` 100GB for `/` and some space for var/lib. `/var/lib` is where most application data lives. KVM/Libvirt stores virtual machine disks in /var/lib/libvirt/images. Docker (if you use it for AdGuard) stores everything in /var/lib/docker.
+  - In storage configuration, select  Entire disk with 'encrypt the LVM group with LUKS'. Since we will install HAOS inside a VM later, create a partition for `/var/lib/libvirt/images`.
   - Install `openssh-server` and manage it remotely using SSH from another machine so you can copy-paste commands from the documentation.
   - enable ssh auto start : `sudo systemctl enable ssh` and  `sudo systemctl start ssh`
 ### First checks / updates
@@ -52,13 +55,18 @@
 
 ```bash
 sudo apt update && sudo apt upgrade
+
+# if you face an error with CDROM
+sudo rm /etc/apt/sources.list.d/cdrom.sources
+
+sudo apt autoremove -y
 ```
 
-- Run `ip addr` to check the IP address. This is your HOST-IP. It looks like `192.168.x.x`
+- Run `ip addr` to check the IP address. This is your HOST-IP. It looks like `192.168.x.x` ( you will have a IPV4 and IPV6 address)
 - Run `ping google.com` to check the connection.
-
-- Connect remotely in the same network using SSH and the HOST-IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation.
-
+- If this machine was your DHCP server. You need to have a static IP, and point to the dns and router gateway (`sudo vim /etc/netplan/01-net.yaml` then set ``dhcp4: no`` and add address, nameserver and dns)
+- Connect remotely in the same network using SSH and the server IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation. You can either use the IPV6 or the IPV4of the server.
+  This is because we don't have a DHCP server and since the machine is NOT using DHCP right now (dhcp4:no), the router is NOT giving your server: IP Gateway DNS. And we need to define it manually until we add the DHCP server.
 ```bash
 ssh username@192.168.x.x
 ```
@@ -69,11 +77,11 @@ ssh username@192.168.x.x
 
 ### Lid closed (Laptop)
 
-- File: `/etc/systemd/logind.conf`
-- Change this line: `HandleLidSwitch=ignore`
+- File: `sudo vim /etc/systemd/logind.conf`
+- Change this line: `HandleLidSwitch=ignore` (uncomment it too)
 - Restart with `sudo systemctl restart systemd-logind`
 
-## Home Assistant
+## 2. Home Assistant
 
 ### Virtualization
 
@@ -126,13 +134,16 @@ A network bridge in KVM allows your virtual machines to appear directly on the s
 
 - With a bridge: VMs act like physical machines on your network. They get an IP from your router (or DHCP server) just like your host, and other devices can communicate with them directly.
 
-- This works only with Ethernet, not with wifi.
+- This works only with Ethernet, not with Wi-Fi.
+
+>> Important:
+> The bridge will create new Mac Addresses. So if you had a DHCP with devices that used static IP through the bridge, you will need to update it.
+> For adguard, you will need to go to DHCP settings, delete the old client and create a new one in DHCP leases after it detects the new IP address.
 
 How to:
 - Identify your network interface with `ip addr`, it should look like `enp0s31f6` or `enx001`  It is where you can see eth0.
 - Create a bridge configuration file in `/etc/netplan/` with the following content:
-
-- Create a bridge configuration file in  `/etc/netplan/01-bridge.yaml`, replace `enx001cc253c478` with your interface name:
+- Create a bridge configuration file with  `sudo vim /etc/netplan/01-bridge.yaml`, replace `enx001cc253c478` with your interface name
 ```yaml
 network:
   version: 2
@@ -149,22 +160,24 @@ network:
         forward-delay: 0
 ```
 
-
-- Before applying the configuration, connect physically to the server because the next command will change the ip address of the SSH and your SSH connection will be lost.
+- `sudo chmod 600 /etc/netplan/*.yaml`
+- Before applying the configuration with  `sudo netplan apply`, connect physically to the server because the next command will change the ip address of the SSH and your SSH connection will be lost. Or check the IP address of the server in the router.
 - Your host’s IP will move from enx001cc253c478 to br0
 - Apply the configuration:
 
 ```bash
 sudo netplan apply
 ```
-If you are connected via SSH, you will be disconnected.
-Go physically to the server and get the new IP address:
+If you are connected via SSH, you will probably get disconnected unless the static ip is set.
+Go physically to the server (or check the devices in the router) and get the new IP address:
 
 ```bash
 ip addr
 ```
 Your `interface name` will no longer have a direct IP. All traffic goes through `br0`.
 To connect to the server via SSH, you will need to use the ``br0`` address.
+
+Try `ping 8.8.8.8`
 
 ### Home Assistant OS in a VM
 
@@ -188,7 +201,7 @@ sudo mv haos_ova-16.3.qcow2.xz /var/lib/libvirt/images/
 sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 ```
 
-- important: we will use sudo so with all the commands later like `virsh list --all` should use sudo ``sudo virsh list --all`` otherwise it will show nothing.
+>> Important: we will use sudo so with all the commands later like `virsh list --all` should use sudo ``sudo virsh list --all`` otherwise it will show nothing.
 - HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt
 -
 
@@ -205,7 +218,7 @@ sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 
 
 - Create the VM: ( we are adding --network bridge=br0) to use the bridge.
-
+If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.
 ```bash
 sudo virt-install --name haos --description "Home Assistant OS" --os-variant=generic --ram=4096 --vcpus=2 --disk /var/lib/libvirt/images/haos_ova-16.3.qcow2,bus=scsi --controller type=scsi,model=virtio-scsi --import --graphics none --boot uefi --network bridge=br0,model=virtio --console pty,target_type=serial
 ```
@@ -215,9 +228,11 @@ sudo virt-install --name haos --description "Home Assistant OS" --os-variant=gen
 - Now we need to check if HAOS is running:
   - `sudo virsh list --all`, you should see the VM running named `haos`
   - Find the IP address of the HAOS VM: From your router’s DHCP table (recommended) on your router app/website. As you can understand, the VM is like a device that is connected to the router, that is why the router assigned it an IP address.
-  - The default port is `8123`
-  - Check if HAOS is running : open a browser and go to `http://<HAOS-IP>:8123` or use curl: ``curl -v http://<HAOS-IP>:8123``
+    - The default port is `8123`
+    - Check if HAOS is running : open a browser and go to `http://<HAOS-IP>:8123` or use curl: ``curl -v http://<HAOS-IP>:8123``
+    - Go to `http://homeassistant.local:8123/`. This is the default address if the name is `homeassistant` in Settings -> System -> Network -> Hostname : `homeassistant` . If the name is something else like 'ha' the address will be `http://ha.local:8123/`.
   - You should see the Home Assistant login page.
+  - If you have a backup, select 'Backup' then reboot it with `sudo virsh reboot haos` then go HAOS settings -> Configure network interfaces -> IPv4 -> Static and set the IP address that was previously set .
   - Back on your terminal, activate the autostart: `sudo virsh autostart haos`
   - Check autostart in: `sudo virsh dominfo haos`
 
@@ -225,13 +240,19 @@ sudo virt-install --name haos --description "Home Assistant OS" --os-variant=gen
 You need to differentiate between:
 
 - HOST IP (the IP of the laptop): `ip addr` example: `192.168.1.86`
-- VM-IP or HAOS-IP (the IP of the HAOS VM) example: `192.168.1.20`
+- VM-IP or HAOS-IP (the IP of the HAOS VM) example: `192.168.1.20` or `homeassistant.local`
 - Both have IPs assigned from the router. The HAOS VM uses a bridge, so it gets an IP from the router just like a regular device.
 - These IPs can change if we restart the router, we will assign static ip to the VM.
 
+If you want to resize the VM disk:
+```bash
+sudo qemu-img resize /var/lib/libvirt/images/haos_ova-16.3.qcow2 +20G
+```
+
+
 #### inside HA in your browser or mobile app:
 
-- In your browser, go to `http://<HOST-IP>:8123`, for example `http://192.168.1.86:8123`.
+- In your browser, go to  `http://<HOST-IP>:8123`, for example `http://homeassistant.local:8123` or `http://192.168.1.86:8123`.
 - Create an account.
 - User settings: Profile -> General-> language, date format, number format, etc.
 - Check Advanced mode in General settings.
@@ -411,26 +432,26 @@ How to setup Sonoff MG24:
  - Run:
 
  ```sh
- sudo virsh attach-device haos /dev/stdin --persistent <<EOF
- <hostdev mode='subsystem' type='usb' managed='yes'>
-   <source>
-     <vendor id='0x10c4'/>
-     <product id='0xea60'/>
-   </source>
- </hostdev>
- EOF
+sudo virsh attach-device haos /dev/stdin --persistent <<EOF
+<hostdev mode='subsystem' type='usb' managed='yes'>
+  <source>
+    <vendor id='0x10c4'/>
+    <product id='0xea60'/>
+  </source>
+</hostdev>
+EOF
  ```
 
  Or using the bus and device:
 
  ```sh
- sudo virsh attach-device haos /dev/stdin --persistent <<EOF
- <hostdev mode='subsystem' type='usb' managed='yes'>
-   <source>
-     <address bus='1' device='12'/>
-   </source>
- </hostdev>
- EOF
+sudo virsh attach-device haos /dev/stdin --persistent <<EOF
+<hostdev mode='subsystem' type='usb' managed='yes'>
+ <source>
+   <address bus='1' device='12'/>
+ </source>
+</hostdev>
+EOF
  ```
 
  - Run `sudo virsh reboot haos`.
@@ -457,6 +478,7 @@ How to setup Sonoff MG24:
 
 
 * [Cloudflared](https://github.com/homeassistant-apps/app-cloudflared) (Cloudflare Tunnel)
+  - Create tunnels for the addons that you want. For example an app running on http://homeassistant.local:8081
 
 * [Donetick](https://github.com/donetick/hassio-addons)
 
@@ -480,7 +502,8 @@ How to setup Sonoff MG24:
 * [motionEye](https://www.home-assistant.io/integrations/motioneye/)
 
 * Music/Audio addons :
-  * Navidrome:
+  * [Navidrome](https://github.com/alexbelgium/hassio-addons/tree/master/navidrome)
+  * [Octo-Fiesta](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/octo-fiesta)
   * Use it with Octo-Fiesta (and [Tidal](https://tidal.squid.wtf/) as a backend)
   * Music Assistant Addon
   * Clients : https://www.navidrome.org/apps/
@@ -495,6 +518,20 @@ How to setup Sonoff MG24:
   * After installing, point your Bitwarden clients to your self-hosted server URL instead of `bitwarden.com`.
 
 * [n8n](https://github.com/Rbillon59/hass-n8n)
+Update the config of the addon if you want to use the (forms and chat...etc) since they rely on webhooks and the api :
+  * In network enable both ports.
+  * Update the config of the addon. Since we changed the N8N_EDITOR_BASE_URL, you will not be able to access it from HAOS Ingress. You must use the new address.
+  ```yaml
+  timezone: Europe/Paris
+  env_vars_list:
+    - "WEBHOOK_URL: http://homeassistant.local:8081/"
+    - "N8N_PATH: /"
+    - "N8N_EDITOR_BASE_URL: http://homeassistant.local:5678/"
+  cmd_line_args: ""
+  ```
+
+It is better to use an external WEBHOOK_URL for the api so external applications can use it.
+
 
 * **Samba Backup**
 
@@ -589,6 +626,9 @@ This next section is about controllers / routers add-ons :
 
 
 * HA Label State: https://github.com/andrew-codechimp/HA-Label-State
+  * Create two helpers for : entities & addons(apps) with 4 status: off,unavailable, unknown, not_home (away=not_home in raw format)
+  * You need to always look at the raw format of the state to see the status of the entity or addon. For example IKEA water-leak sensor's translated status is 'Dry' but the raw format is 'off'. But when the detector is really off, the state is 'unavailable' so our automation can still be triggered.
+  * Example [addons_offline.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/addons_offline.yaml) & [low_battery.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/low_battery.yaml)
 
 ### Dashboard & Cards
 * **Auto entities** : https://github.com/thomasloven/lovelace-auto-entities
@@ -621,6 +661,12 @@ This next section is about controllers / routers add-ons :
 
 
 ## AdGuard Home address naming resolution using the router (Freebox)
+- You must have ONLY ONE DHCP server on the network
+- adguard can be used as DNS and DHCP. If so, Go to Freebox Settings -> DHCP -> first, put your  Adguard DNS server, save then deactivate the DHCP server then save again.
+- Check the address here
+- Don't touch the IPV6 settings.
+- Set static IPs in adguard Home. If  you previously had devices using a bridge network, and you did reset that bridge, check again their mac addresses and set static IPs in adguard home and restart the network / devices .
+- Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)
 - The following will show you how to get the names of the devices in AdGuard home using your router (this example is for Freebox API).
 - You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).
 - We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.
