@@ -24,9 +24,9 @@ default-groups = []
 dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
-    "pre-commit==4.6.1",
-    "ruff==0.16.2",
-    "python-semantic-release==10.6.1",
+    "pre-commit==4.6.2",
+    "ruff==0.16.5",
+    "python-semantic-release==10.6.2",
 ]
 
 docs = [
@@ -35,7 +35,7 @@ docs = [
     "mkdocstrings==1.0.6",
     "mkdocs-mermaid2-plugin==1.2.3",
     "mkdocs-gen-files==0.6.1",
-    "mkdocstrings-python==2.0.5",
+    "mkdocstrings-python==2.0.7",
     "mkdocs-same-dir==0.1.5",
     "mkdocs-exclude==1.0.2",
     "mkdocs-literate-nav==0.6.3",
