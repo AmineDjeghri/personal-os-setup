@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+@AGENTS.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. The canonical cross-agent rules are imported from `AGENTS.md` above; this file adds Claude Code-specific depth.
 
 ## What this is
 
@@ -9,32 +11,6 @@ An "OS setup" project with two parts:
 2. A **documentation hub** (`docs/`) covering Windows/WSL2, Linux, macOS, Android TV, and home-server setups, published as a static site via `properdocs`/`mkdocs`.
 
 `src/awesome_os/` only contains stale `__pycache__` directories from a prior package name — the real package is `personal_os_setup`. Don't treat it as live code.
-
-## Safety: always confirm before system-mutating actions
-
-This repo's whole purpose is to run commands and apply configs that change the *host* system (package installs, dotfile/config sync, default-shell changes, driver setup, WSL/VM lifecycle, etc.) — treat every one of these as requiring **explicit, per-action user approval before you run it**, not just before you write the code.
-
-- **Never run a package install, `chezmoi apply`, shell-change, driver-setup, or VM command yourself as a side effect of a coding task** (e.g. "verify the fix works") without asking first — write/read code, run the unit test suite, but don't execute the underlying system action.
-- If the user asks you to run one of these directly (not through the TUI), **confirm the specific command and its effect before running it**, even if they already said to do it — a prior "yes" to the feature/task is not standing approval for every mutating command that touches their machine. Re-confirm scope each time (e.g. "install zsh prerequisites" is not blanket approval to also `chezmoi apply` unrelated dotfiles).
-- This applies doubly to anything destructive or hard to reverse: `make vm-clean`, `make deploy-doc-gh` (pushes to `gh-pages`), `chezmoi apply`/`forget`, `set zsh as default shell`, any `sudo`-requiring step (`make vm-deps`), package upgrades/removals.
-- Never disable this by editing `SystemAction.confirm=False` on an existing action, or by scripting around the TUI's own confirm dialogs, to "make things faster."
-
-## Commands
-
-All common tasks go through `make` (backed by `makefiles/*.mk`, included from the root `Makefile`). Run `make help` to list targets by category.
-
-- `make install-dev` — installs uv (if needed) and all dependency groups (dev + docs) into `.venv`. Use this, not `uv pip install -e .` unless doing something one-off.
-- `make test` — `uv run pytest tests/unit` (exit code 5 / "no tests collected" is treated as success).
-- `make test-integration` — runs `tests/integration/*` (requires Ubuntu with passwordless sudo; not runnable on macOS/dev machines).
-- Run a single test: `uv run pytest tests/unit/test_detect_os.py::test_name -v`
-- `make pre-commit` — installs hooks then `pre-commit run --all-files` (ruff check+format, detect-secrets, commitizen, check-yaml/json/toml, uv-lock sync, etc). Run this and `make test` before opening a PR.
-- `make lint` / `make format` — `ruff check .` / `ruff format .` directly.
-- `make run` — launches the TUI (`python src/personal_os_setup/frontend/main.py`).
-- `make deploy-doc-local` — builds and serves the `properdocs`/mkdocs site locally.
-- `make build-package` — `uv build` (wheel).
-- `make install-act` / `make act` — run GitHub Actions locally via `act` (requires Docker).
-
-CI runs the identical `make pre-commit` / `make test` commands used locally — there is no separate GH-Actions-only tooling, so if it passes locally it passes in CI.
 
 ## Architecture
 
@@ -46,7 +22,7 @@ CI runs the identical `make pre-commit` / `make test` commands used locally — 
 
 ### Package managers (`tasks/managers/`)
 
-Each backend (apt, snap, brew/cask, winget, msstore, pacman/paru, webinstall) implements the `PackageManager` protocol in `tasks/managers/base.py`: `is_installed`, `install`, `update`, `upgrade`, `cleanup`. `tasks/factory.py` maps `(distro, manager_name)` → manager class in `_PACKAGE_MANAGER_FACTORY_BY_DISTRO`, and `_PRIMARY_MANAGERS_BY_DISTRO` controls which managers are surfaced in the UI per distro (e.g. only `apt` shown for Ubuntu even though `snap`/`webinstall` also exist) to avoid duplicate buttons.
+Each backend (apt, snap, brew/cask, winget, msstore, pacman/paru, webinstall) implements the `PackageManager` protocol in `tasks/managers/base.py`: `is_installed`, `install`, `update`, `upgrade`, `cleanup`. `tasks/factory.py` maps `(distro, manager_name)` → manager class in `_PACKAGE_MANAGER_FACTORY_BY_DISTRO`, and `_UI_VISIBLE_MANAGERS_BY_DISTRO` controls which managers are surfaced in the UI per distro (e.g. only `apt` shown for Ubuntu even though `snap`/`webinstall` also exist) to avoid duplicate buttons.
 
 `tasks/managers/_shared.py` centralizes result-construction boilerplate reused across backends: `command_details()`/`format_failed_command()` (stdout/stderr → details text), `sudo_required_task_result()`/`sudo_required_install_result()`, `missing_executable_task_result()`/`missing_executable_install_result()`, and `winget_path()`/`winget_list_shows_installed()` (shared by the winget and msstore backends). Each manager still calls `shutil.which(...)`/`sudo_non_interactive_ok()` itself (not through `_shared.py`) so unit tests can keep patching those checks at the manager's own module path — `_shared.py` only builds the resulting `TaskResult`/`InstallResult` once the check has failed. Follow this pattern (local check, shared result-builder) when adding a new manager rather than re-deriving the boilerplate.
 
@@ -72,11 +48,7 @@ Frontend behavior is covered by `tests/unit/test_app.py` using Textual's headles
 
 `ApplicationSettings` (pydantic-settings) reads `LOGGING_LEVEL` from env/`.env` (default `CRITICAL`); `logger` is a `loguru` logger bound to `name="personal-os-setup"` with the default sink removed to avoid duplicate output — use this `logger`, not a fresh loguru instance, in new modules.
 
-## Conventions specific to this repo
+## Code conventions (Claude Code depth)
 
 - **Exceptions**: always log (via the bound `logger`) then re-raise, unless inside a loop where one failure shouldn't abort the rest (see `run_tasks`). Prefer `if/else` + explicit raise over broad try/except when the failure condition is checkable upfront.
 - **Docstrings**: Google-convention docstrings are enforced by ruff (`D` rules) except for the usual boilerplate exemptions (`D100-D104`, `D107`, `D417`); write them since they feed `properdocs`/mkdocstrings generation.
-- **Secrets**: `detect-secrets` runs in pre-commit. Use `# pragma: allowlist secret` inline for a known false positive on a specific line (e.g. `${{ secrets.GITHUB_TOKEN }}`) rather than adding whole files to the pre-commit exclude list.
-- **Commit messages / releases**: Conventional Commits with optional gitmoji prefix, e.g. `✨ feat(auth): ...`, `🐛 fix(llm): ...`. `python-semantic-release` (via `scripts/emoji_commit_parser.py`) drives versioning — `feat`→minor, `fix`/`perf`→patch, `feat!`/`BREAKING CHANGE`→major, `chore`/`ci`/`docs`/`style`/`refactor`/`test`/`build`→no release. **Never manually bump `pyproject.toml` version** — semantic-release does it on merge. Never create tags manually.
-- **Branches**: work targets `dev`, not `main`; `dev`→`main` is a separate promotion PR. All PRs squash-merge, and the PR title becomes the release-determining commit message.
-- **Renovate**: dependency PRs have a 7-day cooldown baked into `renovate.json`; `uv.lock` is regenerated rather than pinning versions directly in `pyproject.toml`.
