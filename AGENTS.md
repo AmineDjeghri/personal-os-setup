@@ -54,6 +54,25 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
 
+## Skills & plugins — 2-track governance (decision Sep 2026)
+
+- **Track 1 — Curated (repo = truth):** skills the user authors, customizes, or pins.
+  Canonical copy in `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (chezmoi
+  source) → deployed to `~/.claude/skills` (= `/config/.claude/skills` on the HA addons).
+  Hermes loads them via `skills.external_dirs`; Claude Code via its global skills dir —
+  one copy, both agents. Changes go through PRs. Currently: `coding-workflow`,
+  `repo-conventions`, `skill-deployment`, `skill-creator` (vendored from
+  anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`).
+- **Track 2 — Managed (tool = truth):** fast-moving third-party suites installed via
+  Claude Code's native marketplace (`claude plugin marketplace add <owner>/<repo>` →
+  `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
+  self-updating (`/plugin update`). NOT committed to this repo; re-register per machine.
+  Hermes never loads plugins (skills are the shared currency). Currently:
+  `superpowers` (obra/superpowers, user scope).
+- **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
+  the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
+  Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
+
 ## Known drift (trust nothing blindly)
 
 - `make help` Development section broken (greps nonexistent `makefiles/dev.mk`)
