@@ -4,14 +4,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. The canonical cross-agent rules are imported from `AGENTS.md` above; this file adds Claude Code-specific depth.
 
-## What this is
-
-An "OS setup" project with two parts:
-1. A cross-platform Python **terminal UI app** (`personal-os-setup`, package `src/personal_os_setup/`) that detects the host OS/distro and lets the user install packages and run system actions (WSL management, zsh/oh-my-zsh, NVIDIA drivers, Windows Terminal config, chezmoi dotfiles, Docker post-install, etc).
-2. A **documentation hub** (`docs/`) covering Windows/WSL2, Linux, macOS, Android TV, and home-server setups, published as a static site via `properdocs`/`mkdocs`.
-
-`src/awesome_os/` only contains stale `__pycache__` directories from a prior package name — the real package is `personal_os_setup`. Don't treat it as live code.
-
 ## Architecture
 
 ### OS/distro detection → package catalog → UI
@@ -48,7 +40,7 @@ Frontend behavior is covered by `tests/unit/test_app.py` using Textual's headles
 
 `ApplicationSettings` (pydantic-settings) reads `LOGGING_LEVEL` from env/`.env` (default `CRITICAL`); `logger` is a `loguru` logger bound to `name="personal-os-setup"` with the default sink removed to avoid duplicate output — use this `logger`, not a fresh loguru instance, in new modules.
 
-## Code conventions (Claude Code depth)
+## Code style depth (Claude Code only — complements AGENTS.md conventions)
 
 - **Exceptions**: always log (via the bound `logger`) then re-raise, unless inside a loop where one failure shouldn't abort the rest (see `run_tasks`). Prefer `if/else` + explicit raise over broad try/except when the failure condition is checkable upfront.
 - **Docstrings**: Google-convention docstrings are enforced by ruff (`D` rules) except for the usual boilerplate exemptions (`D100-D104`, `D107`, `D417`); write them since they feed `properdocs`/mkdocstrings generation.
