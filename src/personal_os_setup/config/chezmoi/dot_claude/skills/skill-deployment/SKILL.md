@@ -17,4 +17,8 @@ Two gotchas (both previously caused "not managed"):
 1. `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nested dir) — never the nested dir
 2. Run from **HOME** — targets resolve against CWD
 
+⚠️ The nested `config/chezmoi` dir must **never** contain its own `.chezmoiroot`: the app
+(`src/personal_os_setup/tasks/system/chezmoi.py`) passes that dir directly as `--source`, so a
+nested `.chezmoiroot` would double-redirect and break the app's deploy path.
+
 Refresh after `git pull`. On the container deploy only `.claude` (full apply would dump desktop dotfiles).

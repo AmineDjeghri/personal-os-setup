@@ -16,8 +16,7 @@ skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
 	@for d in $(CLAUDE_SKILLS)/*/; do \
 		[ -d "$$d" ] || continue; \
 		name=$${d%/}; name=$${name##*/}; \
-		ln -sfn ../../$(CLAUDE_SKILLS)/$$name $(AGENTS_SKILLS)/$$name; \
-		echo "linked $$name"; \
+		ln -sfn ../../$(CLAUDE_SKILLS)/$$name $(AGENTS_SKILLS)/$$name && echo "linked $$name" || exit 1; \
 	done
 
 skills-check: ## Verify every .claude/skills skill has a working .agents/skills symlink
