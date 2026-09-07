@@ -12,7 +12,7 @@ Shared workflow rules for coding tasks. Both agents read this skill; rules are a
 | Task | Agent |
 |---|---|
 | Home Assistant, Hermes gateway/admin, scheduling (cron), memory, audits, container/system ops | **Hermes** |
-| In-repo code changes, features, bugfixes, PRs (personal-os-setup, ha-addons, ...) | **Claude Code** (Hermes delegates via `claude -p` or interactive) |
+| In-repo code changes, features, bugfixes, PRs (in any repo the user works on) | **Claude Code** (Hermes delegates via `claude -p` or interactive) |
 | Repo docs (docs/, README, skills) | Either — follow repo-conventions |
 
 Hermes orchestrates and can delegate coding to Claude Code. Claude Code works inside a repo; it does NOT manage the Hermes agent, HA gateway, or cron.
@@ -33,7 +33,7 @@ Never jump straight into editing. For anything non-trivial:
 
 ## 4. Review
 
-- Run the repo's checks before any PR: `make test` + `make pre-commit` (personal-os-setup) or the repo's CI-equivalent.
+- Run the repo's own checks before any PR: its `make test`/`make pre-commit` where defined, or the CI-equivalent.
 - Verify git identity before committing (wrong email = phantom PR participants — see repo-conventions).
 - Review your own diff before pushing; for PRs, diff against the base branch.
 
@@ -41,8 +41,7 @@ Never jump straight into editing. For anything non-trivial:
 
 Load `repo-conventions` and follow the row for that repo. Default when unsure: branch from the default branch, conventional commit, squash-merge PR with a conventional title.
 
-## 6. Skills & docs maintenance
+## 6. Skills & plugins maintenance
 
-- General/shared skills live in personal-os-setup's chezmoi source (`dot_claude/skills/`) — both agents read them. Repo-specific skills live in each repo's `.claude/skills/`.
-- Community skills (via `npx skills`) are vendored into the shared dir, pinned, and updated through git PRs.
-- Chat-made decisions get encoded into the governing skill (this one, repo-conventions, or the repo skill) — never left only in memory.
+- **2-track governance** (encoded in the shared AGENTS.md): Track 1 = curated skills, versioned in the chezmoi source, deployed via `skill-deployment`; Track 2 = third-party suites as Claude Code plugins (e.g. superpowers). Never hand-copy a Track-2 suite into Track 1 — it fights its own updater.
+- Chat-made decisions get encoded into the governing skill (this one, `repo-conventions`, or the repo's own skill) — never left only in memory.
