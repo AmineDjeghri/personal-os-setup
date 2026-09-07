@@ -4065,7 +4065,7 @@ macOS, and CachyOS setups.</p>
 
 <h2 id="app-availability-alternatives-across-oses">App availability &amp; alternatives across OSes<a class="headerlink" href="#app-availability-alternatives-across-oses" title="Permanent link">&para;</a></h2>
 <p>A single table covering every app/tool in
-<a href="../../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>, plus a few OS-native features
+<a href="../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>, plus a few OS-native features
 that aren't in packages.yaml (disk encryption, audio control, general shortcuts). The <strong>Notes</strong>
 column links to a dedicated section below when one exists, or to <code>packages.yaml</code> otherwise.
 <code>✅</code> = present/used on that OS, <code>—</code> = not present/not applicable, <code>*</code> = see the footnote below the
@@ -4205,7 +4205,7 @@ table.</p>
 <td>Helium, Brave</td>
 <td>Helium, Brave, Safari</td>
 <td>Helium, Brave</td>
-<td>→ <a href="../../../src/personal_os_setup/config/packages.yaml">packages.yaml</a></td>
+<td>→ <a href="../../src/personal_os_setup/config/packages.yaml">packages.yaml</a></td>
 </tr>
 <tr>
 <td>Messaging</td>
@@ -4421,7 +4421,7 @@ table.</p>
 </table>
 <p>* Bitwarden itself is cross-platform, but only the CachyOS entry is installed via this project's
 package manager (<code>pacman</code>, <code>Utilities</code> category in
-<a href="../../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>). On Windows/macOS, install it
+<a href="../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>). On Windows/macOS, install it
 manually as a browser extension or desktop app.</p>
 <h2 id="1-general-os-shortcuts">1. General OS shortcuts<a class="headerlink" href="#1-general-os-shortcuts" title="Permanent link">&para;</a></h2>
 <p><strong>Windows:</strong>
@@ -4506,7 +4506,7 @@ config documented yet.</p>
   - <code>port-killer</code>, <code>process-manager</code> — kill/manage running processes and listening ports
   - <code>kill-process</code>, <code>port-manager</code> — Raycast equivalents of the above (process/port management)
   - <code>systemd</code> — start/stop/restart/enable/disable a unit straight from the launcher
-  - and a lot of other extensions in <a href="../../../src/personal_os_setup/config/chezmoi/dot_config/vicinae/run_onchange_after_install-vicinae-extensions.sh.tmpl"><code>run_onchange_after_install-vicinae-extensions.sh.tmpl</code></a></p>
+  - and a lot of other extensions in <a href="../../src/personal_os_setup/config/chezmoi/dot_config/vicinae/run_onchange_after_install-vicinae-extensions.sh.tmpl"><code>run_onchange_after_install-vicinae-extensions.sh.tmpl</code></a></p>
 <h2 id="3-terminal">3. Terminal<a class="headerlink" href="#3-terminal" title="Permanent link">&para;</a></h2>
 <h3 id="31-windows-terminal">3.1. Windows Terminal<a class="headerlink" href="#31-windows-terminal" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4518,8 +4518,8 @@ config documented yet.</p>
 (Ghostty) and shell setup.</p>
 <h3 id="32-terminal-commands-cheatsheet-macoscachyos">3.2. Terminal commands cheatsheet (macOS/CachyOS)<a class="headerlink" href="#32-terminal-commands-cheatsheet-macoscachyos" title="Permanent link">&para;</a></h3>
 <p>These reflect what's actually installed/aliased by this project — see
-<a href="../../../src/personal_os_setup/config/packages.yaml">terminal_tools in packages.yaml</a> and
-<a href="../../../src/personal_os_setup/config/chezmoi/dot_zshrc">.zshrc</a>.</p>
+<a href="../../src/personal_os_setup/config/packages.yaml">terminal_tools in packages.yaml</a> and
+<a href="../../src/personal_os_setup/config/chezmoi/dot_zshrc">.zshrc</a>.</p>
 <ul>
 <li><code>ls</code> / <code>ll</code> / <code>lt</code> → aliased to <code>eza</code> (icons, git status, tree view)</li>
 <li><code>cat</code> → aliased to <code>bat</code> (syntax highlighting); also set as the <code>man</code> pager</li>
@@ -4552,7 +4552,7 @@ config documented yet.</p>
 <p>Nautilus is the GNOME file manager used on CachyOS/Hyprland (replaces Dolphin — no KDE
 session deps like kwallet/kded/portals to fight with under Hyprland).</p>
 <p>Better to install it together with <strong>all</strong> of its extensions from the <code>Files explorer</code>
-category in <a href="../../../src/personal_os_setup/config/packages.yaml">packages.yaml</a> rather than
+category in <a href="../../src/personal_os_setup/config/packages.yaml">packages.yaml</a> rather than
 just the <code>nautilus</code> package alone:</p>
 <ul>
 <li><code>gvfs</code> — virtual filesystem backend Nautilus uses for all mounting (local disks, udisks2, trash, etc.)</li>
@@ -5019,10 +5019,10 @@ on all three OSes.</p>
 <p><strong>Windows — HWiNFO:</strong>
 - export file: regedit -&gt; <code>Ordinateur\HKEY_CURRENT_USER\Software\HWiNFO64</code>
 - import settings: double-click on the downloaded file to restore settings. Check
-  mine <a href="../../../src/personal_os_setup/config/windows/HWINFO_settings.reg">here</a></p>
+  mine <a href="../../src/personal_os_setup/config/windows/HWINFO_settings.reg">here</a></p>
 <p><strong>CachyOS — CoolerControl, OpenRGB, nvtop, rivalcfg:</strong>
 - Installed via the <code>Hardware Monitoring</code> category in
-  <a href="../../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>.
+  <a href="../../src/personal_os_setup/config/packages.yaml">packages.yaml</a>.
 - CoolerControl needs its daemon enabled after install: <code>systemctl enable --now coolercontrold</code>.
 - <code>nvtop</code> complements <code>btop</code>, which doesn't show GPU stats.</p>
 <p>No macOS equivalent is documented in this repo.</p>
@@ -5086,7 +5086,7 @@ through the window manager — no equivalent paid tool is used there.</p>
 <h2 id="11-media-players">11. Media players<a class="headerlink" href="#11-media-players" title="Permanent link">&para;</a></h2>
 <h3 id="111-mpv-cachyos">11.1. mpv (CachyOS)<a class="headerlink" href="#111-mpv-cachyos" title="Permanent link">&para;</a></h3>
 <p>mpv is the default video/audio player on CachyOS (see
-<a href="../../../src/personal_os_setup/config/chezmoi/dot_config/mimeapps.list">mimeapps.list</a>), running
+<a href="../../src/personal_os_setup/config/chezmoi/dot_config/mimeapps.list">mimeapps.list</a>), running
 under Hyprland with Wayland color management for HDR passthrough.</p>
 <h4 id="shortcuts">Shortcuts<a class="headerlink" href="#shortcuts" title="Permanent link">&para;</a></h4>
 <p>Link: https://mpv.io/manual/master/

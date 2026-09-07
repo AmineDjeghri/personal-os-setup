@@ -3278,7 +3278,7 @@
 <p><strong>It now runs as a Home Assistant add-on</strong> — install it from the <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets">Beets add-on</a> (see its <a href="https://github.com/AmineDjeghri/ha-addons/blob/main/addons/beets/README.md">README</a> for all options, the manual interactive review command, and the docker notes). It watches <code>/media/music</code> (the Octo-Fiesta download folder), tags new files automatically, and replaces the host cronjobs below.</p>
 <p>The following section summarizes the key concepts and behaviors of <strong>Beets</strong> regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.</p>
-<p>in the <a href="../../../../src/personal_os_setup/config/unix/beets/config.yaml">config.yaml</a> file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :</p>
+<p>in the <a href="../../../src/personal_os_setup/config/unix/beets/config.yaml">config.yaml</a> file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># import settings, check https://beets.readthedocs.io/en/stable/reference/config.html#importer-options</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">import</span><span class="p">:</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">write</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w">                        </span><span class="c1"># if yes, write metadata into the files.</span>
@@ -3322,7 +3322,7 @@ It primarily registers them in the Beets database. Modifying the files is contro
 Beets computes a <strong>match distance score</strong> to determine the best candidate using the match section.</p>
 <h4 id="workflow">Workflow:<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h4>
 <ul>
-<li>My <a href="../../../../src/personal_os_setup/config/unix/beets/config.yaml">config.yaml</a>
+<li>My <a href="../../../src/personal_os_setup/config/unix/beets/config.yaml">config.yaml</a>
 What I advise to play with is:</li>
 <li>Use <code>-v</code> to see the output or <code>-vv</code> to see the details.</li>
 <li>Use <code>autotag: yes</code> with <code>write: no</code> will not write metadata into the files. This is useful to preview the changes.</li>

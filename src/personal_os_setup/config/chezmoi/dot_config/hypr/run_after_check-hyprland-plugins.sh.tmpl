@@ -1,8 +1,0 @@
-{{- if eq .chezmoi.os "linux" -}}
-#!/bin/bash
-set -eu
-
-# Plugin list/load logic lives in apply-hyprland-plugins.sh (shared with autostart.lua's hyprland.start hook).
-# Named to sort alphabetically before this script's own target name (check-hyprland-plugins.sh)
-exec "$HOME/.config/hypr/apply-hyprland-plugins.sh"
-{{ end -}}
