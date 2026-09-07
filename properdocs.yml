@@ -72,6 +72,8 @@ plugins:
         - .deepeval/**
         - .deepteam/**
         - .changelog/**
+        - .agents/**
+        - .chezmoiroot
         - docs/examples/data/sample.*
 
 markdown_extensions:

@@ -56,6 +56,15 @@ repos:
       # Update the uv lockfile
       - id: uv-lock
 
+  - repo: local
+    hooks:
+      # Every .claude/skills skill needs a working .agents/skills symlink
+      - id: skills-check
+        name: skills-check
+        entry: make skills-check
+        language: system
+        pass_filenames: false
+
 #  - repo: https://github.com/pypa/pip-audit
 #    rev: v2.10.0
 #    hooks:
