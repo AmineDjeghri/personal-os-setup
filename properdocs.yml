@@ -74,6 +74,9 @@ plugins:
         - .changelog/**
         - .agents/**
         - .chezmoiroot
+        - src/personal_os_setup/config/**
+        - AGENTS.md
+        - CLAUDE.md
         - docs/examples/data/sample.*
 
 markdown_extensions:

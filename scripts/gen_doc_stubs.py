@@ -8,21 +8,27 @@ from pathlib import Path
 import mkdocs_gen_files
 
 src_root = Path("src")
+config_root = src_root / "personal_os_setup" / "config"
 nav = mkdocs_gen_files.Nav()
 
 for path in sorted(src_root.glob("**/*.py")):
     if "__init__" in str(path):
         print("Skipping", path)
         continue
+    # Only the importable package is API. The config/ tree is data
+    # (chezmoi dotfiles, vendored skills with their own .py code under
+    # dash-named dirs that are not valid modules) — never stub it.
+    if config_root in path.parents:
+        print("Skipping", path)
+        continue
     doc_path = Path("package", path.relative_to(src_root)).with_suffix(".md")
 
-    if "seqly" not in str(path):
-        with mkdocs_gen_files.open(doc_path, "w") as f:
-            ident = ".".join(path.relative_to(src_root).with_suffix("").parts)
-            print("::: " + ident, file=f)
-        nav[path.relative_to(src_root).with_suffix("").parts] = (
-            path.relative_to(src_root).with_suffix(".md").as_posix()
-        )
+    with mkdocs_gen_files.open(doc_path, "w") as f:
+        ident = ".".join(path.relative_to(src_root).with_suffix("").parts)
+        print("::: " + ident, file=f)
+    nav[path.relative_to(src_root).with_suffix("").parts] = (
+        path.relative_to(src_root).with_suffix(".md").as_posix()
+    )
 
 with mkdocs_gen_files.open("package/SUMMARY.md", "w") as nav_file:
     nav_file.writelines(nav.build_literate_nav())
