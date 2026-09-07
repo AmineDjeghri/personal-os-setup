@@ -8,6 +8,11 @@ description: Use when deploying the shared agent skills via chezmoi, or fixing "
 Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` → `~/.claude/skills`
 (Claude Code + Hermes external_dirs). Desktops: TUI dotfiles tab. Container/CLI:
 
+> Scope: this deploys only the **general/shared** skills. Repo-specific skills are NOT part of it —
+> they live in the repo itself under `.claude/skills/` (Claude Code reads those natively) with
+> git-symlink mirrors in `.agents/skills/` for other agents, kept in sync by `skills.mk`
+> (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
+
 ```bash
 REPO=/config/workspace/personal-os-setup
 cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the skills
