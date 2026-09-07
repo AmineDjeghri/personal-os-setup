@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.13.2 (2026-09-07)
+
+### Bug Fixes
+
+- **vm-lab**: Scrub owner-name VM credentials, sync skills docs (#107)
+  ([#107](https://github.com/AmineDjeghri/personal-os-setup/pull/107),
+  [`9124ede`](https://github.com/AmineDjeghri/personal-os-setup/commit/9124edef1e3ff2ad35810689c23c59155b0f621a))
+
+
 ## v2.13.1 (2026-09-07)
 
 ### Bug Fixes
