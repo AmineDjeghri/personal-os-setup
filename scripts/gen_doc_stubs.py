@@ -15,9 +15,7 @@ for path in sorted(src_root.glob("**/*.py")):
     if "__init__" in str(path):
         print("Skipping", path)
         continue
-    # Only the importable package is API. The config/ tree is data
-    # (chezmoi dotfiles, vendored skills with their own .py code under
-    # dash-named dirs that are not valid modules) — never stub it.
+    # Only the importable package is API.
     if config_root in path.parents:
         print("Skipping", path)
         continue
