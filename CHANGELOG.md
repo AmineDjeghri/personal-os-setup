@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.13.0 (2026-09-07)
+
+### Features
+
+- **skills**: Add shared agent skills and canonical AGENTS.md (#103)
+  ([#103](https://github.com/AmineDjeghri/personal-os-setup/pull/103),
+  [`a557213`](https://github.com/AmineDjeghri/personal-os-setup/commit/a55721376714d304f8e4eefbd95059107a75fdae))
+
+
 ## v2.12.0 (2026-09-07)
 
 ### Features
