@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.13.1 (2026-09-07)
+
+### Bug Fixes
+
+- **docs**: Exclude the config/ data tree from API stubs and docs crawl (#106)
+  ([#106](https://github.com/AmineDjeghri/personal-os-setup/pull/106),
+  [`9d95c22`](https://github.com/AmineDjeghri/personal-os-setup/commit/9d95c224ec88d3e18571aa4d68fad158efadd957))
+
+
 ## v2.13.0 (2026-09-07)
 
 ### Features
