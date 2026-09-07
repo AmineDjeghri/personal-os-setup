@@ -61,8 +61,8 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   source) → deployed to `~/.claude/skills` (= `/config/.claude/skills` on the HA addons).
   Hermes loads them via `skills.external_dirs`; Claude Code via its global skills dir —
   one copy, both agents. Changes go through PRs. Currently: `coding-workflow`,
-  `repo-conventions`, `skill-deployment`, `skill-creator` (vendored from
-  anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`).
+  `repo-conventions`, `project-templates`, `skill-deployment`, `skill-creator`
+  (vendored from anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`).
 - **Track 2 — Managed (tool = truth):** fast-moving third-party suites installed via
   Claude Code's native marketplace (`claude plugin marketplace add <owner>/<repo>` →
   `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
