@@ -1,6 +1,6 @@
 # Agent skills symlink targets.
-# Canonical skills live in .claude/skills; .agents/skills holds git symlinks so every
-# agent (Claude Code, Hermes, Codex, ...) sees the same files.
+# Canonical skills live in .claude/skills; .agents/skills holds git symlinks so
+# non-Claude agents (Hermes, Codex, OpenCode, skills CLI) see the same files.
 
 .PHONY: skills-link skills-check
 
@@ -9,6 +9,10 @@ AGENTS_SKILLS := .agents/skills
 
 skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
 	@mkdir -p $(AGENTS_SKILLS)
+	@# Prune dangling symlinks left behind by deleted skills
+	@for l in $(AGENTS_SKILLS)/*; do \
+		[ -L "$$l" ] && [ ! -e "$$l" ] && rm -f "$$l" && echo "pruned $$l"; \
+	done || true
 	@for d in $(CLAUDE_SKILLS)/*/; do \
 		[ -d "$$d" ] || continue; \
 		name=$${d%/}; name=$${name##*/}; \
@@ -25,4 +29,9 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		else \
 			echo "MISS $$name  (run: make skills-link)"; rc=1; \
 		fi; \
+	done; \
+	for l in $(AGENTS_SKILLS)/*; do \
+		[ -L "$$l" ] || continue; \
+		[ -e "$$l" ] && continue; \
+		echo "STALE $$l  (run: make skills-link)"; rc=1; \
 	done; exit $$rc
