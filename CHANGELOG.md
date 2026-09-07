@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.12.0 (2026-09-07)
+
+### Features
+
+- Update server (#104) ([#104](https://github.com/AmineDjeghri/personal-os-setup/pull/104),
+  [`9e5c0a4`](https://github.com/AmineDjeghri/personal-os-setup/commit/9e5c0a41b52a962aece5bde2586b64ad2087afc1))
+
+
 ## v2.11.2 (2026-09-03)
 
 ### Bug Fixes
