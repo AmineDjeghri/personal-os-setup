@@ -25,9 +25,11 @@ VCPUS=4
 DISK_GB=40
 NAME_PREFIX="pos-"
 
+# Generic throwaway default — the VM is an ephemeral local dev box, never network-exposed.
 # Override with: AUTOINSTALL_USER=foo AUTOINSTALL_PASSWORD=bar make vm-ubuntu-server
-AUTOINSTALL_USER="${AUTOINSTALL_USER:-amine}"
-AUTOINSTALL_PASSWORD="${AUTOINSTALL_PASSWORD:-amine}"
+# (password falls back to the resolved user value when left unset)
+AUTOINSTALL_USER="${AUTOINSTALL_USER:-pos-dev}"
+AUTOINSTALL_PASSWORD="${AUTOINSTALL_PASSWORD:-$AUTOINSTALL_USER}"
 
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
