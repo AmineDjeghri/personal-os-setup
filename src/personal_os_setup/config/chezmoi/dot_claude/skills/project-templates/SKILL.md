@@ -10,9 +10,12 @@ ship CI/CD, GitHub Pages docs site, pre-commit, and release tooling, so you repl
 
 | Build target | Fork | Stack / notes |
 |---|---|---|
-| Python package / library | `AmineDjeghri/python-package-template` | uv-based package, tests, pre-commit, semantic-release |
-| Generative-AI project, or full-stack (backend + frontend) | `AmineDjeghri/generative-ai-project-template` | FastAPI + NiceGUI; litellm/ollama (cloud + local LLMs); langfuse observability |
-| Home Assistant addon | Add to `AmineDjeghri/ha-addons` (octo-fiesta pattern: per-addon `config.yaml`/`Dockerfile`/`run.sh`, HA Store release flow) — or fork it as the base for your own addon collection |
+| Python package / library | `python-package-template` | uv-based package, tests, pre-commit, semantic-release |
+| Generative-AI project, or full-stack (backend + frontend) | `generative-ai-project-template` | FastAPI + NiceGUI; litellm/ollama (cloud + local LLMs); langfuse observability |
+| Home Assistant addon | Add to `ha-addons` (octo-fiesta pattern: per-addon `config.yaml`/`Dockerfile`/`run.sh`, HA Store release flow) — or fork it as the base for your own addon collection |
+
+> These templates live in the skill owner's GitHub account. If you fork this skill set, point the
+> table at your own template repos.
 
 Rules:
 1. **Match the type first** (package vs gen-ai/full-stack vs addon) — don't retrofit a template.
