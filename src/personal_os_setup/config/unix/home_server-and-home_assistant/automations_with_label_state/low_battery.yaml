@@ -1,0 +1,24 @@
+# Requires HA Label State
+alias: 🪫Low battery
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.low_battery
+    to:
+      - "on"
+conditions: []
+actions:
+  - data:
+      title: 🪫Batterie faible
+      message: >-
+        La batterie de {{ state_attr('binary_sensor.entity_status_unavailable',
+        'entity_names') | first }} est faible
+    action: notify.notify
+  - action: notify.alexa_media_echo_dot_amine
+    metadata: {}
+    data:
+      message: >-
+        La batterie de {{ state_attr('binary_sensor.entity_status_unavailable',
+        'entity_names') | first }} est faible
+mode: single
