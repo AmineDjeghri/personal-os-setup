@@ -858,15 +858,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ubuntu-server-2404" class="md-nav__link">
+  <a href="#1-ubuntu-server-2604" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ubuntu Server 24.04
+        1. Ubuntu Server 26.04
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ubuntu Server 24.04">
+    <nav class="md-nav" aria-label="1. Ubuntu Server 26.04">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -908,15 +908,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#home-assistant" class="md-nav__link">
+  <a href="#2-home-assistant" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Home Assistant
+        2. Home Assistant
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Home Assistant">
+    <nav class="md-nav" aria-label="2. Home Assistant">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -967,23 +967,7 @@
     </span>
   </a>
   
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#haos-runs-under-system-libvirt-and-needs-to-be-managed-by-root-and-uses-varliblibvirt" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HAOS runs under system libvirt and needs to be managed by root and uses /var/lib/libvirt
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HAOS runs under system libvirt and needs to be managed by root and uses /var/lib/libvirt">
+    <nav class="md-nav" aria-label="Home Assistant OS in a VM">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -994,6 +978,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -3250,15 +3239,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ubuntu-server-2404" class="md-nav__link">
+  <a href="#1-ubuntu-server-2604" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ubuntu Server 24.04
+        1. Ubuntu Server 26.04
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Ubuntu Server 24.04">
+    <nav class="md-nav" aria-label="1. Ubuntu Server 26.04">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3300,15 +3289,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#home-assistant" class="md-nav__link">
+  <a href="#2-home-assistant" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Home Assistant
+        2. Home Assistant
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Home Assistant">
+    <nav class="md-nav" aria-label="2. Home Assistant">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3359,23 +3348,7 @@
     </span>
   </a>
   
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#haos-runs-under-system-libvirt-and-needs-to-be-managed-by-root-and-uses-varliblibvirt" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HAOS runs under system libvirt and needs to be managed by root and uses /var/lib/libvirt
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HAOS runs under system libvirt and needs to be managed by root and uses /var/lib/libvirt">
+    <nav class="md-nav" aria-label="Home Assistant OS in a VM">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3386,6 +3359,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -3697,13 +3675,13 @@
 <!-- TOC -->
 <ul>
 <li><a href="#home-server-ubuntu-server-kvm-home-assistant-os">Home server (Ubuntu Server, KVM, Home Assistant OS)</a></li>
-<li><a href="#ubuntu-server-2404">Ubuntu Server 24.04</a><ul>
+<li><a href="#1-ubuntu-server-2604">1. Ubuntu Server 26.04</a><ul>
 <li><a href="#setup">Setup</a></li>
 <li><a href="#first-checks--updates">First checks / updates</a></li>
 <li><a href="#lid-closed-laptop">Lid closed (Laptop)</a></li>
 </ul>
 </li>
-<li><a href="#home-assistant">Home Assistant</a><ul>
+<li><a href="#2-home-assistant">2. Home Assistant</a><ul>
 <li><a href="#virtualization">Virtualization</a></li>
 <li><a href="#install-kvm-kernel-based-virtual-machine-and-libvirt">Install KVM (Kernel-based Virtual Machine) and libvirt</a></li>
 <li><a href="#create-a-bridge-configuration">Create a bridge configuration</a></li>
@@ -3738,14 +3716,16 @@
 </ul>
 <!-- TOC -->
 
-<h2 id="ubuntu-server-2404">Ubuntu Server 24.04<a class="headerlink" href="#ubuntu-server-2404" title="Permanent link">&para;</a></h2>
+<h2 id="1-ubuntu-server-2604">1. Ubuntu Server 26.04<a class="headerlink" href="#1-ubuntu-server-2604" title="Permanent link">&para;</a></h2>
+<p>Before everything.
+If this server was your DHCP Server, activate temporarily the DHCP of your router so the machine can get an IP address.</p>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Set up an Ubuntu Server on a laptop.</li>
-<li>You  better have Ethernet connection. If you only have wifi, buy a usb  ethernet adapter. It's worth it and you will be able to use the bridge mode which is not available with wifi.</li>
+<li>You  better have Ethernet connection. If you only have Wi-Fi, buy a usb  Ethernet adapter. It's worth it, and you will be able to use the bridge mode which is not available with wifi.</li>
 <li>boot up ubuntu from an usb drive, select the language, keyboard layout, and timezone. In the network section, select the Ethernet connection, an IP 192.168.x.x will be assigned.</li>
 <li>Wait for mirror to be configured.</li>
-<li>Assign some partitions : <code>ext4</code> 100GB for <code>/</code> and some space for var/lib. <code>/var/lib</code> is where most application data lives. KVM/Libvirt stores virtual machine disks in /var/lib/libvirt/images. Docker (if you use it for AdGuard) stores everything in /var/lib/docker.</li>
+<li>In storage configuration, select  Entire disk with 'encrypt the LVM group with LUKS'. Since we will install HAOS inside a VM later, create a partition for <code>/var/lib/libvirt/images</code>.</li>
 <li>Install <code>openssh-server</code> and manage it remotely using SSH from another machine so you can copy-paste commands from the documentation.</li>
 <li>enable ssh auto start : <code>sudo systemctl enable ssh</code> and  <code>sudo systemctl start ssh</code></li>
 </ul>
@@ -3754,19 +3734,22 @@
 <li>Run updates:</li>
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># if you face an error with CDROM</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sudo<span class="w"> </span>rm<span class="w"> </span>/etc/apt/sources.list.d/cdrom.sources
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>apt<span class="w"> </span>autoremove<span class="w"> </span>-y
 </span></code></pre></div>
 <ul>
-<li>Run <code>ip addr</code> to check the IP address. This is your HOST-IP. It looks like <code>192.168.x.x</code></li>
+<li>Run <code>ip addr</code> to check the IP address. This is your HOST-IP. It looks like <code>192.168.x.x</code> ( you will have a IPV4 and IPV6 address)</li>
+<li>Run <code>ping google.com</code> to check the connection.</li>
+<li>If this machine was your DHCP server. You need to have a static IP, and point to the dns and router gateway (<code>sudo vim /etc/netplan/01-net.yaml</code> then set <code>dhcp4: no</code> and add address, nameserver and dns)</li>
 <li>
-<p>Run <code>ping google.com</code> to check the connection.</p>
-</li>
-<li>
-<p>Connect remotely in the same network using SSH and the HOST-IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation.</p>
-</li>
-</ul>
+<p>Connect remotely in the same network using SSH and the server IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation. You can either use the IPV6 or the IPV4of the server.
+  This is because we don't have a DHCP server and since the machine is NOT using DHCP right now (dhcp4:no), the router is NOT giving your server: IP Gateway DNS. And we need to define it manually until we add the DHCP server.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh<span class="w"> </span>username@192.168.x.x
-</span></code></pre></div>
-<ul>
+</span></code></pre></div></p>
+</li>
 <li>
 <p>SSH authentication: SSH always requires login, even on your own network. With a <code>password</code>, you are prompted to type it on every connection. With an SSH key (<code>ssh-keygen -t ed25519 -a 100</code>, then <code>ssh-copy-id username@192.168.x.x</code>), no prompt appears — the key proves your identity automatically (your client may ask for the key's passphrase once, or ssh-agent remembers it). If both are set, the key is tried first and the password acts as a fallback. Note: on iOS, the Files app supports SMB only (no SFTP) — for SFTP/SSH use Termius (or another SSH/SFTP client) instead.</p>
 </li>
@@ -3776,11 +3759,11 @@
 </ul>
 <h3 id="lid-closed-laptop">Lid closed (Laptop)<a class="headerlink" href="#lid-closed-laptop" title="Permanent link">&para;</a></h3>
 <ul>
-<li>File: <code>/etc/systemd/logind.conf</code></li>
-<li>Change this line: <code>HandleLidSwitch=ignore</code></li>
+<li>File: <code>sudo vim /etc/systemd/logind.conf</code></li>
+<li>Change this line: <code>HandleLidSwitch=ignore</code> (uncomment it too)</li>
 <li>Restart with <code>sudo systemctl restart systemd-logind</code></li>
 </ul>
-<h2 id="home-assistant">Home Assistant<a class="headerlink" href="#home-assistant" title="Permanent link">&para;</a></h2>
+<h2 id="2-home-assistant">2. Home Assistant<a class="headerlink" href="#2-home-assistant" title="Permanent link">&para;</a></h2>
 <h3 id="virtualization">Virtualization<a class="headerlink" href="#virtualization" title="Permanent link">&para;</a></h3>
 <ul>
 <li>I verified that virtualization was supported on the system, checked Secure Boot status:</li>
@@ -3826,15 +3809,20 @@ If it is the case, you can run virsh without sudo.</p>
 <p>With a bridge: VMs act like physical machines on your network. They get an IP from your router (or DHCP server) just like your host, and other devices can communicate with them directly.</p>
 </li>
 <li>
-<p>This works only with Ethernet, not with wifi.</p>
+<p>This works only with Ethernet, not with Wi-Fi.</p>
 </li>
 </ul>
+<blockquote>
+<blockquote>
+<p>Important:
+The bridge will create new Mac Addresses. So if you had a DHCP with devices that used static IP through the bridge, you will need to update it.
+For adguard, you will need to go to DHCP settings, delete the old client and create a new one in DHCP leases after it detects the new IP address.</p>
+</blockquote>
+</blockquote>
 <p>How to:
 - Identify your network interface with <code>ip addr</code>, it should look like <code>enp0s31f6</code> or <code>enx001</code>  It is where you can see eth0.
-- Create a bridge configuration file in <code>/etc/netplan/</code> with the following content:</p>
-<ul>
-<li>
-<p>Create a bridge configuration file in  <code>/etc/netplan/01-bridge.yaml</code>, replace <code>enx001cc253c478</code> with your interface name:
+- Create a bridge configuration file in <code>/etc/netplan/</code> with the following content:
+- Create a bridge configuration file with  <code>sudo vim /etc/netplan/01-bridge.yaml</code>, replace <code>enx001cc253c478</code> with your interface name
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">network</span><span class="p">:</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
@@ -3849,21 +3837,21 @@ If it is the case, you can run virsh without sudo.</p>
 </span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="nt">stp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="nt">forward-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 </span></code></pre></div></p>
-</li>
-<li>
-<p>Before applying the configuration, connect physically to the server because the next command will change the ip address of the SSH and your SSH connection will be lost.</p>
-</li>
+<ul>
+<li><code>sudo chmod 600 /etc/netplan/*.yaml</code></li>
+<li>Before applying the configuration with  <code>sudo netplan apply</code>, connect physically to the server because the next command will change the ip address of the SSH and your SSH connection will be lost. Or check the IP address of the server in the router.</li>
 <li>Your host’s IP will move from enx001cc253c478 to br0</li>
 <li>Apply the configuration:</li>
 </ul>
 <p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 </span></code></pre></div>
-If you are connected via SSH, you will be disconnected.
-Go physically to the server and get the new IP address:</p>
+If you are connected via SSH, you will probably get disconnected unless the static ip is set.
+Go physically to the server (or check the devices in the router) and get the new IP address:</p>
 <p><div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ip<span class="w"> </span>addr
 </span></code></pre></div>
 Your <code>interface name</code> will no longer have a direct IP. All traffic goes through <code>br0</code>.
 To connect to the server via SSH, you will need to use the <code>br0</code> address.</p>
+<p>Try <code>ping 8.8.8.8</code></p>
 <h3 id="home-assistant-os-in-a-vm">Home Assistant OS in a VM<a class="headerlink" href="#home-assistant-os-in-a-vm" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
@@ -3885,12 +3873,13 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
-<ul>
-<li>important: we will use sudo so with all the commands later like <code>virsh list --all</code> should use sudo <code>sudo virsh list --all</code> otherwise it will show nothing.</li>
-<li>
-<h2 id="haos-runs-under-system-libvirt-and-needs-to-be-managed-by-root-and-uses-varliblibvirt">HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt<a class="headerlink" href="#haos-runs-under-system-libvirt-and-needs-to-be-managed-by-root-and-uses-varliblibvirt" title="Permanent link">&para;</a></h2>
-</li>
-</ul>
+<blockquote>
+<blockquote>
+<p>Important: we will use sudo so with all the commands later like <code>virsh list --all</code> should use sudo <code>sudo virsh list --all</code> otherwise it will show nothing.
+- HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt
+-</p>
+</blockquote>
+</blockquote>
 <table>
 <thead>
 <tr>
@@ -3946,11 +3935,12 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 </tbody>
 </table>
 <ul>
-<li>Create the VM: ( we are adding --network bridge=br0) to use the bridge.</li>
-</ul>
+<li>
+<p>Create the VM: ( we are adding --network bridge=br0) to use the bridge.
+If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Home Assistant OS&quot;</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
-</span></code></pre></div>
-<ul>
+</span></code></pre></div></p>
+</li>
 <li>
 <p>Once you see <code>Welcome to Home Assistant homeassistant login:</code>, you can quit leave the console using <code>Ctrl + Alt Gr +]</code> or Open a new terminal.</p>
 </li>
@@ -3958,23 +3948,30 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <p>Now we need to check if HAOS is running:</p>
 </li>
 <li><code>sudo virsh list --all</code>, you should see the VM running named <code>haos</code></li>
-<li>Find the IP address of the HAOS VM: From your router’s DHCP table (recommended) on your router app/website. As you can understand, the VM is like a device that is connected to the router, that is why the router assigned it an IP address.</li>
+<li>Find the IP address of the HAOS VM: From your router’s DHCP table (recommended) on your router app/website. As you can understand, the VM is like a device that is connected to the router, that is why the router assigned it an IP address.<ul>
 <li>The default port is <code>8123</code></li>
 <li>Check if HAOS is running : open a browser and go to <code>http://&lt;HAOS-IP&gt;:8123</code> or use curl: <code>curl -v http://&lt;HAOS-IP&gt;:8123</code></li>
+<li>Go to <code>http://homeassistant.local:8123/</code>. This is the default address if the name is <code>homeassistant</code> in Settings -&gt; System -&gt; Network -&gt; Hostname : <code>homeassistant</code> . If the name is something else like 'ha' the address will be <code>http://ha.local:8123/</code>.</li>
+</ul>
+</li>
 <li>You should see the Home Assistant login page.</li>
+<li>If you have a backup, select 'Backup' then reboot it with <code>sudo virsh reboot haos</code> then go HAOS settings -&gt; Configure network interfaces -&gt; IPv4 -&gt; Static and set the IP address that was previously set .</li>
 <li>Back on your terminal, activate the autostart: <code>sudo virsh autostart haos</code></li>
 <li>Check autostart in: <code>sudo virsh dominfo haos</code></li>
 </ul>
 <p>You need to differentiate between:</p>
 <ul>
 <li>HOST IP (the IP of the laptop): <code>ip addr</code> example: <code>192.168.1.86</code></li>
-<li>VM-IP or HAOS-IP (the IP of the HAOS VM) example: <code>192.168.1.20</code></li>
+<li>VM-IP or HAOS-IP (the IP of the HAOS VM) example: <code>192.168.1.20</code> or <code>homeassistant.local</code></li>
 <li>Both have IPs assigned from the router. The HAOS VM uses a bridge, so it gets an IP from the router just like a regular device.</li>
 <li>These IPs can change if we restart the router, we will assign static ip to the VM.</li>
 </ul>
+<p>If you want to resize the VM disk:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>qemu-img<span class="w"> </span>resize<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2<span class="w"> </span>+20G
+</span></code></pre></div></p>
 <h4 id="inside-ha-in-your-browser-or-mobile-app">inside HA in your browser or mobile app:<a class="headerlink" href="#inside-ha-in-your-browser-or-mobile-app" title="Permanent link">&para;</a></h4>
 <ul>
-<li>In your browser, go to <code>http://&lt;HOST-IP&gt;:8123</code>, for example <code>http://192.168.1.86:8123</code>.</li>
+<li>In your browser, go to  <code>http://&lt;HOST-IP&gt;:8123</code>, for example <code>http://homeassistant.local:8123</code> or <code>http://192.168.1.86:8123</code>.</li>
 <li>Create an account.</li>
 <li>User settings: Profile -&gt; General-&gt; language, date format, number format, etc.</li>
 <li>Check Advanced mode in General settings.</li>
@@ -4130,24 +4127,25 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>Attach to usb port, run <code>usb-devices</code> on ubuntu and get Vendor and ProdID.</li>
 <li>Run:</li>
 </ul>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-device<span class="w"> </span>haos<span class="w"> </span>/dev/stdin<span class="w"> </span>--persistent<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="s">&lt;hostdev mode=&#39;subsystem&#39; type=&#39;usb&#39; managed=&#39;yes&#39;&gt;</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="s">  &lt;source&gt;</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s">    &lt;vendor id=&#39;0x10c4&#39;/&gt;</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s">    &lt;product id=&#39;0xea60&#39;/&gt;</span>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s">  &lt;/source&gt;</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s">&lt;/hostdev&gt;</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="s">EOF</span>
-</span></code></pre></div>
+<p><code>sh
+sudo virsh attach-device haos /dev/stdin --persistent &lt;&lt;EOF
+&lt;hostdev mode='subsystem' type='usb' managed='yes'&gt;
+  &lt;source&gt;
+    &lt;vendor id='0x10c4'/&gt;
+    &lt;product id='0xea60'/&gt;
+  &lt;/source&gt;
+&lt;/hostdev&gt;
+EOF</code></p>
 <p>Or using the bus and device:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-device<span class="w"> </span>haos<span class="w"> </span>/dev/stdin<span class="w"> </span>--persistent<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="s">&lt;hostdev mode=&#39;subsystem&#39; type=&#39;usb&#39; managed=&#39;yes&#39;&gt;</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="s">  &lt;source&gt;</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s">    &lt;address bus=&#39;1&#39; device=&#39;12&#39;/&gt;</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="s">  &lt;/source&gt;</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s">&lt;/hostdev&gt;</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="s">EOF</span>
-</span></code></pre></div>
+<p>```sh
+sudo virsh attach-device haos /dev/stdin --persistent &lt;&lt;EOF
+<hostdev mode='subsystem' type='usb' managed='yes'>
+ <source>
+   <address bus='1' device='12'/></p>
+<p></source>
+</hostdev>
+EOF
+ ```</p>
 <ul>
 <li>Run <code>sudo virsh reboot haos</code>.</li>
 <li>Go to Home Assistant -&gt; Settings -&gt; System -&gt; Hardware -&gt; All Hardware -&gt; search for <code>Sonoff</code>.</li>
@@ -4173,6 +4171,9 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 </li>
 <li>
 <p><a href="https://github.com/homeassistant-apps/app-cloudflared">Cloudflared</a> (Cloudflare Tunnel)</p>
+</li>
+<li>
+<p>Create tunnels for the addons that you want. For example an app running on http://homeassistant.local:8081</p>
 </li>
 <li>
 <p><a href="https://github.com/donetick/hassio-addons">Donetick</a></p>
@@ -4210,7 +4211,8 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>
 <p>Music/Audio addons :</p>
 </li>
-<li>Navidrome:</li>
+<li><a href="https://github.com/alexbelgium/hassio-addons/tree/master/navidrome">Navidrome</a></li>
+<li><a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/octo-fiesta">Octo-Fiesta</a></li>
 <li>Use it with Octo-Fiesta (and <a href="https://tidal.squid.wtf/">Tidal</a> as a backend)</li>
 <li>Music Assistant Addon</li>
 <li>Clients : https://www.navidrome.org/apps/<ul>
@@ -4230,8 +4232,21 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <p>After installing, point your Bitwarden clients to your self-hosted server URL instead of <code>bitwarden.com</code>.</p>
 </li>
 <li>
-<p><a href="https://github.com/Rbillon59/hass-n8n">n8n</a></p>
+<p><a href="https://github.com/Rbillon59/hass-n8n">n8n</a>
+Update the config of the addon if you want to use the (forms and chat...etc) since they rely on webhooks and the api :</p>
 </li>
+<li>In network enable both ports.</li>
+<li>Update the config of the addon. Since we changed the N8N_EDITOR_BASE_URL, you will not be able to access it from HAOS Ingress. You must use the new address.
+  <div class="language-yaml highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nt">timezone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Paris</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nt">env_vars_list</span><span class="p">:</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;WEBHOOK_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:8081/&quot;</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;N8N_PATH:</span><span class="nv"> </span><span class="s">/&quot;</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;N8N_EDITOR_BASE_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:5678/&quot;</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nt">cmd_line_args</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span></code></pre></div></li>
+</ul>
+<p>It is better to use an external WEBHOOK_URL for the api so external applications can use it.</p>
+<ul>
 <li>
 <p><strong>Samba Backup</strong></p>
 </li>
@@ -4369,6 +4384,9 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>
 <p>HA Label State: https://github.com/andrew-codechimp/HA-Label-State</p>
 </li>
+<li>Create two helpers for : entities &amp; addons(apps) with 4 status: off,unavailable, unknown, not_home (away=not_home in raw format)</li>
+<li>You need to always look at the raw format of the state to see the status of the entity or addon. For example IKEA water-leak sensor's translated status is 'Dry' but the raw format is 'off'. But when the detector is really off, the state is 'unavailable' so our automation can still be triggered.</li>
+<li>Example <a href="../../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/addons_offline.yaml">addons_offline.yaml</a> &amp; <a href="../../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/low_battery.yaml">low_battery.yaml</a></li>
 </ul>
 <h3 id="dashboard-cards">Dashboard &amp; Cards<a class="headerlink" href="#dashboard-cards" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4416,6 +4434,12 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 </ul>
 <h2 id="adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)<a class="headerlink" href="#adguard-home-address-naming-resolution-using-the-router-freebox" title="Permanent link">&para;</a></h2>
 <ul>
+<li>You must have ONLY ONE DHCP server on the network</li>
+<li>adguard can be used as DNS and DHCP. If so, Go to Freebox Settings -&gt; DHCP -&gt; first, put your  Adguard DNS server, save then deactivate the DHCP server then save again.</li>
+<li>Check the address here</li>
+<li>Don't touch the IPV6 settings.</li>
+<li>Set static IPs in adguard Home. If  you previously had devices using a bridge network, and you did reset that bridge, check again their mac addresses and set static IPs in adguard home and restart the network / devices .</li>
+<li>Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)</li>
 <li>The following will show you how to get the names of the devices in AdGuard home using your router (this example is for Freebox API).</li>
 <li>You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).</li>
 <li>We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.</li>

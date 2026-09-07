@@ -1,0 +1,60 @@
+# Requires HA Label State
+alias: 🚨 Add-on Offline
+description: Notify when any add-on is offline for at least 30 minutes
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.addon_status_off
+      - binary_sensor.addon_status_unavailable
+      - binary_sensor.addon_status_unknown
+      - binary_sensor.addon_status_away
+    to:
+      - "on"
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+conditions: []
+actions:
+  - parallel:
+      - data:
+          title: 🚨 Add-on hors ligne
+          message: >
+            Add-ons offline for 30 min: {{
+            (state_attr('binary_sensor.addon_status_off', 'entity_names') | list
+            + state_attr('binary_sensor.addon_status_unavailable',
+            'entity_names') | list +
+            state_attr('binary_sensor.addon_status_unknown', 'entity_names') |
+            list + state_attr('binary_sensor.addon_status_away', 'entity_names')
+            | list) | unique | join(', ') }}
+        action: notify.notify
+      - data:
+          target:
+            - media_player.echo_dot_amine
+          message: >
+            Add-ons offline for 30 min: {{
+            (state_attr('binary_sensor.addon_status_off', 'entity_names') | list
+            + state_attr('binary_sensor.addon_status_unavailable',
+            'entity_names') | list +
+            state_attr('binary_sensor.addon_status_unknown', 'entity_names') |
+            list + state_attr('binary_sensor.addon_status_away', 'entity_names')
+            | list) | unique | join(', ') }}
+        enabled: false
+        action: notify.alexa_media
+mode: single
+variables:
+  _cafe_metadata:
+    version: 1
+    strategy: native
+    nodes:
+      trigger_1778272364557_0_0:
+        x: 12
+        "y": 12
+      action_1778272364558_1_1:
+        x: 435
+        "y": 105
+      action_1778272364558_2_2:
+        x: 435
+        "y": -30
+    graph_id: ec5499d3-5056-41d3-9091-09c52cfbb473
+    graph_version: 1
