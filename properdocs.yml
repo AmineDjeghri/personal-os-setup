@@ -61,6 +61,7 @@ plugins:
       glob:
         - node_modules/**
         - .venv/**
+        - venv/**
         - docker_data/**
         - dist/**
         - reports/**
