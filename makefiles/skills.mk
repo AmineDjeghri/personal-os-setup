@@ -2,10 +2,14 @@
 # Canonical skills live in .claude/skills; .agents/skills holds git symlinks so
 # non-Claude agents (Hermes, Codex, OpenCode, skills CLI) see the same files.
 
-.PHONY: skills-link skills-check
+.PHONY: skills-link skills-check skills-deploy
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
+
+# Global deploy: the chezmoi source doubles as the container/CLI deploy source.
+SKILLS_SRC := src/personal_os_setup/config/chezmoi/dot_claude/skills
+SKILLS_DST := $(HOME)/.claude/skills
 
 skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
 	@mkdir -p $(AGENTS_SKILLS)
@@ -34,3 +38,8 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		[ -e "$$l" ] && continue; \
 		echo "STALE $$l  (run: make skills-link)"; rc=1; \
 	done; exit $$rc
+
+skills-deploy: ## Copy shared skills from the chezmoi source to ~/.claude/skills (both agents read this dir)
+	@mkdir -p $(SKILLS_DST)
+	@cp -R $(SKILLS_SRC)/. $(SKILLS_DST)/
+	@echo "deployed shared skills to $(SKILLS_DST)"

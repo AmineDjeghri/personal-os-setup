@@ -18,6 +18,10 @@ REPO=/config/workspace/personal-os-setup
 cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the skills
 ```
 
+**No chezmoi (HA container/CLI):** `cd <repo> && make skills-deploy` — copies the same source
+to `~/.claude/skills`. The make target lives in `makefiles/skills.mk` (same file as
+`skills-link`/`skills-check`).
+
 Two gotchas (both previously caused "not managed"):
 1. `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nested dir) — never the nested dir
 2. Run from **HOME** — targets resolve against CWD
