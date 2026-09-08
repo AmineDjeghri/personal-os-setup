@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.14.0 (2026-09-08)
+
+### Features
+
+- **skills**: Add make skills-deploy for chezmoi-source -> ~/.claude/skills (#108)
+  ([#108](https://github.com/AmineDjeghri/personal-os-setup/pull/108),
+  [`4ceacc3`](https://github.com/AmineDjeghri/personal-os-setup/commit/4ceacc32d81f339168a9ae0f377e443c5fadd1bb))
+
+
 ## v2.13.2 (2026-09-07)
 
 ### Bug Fixes
