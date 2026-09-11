@@ -469,6 +469,37 @@ EOF
 
  ### Apps / Add-ons
 
+#### Exposure model — what is reachable from outside the LAN
+
+Only the **Cloudflared tunnel** publishes services, and **nothing is port-forwarded**. Every
+other add-on port is LAN-only — note that the LAN is *not* a trust boundary (a compromised
+add-on can reach every other add-on and Home Assistant itself on `8123`), so "LAN-only" means
+"not on the internet", not "safe".
+
+| Public? | Service | Front door | Blocked at the edge (Cloudflare WAF rule) |
+|---|---|---|---|
+| yes — Access | Home Assistant | Cloudflare Access (email OTP) | — |
+| yes — Access | Hermes WebUI | Cloudflare Access + add-on `password` | — (whole hostname is credential-grade) |
+| yes — app login | Navidrome | **none** — per-user app login | nothing safe to block: clients need `/rest/*`, the web UI needs `/api/*` → rate-limit `/auth/login` and `/rest/*` |
+| yes — app login | Vaultwarden | **none** — master password | `/admin*`, `POST /identity/accounts/register*` |
+| yes — app login | AIOStreams | **none** — app login (`auth_required`) | `/api/v1/status`, `/builtins/*` |
+
+The actual hostnames are whatever is configured in the Cloudflared add-on (`external_hostname`
++ `additional_hosts`) and are deliberately **not** repeated here — this page should not be a
+map of the tunnel.
+
+The last three hostnames deliberately have **no Access OTP**: Stremio/Navidrome/Vaultwarden
+*clients* are header-less and cannot answer an Access challenge, so their own credential is
+the gate — use strong passwords (and 2FA where the app supports it) plus edge rate limiting.
+
+What each add-on actually serves, and the full must-never-be-public path list, lives in the
+add-on READMEs: [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/aiostreams),
+[Beets](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets),
+[Hermes WebUI](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/hermes-webui),
+[MediaFlow Proxy Light](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/mediaflow-proxy-light),
+[Octo-Fiesta](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/octo-fiesta),
+[Personal App](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/personal-app).
+
 * **AdGuard Home**
   * DNS and DHCP (do not forget to add IPv4 and IPv6 DNS servers to your router). Disable safe search.
   * For IP address name resolving, check [this section](#adguard-home-address-naming-resolution-using-the-router-freebox).
@@ -479,6 +510,7 @@ EOF
 
 * [Cloudflared](https://github.com/homeassistant-apps/app-cloudflared) (Cloudflare Tunnel)
   - Create tunnels for the addons that you want. For example an app running on http://homeassistant.local:8081
+  - ⚠️ Every entry added here is **public**: the tunnel is the only door, but it is a door. Add an entry only after reading the add-on's *Exposure* section, and check the [exposure model](#exposure-model--what-is-reachable-from-outside-the-lan) for which hostnames also need an Access policy.
 
 * [Donetick](https://github.com/donetick/hassio-addons)
 
@@ -508,14 +540,37 @@ EOF
   * Music Assistant Addon
   * Clients : https://www.navidrome.org/apps/
     * For example Narjo for iOS
-  * Auto tagger : Beets
+  * Auto tagger : [Beets add-on](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets) — no HTTP surface, no published port
   * You can check this [music server setup](music/music_server.md)
+  * ⚠️ **Remote access — Navidrome is the one exposed service that runs privileged.** The
+    community add-on gets `CAP_SYS_ADMIN` + `CAP_DAC_READ_SEARCH` and the host's block
+    devices, so code execution inside it is a *host-level* compromise, not a music leak.
+    Lower-risk ways to keep remote access:
+    * run Navidrome on the Ubuntu server and point the tunnel entry at its LAN IP
+      (`http://192.168.x.x:4533`) — the Cloudflared add-on can reach LAN addresses;
+    * or keep it LAN-only and reach it over Tailscale (`hassio-addons/app-tailscale`), then
+      drop the Navidrome entry from the tunnel.
+    Cloudflare Access service tokens are only an option for clients that can send custom
+    headers — Symfonium, Amperfy and Nautiline can; Narjo, Substreamer and Feishin cannot.
+
+* [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/aiostreams) — Stremio/Nuvio add-on aggregator (debrid/usenet)
+  * Public by design on its own tunnel hostname: Stremio/Nuvio clients cannot answer an Access OTP challenge. Keep `auth` set + `auth_required: true`, then block `/api/v1/status` and `/builtins/*` at the edge.
+
+* [MediaFlow Proxy Light](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/mediaflow-proxy-light) — streaming proxy used by AIOStreams
+  * **LAN-only, never publish.** The proxy password covers `/proxy/*` but not the UI/builder paths — `/playlist/builder` is an unauthenticated fetch primitive (and a LAN port scanner).
+
+* [Hermes Agent](https://github.com/WolframRavenwolf/hermes-ha-addon) + [Hermes WebUI](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/hermes-webui)
+  * The WebUI is exposed **only behind Cloudflare Access** (plus its own `password` option). `/api/*` runs the agent in-process — i.e. arbitrary tool execution — and `all_addon_configs:rw` lets it read every other add-on's configuration, including the tunnel config.
+
+* [Personal App](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/personal-app)
+  * **LAN-only, never publish** — no authentication anywhere: UI on `8080`, FastAPI `/docs` + `/openapi.json` on `8000` (not host-published, but reachable from any co-resident container), CORS `*` **with** credentials, default `SESSION_SECRET`.
 
 
 * **Vaultwarden** (self-hosted Bitwarden backend)
   * Lightweight, open-source reimplementation of the Bitwarden server API. All official Bitwarden clients (iOS, Android, Windows, macOS, browser extensions) work with it.
   * Addon repo: https://github.com/hassio-addons/app-vaultwarden
   * After installing, point your Bitwarden clients to your self-hosted server URL instead of `bitwarden.com`.
+  * ⚠️ **Exposure:** exposed on its own hostname with no Access login (the Bitwarden apps cannot answer an OTP challenge), so the master password is the only door. **Disable public signups**: `/admin` → General → uncheck "Allow new signups" → Save — this is what `/api/config` reports as `disableUserRegistration`, and while it is `false` anyone on the internet can create an account on your instance. Clear the "Signup Domains Whitelist" at the same time (a non-empty whitelist overrides the signups setting). Then block `/admin*` and `POST /identity/accounts/register*` at the edge — the admin panel stays reachable on the LAN at `http://homeassistant.local:7277/admin`.
 
 * [n8n](https://github.com/Rbillon59/hass-n8n)
 Update the config of the addon if you want to use the (forms and chat...etc) since they rely on webhooks and the api :
