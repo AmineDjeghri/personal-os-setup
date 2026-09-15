@@ -16,8 +16,12 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
   **explicit, per-action user approval before running**. A prior "yes" is not standing approval.
 - Destructive: `make vm-clean`, `make deploy-doc-gh` (pushes gh-pages). Never bypass the TUI's
   confirm dialogs (`SystemAction.confirm=False`).
-- Git/GitHub: committing locally is fine once asked; **pushing, PRs, and release-branch actions need
-  explicit confirmation**.
+- **Git: NEVER run `git commit` or `git push` without the user's explicit approval.** Both are
+  approved per action, every single time. A task description, a plan, "do the work", a previous
+  approval, or an earlier push on the same branch is NOT permission. Ask, wait for the yes, then
+  run exactly the action that was approved. The same applies to `--force`, PR creation/merge and
+  release-branch actions. **If an approval prompt times out, STOP** — silence is not consent; say
+  "prompt me again" is the user's call, not yours.
 
 ## Commands
 
