@@ -68,7 +68,9 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
   self-updating (`/plugin update`). NOT committed to this repo; re-register per machine.
   Hermes never loads plugins (skills are the shared currency). Currently:
-  `superpowers` (obra/superpowers, user scope).
+  `superpowers` (obra/superpowers, user scope), `cloudflare` (cloudflare/skills — Cloudflare
+  skills + MCP server for both agents, installed with `make agents-cloudflare`; recipe and
+  approval model in `docs/agents/cloudflare.md`, never vendored into Track 1).
 - **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
   the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
   Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
