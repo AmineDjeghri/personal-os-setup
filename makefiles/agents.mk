@@ -1,35 +1,66 @@
 # Agent integrations — Track 2 (tool = truth).
 #
-# Third-party agent suites (skills + MCP servers) that are owned and updated upstream.
-# Installed with the vendor's own tool; never vendored into the Track 1 chezmoi source
-# (dot_claude/skills) and never touched by `make skills-deploy`.
+# Third-party agent suites (skills + MCP servers) that upstream owns and updates. Installed
+# with the vendor's own tool; never vendored into the Track 1 chezmoi source (dot_claude/skills)
+# and never touched by `make skills-deploy`.
+#
+# Independence: every target below is idempotent and per-agent, so a machine that has only
+# Claude Code (or only Hermes, or neither) runs just the half it can — nothing hard-requires
+# both agents. Binaries are overridable: CLAUDE=/path/to/claude HERMES=/path/to/hermes.
 #
 # Recipe + approval model: docs/agents/cloudflare.md
 
-.PHONY: agents-cloudflare agents-cloudflare-check
+.PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes agents-cloudflare-check
 
 CLAUDE ?= claude
 HERMES ?= hermes
 CLOUDFLARE_SKILLS := cloudflare/skills
 
-agents-cloudflare: ## Install Cloudflare skills + MCP server for Claude Code and Hermes
-	@command -v $(CLAUDE) >/dev/null || { echo "claude not on PATH (set CLAUDE=/path/to/claude)"; exit 1; }
-	@command -v $(HERMES) >/dev/null || { echo "hermes not on PATH (set HERMES=/path/to/hermes)"; exit 1; }
-	@echo "== Claude Code: marketplace + plugin (skills and the bundled cloudflare MCP server)"
-	$(CLAUDE) plugin marketplace add $(CLOUDFLARE_SKILLS)
-	$(CLAUDE) plugin install cloudflare@cloudflare
-	@echo "== Hermes: skills (canonical copy in ~/.agents/skills, symlinked into \$$HERMES_HOME/skills)"
-	npx -y skills add $(CLOUDFLARE_SKILLS) --skill '*' --yes --global --agent hermes-agent
-	@echo "== Hermes: cloudflare MCP server (OAuth; write tools stay behind the approval surface)"
-	$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth
-	@echo
-	@echo "Next steps:"
-	@echo "  1. ensure the mcp_servers.cloudflare entry carries 'trust: untrusted' (docs/agents/cloudflare.md)"
-	@echo "  2. $(HERMES) mcp login cloudflare    # browser OAuth; restart the agent afterwards"
-	@echo "  3. Claude Code: /reload-plugins to activate the plugin"
+agents-cloudflare: ## Install Cloudflare skills + MCP for whichever agents are installed here
+	@$(MAKE) --no-print-directory agents-cloudflare-claude
+	@$(MAKE) --no-print-directory agents-cloudflare-hermes
+	@echo ""
+	@echo "Login next: '$(HERMES) mcp login cloudflare' where Hermes is installed;"
+	@echo "            Claude Code authenticates on first Cloudflare tool use, then /reload-plugins."
 
-agents-cloudflare-check: ## Verify the Cloudflare wiring is present and approval-gated
-	@$(HERMES) mcp list 2>/dev/null | grep -q cloudflare && echo "OK   hermes: cloudflare MCP registered" || echo "MISS hermes: cloudflare MCP (run: make agents-cloudflare)"
-	@grep -q 'trust: untrusted' $$(echo $${HERMES_HOME:-$$HOME/.hermes}/config.yaml) 2>/dev/null && echo "OK   hermes: untrusted trust tier" || echo "WARN hermes: no 'trust: untrusted' found in config.yaml"
-	@[ -d "$${CLAUDE_CONFIG_DIR:-$$HOME/.claude}/plugins" ] && ls "$${CLAUDE_CONFIG_DIR:-$$HOME/.claude}/plugins/marketplaces" 2>/dev/null | grep -q cloudflare && echo "OK   claude: cloudflare marketplace registered" || echo "MISS claude: cloudflare marketplace (run: make agents-cloudflare)"
-	@[ -n "$$(ls -d $${HERMES_HOME:-$$HOME/.hermes}/skills/*cloudflare* 2>/dev/null)" ] && echo "OK   hermes: cloudflare skills linked" || echo "MISS hermes: cloudflare skills (run: make agents-cloudflare)"
+agents-cloudflare-claude: ## Cloudflare skills + MCP for Claude Code only (skips if not installed)
+	@if command -v $(CLAUDE) >/dev/null 2>&1; then \
+		echo "== Claude Code: marketplace + plugin (skills and the bundled cloudflare MCP server)"; \
+		$(CLAUDE) plugin marketplace add $(CLOUDFLARE_SKILLS) && \
+		$(CLAUDE) plugin install cloudflare@cloudflare; \
+	else \
+		echo "== Claude Code: skipped ('$(CLAUDE)' not on PATH)"; \
+	fi
+
+agents-cloudflare-hermes: ## Cloudflare skills + MCP for Hermes only (skips if not installed)
+	@if ! command -v $(HERMES) >/dev/null 2>&1; then \
+		echo "== Hermes: skipped ('$(HERMES)' not on PATH)"; \
+	elif ! command -v npx >/dev/null 2>&1; then \
+		echo "== Hermes: skills skipped (node/npx not available) — adding the MCP entry only"; \
+		$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth && \
+		echo "   reminder: keep 'trust: untrusted' on the mcp_servers.cloudflare entry"; \
+	else \
+		echo "== Hermes: skills (canonical copy in ~/.agents/skills, symlinked into \$$HERMES_HOME/skills)"; \
+		npx -y skills add $(CLOUDFLARE_SKILLS) --skill '*' --yes --global --agent hermes-agent && \
+		echo "== Hermes: cloudflare MCP server (OAuth; write tools stay behind the approval surface)" && \
+		$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth && \
+		echo "   reminder: keep 'trust: untrusted' on the mcp_servers.cloudflare entry (docs/agents/cloudflare.md)"; \
+	fi
+
+agents-cloudflare-check: ## Show what is wired per agent on this machine
+	@if command -v $(CLAUDE) >/dev/null 2>&1; then \
+		if ls "$${CLAUDE_CONFIG_DIR:-$$HOME/.claude}/plugins/marketplaces" 2>/dev/null | grep -q cloudflare; then \
+			echo "OK   claude: cloudflare marketplace registered"; \
+		else echo "MISS claude: cloudflare marketplace (run: make agents-cloudflare-claude)"; fi; \
+	else echo "n/a  claude: not installed on this machine"; fi
+	@if command -v $(HERMES) >/dev/null 2>&1; then \
+		if $(HERMES) mcp list 2>/dev/null | grep -q cloudflare; then \
+			echo "OK   hermes: cloudflare MCP registered"; \
+		else echo "MISS hermes: cloudflare MCP (run: make agents-cloudflare-hermes)"; fi; \
+		if ls -d $${HERMES_HOME:-$$HOME/.hermes}/skills/*cloudflare* >/dev/null 2>&1; then \
+			echo "OK   hermes: cloudflare skills linked"; \
+		else echo "MISS hermes: cloudflare skills (run: make agents-cloudflare-hermes)"; fi; \
+		if grep -q 'trust: untrusted' $${HERMES_HOME:-$$HOME/.hermes}/config.yaml 2>/dev/null; then \
+			echo "OK   hermes: untrusted trust tier"; \
+		else echo "WARN hermes: no 'trust: untrusted' in config.yaml — writes would not be approval-gated"; fi; \
+	else echo "n/a  hermes: not installed on this machine"; fi
