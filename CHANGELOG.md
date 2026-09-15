@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.14.2 (2026-09-15)
+
+### Bug Fixes
+
+- **deps**: Update python dependencies (#98)
+  ([#98](https://github.com/AmineDjeghri/personal-os-setup/pull/98),
+  [`dd61d9c`](https://github.com/AmineDjeghri/personal-os-setup/commit/dd61d9c05552584923824eb6ad34824f6b2bd626))
+
+
 ## v2.14.1 (2026-09-15)
 
 ### Bug Fixes
