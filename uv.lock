@@ -627,7 +627,7 @@ wheels = [
 
 [[package]]
 name = "personal-os-setup"
-version = "2.11.1"
+version = "2.14.0"
 source = { editable = "." }
 dependencies = [
     { name = "build" },
