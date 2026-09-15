@@ -480,17 +480,24 @@ add-on can reach every other add-on and Home Assistant itself on `8123`), so "LA
 |---|---|---|---|
 | yes — Access | Home Assistant | Cloudflare Access (email OTP) | — |
 | yes — Access | Hermes WebUI | Cloudflare Access + add-on `password` | — (whole hostname is credential-grade) |
-| yes — app login | Navidrome | **none** — per-user app login | nothing safe to block: clients need `/rest/*`, the web UI needs `/api/*` → rate-limit `/auth/login` and `/rest/*` |
-| yes — app login | Vaultwarden | **none** — master password | `/admin*`, `POST /identity/accounts/register*` |
+| yes — Access | Navidrome | **Cloudflare Access service token** — the client sends `CF-Access-Client-Id` / `CF-Access-Client-Secret` (one token per user: the only per-person revoke path). No email policy, so a plain browser gets `403` | nothing path-level — the token is the gate, and clients still need `/rest/*` |
+| not installed | Vaultwarden | deleted for now — on reinstall it gets **no** Access (the Bitwarden apps cannot answer a challenge) | `/admin*`, `POST /identity/accounts/register*`, and **disable signups in `/admin`** (verified open: `/api/config` reported `disableUserRegistration: false`) |
 | yes — app login | AIOStreams | **none** — app login (`auth_required`) | `/api/v1/status`, `/builtins/*` |
 
 The actual hostnames are whatever is configured in the Cloudflared add-on (`external_hostname`
 + `additional_hosts`) and are deliberately **not** repeated here — this page should not be a
 map of the tunnel.
 
-The last three hostnames deliberately have **no Access OTP**: Stremio/Navidrome/Vaultwarden
-*clients* are header-less and cannot answer an Access challenge, so their own credential is
-the gate — use strong passwords (and 2FA where the app supports it) plus edge rate limiting.
+AIOStreams is the only hostname with **no Access layer at all** — Stremio/Nuvio clients are
+header-less and cannot answer an Access challenge, so its own login is the gate. Where the
+client *can* send headers (Navidrome), use a **service token** instead: it is per-person
+revocable and keeps anonymous traffic out entirely.
+
+Free-plan budget: **5** WAF custom rules + **1** rate-limit rule. Spend the rate limit on
+Vaultwarden's `/identity/*` if it comes back — never on the streaming hostnames, where a
+10-second counting window would hit legitimate playback. Navidrome's Access app carries **no
+email policy**, so the web player returns `403`; add an email-allow policy to that app if the
+browser UI is ever needed.
 
 What each add-on actually serves, and the full must-never-be-public path list, lives in the
 add-on READMEs: [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/aiostreams),
