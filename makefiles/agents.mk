@@ -12,7 +12,7 @@
 #
 # Recipe + approval model: docs/agents/cloudflare.md
 
-.PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes
+.PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes agents-cloudflare-update
 
 CLAUDE ?= claude
 HERMES ?= hermes
@@ -56,3 +56,22 @@ agents-cloudflare-hermes: ## Cloudflare skills + MCP for Hermes only (skips if n
 			echo "   ! approval gate: add 'trust: untrusted' to the mcp_servers.cloudflare entry (docs/agents/cloudflare.md)"; \
 		fi; \
 	fi
+
+agents-cloudflare-update: ## Refresh the Cloudflare skills + Claude plugin to their latest versions
+	@if command -v $(CLAUDE) >/dev/null 2>&1; then \
+		echo "== Claude Code: refresh marketplace + plugin"; \
+		$(CLAUDE) plugin marketplace update cloudflare && \
+		$(CLAUDE) plugin install cloudflare@cloudflare; \
+		echo "   then: /reload-plugins inside Claude Code"; \
+	else \
+		echo "== Claude Code: skipped ('$(CLAUDE)' not on PATH)"; \
+	fi
+	@if command -v npx >/dev/null 2>&1; then \
+		echo "== Hermes skills: 'npx skills update -g -y' (local scope holds only the Cloudflare skills)"; \
+		npx -y skills update -g -y; \
+	else \
+		echo "== Hermes skills: skipped (node/npx not available)"; \
+	fi
+	@echo ""
+	@echo "The MCP server itself needs no update: it is remote (Cloudflare's side)."
+	@echo "Restart the gateway afterwards so MCP discovery re-runs: '$(HERMES) gateway restart'."

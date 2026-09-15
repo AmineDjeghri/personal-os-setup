@@ -54,6 +54,19 @@ Nobody may mutate a Cloudflare zone without an explicit yes:
 The main server is **Code Mode**: 3 tools (`docs`, `search`, `execute`) rather than ~2,500
 individual ones, so the context cost is negligible. Write capability rides inside `execute`.
 
+## Updates
+
+| Thing | How it updates |
+|---|---|
+| The Cloudflare MCP server | **Nothing to do** — it's remote (`mcp.cloudflare.com`). Cloudflare ships changes server-side, and the tool list is re-read each time the agent connects. |
+| Hermes skills | `make agents-cloudflare-update` (or `npx skills update -g -y`): re-pulls the canonical copy in `~/.agents/skills` and refreshes the symlinks. |
+| Claude plugin (skills + the bundled MCP entry) | same target: `claude plugin marketplace update cloudflare` then `claude plugin install cloudflare@cloudflare`. Marketplaces also support `"autoUpdate": true` if you want it hands-off. |
+| OAuth tokens | refresh themselves; run `hermes mcp reauth cloudflare` when one goes stale. |
+
+After updating, restart the Hermes gateway (`hermes gateway restart`): MCP connections are
+established at **startup**, not per session. Skills are read at session start, so a new session
+picks them up; Claude Code needs `/reload-plugins`.
+
 ## Login / credentials
 
 - Hermes: `hermes mcp login cloudflare` (or `hermes mcp reauth cloudflare`) runs the OAuth 2.1
