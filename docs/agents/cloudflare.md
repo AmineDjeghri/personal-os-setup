@@ -8,13 +8,15 @@ upstream-owned, fast-moving content with the vendor's own tool — nothing here 
 make agents-cloudflare            # whichever agents are installed on this machine
 make agents-cloudflare-claude     # Claude Code only
 make agents-cloudflare-hermes     # Hermes only
-make agents-cloudflare-check      # what is wired here
 ```
 
 Nothing requires both agents: each target is independent, idempotent and **skips itself** when
-its CLI isn't on `PATH` (a machine with only Claude Code installs only the plugin; on a machine
-without `npx`, Hermes still gets the MCP entry and only the skills are skipped). Override the
-binaries when they aren't on `PATH`: `make agents-cloudflare CLAUDE=/path/claude HERMES=/path/hermes`.
+its CLI isn't on `PATH` (a machine with only Claude Code installs only the plugin). Re-running
+changes nothing — an already-registered MCP server is left untouched rather than re-added.
+Override the binaries when they aren't on `PATH`: `make agents-cloudflare CLAUDE=/path/claude HERMES=/path/hermes`.
+
+To see what is wired without the makefile: `claude plugin list`, `hermes mcp list`, and that
+`mcp_servers.cloudflare` carries `trust: untrusted`.
 
 ## What `agents-cloudflare` installs
 

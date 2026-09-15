@@ -6,11 +6,13 @@
 #
 # Independence: every target below is idempotent and per-agent, so a machine that has only
 # Claude Code (or only Hermes, or neither) runs just the half it can — nothing hard-requires
-# both agents. Binaries are overridable: CLAUDE=/path/to/claude HERMES=/path/to/hermes.
+# both agents. Re-running is a no-op: an existing MCP entry is left untouched instead of
+# re-adding it (which would prompt "Overwrite?" and change nothing anyway).
+# Binaries are overridable: CLAUDE=/path/to/claude HERMES=/path/to/hermes.
 #
 # Recipe + approval model: docs/agents/cloudflare.md
 
-.PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes agents-cloudflare-check
+.PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes
 
 CLAUDE ?= claude
 HERMES ?= hermes
@@ -35,32 +37,22 @@ agents-cloudflare-claude: ## Cloudflare skills + MCP for Claude Code only (skips
 agents-cloudflare-hermes: ## Cloudflare skills + MCP for Hermes only (skips if not installed)
 	@if ! command -v $(HERMES) >/dev/null 2>&1; then \
 		echo "== Hermes: skipped ('$(HERMES)' not on PATH)"; \
-	elif ! command -v npx >/dev/null 2>&1; then \
-		echo "== Hermes: skills skipped (node/npx not available) — adding the MCP entry only"; \
-		$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth && \
-		echo "   reminder: keep 'trust: untrusted' on the mcp_servers.cloudflare entry"; \
 	else \
-		echo "== Hermes: skills (canonical copy in ~/.agents/skills, symlinked into \$$HERMES_HOME/skills)"; \
-		npx -y skills add $(CLOUDFLARE_SKILLS) --skill '*' --yes --global --agent hermes-agent && \
-		echo "== Hermes: cloudflare MCP server (OAuth; write tools stay behind the approval surface)" && \
-		$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth && \
-		echo "   reminder: keep 'trust: untrusted' on the mcp_servers.cloudflare entry (docs/agents/cloudflare.md)"; \
-	fi
-
-agents-cloudflare-check: ## Show what is wired per agent on this machine
-	@if command -v $(CLAUDE) >/dev/null 2>&1; then \
-		if ls "$${CLAUDE_CONFIG_DIR:-$$HOME/.claude}/plugins/marketplaces" 2>/dev/null | grep -q cloudflare; then \
-			echo "OK   claude: cloudflare marketplace registered"; \
-		else echo "MISS claude: cloudflare marketplace (run: make agents-cloudflare-claude)"; fi; \
-	else echo "n/a  claude: not installed on this machine"; fi
-	@if command -v $(HERMES) >/dev/null 2>&1; then \
+		if command -v npx >/dev/null 2>&1; then \
+			echo "== Hermes: skills (canonical copy in ~/.agents/skills, symlinked into \$$HERMES_HOME/skills)"; \
+			npx -y skills add $(CLOUDFLARE_SKILLS) --skill '*' --yes --global --agent hermes-agent; \
+		else \
+			echo "== Hermes: skills skipped (node/npx not available)"; \
+		fi; \
 		if $(HERMES) mcp list 2>/dev/null | grep -q cloudflare; then \
-			echo "OK   hermes: cloudflare MCP registered"; \
-		else echo "MISS hermes: cloudflare MCP (run: make agents-cloudflare-hermes)"; fi; \
-		if ls -d $${HERMES_HOME:-$$HOME/.hermes}/skills/*cloudflare* >/dev/null 2>&1; then \
-			echo "OK   hermes: cloudflare skills linked"; \
-		else echo "MISS hermes: cloudflare skills (run: make agents-cloudflare-hermes)"; fi; \
+			echo "== Hermes: cloudflare MCP already registered — left unchanged"; \
+		else \
+			echo "== Hermes: cloudflare MCP server (OAuth; write tools stay behind the approval surface)"; \
+			$(HERMES) mcp add cloudflare --url https://mcp.cloudflare.com/mcp --auth oauth; \
+		fi; \
 		if grep -q 'trust: untrusted' $${HERMES_HOME:-$$HOME/.hermes}/config.yaml 2>/dev/null; then \
-			echo "OK   hermes: untrusted trust tier"; \
-		else echo "WARN hermes: no 'trust: untrusted' in config.yaml — writes would not be approval-gated"; fi; \
-	else echo "n/a  hermes: not installed on this machine"; fi
+			echo "   approval gate: OK ('trust: untrusted' present)"; \
+		else \
+			echo "   ! approval gate: add 'trust: untrusted' to the mcp_servers.cloudflare entry (docs/agents/cloudflare.md)"; \
+		fi; \
+	fi
