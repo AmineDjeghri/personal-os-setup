@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.14.1 (2026-09-15)
+
+### Bug Fixes
+
+- Update config
+  ([`40e176b`](https://github.com/AmineDjeghri/personal-os-setup/commit/40e176be30eb89864a22bcc53dd8aae95b876eb7))
+
+
 ## v2.14.0 (2026-09-08)
 
 ### Features
