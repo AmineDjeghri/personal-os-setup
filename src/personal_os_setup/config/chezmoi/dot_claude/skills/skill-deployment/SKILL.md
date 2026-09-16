@@ -13,6 +13,17 @@ Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` �
 > git-symlink mirrors in `.agents/skills/` for other agents, kept in sync by `skills.mk`
 > (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
 
+**Two loading paths — don't confuse them:**
+
+- **Shared (Track 1)** → `skills.external_dirs` in the Hermes config: always in the index, every
+  session, any cwd. That one entry (`~/.claude/skills`) is what both agents load.
+- **Repo-scoped** → `<repo>/.hermes/skills` + `.agents/skills` load *only* when the session's
+  working dir resolves to the repo's git root **and** that root is in `skills.trusted_project_dirs`.
+  A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads — upstream
+  Hermes bug #103423, fix in review as PR #103424. Never park repo skills in `external_dirs`
+  (N repos × M skills doesn't scale): promote a repo's skills to Track 1 if they must be
+  always-on, otherwise they're read on demand.
+
 ```bash
 REPO=/config/workspace/personal-os-setup
 cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the skills
