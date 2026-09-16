@@ -1,16 +1,6 @@
-# Agent integrations — Track 2 (tool = truth).
-#
-# Third-party agent suites (skills + MCP servers) that upstream owns and updates. Installed
-# with the vendor's own tool; never vendored into the Track 1 chezmoi source (dot_claude/skills)
-# and never touched by `make skills-deploy`.
-#
-# Independence: every target below is idempotent and per-agent, so a machine that has only
-# Claude Code (or only Hermes, or neither) runs just the half it can — nothing hard-requires
-# both agents. Re-running is a no-op: an existing MCP entry is left untouched instead of
-# re-adding it (which would prompt "Overwrite?" and change nothing anyway).
-# Binaries are overridable: CLAUDE=/path/to/claude HERMES=/path/to/hermes.
-#
-# Recipe + approval model: docs/agents/cloudflare.md
+# Agent integrations — Track 2 (tool = truth): third-party agent suites installed with the
+# vendor's own tool, never vendored into the Track 1 chezmoi source. Targets are per-agent and
+# idempotent; binaries overridable (CLAUDE=… HERMES=…). Recipe + approval model: docs/agents/cloudflare.md
 
 .PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes agents-cloudflare-update
 

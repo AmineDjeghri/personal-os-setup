@@ -35,17 +35,10 @@ Upstream reference: <https://developers.cloudflare.com/agent-setup/> · <https:/
 
 Nobody may mutate a Cloudflare zone without an explicit yes:
 
-- **Hermes** — the server entry must carry `trust: untrusted` in `mcp_servers.cloudflare`. Every
-  tool without a `readOnlyHint: true` annotation then goes through the approval surface before it
-  runs. Verify after `hermes mcp add`: the generated entry should look like
-
-  ```yaml
-  mcp_servers:
-    cloudflare:
-      url: "https://mcp.cloudflare.com/mcp"
-      auth: oauth
-      trust: untrusted
-  ```
+- **Hermes** — the entry must carry `trust: untrusted`: every tool without a `readOnlyHint: true`
+  annotation then goes through the approval surface. Verify the generated entry after
+  `hermes mcp add`; the least-privilege block below shows its shape (swap `headers:` for
+  `auth: oauth`).
 
 - **Claude Code** — MCP tools prompt per call by default. To pin it, add the server to the
   `permissions` rules in `~/.claude/settings.json` (`mcp__cloudflare__*`) with `ask`/`deny`
@@ -54,25 +47,17 @@ Nobody may mutate a Cloudflare zone without an explicit yes:
 The main server is **Code Mode**: 3 tools (`docs`, `search`, `execute`) rather than ~2,500
 individual ones, so the context cost is negligible. Write capability rides inside `execute`.
 
-## Updates
+## Updates & credentials
 
-| Thing | How it updates |
-|---|---|
-| The Cloudflare MCP server | **Nothing to do** — it's remote (`mcp.cloudflare.com`). Cloudflare ships changes server-side, and the tool list is re-read each time the agent connects. |
-| Hermes skills | `make agents-cloudflare-update` (or `npx skills update -g -y`): re-pulls the canonical copy in `~/.agents/skills` and refreshes the symlinks. |
-| Claude plugin (skills + the bundled MCP entry) | same target: `claude plugin marketplace update cloudflare` then `claude plugin install cloudflare@cloudflare`. Marketplaces also support `"autoUpdate": true` if you want it hands-off. |
-| OAuth tokens | refresh themselves; run `hermes mcp reauth cloudflare` when one goes stale. |
-
-After updating, restart the Hermes gateway (`hermes gateway restart`): MCP connections are
-established at **startup**, not per session. Skills are read at session start, so a new session
-picks them up; Claude Code needs `/reload-plugins`.
-
-## Login / credentials
-
-- Hermes: `hermes mcp login cloudflare` (or `hermes mcp reauth cloudflare`) runs the OAuth 2.1
-  PKCE flow; tokens persist in `$HERMES_HOME/mcp-tokens/cloudflare.json` and refresh themselves.
-- Claude: OAuth triggers on first Cloudflare tool use; credentials live in `~/.claude/`.
-- **Never commit either file.** They are full-account grants unless you use a scoped token.
+- **MCP server: nothing to update** — it's remote (`mcp.cloudflare.com`) and the tool list is
+  re-read on every connect. Tokens refresh themselves (`hermes mcp reauth cloudflare` when one
+  goes stale); they persist in `$HERMES_HOME/mcp-tokens/cloudflare.json` (Claude: `~/.claude/`, on
+  first tool use) — **never commit either file**, they are full-account grants unless you use a
+  scoped token.
+- **Skills + plugin:** `make agents-cloudflare-update` (Hermes skills via `npx skills update -g -y`;
+  Claude via `claude plugin marketplace update cloudflare` + `plugin install cloudflare@cloudflare`).
+- **After updating:** Hermes builds MCP connections at **startup**, so `hermes gateway restart`;
+  Claude Code needs `/reload-plugins`. Skills are read at session start.
 
 ## Least-privilege alternative
 
@@ -93,16 +78,7 @@ can auto-detect the account ID, and tokens with "Client IP Address Filtering" en
 supported. Prefer this when the agent should only touch DNS/WAF/Zero Trust and nothing else —
 OAuth grants the whole account.
 
-## Other servers (opt-in, not installed)
-
-`docs.mcp.cloudflare.com/mcp` needs no auth (1 tool, read-only) if you want doc lookup from the
-agent. `bindings` / `builds` / `observability` are Workers-only — skip them unless you deploy
-Workers.
-
-## Removing it
-
-```bash
-claude plugin uninstall cloudflare@cloudflare
-hermes mcp remove cloudflare
-npx -y skills remove --global --agent hermes-agent cloudflare   # or delete ~/.agents/skills/<skill>
-```
+`docs.mcp.cloudflare.com/mcp` is a no-auth, read-only doc lookup if you ever want it; `bindings` /
+`builds` / `observability` are Workers-only. To remove everything:
+`claude plugin uninstall cloudflare@cloudflare`, `hermes mcp remove cloudflare`,
+`npx -y skills remove --global --agent hermes-agent cloudflare`.
