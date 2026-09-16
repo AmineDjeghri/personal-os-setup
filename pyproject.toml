@@ -24,6 +24,7 @@ default-groups = []
 dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
+    "pytest-xdist==3.8.0",
     "pre-commit==4.6.2",
     "ruff==0.16.6",
     "python-semantic-release==10.6.2",
