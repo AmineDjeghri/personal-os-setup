@@ -156,9 +156,10 @@ Check the readme file.
 
 #### GitHub Actions workflows
 
-| Workflow                                 | Trigger                           | Purpose                                                                                  |
-|------------------------------------------|-----------------------------------|------------------------------------------------------------------------------------------|
-| `🔍 PR — Quality Checks` (`ci.yml`)      | `pull_request` on any branch      | Pre-commit (actionlint, ruff, detect-secrets, pip-audit) + tests on every PR             |
+| Workflow                                     | Trigger                                       | Purpose                                                                                  |
+|-----------------------------------------------|-----------------------------------------------|------------------------------------------------------------------------------------------|
+| `👷 CI — Validate` (`ci.yml`)                 | `push` to any branch except `main`/`dev`      | Pre-commit + unit tests + OS integration tests on every branch push (the same run is what shows on the PR) |
+| `📝 Validate PR Title` (`pr-title.yml`)       | `pull_request` (opened, edited, reopened)     | Lints the PR title against Conventional Commits (it becomes the squash commit for semantic-release) |
 | `🔶 Release — Dev` (`dev-release.yml`)   | `push` to `dev` (non `[skip ci]`) | RC versioning (`v1.1.0-rc.X`), builds & publishes prerelease to GitHub                   |
 | `🚀 Release — Main` (`main-release.yml`) | `push`/PR merged to `main`        | Stable versioning (`v1.1.0`), builds, publishes to GitHub Releases + deploys docs        |
 | `🤖 Renovate` (`renovate.json`)          | Schedule (Renovate app)           | Updates GitHub Actions and Python dependencies with 7-day cooldown + selective automerge |

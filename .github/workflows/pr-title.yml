@@ -1,0 +1,46 @@
+# =============================================================================
+# PR Title — Conventional Commits check
+# =============================================================================
+# PR-only on purpose: linting the title needs the pull_request payload, and it is
+# deliberately kept out of ci.yml so that ci.yml can stay push-only (one run per
+# push, no duplicate run when a PR exists).
+# =============================================================================
+name: "📝 Validate PR Title"
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+jobs:
+  validate-pr-title:
+    name: "📝 Validate PR Title"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Conventional Commits format
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            // Pattern matches commitizen schema from pyproject.toml
+            // Supports: [emoji] <type>[(<scope>)][!]: <description>
+            const pattern = /^[^\w\n]*(feat|feature|fix|bugfix|hotfix|perf|refactor|docs|style|test|chore|ci|build)(\([^)]*\))?!?:\s.+/;
+            if (!pattern.test(title)) {
+              core.setFailed(
+                `❌ PR title does not follow Conventional Commits format.\n\n` +
+                `Got: "${title}"\n\n` +
+                `Expected format: <type>[(<scope>)][!]: <description>\n\n` +
+                `Valid types:\n` +
+                `  • feat, feature       → minor version bump\n` +
+                `  • fix, bugfix, hotfix → patch version bump\n` +
+                `  • perf                → patch version bump\n` +
+                `  • refactor, docs, style, test, chore, ci, build → no release\n\n` +
+                `Examples:\n` +
+                `  ✅ "feat: add login page"\n` +
+                `  ✅ "🎉 feat: add login page"\n` +
+                `  ✅ "fix(auth): resolve token expiry"\n` +
+                `  ✅ "feat!: breaking API change"\n`
+              );
+            } else {
+              core.info(`✅ PR title is valid: "${title}"`);
+            }
