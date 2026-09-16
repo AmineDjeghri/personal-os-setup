@@ -1,6 +1,6 @@
 # Agent integrations — Track 2 (tool = truth): third-party agent suites installed with the
 # vendor's own tool, never vendored into the Track 1 chezmoi source. Targets are per-agent and
-# idempotent; binaries overridable (CLAUDE=… HERMES=…). Recipe + approval model: docs/agents/cloudflare.md
+# idempotent; binaries overridable (CLAUDE=… HERMES=…). Recipe + approval model: .claude/skills/cloudflare-agents
 
 .PHONY: agents-cloudflare agents-cloudflare-claude agents-cloudflare-hermes agents-cloudflare-update
 
@@ -43,7 +43,7 @@ agents-cloudflare-hermes: ## Cloudflare skills + MCP for Hermes only (skips if n
 		if grep -q 'trust: untrusted' $${HERMES_HOME:-$$HOME/.hermes}/config.yaml 2>/dev/null; then \
 			echo "   approval gate: OK ('trust: untrusted' present)"; \
 		else \
-			echo "   ! approval gate: add 'trust: untrusted' to the mcp_servers.cloudflare entry (docs/agents/cloudflare.md)"; \
+			echo "   ! approval gate: add 'trust: untrusted' to the mcp_servers.cloudflare entry, then restart the gateway"; \
 		fi; \
 	fi
 

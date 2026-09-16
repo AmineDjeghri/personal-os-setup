@@ -55,6 +55,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Documented-vs-reality drift | `.claude/skills/repo-gotchas` |
 | Tests & coverage | `.claude/skills/run-tests` |
 | Docs site gotchas | `.claude/skills/docs-site` |
+| Agent integrations (Cloudflare skills + MCP) | `.claude/skills/cloudflare-agents` |
 | Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
 
@@ -74,7 +75,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   Hermes never loads plugins (skills are the shared currency). Currently:
   `superpowers` (obra/superpowers, user scope), `cloudflare` (cloudflare/skills — Cloudflare
   skills + MCP server for both agents, installed with `make agents-cloudflare`; recipe and
-  approval model in `docs/agents/cloudflare.md`, never vendored into Track 1).
+  approval model in `.claude/skills/cloudflare-agents`, never vendored into Track 1).
 - **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
   the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
   Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
