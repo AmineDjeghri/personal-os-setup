@@ -4,6 +4,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. The canonical cross-agent rules are imported from `AGENTS.md` above; this file adds Claude Code-specific depth.
 
+**Hard rule — approved per action, every time:** never run `git commit` and never run `git push` without the user's explicit approval. A task description, a plan, "do the work", or a previous approval is not permission. Ask, wait for the yes, then run exactly what was approved (this includes `--force`, PR creation/merge, and release-branch actions). If an approval prompt times out, stop — silence is not consent.
+
 ## Architecture
 
 ### OS/distro detection → package catalog → UI

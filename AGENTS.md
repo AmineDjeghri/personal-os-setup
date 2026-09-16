@@ -16,8 +16,12 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
   **explicit, per-action user approval before running**. A prior "yes" is not standing approval.
 - Destructive: `make vm-clean`, `make deploy-doc-gh` (pushes gh-pages). Never bypass the TUI's
   confirm dialogs (`SystemAction.confirm=False`).
-- Git/GitHub: committing locally is fine once asked; **pushing, PRs, and release-branch actions need
-  explicit confirmation**.
+- **Git: NEVER run `git commit` or `git push` without the user's explicit approval.** Both are
+  approved per action, every single time. A task description, a plan, "do the work", a previous
+  approval, or an earlier push on the same branch is NOT permission. Ask, wait for the yes, then
+  run exactly the action that was approved. The same applies to `--force`, PR creation/merge and
+  release-branch actions. **If an approval prompt times out, STOP** — silence is not consent; say
+  "prompt me again" is the user's call, not yours.
 
 ## Commands
 
@@ -51,6 +55,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Documented-vs-reality drift | `.claude/skills/repo-gotchas` |
 | Tests & coverage | `.claude/skills/run-tests` |
 | Docs site gotchas | `.claude/skills/docs-site` |
+| Agent integrations (Cloudflare skills + MCP) | `.claude/skills/cloudflare-agents` |
 | Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
 
@@ -68,7 +73,9 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
   self-updating (`/plugin update`). NOT committed to this repo; re-register per machine.
   Hermes never loads plugins (skills are the shared currency). Currently:
-  `superpowers` (obra/superpowers, user scope).
+  `superpowers` (obra/superpowers, user scope), `cloudflare` (cloudflare/skills — Cloudflare
+  skills + MCP server for both agents, installed with `make agents-cloudflare`; recipe and
+  approval model in `.claude/skills/cloudflare-agents`, never vendored into Track 1).
 - **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
   the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
   Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.

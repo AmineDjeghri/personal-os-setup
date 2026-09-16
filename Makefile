@@ -15,6 +15,7 @@ include makefiles/ci.mk
 include makefiles/build.mk
 include makefiles/vm.mk
 include makefiles/skills.mk
+include makefiles/agents.mk
 
 .PHONY: all help
 
@@ -51,3 +52,6 @@ help: ## Show this help message
 	@echo ""
 	@echo "Agent Skills:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/skills.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Agent Integrations:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/agents.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
