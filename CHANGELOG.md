@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v2.15.0 (2026-09-16)
+
+### Features
+
+- **agents**: Add Cloudflare skills + MCP integration for Claude Code and Hermes (#111)
+  ([#111](https://github.com/AmineDjeghri/personal-os-setup/pull/111),
+  [`0dd5a5d`](https://github.com/AmineDjeghri/personal-os-setup/commit/0dd5a5deb88af48c942a1ea8ce73fad5ce78c7bf))
+
+
 ## v2.14.2 (2026-09-15)
 
 ### Bug Fixes
