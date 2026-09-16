@@ -1136,6 +1136,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#exposure-model-what-is-reachable-from-outside-the-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exposure model — what is reachable from outside the LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3517,6 +3528,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#exposure-model-what-is-reachable-from-outside-the-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exposure model — what is reachable from outside the LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4160,6 +4182,72 @@ EOF
 <li>If you are facing an issue with onboarding not loading after submitting, check: https://community.home-assistant.io/t/smlight-slzb-06-new-installation-can-not-pass-the-zigbee2mqtt-onboarding-page/908462/2</li>
 </ul>
 <p>### Apps / Add-ons</p>
+<h4 id="exposure-model-what-is-reachable-from-outside-the-lan">Exposure model — what is reachable from outside the LAN<a class="headerlink" href="#exposure-model-what-is-reachable-from-outside-the-lan" title="Permanent link">&para;</a></h4>
+<p>Only the <strong>Cloudflared tunnel</strong> publishes services, and <strong>nothing is port-forwarded</strong>. Every
+other add-on port is LAN-only — note that the LAN is <em>not</em> a trust boundary (a compromised
+add-on can reach every other add-on and Home Assistant itself on <code>8123</code>), so "LAN-only" means
+"not on the internet", not "safe".</p>
+<table>
+<thead>
+<tr>
+<th>Public?</th>
+<th>Service</th>
+<th>Front door</th>
+<th>Blocked at the edge (Cloudflare WAF rule)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yes — Access</td>
+<td>Home Assistant</td>
+<td>Cloudflare Access (email OTP)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>yes — Access</td>
+<td>Hermes WebUI</td>
+<td>Cloudflare Access + add-on <code>password</code></td>
+<td>— (whole hostname is credential-grade)</td>
+</tr>
+<tr>
+<td>yes — Access</td>
+<td>Navidrome</td>
+<td><strong>Cloudflare Access service token</strong> — the client sends <code>CF-Access-Client-Id</code> / <code>CF-Access-Client-Secret</code> (one token per user: the only per-person revoke path). No email policy, so a plain browser gets <code>403</code></td>
+<td>nothing path-level — the token is the gate, and clients still need <code>/rest/*</code></td>
+</tr>
+<tr>
+<td>not installed</td>
+<td>Vaultwarden</td>
+<td>deleted for now — on reinstall it gets <strong>no</strong> Access (the Bitwarden apps cannot answer a challenge)</td>
+<td><code>/admin*</code>, <code>POST /identity/accounts/register*</code>, and <strong>disable signups in <code>/admin</code></strong> (verified open: <code>/api/config</code> reported <code>disableUserRegistration: false</code>)</td>
+</tr>
+<tr>
+<td>yes — app login</td>
+<td>AIOStreams</td>
+<td><strong>none</strong> — app login (<code>auth_required</code>)</td>
+<td><code>/api/v1/status</code>, <code>/builtins/*</code></td>
+</tr>
+</tbody>
+</table>
+<p>The actual hostnames are whatever is configured in the Cloudflared add-on (<code>external_hostname</code>
++ <code>additional_hosts</code>) and are deliberately <strong>not</strong> repeated here — this page should not be a
+map of the tunnel.</p>
+<p>AIOStreams is the only hostname with <strong>no Access layer at all</strong> — Stremio/Nuvio clients are
+header-less and cannot answer an Access challenge, so its own login is the gate. Where the
+client <em>can</em> send headers (Navidrome), use a <strong>service token</strong> instead: it is per-person
+revocable and keeps anonymous traffic out entirely.</p>
+<p>Free-plan budget: <strong>5</strong> WAF custom rules + <strong>1</strong> rate-limit rule. Spend the rate limit on
+Vaultwarden's <code>/identity/*</code> if it comes back — never on the streaming hostnames, where a
+10-second counting window would hit legitimate playback. Navidrome's Access app carries <strong>no
+email policy</strong>, so the web player returns <code>403</code>; add an email-allow policy to that app if the
+browser UI is ever needed.</p>
+<p>What each add-on actually serves, and the full must-never-be-public path list, lives in the
+add-on READMEs: <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/aiostreams">AIOStreams</a>,
+<a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets">Beets</a>,
+<a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/hermes-webui">Hermes WebUI</a>,
+<a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/mediaflow-proxy-light">MediaFlow Proxy Light</a>,
+<a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/octo-fiesta">Octo-Fiesta</a>,
+<a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/personal-app">Personal App</a>.</p>
 <ul>
 <li><strong>AdGuard Home</strong></li>
 <li>DNS and DHCP (do not forget to add IPv4 and IPv6 DNS servers to your router). Disable safe search.</li>
@@ -4172,8 +4260,9 @@ EOF
 <li>
 <p><a href="https://github.com/homeassistant-apps/app-cloudflared">Cloudflared</a> (Cloudflare Tunnel)</p>
 </li>
+<li>Create tunnels for the addons that you want. For example an app running on http://homeassistant.local:8081</li>
 <li>
-<p>Create tunnels for the addons that you want. For example an app running on http://homeassistant.local:8081</p>
+<p>⚠️ Every entry added here is <strong>public</strong>: the tunnel is the only door, but it is a door. Add an entry only after reading the add-on's <em>Exposure</em> section, and check the <a href="#exposure-model--what-is-reachable-from-outside-the-lan">exposure model</a> for which hostnames also need an Access policy.</p>
 </li>
 <li>
 <p><a href="https://github.com/donetick/hassio-addons">Donetick</a></p>
@@ -4219,17 +4308,54 @@ EOF
 <li>For example Narjo for iOS</li>
 </ul>
 </li>
-<li>Auto tagger : Beets</li>
+<li>Auto tagger : <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets">Beets add-on</a> — no HTTP surface, no published port</li>
+<li>You can check this <a href="../music/music_server/">music server setup</a></li>
 <li>
-<p>You can check this <a href="../music/music_server/">music server setup</a></p>
+<p>⚠️ <strong>Remote access — Navidrome is the one exposed service that runs privileged.</strong> The
+    community add-on gets <code>CAP_SYS_ADMIN</code> + <code>CAP_DAC_READ_SEARCH</code> and the host's block
+    devices, so code execution inside it is a <em>host-level</em> compromise, not a music leak.
+    Lower-risk ways to keep remote access:</p>
+<ul>
+<li>run Navidrome on the Ubuntu server and point the tunnel entry at its LAN IP
+  (<code>http://192.168.x.x:4533</code>) — the Cloudflared add-on can reach LAN addresses;</li>
+<li>or keep it LAN-only and reach it over Tailscale (<code>hassio-addons/app-tailscale</code>), then
+  drop the Navidrome entry from the tunnel.
+Cloudflare Access service tokens are only an option for clients that can send custom
+headers — Symfonium, Amperfy and Nautiline can; Narjo, Substreamer and Feishin cannot.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/aiostreams">AIOStreams</a> — Stremio/Nuvio add-on aggregator (debrid/usenet)</p>
+</li>
+<li>
+<p>Public by design on its own tunnel hostname: Stremio/Nuvio clients cannot answer an Access OTP challenge. Keep <code>auth</code> set + <code>auth_required: true</code>, then block <code>/api/v1/status</code> and <code>/builtins/*</code> at the edge.</p>
+</li>
+<li>
+<p><a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/mediaflow-proxy-light">MediaFlow Proxy Light</a> — streaming proxy used by AIOStreams</p>
+</li>
+<li>
+<p><strong>LAN-only, never publish.</strong> The proxy password covers <code>/proxy/*</code> but not the UI/builder paths — <code>/playlist/builder</code> is an unauthenticated fetch primitive (and a LAN port scanner).</p>
+</li>
+<li>
+<p><a href="https://github.com/WolframRavenwolf/hermes-ha-addon">Hermes Agent</a> + <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/hermes-webui">Hermes WebUI</a></p>
+</li>
+<li>
+<p>The WebUI is exposed <strong>only behind Cloudflare Access</strong> (plus its own <code>password</code> option). <code>/api/*</code> runs the agent in-process — i.e. arbitrary tool execution — and <code>all_addon_configs:rw</code> lets it read every other add-on's configuration, including the tunnel config.</p>
+</li>
+<li>
+<p><a href="https://github.com/AmineDjeghri/ha-addons/tree/main/addons/personal-app">Personal App</a></p>
+</li>
+<li>
+<p><strong>LAN-only, never publish</strong> — no authentication anywhere: UI on <code>8080</code>, FastAPI <code>/docs</code> + <code>/openapi.json</code> on <code>8000</code> (not host-published, but reachable from any co-resident container), CORS <code>*</code> <strong>with</strong> credentials, default <code>SESSION_SECRET</code>.</p>
 </li>
 <li>
 <p><strong>Vaultwarden</strong> (self-hosted Bitwarden backend)</p>
 </li>
 <li>Lightweight, open-source reimplementation of the Bitwarden server API. All official Bitwarden clients (iOS, Android, Windows, macOS, browser extensions) work with it.</li>
 <li>Addon repo: https://github.com/hassio-addons/app-vaultwarden</li>
+<li>After installing, point your Bitwarden clients to your self-hosted server URL instead of <code>bitwarden.com</code>.</li>
 <li>
-<p>After installing, point your Bitwarden clients to your self-hosted server URL instead of <code>bitwarden.com</code>.</p>
+<p>⚠️ <strong>Exposure:</strong> exposed on its own hostname with no Access login (the Bitwarden apps cannot answer an OTP challenge), so the master password is the only door. <strong>Disable public signups</strong>: <code>/admin</code> → General → uncheck "Allow new signups" → Save — this is what <code>/api/config</code> reports as <code>disableUserRegistration</code>, and while it is <code>false</code> anyone on the internet can create an account on your instance. Clear the "Signup Domains Whitelist" at the same time (a non-empty whitelist overrides the signups setting). Then block <code>/admin*</code> and <code>POST /identity/accounts/register*</code> at the edge — the admin panel stays reachable on the LAN at <code>http://homeassistant.local:7277/admin</code>.</p>
 </li>
 <li>
 <p><a href="https://github.com/Rbillon59/hass-n8n">n8n</a>
