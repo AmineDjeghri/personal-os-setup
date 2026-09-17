@@ -42,3 +42,31 @@ Two gotchas (both previously caused "not managed"):
 nested `.chezmoiroot` would double-redirect and break the app's deploy path.
 
 Refresh after `git pull`. On the container deploy only `.claude` (full apply would dump desktop dotfiles).
+
+**Hermes-only (not Track 1):** `dot_hermes/skills/<category>/<skill>/` → `~/.hermes/skills/`,
+deployed by the same `make skills-deploy` (mode 644 dirs preserved). Renaming a skill does NOT
+hide it from Claude Code — only living under `dot_hermes/` does; the shared Track-1 list no
+longer includes the coding workflow (now `hermes-coding-workflow`, Hermes-only). The deployed
+names are protected from the Curator: bundled/hub-installed skills are never touched by it, only
+agent-created ones — exactly this promoted set. Pin them per machine after each deploy:
+`hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
+
+**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-deploy` is
+copy-only: it overwrites whatever is live and deletes nothing.
+
+- A skill edited in place (foreground agent, `hermes skills` editor) is reverted by the next
+  deploy — copy it back into the source tree first, then deploy.
+- The Curator and the background-review pass patch agent-created skills in place, so unpinned
+  promoted skills drift and the deploy silently wins. Pin every deployed name.
+- `hermes update` needs no action here: these names are not bundled (absent from
+  `.bundled_manifest`), and the bundled sync never overwrites a same-named local skill — it warns
+  and keeps yours.
+- Deleting a skill in the repo does not delete it live: `rm` the deployed dir by hand.
+- Never deploy a skill that already lives elsewhere in the repo and is symlinked into the store
+  (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
+  tracked source. Keep the symlink, don't duplicate the directory.
+
+**Checking drift (read-only, no deploy):** `make skills-diff` compares repo vs live for both
+trees and exits non-zero on any MISSING/DIFFERS. `make skills-status` lists every git-managed
+skill plus any live `~/.hermes/skills` copy that duplicates a now-git-managed name (leftover from
+before promotion — safe to remove, the next deploy overwrites it anyway).
