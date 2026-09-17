@@ -1,11 +1,8 @@
 # =============================================================================
 # CI — Quality Checks
 # =============================================================================
-# Quality checks run on every push to a branch (main and dev are handled by the
-# release workflows instead). Push-only on purpose: this used to also trigger on
-# PRs, which ran the whole suite a second time for every push to a branch that
-# has an open PR. The PR-title check needs the PR event payload, so it now
-# lives in its own workflow, pr-title.yml, keeping this one push-only.
+# Validates code quality on every push and PR.
+# Runs on feature branches, but skips main and dev (handled by release workflows).
 # =============================================================================
 name: "👷 CI — Validate"
 on:
@@ -14,11 +11,46 @@ on:
       - "**"
       - "!main" # handled by main-release.yml
       - "!dev" # handled by dev-release.yml
-  workflow_dispatch: # manual re-run path; also the escape hatch for fork PRs (no push event)
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches:
+      - "**"
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
 jobs:
+  validate-pr-title:
+    name: "📝 Validate PR Title"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Conventional Commits format
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            // Pattern matches commitizen schema from pyproject.toml
+            // Supports: [emoji] <type>[(<scope>)][!]: <description>
+            const pattern = /^[^\w\n]*(feat|feature|fix|bugfix|hotfix|perf|refactor|docs|style|test|chore|ci|build)(\([^)]*\))?!?:\s.+/;
+            if (!pattern.test(title)) {
+              core.setFailed(
+                `❌ PR title does not follow Conventional Commits format.\n\n` +
+                `Got: "${title}"\n\n` +
+                `Expected format: <type>[(<scope>)][!]: <description>\n\n` +
+                `Valid types:\n` +
+                `  • feat, feature       → minor version bump\n` +
+                `  • fix, bugfix, hotfix → patch version bump\n` +
+                `  • perf                → patch version bump\n` +
+                `  • refactor, docs, style, test, chore, ci, build → no release\n\n` +
+                `Examples:\n` +
+                `  ✅ "feat: add login page"\n` +
+                `  ✅ "🎉 feat: add login page"\n` +
+                `  ✅ "fix(auth): resolve token expiry"\n` +
+                `  ✅ "feat!: breaking API change"\n`
+              );
+            } else {
+              core.info(`✅ PR title is valid: "${title}"`);
+            }
   quality-check-and-tests:
     name: "👷 Quality Check & Tests"
     uses: ./.github/workflows/quality-and-tests.yml
