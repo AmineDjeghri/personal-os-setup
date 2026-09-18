@@ -65,9 +65,12 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   Canonical copy in `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (chezmoi
   source) → deployed to `~/.claude/skills` (= `/config/.claude/skills` on the HA addons).
   Hermes loads them via `skills.external_dirs`; Claude Code via its global skills dir —
-  one copy, both agents. Changes go through PRs. Currently: `coding-workflow`,
-  `repo-conventions`, `project-templates`, `skill-deployment`, `skill-creator`
-  (vendored from anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`).
+  one copy, both agents. Changes go through PRs. Currently: `coding-workflow`, `repo-conventions`,
+  `project-templates`, `skill-deployment`, `skill-creator`
+  (vendored from anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`), `github-auth`,
+  `github-code-review`, `github-issue-to-pr`, `github-issues`, `github-repo-management`,
+  `git-line-endings`, `github-actions-trigger-gotchas`, `github-pr-workflow`,
+  `github-community-health-files`.
 - **Track 2 — Managed (tool = truth):** fast-moving third-party suites installed via
   Claude Code's native marketplace (`claude plugin marketplace add <owner>/<repo>` →
   `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
@@ -76,9 +79,19 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   `superpowers` (obra/superpowers, user scope), `cloudflare` (cloudflare/skills — Cloudflare
   skills + MCP server for both agents, installed with `make agents-cloudflare`; recipe and
   approval model in `.claude/skills/cloudflare-agents`, never vendored into Track 1).
+- **Hermes-only (repo = truth, single-agent):** Hermes-authored skills that Claude Code must
+  NOT read. Canonical copy in `src/personal_os_setup/config/chezmoi/dot_hermes/skills/<category>/<skill>/`
+  → deployed to `~/.hermes/skills` by the same `make skills-deploy`. Deployed names are
+  Curator-protected (`hermes curator pin <skill>` per machine after deploy) — see
+  `.claude/skills/skill-deployment`. Includes `hermes-coding-workflow`, which keeps only the
+  orchestration/delegation rules (division of labor, briefing, verification) — the agent-agnostic
+  plan/confirm/review/PR workflow stays shared in Track 1's `coding-workflow`.
 - **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
   the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
   Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
+- **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
+  put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
+  see `.claude/skills/skill-deployment`.
 
 ## Known drift (trust nothing blindly)
 
