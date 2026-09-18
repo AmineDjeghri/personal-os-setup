@@ -89,6 +89,9 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 - **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
   the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
   Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
+- **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
+  put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
+  see `.claude/skills/skill-deployment`.
 
 ## Known drift (trust nothing blindly)
 

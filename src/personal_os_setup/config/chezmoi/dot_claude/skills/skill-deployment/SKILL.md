@@ -70,3 +70,30 @@ copy-only: it overwrites whatever is live and deletes nothing.
 trees and exits non-zero on any MISSING/DIFFERS. `make skills-status` lists every git-managed
 skill plus any live `~/.hermes/skills` copy that duplicates a now-git-managed name (leftover from
 before promotion — safe to remove, the next deploy overwrites it anyway).
+
+**`skills-deploy` refuses on drift.** Before copying, it runs `make skills-drift` — same scan as
+`skills-diff` but MISSING (never deployed yet) is fine; only a DIFFERS aborts the deploy, so an
+in-place edit isn't silently reverted. Run `make skills-diff` for a full report or `make
+skills-drift` to just check the gate. Fix a DIFFERS by porting the live edit into the repo (PR)
+first, then deploy; or force the overwrite with `make skills-deploy SKILLS_FORCE=1`.
+
+GNU Make gotcha: `export VAR = x   # comment` keeps the comment's leading whitespace inside the
+value, so keep such comments on their own line.
+
+## Bundled (addon-shipped) skills are read-only
+
+Bundled skills sync from the addon with a per-directory hash manifest, so a copy we edited is skipped
+forever and upstream improvements never reach us. Never edit one. When we want a local addition:
+
+1. `hermes skills diff <name>` — see exactly what our copy adds.
+2. Move that content into a skill we own (a `*-ops` addendum, e.g. `claude-code-ops` for the container
+   facts about the `claude-code` skill).
+3. `hermes skills reset <name>` — clears the "user-modified" flag so updates work again; it does not
+   touch the content. `hermes skills reset <name> --restore` also reverts to stock.
+4. Confirm with `hermes skills list-modified`; the next addon update brings the stock version.
+
+Local additions we dropped when un-freezing (kept here for reference; upstream may adopt them):
+`pdf` (scanned-PDF hand-off to `ocr-and-documents`, `--meta` inspect step, `related_skills` frontmatter),
+`grounded-citations` (hand-off to `research-paper-writing`), `hermes-agent` (`/background`, `/busy` rows,
+the OPT-IN plugin note), `hermes-agent-skill-authoring` (`related_skills` line). `claude-code`'s additions
+live in `claude-code-ops`. `docx` / `xlsx` were already identical to stock.

@@ -2,7 +2,7 @@
 # Canonical skills live in .claude/skills; .agents/skills holds git symlinks so
 # non-Claude agents (Hermes, Codex, OpenCode, skills CLI) see the same files.
 
-.PHONY: skills-link skills-check skills-deploy skills-diff skills-status
+.PHONY: skills-link skills-check skills-deploy skills-diff skills-drift skills-status
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
@@ -43,7 +43,12 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		echo "STALE $$l  (run: make skills-link)"; rc=1; \
 	done; exit $$rc
 
-skills-deploy: ## Copy shared skills to ~/.claude/skills and Hermes-only skills to ~/.hermes/skills
+skills-deploy: ## Copy shared skills to ~/.claude/skills and Hermes-only skills to ~/.hermes/skills (refuses if a live copy DIFFERS from git; SKILLS_FORCE=1 overrides)
+ifeq ($(SKILLS_FORCE),1)
+	@echo "skills-deploy: drift check SKIPPED (SKILLS_FORCE=1)"
+else
+	@$(MAKE) --no-print-directory skills-drift || { echo; echo "skills-deploy: ABORTED -- the live copies above differ from git."; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
+endif
 	@mkdir -p $(SKILLS_DST)
 	@cp -R $(SKILLS_SRC)/. $(SKILLS_DST)/
 	@echo "deployed shared skills to $(SKILLS_DST)"
@@ -51,24 +56,36 @@ skills-deploy: ## Copy shared skills to ~/.claude/skills and Hermes-only skills 
 	@cp -R $(HERMES_SKILLS_SRC)/. $(HERMES_SKILLS_DST)/
 	@echo "deployed Hermes-only skills to $(HERMES_SKILLS_DST)"
 
-skills-diff: ## Compare each git-managed skill against its live copy (read-only; exit 1 on drift)
+# skills-diff mode "all": MISSING or DIFFERS -> exit 1 (full OK/DIFFERS/MISSING report)
+# skills-drift mode "drift": DIFFERS only -> exit 1; MISSING is fine (i.e. never deployed yet)
+skills-diff: export SKILLS_SCAN_MODE = all
+skills-drift: export SKILLS_SCAN_MODE = drift
+skills-diff: ## Compare each git-managed skill against its live copy (read-only; exit 1 on MISSING or DIFFERS)
+skills-drift: ## Like skills-diff but only fails on DIFFERS, not MISSING; the skills-deploy gate
+skills-diff skills-drift:
 	@rc=0; \
-	echo "== shared: $(SKILLS_SRC) -> $(SKILLS_DST)"; \
+	[ "$$SKILLS_SCAN_MODE" = "all" ] && echo "== shared: $(SKILLS_SRC) -> $(SKILLS_DST)"; \
 	for d in $(SKILLS_SRC)/*/; do \
 		[ -d "$$d" ] || continue; name=$$(basename "$$d"); \
-		if [ ! -e "$(SKILLS_DST)/$$name" ]; then echo "  MISSING  $$name"; rc=1; \
+		if [ ! -e "$(SKILLS_DST)/$$name" ]; then \
+			[ "$$SKILLS_SCAN_MODE" = "all" ] && { echo "  MISSING  $$name"; rc=1; }; \
 		elif ! diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" >/dev/null 2>&1; then \
 			echo "  DIFFERS  $$name"; diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" | sed 's/^/           /'; rc=1; \
-		else echo "  OK       $$name"; fi; \
+		elif [ "$$SKILLS_SCAN_MODE" = "all" ]; then echo "  OK       $$name"; fi; \
 	done; \
-	echo "== hermes-only: $(HERMES_SKILLS_SRC) -> $(HERMES_SKILLS_DST)"; \
+	[ "$$SKILLS_SCAN_MODE" = "all" ] && echo "== hermes-only: $(HERMES_SKILLS_SRC) -> $(HERMES_SKILLS_DST)"; \
 	for d in $(HERMES_SKILLS_SRC)/*/*/; do \
 		[ -d "$$d" ] || continue; name=$$(basename "$$d"); cat=$$(basename "$$(dirname "$$d")"); \
-		if [ ! -e "$(HERMES_SKILLS_DST)/$$cat/$$name" ]; then echo "  MISSING  $$cat/$$name"; rc=1; \
+		if [ ! -e "$(HERMES_SKILLS_DST)/$$cat/$$name" ]; then \
+			[ "$$SKILLS_SCAN_MODE" = "all" ] && { echo "  MISSING  $$cat/$$name"; rc=1; }; \
 		elif ! diff -rq --exclude=.DS_Store "$$d" "$(HERMES_SKILLS_DST)/$$cat/$$name" >/dev/null 2>&1; then \
 			echo "  DIFFERS  $$cat/$$name"; diff -rq --exclude=.DS_Store "$$d" "$(HERMES_SKILLS_DST)/$$cat/$$name" | sed 's/^/           /'; rc=1; \
-		else echo "  OK       $$cat/$$name"; fi; \
+		elif [ "$$SKILLS_SCAN_MODE" = "all" ]; then echo "  OK       $$cat/$$name"; fi; \
 	done; \
+	if [ "$$SKILLS_SCAN_MODE" = "drift" ]; then \
+		if [ $$rc -ne 0 ]; then echo "skills-drift: DRIFT found (live differs from git; see DIFFERS above)"; \
+		else echo "skills-drift: no drift (live copies match git, or are not yet deployed)"; fi; \
+	fi; \
 	exit $$rc
 
 skills-status: ## Show git-managed skills and live copies that duplicate a managed name
