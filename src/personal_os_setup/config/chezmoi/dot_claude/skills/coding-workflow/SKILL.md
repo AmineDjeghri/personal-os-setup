@@ -9,11 +9,11 @@ Shared workflow rules for coding tasks. Both agents read this skill; rules are a
 
 ## 1. Division of labor
 
-| Task | Agent |
-|---|---|
-| Home Assistant, Hermes gateway/admin, scheduling (cron), memory, audits, container/system ops | **Hermes** |
-| In-repo code changes, features, bugfixes, PRs (in any repo the user works on) | **Claude Code** (Hermes delegates via `claude -p` or interactive) |
-| Repo docs (docs/, README, skills) | Either — follow repo-conventions |
+| Task                                                                                          | Agent                                                             |
+|-----------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| Home Assistant, Hermes gateway/admin, scheduling (cron), memory, audits, container/system ops | **Hermes**                                                        |
+| In-repo code changes, features, bugfixes, PRs (in any repo the user works on)                 | **Claude Code** (Hermes delegates via `claude -p` or interactive) |
+| Repo docs (docs/, README, skills)                                                             | Either — follow repo-conventions                                  |
 
 Hermes orchestrates and can delegate coding to Claude Code. Claude Code works inside a repo; it does NOT manage the Hermes agent, HA gateway, or cron.
 
