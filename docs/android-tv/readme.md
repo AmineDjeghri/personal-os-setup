@@ -129,30 +129,30 @@ This page is where you manage everything related to your addons.
 
 ---
 
-##### 🧱 Step 3 — Create Your Configuration
-1. Go to the **“Save and Install”** section.
-2. Enter a **password** of your choice — this will create your AIOStreams account.
-3. You’ll receive a **UUID** (like your username).
-4. **Save both the UUID and your password!** You’ll need them to restore or import your configuration later.
+##### 🧱 Step 3 — Load My Template
+1. On the AIOStreams start page, click **Use a Template** — you don't need to build a configuration by hand.
+2. In the template list, choose **Import** and paste this link:
+`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json`
+(you can also download [the template file](../../src/personal_os_setup/config/others/aiostreams-template.json) and import it from your device)
+3. Confirm the template **AIOStreams Starter (Debrid / P2P)**, then select the debrid service you use — or press **Skip** for a torrent-only (P2P) setup. Every addon is pointed at the service you choose, so there is nothing to edit per addon afterwards.
+
+My addons, filters, sort order and the custom stream formatter load automatically.
 
 ---
 
-##### 📂 Step 4 — Import Your Settings
-1. Download [my configuration file](../../src/personal_os_setup/config/others/aiostreams-config.json)
-2. Go to **“Navigate and Install”**.
-3. Click **Import**.
-4. Select and upload your saved configuration file. You will an error message saying that some Keys are missing which is normal for now.
-
-Your addons and settings will load automatically.
+##### 📂 Step 4 — Create Your Configuration
+1. Go to the **“Save and Install”** section.
+2. Enter a **password** of your choice — this creates your AIOStreams account.
+3. You’ll receive a **UUID** (like your username).
+4. **Save both the UUID and your password!** You’ll need them to restore your configuration later.
 
 ---
 
 ##### 🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters
 1. In AIOStreams, go to **Services**.
-2. Enable your preferred **Debrid service** (e.g.,AllDebrid, Real-Debrid, TorBox).  I am using All Debrid, if you choose another Debrid provider, you will need to edit the provider in each addon (which is very easy since it's just a select box)
-3. Enter your API key.
-4. Scroll down or check in the tabs to find the `Metadata` section, and look for 'TMDB' and follow the instructions to add your TMDB API keys.
-5. Scroll down or check in the tabs to find the `Posters` section, select RPDB and enter the following api key : `t0-free-rpdb`. Check the options : 'Use Poster Service for Library/Continue Watching' and 'Redirect API'
+2. Enable your preferred **Debrid service** (e.g.,AllDebrid, Real-Debrid, TorBox) and enter its API key. I am using All Debrid — the template already points every addon at the service you selected in Step 3, so there is nothing to edit per addon.
+3. Scroll down or check in the tabs to find the `Metadata` section, and look for 'TMDB' and follow the instructions to add your TMDB API keys.
+4. Scroll down or check in the tabs to find the `Posters` section, select RPDB and enter the following api key : `t0-free-rpdb`. Check the options : 'Use Poster Service for Library/Continue Watching' and 'Redirect API'
 
 ---
 
