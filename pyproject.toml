@@ -1,17 +1,17 @@
 [project]
 name = "personal-os-setup"
-version = "2.11.1"
+version = "2.15.0"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
 dependencies = [
     # Engineering
     "textual==8.2.8",
-    "pydantic==2.13.4",
+    "pydantic==2.13.5",
     "pydantic-settings==2.15.0",
     "loguru==0.7.3",
     "PyYAML==6.0.3",
-    "build==1.5.1", # For building some aur packages like rivalcfg-gui
+    "build==1.6.0", # For building some aur packages like rivalcfg-gui
 ]
 
 ############### uv configuration
@@ -24,9 +24,10 @@ default-groups = []
 dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
-    "pre-commit==4.6.1",
-    "ruff==0.16.2",
-    "python-semantic-release==10.6.1",
+    "pytest-xdist==3.8.0",
+    "pre-commit==4.6.2",
+    "ruff==0.16.6",
+    "python-semantic-release==10.6.2",
 ]
 
 docs = [
@@ -35,7 +36,7 @@ docs = [
     "mkdocstrings==1.0.6",
     "mkdocs-mermaid2-plugin==1.2.3",
     "mkdocs-gen-files==0.6.1",
-    "mkdocstrings-python==2.0.5",
+    "mkdocstrings-python==2.0.8",
     "mkdocs-same-dir==0.1.5",
     "mkdocs-exclude==1.0.2",
     "mkdocs-literate-nav==0.6.3",

@@ -20,31 +20,53 @@
   "prHourlyLimit": 10,
   "vulnerabilityAlerts": {
     "enabled": true,
-    "addLabels": ["security"]
+    "addLabels": ["security"],
+    "semanticCommitType": "fix"
   },
   "osvVulnerabilityAlerts": true,
   "pinDigests": false,
   "packageRules": [
     {
-      "description": "Group pre-commit updates",
+      "description": "Group pre-commit updates (tooling only, no release)",
       "matchManagers": ["pre-commit"],
       "groupName": "pre-commit dependencies",
       "groupSlug": "pre-commit",
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
     },
     {
-      "description": "Group Python/pip updates",
-      "matchManagers": ["pip", "pep621"],
-      "groupName": "python dependencies",
-      "groupSlug": "python",
-      "minimumReleaseAge": "7 days"
-    },
-    {
-      "description": "Group GitHub Actions updates",
+      "description": "Group GitHub Actions updates (CI only, no release)",
       "matchManagers": ["github-actions"],
       "groupName": "github-actions",
       "groupSlug": "github-actions",
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
+    },
+    {
+      "description": "Production Python dependency updates -> trigger a patch release so consumers get the new compatibility range",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["dependencies", "project.dependencies"],
+      "groupName": "python dependencies",
+      "groupSlug": "python",
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "fix"
+    },
+    {
+      "description": "Dev/docs Python dependency updates (dependency-groups) -> tooling only, no release needed",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["devDependencies", "optional-dependencies", "dependency-groups"],
+      "groupName": "python dev dependencies",
+      "groupSlug": "python-dev",
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
+    },
+    {
+      "description": "Major bumps of production deps need manual review for breaking changes",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["dependencies", "project.dependencies"],
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["needs-breaking-review"],
+      "semanticCommitType": "fix"
     }
   ],
   "platformAutomerge": false

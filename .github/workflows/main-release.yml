@@ -26,6 +26,8 @@ concurrency:
 jobs:
   quality-checks:
     name: "👷 Quality Check & Tests"
+    # Skip the bot's own release commit
+    if: "github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]')"
     uses: ./.github/workflows/quality-and-tests.yml
     secrets: inherit  # pragma: allowlist secret
 
@@ -66,7 +68,7 @@ jobs:
           git config core.hooksPath /dev/null
           echo "::group::Semantic Release output"
           NEW_VERSION=$(uv run semantic-release -v version --print | tr -d '[:space:]')
-          if [ -n "$NEW_VERSION" ]; then
+          if [ -n "$NEW_VERSION" ] && ! git rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
             uv run semantic-release -v version
             {
               echo "released=true"

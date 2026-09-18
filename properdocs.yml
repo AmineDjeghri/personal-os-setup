@@ -61,6 +61,7 @@ plugins:
       glob:
         - node_modules/**
         - .venv/**
+        - venv/**
         - docker_data/**
         - dist/**
         - reports/**
@@ -72,6 +73,11 @@ plugins:
         - .deepeval/**
         - .deepteam/**
         - .changelog/**
+        - .agents/**
+        - .chezmoiroot
+        - src/personal_os_setup/config/**
+        - AGENTS.md
+        - CLAUDE.md
         - docs/examples/data/sample.*
 
 markdown_extensions:

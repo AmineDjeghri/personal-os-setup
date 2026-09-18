@@ -2,6 +2,84 @@
 
 <!-- version list -->
 
+## v2.15.0 (2026-09-16)
+
+### Features
+
+- **agents**: Add Cloudflare skills + MCP integration for Claude Code and Hermes (#111)
+  ([#111](https://github.com/AmineDjeghri/personal-os-setup/pull/111),
+  [`0dd5a5d`](https://github.com/AmineDjeghri/personal-os-setup/commit/0dd5a5deb88af48c942a1ea8ce73fad5ce78c7bf))
+
+
+## v2.14.2 (2026-09-15)
+
+### Bug Fixes
+
+- **deps**: Update python dependencies (#98)
+  ([#98](https://github.com/AmineDjeghri/personal-os-setup/pull/98),
+  [`dd61d9c`](https://github.com/AmineDjeghri/personal-os-setup/commit/dd61d9c05552584923824eb6ad34824f6b2bd626))
+
+
+## v2.14.1 (2026-09-15)
+
+### Bug Fixes
+
+- Update config
+  ([`40e176b`](https://github.com/AmineDjeghri/personal-os-setup/commit/40e176be30eb89864a22bcc53dd8aae95b876eb7))
+
+
+## v2.14.0 (2026-09-08)
+
+### Features
+
+- **skills**: Add make skills-deploy for chezmoi-source -> ~/.claude/skills (#108)
+  ([#108](https://github.com/AmineDjeghri/personal-os-setup/pull/108),
+  [`4ceacc3`](https://github.com/AmineDjeghri/personal-os-setup/commit/4ceacc32d81f339168a9ae0f377e443c5fadd1bb))
+
+
+## v2.13.2 (2026-09-07)
+
+### Bug Fixes
+
+- **vm-lab**: Scrub owner-name VM credentials, sync skills docs (#107)
+  ([#107](https://github.com/AmineDjeghri/personal-os-setup/pull/107),
+  [`9124ede`](https://github.com/AmineDjeghri/personal-os-setup/commit/9124edef1e3ff2ad35810689c23c59155b0f621a))
+
+
+## v2.13.1 (2026-09-07)
+
+### Bug Fixes
+
+- **docs**: Exclude the config/ data tree from API stubs and docs crawl (#106)
+  ([#106](https://github.com/AmineDjeghri/personal-os-setup/pull/106),
+  [`9d95c22`](https://github.com/AmineDjeghri/personal-os-setup/commit/9d95c224ec88d3e18571aa4d68fad158efadd957))
+
+
+## v2.13.0 (2026-09-07)
+
+### Features
+
+- **skills**: Add shared agent skills and canonical AGENTS.md (#103)
+  ([#103](https://github.com/AmineDjeghri/personal-os-setup/pull/103),
+  [`a557213`](https://github.com/AmineDjeghri/personal-os-setup/commit/a55721376714d304f8e4eefbd95059107a75fdae))
+
+
+## v2.12.0 (2026-09-07)
+
+### Features
+
+- Update server (#104) ([#104](https://github.com/AmineDjeghri/personal-os-setup/pull/104),
+  [`9e5c0a4`](https://github.com/AmineDjeghri/personal-os-setup/commit/9e5c0a41b52a962aece5bde2586b64ad2087afc1))
+
+
+## v2.11.2 (2026-09-03)
+
+### Bug Fixes
+
+- Add missing configs
+  ([`060a8c4`](https://github.com/AmineDjeghri/personal-os-setup/commit/060a8c4d279984ae3f82738781b07df0368e4ab9))
+
+
 ## v2.11.1 (2026-08-28)
 
 ### Bug Fixes
