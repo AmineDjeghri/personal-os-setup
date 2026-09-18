@@ -39,20 +39,7 @@ together (cron, fan-out), all but ~2 get cancelled every run — worse than the 
 so for a critical job prefer mechanisms with no new syntax.
 
 **Preferred fix for parallel jobs pushing to the same ref:** a `needs:` chain + `if: always()` (deterministic
-ordering, a failure in one job doesn't skip the rest), plus a bounded rebase/push retry:
-
-```bash
-pushed=0
-for attempt in 1 2 3 4 5; do
-  if git pull --rebase --autostash origin main && git push; then pushed=1; break; fi
-  echo "push attempt ${attempt} rejected (main moved?) - retrying"; sleep 5
-done
-[ "$pushed" = 1 ] || { echo "::error::could not push"; exit 1; }
-```
-
-The retry is the load-bearing part: it also covers cross-workflow races (another workflow or a human merging into
-the same branch), which a concurrency group scoped to one workflow never covers. A single `git push` with no retry
-in a scheduled job loses its commit silently-but-redly ("cannot lock ref 'refs/heads/main': is at X but expected Y").
+ordering, a failure in one job doesn't skip the rest).
 
 ## 3. A step gated on a step id that does not exist never runs
 
