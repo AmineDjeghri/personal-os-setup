@@ -35,31 +35,13 @@ Rules that follow from this:
 Claude Code works inside a repo; it does NOT manage the Hermes agent, the HA gateway or cron.
 Hermes orchestrates, writes the specs/briefs and reviews.
 
-## 2. Plan first (MANDATORY)
+## 2. Shared rules (not duplicated here)
 
-Never jump straight into editing. For anything non-trivial:
-1. Restate the goal and constraints in your own words.
-2. Read the repo's AGENTS.md/CLAUDE.md and `.claude/skills/`; explore the relevant files.
-3. Write the plan (files to touch, approach, test strategy) and get explicit user approval before mutating.
-4. If the user says "grill me" / "stress-test this" — interview them about the plan branch by branch until the design tree is resolved.
+The agent-agnostic workflow — plan first, confirm before mutating, reviewable steps, PR flow — lives in the
+shared `coding-workflow` skill (Track 1, read by Hermes and by the delegate). Per-repo specifics live in
+`repo-conventions` and in each repo's own `AGENTS.md`. Do not copy those rules into this file.
 
-## 3. Confirm before mutating (MANDATORY)
-
-- Per-action approval for: system changes, `git push`, opening PRs, anything destructive.
-- A prior "yes" is not standing approval — re-confirm scope.
-- Prefer approval-free git ops: regular push, new commit, merge over rebase; no force-push without explicit approval.
-
-## 4. Review
-
-- Run the repo's own checks before any PR: its `make test`/`make pre-commit` where defined, or the CI-equivalent.
-- Verify git identity before committing (wrong email = phantom PR participants — see repo-conventions).
-- Review your own diff before pushing; for PRs, diff against the base branch.
-
-## 5. Per-repo PR flows
-
-Load `repo-conventions` and follow the row for that repo. Default when unsure: branch from the default branch, conventional commit, squash-merge PR with a conventional title.
-
-## 6. Skills & plugins maintenance
+## 3. Skills & plugins maintenance
 
 - **2-track governance** (encoded in the shared AGENTS.md): Track 1 = curated skills, versioned in the chezmoi source, deployed via `skill-deployment`; Track 2 = third-party suites as Claude Code plugins (e.g. superpowers). Never hand-copy a Track-2 suite into Track 1 — it fights its own updater.
 - Chat-made decisions get encoded into the governing skill (this one, `repo-conventions`, or the repo's own skill) — never left only in memory.
