@@ -137,7 +137,7 @@ This page is where you manage everything related to your addons.
    - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
    (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](../../src/personal_os_setup/config/others/aiostreams-template-essentials.json) and import it from your device)
-3. Confirm the template name, then select the debrid service you use — or press **Skip** for a torrent-only (P2P) setup. Every addon is pointed at the service you choose, so there is nothing to edit per addon afterwards.
+3. Confirm the template name, then select the debrid service you use and enter its API key. This template **requires** a service: its stream addons (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz) fetch through debrid. Once the service is in place every addon is pointed at it, so there is nothing to edit per addon afterwards.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
 
