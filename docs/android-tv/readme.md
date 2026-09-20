@@ -131,10 +131,13 @@ This page is where you manage everything related to your addons.
 
 ##### 🧱 Step 3 — Load My Template
 1. On the AIOStreams start page, click **Use a Template** — you don't need to build a configuration by hand.
-2. In the template list, choose **Import** and paste this link:
+2. In the template list, choose **Import** and paste one of these links:
+   - **Amine's default config** — everything, including rows for the addons that need a URL of your own (see Step 6), shipped disabled:
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json`
-(you can also download [the template file](../../src/personal_os_setup/config/others/aiostreams-template.json) and import it from your device)
-3. Confirm the template **AIOStreams Starter (Debrid / P2P)**, then select the debrid service you use — or press **Skip** for a torrent-only (P2P) setup. Every addon is pointed at the service you choose, so there is nothing to edit per addon afterwards.
+   - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
+`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
+   (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](../../src/personal_os_setup/config/others/aiostreams-template-essentials.json) and import it from your device)
+3. Confirm the template name, then select the debrid service you use — or press **Skip** for a torrent-only (P2P) setup. Every addon is pointed at the service you choose, so there is nothing to edit per addon afterwards.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
 
@@ -157,7 +160,7 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 ---
 
 ##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
-The addons below need **your own account or manifest URL**, so they ship disabled with an empty URL. To use one: configure it on its own site, copy its manifest URL, paste it into that addon in AIOStreams (**Addons → Custom → URL**), then switch the addon on. Everything the template enables out of the box (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
+The addons below are in the **full** template and need **your own account or manifest URL**, so they ship disabled with an empty URL (the **essentials** template leaves them out). To use one: configure it on its own site, copy its manifest URL, paste it into that addon in AIOStreams (**Addons → Custom → URL**), then switch the addon on. Everything the template enables out of the box (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
 | Addon | What it adds | Configure it at | Resources | Format Passthrough | Result Passthrough | Stremio Addons page |
 |---|---|---|---|---|---|---|

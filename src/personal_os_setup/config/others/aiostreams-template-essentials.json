@@ -1,18 +1,17 @@
 {
   "metadata": {
-    "id": "personal-os-setup.aiostreams-starter",
-    "name": "Amine's default config",
-    "description": "Streaming-platform catalogs plus 4K-first French and English streams.",
+    "id": "personal-os-setup.aiostreams-essentials",
+    "name": "Amine's default config (essentials)",
+    "description": "Streaming-platform catalogs plus 4K-first French and English streams, with no addon that needs a URL of your own.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.1.0",
+    "version": "1.0.0",
     "category": "debrid",
     "tags": [
       "debrid",
       "4k",
       "english",
-      "french",
-      "catalogs"
+      "french"
     ],
     "services": [
       "realdebrid",
@@ -27,7 +26,7 @@
     ],
     "serviceRequired": false,
     "setToSaveInstallMenu": true,
-    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json"
+    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json"
   },
   "config": {
     "addonName": "AIOStreams",
@@ -270,22 +269,6 @@
         }
       },
       {
-        "type": "custom",
-        "instanceId": "127",
-        "enabled": false,
-        "options": {
-          "name": "statusio (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "libraryAddon": false,
-          "formatPassthrough": true,
-          "resultPassthrough": true,
-          "timeout": 5000,
-          "resources": [],
-          "mediaTypes": [],
-          "pinPosition": "top"
-        }
-      },
-      {
         "type": "torrentio",
         "instanceId": "392",
         "enabled": true,
@@ -362,72 +345,6 @@
         }
       },
       {
-        "type": "custom",
-        "instanceId": "c9a",
-        "enabled": false,
-        "options": {
-          "name": "Top-Streaming (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false,
-          "forceToTop": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "2e0",
-        "enabled": false,
-        "options": {
-          "name": "Top-streaming FR (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false,
-          "forceToTop": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "bc3",
-        "enabled": false,
-        "options": {
-          "name": "Lumio (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "stream"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "645",
-        "enabled": false,
-        "options": {
-          "name": "Streamfusion (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "stream"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false
-        }
-      },
-      {
         "type": "opensubtitles-v3-plus",
         "instanceId": "02d",
         "enabled": true,
@@ -459,37 +376,6 @@
           "includeP2P": false,
           "removeTrash": false,
           "useMultipleInstances": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "84a",
-        "enabled": false,
-        "options": {
-          "name": "Trakt lists (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 15000,
-          "resources": [
-            "catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "389",
-        "enabled": false,
-        "options": {
-          "name": "Nuvio Live Sports (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "formatPassthrough": true,
-          "resultPassthrough": true
         }
       }
     ],
@@ -581,215 +467,6 @@
         "hideable": false,
         "searchable": false,
         "addonName": "Cinemeta (custom)"
-      },
-      {
-        "id": "c9ae3b0.netflix-movie-united-states",
-        "type": "movie",
-        "name": "🔴 Netflix - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "2e0e3b0.netflix-movie-france",
-        "type": "movie",
-        "name": "🔴 Netflix - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "c9ae3b0.netflix-series-united-states",
-        "type": "series",
-        "name": "🔴 Netflix - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "2e0e3b0.netflix-series-france",
-        "type": "series",
-        "name": "🔴 Netflix - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "c9ae3b0.amazon-prime-movie-united-states",
-        "type": "movie",
-        "name": "📦 Amazon Prime Video - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "2e0e3b0.amazon-prime-movie-france",
-        "type": "movie",
-        "name": "📦 Amazon Prime Video - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "c9ae3b0.amazon-prime-series-united-states",
-        "type": "series",
-        "name": "📦 Amazon Prime Video - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "2e0e3b0.amazon-prime-series-france",
-        "type": "series",
-        "name": "📦 Amazon Prime Video - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "c9ae3b0.apple-tv-movie-united-states",
-        "type": "movie",
-        "name": "🍎 Apple TV - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.apple-tv-series-united-states",
-        "type": "series",
-        "name": "🍎 Apple TV - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.hbo-max-movie-united-states",
-        "type": "movie",
-        "name": "🎭 HBO Max - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.hbo-max-series-united-states",
-        "type": "series",
-        "name": "🎭 HBO Max - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.paramount-plus-movie-united-states",
-        "type": "movie",
-        "name": "🗻 Paramount+ - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.paramount-plus-series-united-states",
-        "type": "series",
-        "name": "🗻 Paramount+ - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "2e0e3b0.canal-movie-france",
-        "type": "movie",
-        "name": "📡 Canal+ - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "2e0e3b0.canal-series-france",
-        "type": "series",
-        "name": "📡 Canal+ - Top 10 France",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
-      },
-      {
-        "id": "c9ae3b0.disney-overall-united-states",
-        "type": "series",
-        "name": "Disney+ - 🏆 Overall United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.popular-movie-global",
-        "type": "movie",
-        "name": "🔥 Popular - Top 10 Global",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
-      },
-      {
-        "id": "c9ae3b0.popular-series-global",
-        "type": "series",
-        "name": "🔥 Popular - Top 10 Global",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "searchable": false,
-        "addonName": "Top-Streaming (custom)"
       }
     ],
     "mergedCatalogs": [],
