@@ -157,51 +157,24 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 ---
 
 ##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
-The following addons are disabled by default in the configuration. Enable them only if you need their specific features:
+The addons below need **your own account or manifest URL**, so they ship disabled with an empty URL. To use one: configure it on its own site, copy its manifest URL, paste it into that addon in AIOStreams (**Addons → Custom → URL**), then switch the addon on. Everything the template enables out of the box (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
-###### ⚙️ (optional) Configure *Baguettio (custom)* for French content:
-1. Baguettio is a French addon with additional French streaming sources
-2. Configure at https://baguettio.org
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable for enhanced French content availability
+| Addon | What it adds | Configure it at | Resources | Format Passthrough | Result Passthrough | Stremio Addons page |
+|---|---|---|---|---|---|---|
+| *Cinemeta (custom)* | Base metadata + Popular / New / Featured catalogs — **enabled by default** | — | `meta` `catalog` | — | — | — |
+| *Top-Streaming (custom)* | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US) | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
+| *Top-streaming FR (custom)* | The same lists for France (Canal+, Netflix FR, Prime FR…) | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
+| *Trakt lists (custom)* | Your Trakt lists, trending and genre lists | <https://trakt.dexter21767.com> — log in with Trakt | `catalog` | — | — | — |
+| *Nuvio Live Sports (custom)* | Live football, NBA, NFL, NHL, F1 | <https://nuvio.moaqeel6679.my.id> | — | ✅ | ✅ | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports) |
+| *Statusio (custom)* | Debrid account health card — provider, username, expiry, days left | <https://statusio.elfhosted.com/configure> | — | ✅ | ✅ | [statusio](https://stremio-addons.net/addons/statusio) |
+| *Lumio (custom)* | French VOD, torrent + direct download | <https://mylumio.tv> | `stream` | — | — | [lumio](https://stremio-addons.net/addons/lumio) |
+| *Streamfusion (custom)* | Extra French streaming sources | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream` | — | — | [streamfusion](https://stremio-addons.net/addons/streamfusion) |
+| *AI Search (custom)* | Recommendations from natural-language queries (needs your own Gemini + TMDB keys; better with Trakt) | see its Stremio Addons page | — | — | — | [ai-search](https://stremio-addons.net/addons/ai-search) |
 
-###### ⚙️ (optional) Configure *Streamfusion (custom) for French content*:
-1. Streamfusion provides additional French streaming sources
-2. Click the **Edit** button in AIOStreams
-3. Look for StreamFusion API Key and follow the instructions to get the api key from the telegram bot
-4. Copy the key and enable the addon
-
-###### ⚙️ (optional) Configure *Statusio (custom)*:
-1. Statusio helps monitor your debrid service status.
-2. Go to https://statusio.elfhosted.com/configure to set it up
-3. Copy the manifest URL and paste it in AIOStreams under 'Statusio (custom)'
-4. Enable the addon if you want status monitoring
-
-###### ⚙️ (optional) Configure *Top-Streaming (custom)* for US catalogs:
-1. Go to https://top-streaming.stream/configure?lang=en
-2. Select 'Standard Posters' for poster type
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable to get Netflix, Amazon Prime, HBO Max, Disney+ top 10 lists for US
-
-###### ⚙️ (optional) Configure *Top-streaming FR (custom)* for French catalogs:
-1. Go to https://top-streaming.stream/configure?lang=fr
-2. Select 'Standard Posters' for poster type
-3. Copy the manifest URL and paste it in AIOStreams under 'Top-streaming FR (custom)'
-4. Enable to get French streaming service catalogs (Canal+, Netflix FR, etc.)
-
-###### ⚙️ (optional) Configure *TVMio* for Live TV:
-1. TVMio provides live TV channels for France, Argentina, and Spain
-2. Go to https://tvmio.ooguy.com to configure
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable if you want live TV support
-
-###### ⚙️ (optional) Configure *AI Search (custom)*:
-1. AI Search provides intelligent recommendations based on your viewing history
-2. Go to https://stremio.itcon.au/ to configure
-3. It is preferable to use this addon with Trakt for better recommendations
-4. Follow the tutorial on their website to get the api keys
-5. Copy the manifest URL and paste it in AIOStreams
-6. Enable for AI-powered search and recommendations
+**Resources** — leave blank unless you want to restrict what AIOStreams takes from the addon: `stream` = streams only, `catalog` = catalogs only.
+**Format Passthrough** — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
+**Result Passthrough** — results from this addon are never filtered out; its streams always appear in the list.
+**Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
 ---
 
 ##### 💾 Step 7 — Save and Install

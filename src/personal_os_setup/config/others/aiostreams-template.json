@@ -1,30 +1,35 @@
 {
   "metadata": {
     "id": "personal-os-setup.aiostreams-starter",
-    "name": "AIOStreams Starter (Debrid / P2P)",
-    "description": "A ready-made AIOStreams setup: Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, TMDB catalogs and OpenSubtitles, tuned for French/English releases and 4K-first ordering, with a custom emoji stream formatter.\n\n**No credentials are included.** Pick your debrid service in the next step (or press Skip for P2P) — the service inside each addon follows your choice.\n\nThe optional catalog addons (Trakt lists, Top-Streaming, TVMio, Lumio, Streamfusion, Statusio) ship disabled: paste your own manifest URL and enable the ones you want.",
+    "name": "Amine's default config",
+    "description": "Streaming-platform catalogs plus 4K-first French and English streams.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "category": "debrid",
     "tags": [
       "debrid",
       "4k",
-      "french"
+      "english",
+      "french",
+      "catalogs"
+    ],
+    "services": [
+      "realdebrid",
+      "alldebrid",
+      "premiumize",
+      "debridlink",
+      "torbox",
+      "offcloud",
+      "easydebrid",
+      "debrider",
+      "pikpak"
     ],
     "serviceRequired": false,
     "setToSaveInstallMenu": true,
-    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json",
-    "changelog": [
-      {
-        "version": "1.0.0",
-        "date": "2026-09-18",
-        "content": "- Initial release: stream addons, filters, sort order and custom formatter; service-agnostic."
-      }
-    ]
+    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json"
   },
   "config": {
-    "trusted": false,
     "addonName": "AIOStreams",
     "addonDescription": "AIOStreams — one addon, all your sources",
     "excludedResolutions": [],
@@ -94,10 +99,14 @@
       1000
     ],
     "seederRangeTypes": [],
+    "ageRangeTypes": [
+      "usenet"
+    ],
     "digitalReleaseFilter": {
       "requestTypes": [],
       "addons": []
     },
+    "enableSeadex": true,
     "excludeCached": false,
     "excludeCachedFromAddons": [],
     "excludeCachedFromServices": [],
@@ -109,6 +118,7 @@
     "excludedStreamExpressions": [],
     "requiredStreamExpressions": [],
     "preferredStreamExpressions": [],
+    "regexOverrides": [],
     "dynamicAddonFetching": {
       "enabled": false,
       "condition": "((count(cached(resolution(regexMatched(totalStreams), '2160p'))) >= 1) or (count(cached(resolution(regexMatched(totalStreams), '1440p'))) >= 1) or ((count(cached(resolution(regexMatched(totalStreams), '1080p'))) >= 2) and (count(cached(resolution(totalStreams, '2160p','1440p'))) == 0)) or ((count(cached(resolution(regexMatched(totalStreams), '720p','576p','480p','360p','240p','144p'))) >= 3) and (count(cached(resolution(totalStreams, '2160p','1440p','1080p'))) == 0)) or (totalTimeTaken > 5000))"
@@ -203,6 +213,14 @@
       "requestTypes": [],
       "addons": []
     },
+    "episodeTitleMatching": {
+      "requestTypes": [],
+      "addons": []
+    },
+    "languageInference": {
+      "enabled": true,
+      "sources": []
+    },
     "deduplicator": {
       "enabled": true,
       "excludeAddons": [],
@@ -230,6 +248,7 @@
     },
     "precacheNextEpisode": true,
     "precacheSelector": "true ? uncached(streams) : []",
+    "precacheSingleStream": true,
     "services": [
       {
         "__if": "services.realdebrid",
@@ -379,7 +398,44 @@
           ],
           "providers": [],
           "useMultipleInstances": false,
-          "services": "{{services}}"
+          "services": [
+            {
+              "__if": "services.realdebrid",
+              "__value": "realdebrid"
+            },
+            {
+              "__if": "services.alldebrid",
+              "__value": "alldebrid"
+            },
+            {
+              "__if": "services.premiumize",
+              "__value": "premiumize"
+            },
+            {
+              "__if": "services.debridlink",
+              "__value": "debridlink"
+            },
+            {
+              "__if": "services.torbox",
+              "__value": "torbox"
+            },
+            {
+              "__if": "services.offcloud",
+              "__value": "offcloud"
+            },
+            {
+              "__if": "services.easydebrid",
+              "__value": "easydebrid"
+            },
+            {
+              "__if": "services.debrider",
+              "__value": "debrider"
+            },
+            {
+              "__if": "services.pikpak",
+              "__value": "pikpak"
+            }
+          ]
         }
       },
       {
@@ -407,7 +463,44 @@
           "resources": [
             "stream"
           ],
-          "services": "{{services}}",
+          "services": [
+            {
+              "__if": "services.realdebrid",
+              "__value": "realdebrid"
+            },
+            {
+              "__if": "services.alldebrid",
+              "__value": "alldebrid"
+            },
+            {
+              "__if": "services.premiumize",
+              "__value": "premiumize"
+            },
+            {
+              "__if": "services.debridlink",
+              "__value": "debridlink"
+            },
+            {
+              "__if": "services.torbox",
+              "__value": "torbox"
+            },
+            {
+              "__if": "services.offcloud",
+              "__value": "offcloud"
+            },
+            {
+              "__if": "services.easydebrid",
+              "__value": "easydebrid"
+            },
+            {
+              "__if": "services.debrider",
+              "__value": "debrider"
+            },
+            {
+              "__if": "services.pikpak",
+              "__value": "pikpak"
+            }
+          ],
           "mediaTypes": []
         }
       },
@@ -427,7 +520,44 @@
           "contributorStreams": false,
           "certificationLevelsFilter": [],
           "nudityFilter": [],
-          "services": "{{services}}",
+          "services": [
+            {
+              "__if": "services.realdebrid",
+              "__value": "realdebrid"
+            },
+            {
+              "__if": "services.alldebrid",
+              "__value": "alldebrid"
+            },
+            {
+              "__if": "services.premiumize",
+              "__value": "premiumize"
+            },
+            {
+              "__if": "services.debridlink",
+              "__value": "debridlink"
+            },
+            {
+              "__if": "services.torbox",
+              "__value": "torbox"
+            },
+            {
+              "__if": "services.offcloud",
+              "__value": "offcloud"
+            },
+            {
+              "__if": "services.easydebrid",
+              "__value": "easydebrid"
+            },
+            {
+              "__if": "services.debrider",
+              "__value": "debrider"
+            },
+            {
+              "__if": "services.pikpak",
+              "__value": "pikpak"
+            }
+          ],
           "mediaTypes": []
         }
       },
@@ -478,20 +608,6 @@
           "libraryAddon": false,
           "resultPassthrough": false,
           "forceToTop": false
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "a02",
-        "enabled": false,
-        "options": {
-          "name": "TVMio (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": true
         }
       },
       {
@@ -554,7 +670,44 @@
           "resources": [
             "stream"
           ],
-          "services": "{{services}}",
+          "services": [
+            {
+              "__if": "services.realdebrid",
+              "__value": "realdebrid"
+            },
+            {
+              "__if": "services.alldebrid",
+              "__value": "alldebrid"
+            },
+            {
+              "__if": "services.premiumize",
+              "__value": "premiumize"
+            },
+            {
+              "__if": "services.debridlink",
+              "__value": "debridlink"
+            },
+            {
+              "__if": "services.torbox",
+              "__value": "torbox"
+            },
+            {
+              "__if": "services.offcloud",
+              "__value": "offcloud"
+            },
+            {
+              "__if": "services.easydebrid",
+              "__value": "easydebrid"
+            },
+            {
+              "__if": "services.debrider",
+              "__value": "debrider"
+            },
+            {
+              "__if": "services.pikpak",
+              "__value": "pikpak"
+            }
+          ],
           "mediaTypes": [],
           "includeP2P": false,
           "removeTrash": false,
@@ -575,6 +728,21 @@
           "mediaTypes": [],
           "libraryAddon": false,
           "resultPassthrough": false
+        }
+      },
+      {
+        "type": "custom",
+        "instanceId": "389",
+        "enabled": false,
+        "options": {
+          "name": "Nuvio Live Sports (custom)",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 5000,
+          "resources": [],
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "formatPassthrough": true,
+          "resultPassthrough": true
         }
       }
     ],
@@ -602,20 +770,31 @@
         "addonName": "Cinemeta (custom)"
       },
       {
-        "id": "4a0e3b0.year",
+        "id": "4a0e3b0.imdbRating",
         "type": "movie",
-        "name": "New",
+        "name": "Featured",
         "shuffle": false,
         "enabled": false,
         "usePosterService": true,
-        "hideable": false,
+        "hideable": true,
         "searchable": false,
         "addonName": "Cinemeta (custom)"
       },
       {
-        "id": "4a0e3b0.year",
+        "id": "4a0e3b0.imdbRating",
         "type": "series",
-        "name": "New",
+        "name": "Featured",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Cinemeta (custom)"
+      },
+      {
+        "id": "4a0e3b0.calendar-videos",
+        "type": "series",
+        "name": "Calendar videos",
         "shuffle": false,
         "enabled": false,
         "usePosterService": true,
@@ -635,9 +814,9 @@
         "addonName": "Cinemeta (custom)"
       },
       {
-        "id": "4a0e3b0.calendar-videos",
+        "id": "4a0e3b0.year",
         "type": "series",
-        "name": "Calendar videos",
+        "name": "New",
         "shuffle": false,
         "enabled": false,
         "usePosterService": true,
@@ -646,26 +825,224 @@
         "addonName": "Cinemeta (custom)"
       },
       {
-        "id": "4a0e3b0.imdbRating",
-        "type": "series",
-        "name": "Featured",
+        "id": "4a0e3b0.year",
+        "type": "movie",
+        "name": "New",
         "shuffle": false,
         "enabled": false,
         "usePosterService": true,
-        "hideable": true,
+        "hideable": false,
         "searchable": false,
         "addonName": "Cinemeta (custom)"
       },
       {
-        "id": "4a0e3b0.imdbRating",
+        "id": "c9ae3b0.netflix-movie-united-states",
         "type": "movie",
-        "name": "Featured",
+        "name": "🔴 Netflix - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "2e0e3b0.netflix-movie-france",
+        "type": "movie",
+        "name": "🔴 Netflix - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "c9ae3b0.netflix-series-united-states",
+        "type": "series",
+        "name": "🔴 Netflix - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "2e0e3b0.netflix-series-france",
+        "type": "series",
+        "name": "🔴 Netflix - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "c9ae3b0.amazon-prime-movie-united-states",
+        "type": "movie",
+        "name": "📦 Amazon Prime Video - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "2e0e3b0.amazon-prime-movie-france",
+        "type": "movie",
+        "name": "📦 Amazon Prime Video - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "c9ae3b0.amazon-prime-series-united-states",
+        "type": "series",
+        "name": "📦 Amazon Prime Video - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "2e0e3b0.amazon-prime-series-france",
+        "type": "series",
+        "name": "📦 Amazon Prime Video - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "c9ae3b0.apple-tv-movie-united-states",
+        "type": "movie",
+        "name": "🍎 Apple TV - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.apple-tv-series-united-states",
+        "type": "series",
+        "name": "🍎 Apple TV - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.hbo-max-movie-united-states",
+        "type": "movie",
+        "name": "🎭 HBO Max - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.hbo-max-series-united-states",
+        "type": "series",
+        "name": "🎭 HBO Max - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.paramount-plus-movie-united-states",
+        "type": "movie",
+        "name": "🗻 Paramount+ - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.paramount-plus-series-united-states",
+        "type": "series",
+        "name": "🗻 Paramount+ - Top 10 United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "2e0e3b0.canal-movie-france",
+        "type": "movie",
+        "name": "📡 Canal+ - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "2e0e3b0.canal-series-france",
+        "type": "series",
+        "name": "📡 Canal+ - Top 10 France",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-streaming FR (custom)"
+      },
+      {
+        "id": "c9ae3b0.disney-overall-united-states",
+        "type": "series",
+        "name": "Disney+ - 🏆 Overall United States",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.popular-movie-global",
+        "type": "movie",
+        "name": "🔥 Popular - Top 10 Global",
         "shuffle": false,
         "enabled": false,
         "usePosterService": true,
         "hideable": true,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Top-Streaming (custom)"
+      },
+      {
+        "id": "c9ae3b0.popular-series-global",
+        "type": "series",
+        "name": "🔥 Popular - Top 10 Global",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "searchable": false,
+        "addonName": "Top-Streaming (custom)"
       }
     ],
     "mergedCatalogs": [],
