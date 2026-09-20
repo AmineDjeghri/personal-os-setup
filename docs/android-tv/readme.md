@@ -160,7 +160,7 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 ---
 
 ##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
-The addons below are in the **full** template and need **your own account or manifest URL**, so they ship disabled with an empty URL (the **essentials** template leaves them out). To use one: configure it on its own site, copy its manifest URL, paste it into that addon in AIOStreams (**Addons → Custom → URL**), then switch the addon on. Everything the template enables out of the box (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
+The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
 | Addon | What it adds | Configure it at | Resources | Format Passthrough | Result Passthrough | Stremio Addons page |
 |---|---|---|---|---|---|---|

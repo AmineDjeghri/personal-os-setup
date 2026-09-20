@@ -261,7 +261,7 @@
       {
         "type": "custom",
         "instanceId": "127",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "statusio (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -362,7 +362,7 @@
       {
         "type": "custom",
         "instanceId": "c9a",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Top-Streaming (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -379,7 +379,7 @@
       {
         "type": "custom",
         "instanceId": "2e0",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Top-streaming FR (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -396,7 +396,7 @@
       {
         "type": "custom",
         "instanceId": "bc3",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Lumio (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -412,7 +412,7 @@
       {
         "type": "custom",
         "instanceId": "645",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Streamfusion (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -465,7 +465,7 @@
       {
         "type": "custom",
         "instanceId": "84a",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Trakt lists (custom)",
           "manifestUrl": "<optional_template_placeholder>",
@@ -481,7 +481,7 @@
       {
         "type": "custom",
         "instanceId": "389",
-        "enabled": false,
+        "enabled": true,
         "options": {
           "name": "Nuvio Live Sports (custom)",
           "manifestUrl": "<optional_template_placeholder>",
