@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams, with no addon that needs a URL of your own.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "category": "debrid",
     "tags": [
       "debrid",
@@ -13,18 +13,7 @@
       "english",
       "french"
     ],
-    "services": [
-      "realdebrid",
-      "alldebrid",
-      "premiumize",
-      "debridlink",
-      "torbox",
-      "offcloud",
-      "easydebrid",
-      "debrider",
-      "pikpak"
-    ],
-    "serviceRequired": true,
+    "serviceRequired": false,
     "setToSaveInstallMenu": true,
     "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json"
   },
@@ -279,7 +268,10 @@
             "stream"
           ],
           "providers": [],
-          "useMultipleInstances": false
+          "useMultipleInstances": false,
+          "services": [
+            "alldebrid"
+          ]
         }
       },
       {
@@ -307,7 +299,10 @@
           "resources": [
             "stream"
           ],
-          "mediaTypes": []
+          "mediaTypes": [],
+          "services": [
+            "alldebrid"
+          ]
         }
       },
       {
@@ -326,7 +321,10 @@
           "contributorStreams": false,
           "certificationLevelsFilter": [],
           "nudityFilter": [],
-          "mediaTypes": []
+          "mediaTypes": [],
+          "services": [
+            "alldebrid"
+          ]
         }
       },
       {
@@ -375,7 +373,10 @@
           "mediaTypes": [],
           "includeP2P": false,
           "removeTrash": false,
-          "useMultipleInstances": false
+          "useMultipleInstances": false,
+          "services": [
+            "alldebrid"
+          ]
         }
       }
     ],
@@ -490,7 +491,7 @@
       },
       {
         "id": "alldebrid",
-        "enabled": false,
+        "enabled": true,
         "credentials": {}
       },
       {

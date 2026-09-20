@@ -137,7 +137,7 @@ This page is where you manage everything related to your addons.
    - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
    (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](../../src/personal_os_setup/config/others/aiostreams-template-essentials.json) and import it from your device)
-3. Confirm the template name, then select the debrid service you use and enter its API key. This template **requires** a service: its stream addons (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz) fetch through debrid. Once the service is in place every addon is pointed at it, so there is nothing to edit per addon afterwards.
+3. Confirm the template name, then pick the debrid service you use (or press **Skip**). The template ships with **AllDebrid** wired into the stream addons — if you use another provider, see Step 5, it is one dropdown per addon.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
 
@@ -153,7 +153,7 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 
 ##### 🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters
 1. In AIOStreams, go to **Services**.
-2. Enable your preferred **Debrid service** (e.g.,AllDebrid, Real-Debrid, TorBox) and enter its API key. I am using All Debrid — the template already points every addon at the service you selected in Step 3, so there is nothing to edit per addon.
+2. Enter the API key of your **Debrid service** (e.g., AllDebrid, Real-Debrid, TorBox). I am using All Debrid, which is what the template ships already wired in — on another provider, also switch the service in each stream addon: Torrentio, StremThru Store, MediaFusion and Meteor each have a *Services* dropdown.
 3. Scroll down or check in the tabs to find the `Metadata` section, and look for 'TMDB' and follow the instructions to add your TMDB API keys.
 4. Scroll down or check in the tabs to find the `Posters` section, select RPDB and enter the following api key : `t0-free-rpdb`. Check the options : 'Use Poster Service for Library/Continue Watching' and 'Redirect API'
 
