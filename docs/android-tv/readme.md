@@ -131,10 +131,13 @@ This page is where you manage everything related to your addons.
 
 ##### 🧱 Step 3 — Load My Template
 1. On the AIOStreams start page, click **Use a Template** — you don't need to build a configuration by hand.
-2. In the template list, choose **Import** and paste this link:
+2. In the template list, choose **Import** and paste one of these links:
+   - **Amine's default config** — everything, including rows for the addons that need a URL of your own (see Step 6), shipped disabled:
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json`
-(you can also download [the template file](../../src/personal_os_setup/config/others/aiostreams-template.json) and import it from your device)
-3. Confirm the template **AIOStreams Starter (Debrid / P2P)**, then select the debrid service you use — or press **Skip** for a torrent-only (P2P) setup. Every addon is pointed at the service you choose, so there is nothing to edit per addon afterwards.
+   - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
+`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
+   (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](../../src/personal_os_setup/config/others/aiostreams-template-essentials.json) and import it from your device)
+3. Confirm the template name, then pick the debrid service you use (or press **Skip**). The template ships with **AllDebrid** wired into the stream addons — if you use another provider, see Step 5, it is one dropdown per addon.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
 
@@ -150,58 +153,31 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 
 ##### 🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters
 1. In AIOStreams, go to **Services**.
-2. Enable your preferred **Debrid service** (e.g.,AllDebrid, Real-Debrid, TorBox) and enter its API key. I am using All Debrid — the template already points every addon at the service you selected in Step 3, so there is nothing to edit per addon.
+2. Enter the API key of your **Debrid service** (e.g., AllDebrid, Real-Debrid, TorBox). I am using All Debrid, which is what the template ships already wired in — on another provider, also switch the service in each stream addon: Torrentio, StremThru Store, MediaFusion and Meteor each have a *Services* dropdown.
 3. Scroll down or check in the tabs to find the `Metadata` section, and look for 'TMDB' and follow the instructions to add your TMDB API keys.
 4. Scroll down or check in the tabs to find the `Posters` section, select RPDB and enter the following api key : `t0-free-rpdb`. Check the options : 'Use Poster Service for Library/Continue Watching' and 'Redirect API'
 
 ---
 
 ##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
-The following addons are disabled by default in the configuration. Enable them only if you need their specific features:
+The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
-###### ⚙️ (optional) Configure *Baguettio (custom)* for French content:
-1. Baguettio is a French addon with additional French streaming sources
-2. Configure at https://baguettio.org
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable for enhanced French content availability
+| Addon | What it adds | Configure it at | Resources | Format Passthrough | Result Passthrough | Stremio Addons page |
+|---|---|---|---|---|---|---|
+| *Cinemeta (custom)* | Base metadata + Popular / New / Featured catalogs — **enabled by default** | — | `meta` `catalog` | — | — | — |
+| *Top-Streaming (custom)* | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US) | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
+| *Top-streaming FR (custom)* | The same lists for France (Canal+, Netflix FR, Prime FR…) | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
+| *Trakt lists (custom)* | Your Trakt lists, trending and genre lists | <https://trakt.dexter21767.com> — log in with Trakt | `catalog` | — | — | — |
+| *Nuvio Live Sports (custom)* | Live football, NBA, NFL, NHL, F1 | <https://nuvio.moaqeel6679.my.id> | — | ✅ | ✅ | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports) |
+| *Statusio (custom)* | Debrid account health card — provider, username, expiry, days left | <https://statusio.elfhosted.com/configure> | — | ✅ | ✅ | [statusio](https://stremio-addons.net/addons/statusio) |
+| *Lumio (custom)* | French VOD, torrent + direct download | <https://mylumio.tv> | `stream` | — | — | [lumio](https://stremio-addons.net/addons/lumio) |
+| *Streamfusion (custom)* | Extra French streaming sources | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream` | — | — | [streamfusion](https://stremio-addons.net/addons/streamfusion) |
+| *AI Search (custom)* | Recommendations from natural-language queries (needs your own Gemini + TMDB keys; better with Trakt) | see its Stremio Addons page | — | — | — | [ai-search](https://stremio-addons.net/addons/ai-search) |
 
-###### ⚙️ (optional) Configure *Streamfusion (custom) for French content*:
-1. Streamfusion provides additional French streaming sources
-2. Click the **Edit** button in AIOStreams
-3. Look for StreamFusion API Key and follow the instructions to get the api key from the telegram bot
-4. Copy the key and enable the addon
-
-###### ⚙️ (optional) Configure *Statusio (custom)*:
-1. Statusio helps monitor your debrid service status.
-2. Go to https://statusio.elfhosted.com/configure to set it up
-3. Copy the manifest URL and paste it in AIOStreams under 'Statusio (custom)'
-4. Enable the addon if you want status monitoring
-
-###### ⚙️ (optional) Configure *Top-Streaming (custom)* for US catalogs:
-1. Go to https://top-streaming.stream/configure?lang=en
-2. Select 'Standard Posters' for poster type
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable to get Netflix, Amazon Prime, HBO Max, Disney+ top 10 lists for US
-
-###### ⚙️ (optional) Configure *Top-streaming FR (custom)* for French catalogs:
-1. Go to https://top-streaming.stream/configure?lang=fr
-2. Select 'Standard Posters' for poster type
-3. Copy the manifest URL and paste it in AIOStreams under 'Top-streaming FR (custom)'
-4. Enable to get French streaming service catalogs (Canal+, Netflix FR, etc.)
-
-###### ⚙️ (optional) Configure *TVMio* for Live TV:
-1. TVMio provides live TV channels for France, Argentina, and Spain
-2. Go to https://tvmio.ooguy.com to configure
-3. Copy the manifest URL and paste it in AIOStreams
-4. Enable if you want live TV support
-
-###### ⚙️ (optional) Configure *AI Search (custom)*:
-1. AI Search provides intelligent recommendations based on your viewing history
-2. Go to https://stremio.itcon.au/ to configure
-3. It is preferable to use this addon with Trakt for better recommendations
-4. Follow the tutorial on their website to get the api keys
-5. Copy the manifest URL and paste it in AIOStreams
-6. Enable for AI-powered search and recommendations
+**Resources** — leave blank unless you want to restrict what AIOStreams takes from the addon: `stream` = streams only, `catalog` = catalogs only.
+**Format Passthrough** — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
+**Result Passthrough** — results from this addon are never filtered out; its streams always appear in the list.
+**Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
 ---
 
 ##### 💾 Step 7 — Save and Install
