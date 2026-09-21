@@ -92,6 +92,8 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 #### 🖥️ Manage Nuvio from nuvio.tv (Website)
 
 - It's preferable to manage your account, profiles and integrations from the [nuvio.tv](https://nuvio.tv) website rather than from the TV or mobile app — preferably from a computer. The website gives you a much better overview to handle account settings and integrations across all your systems (mobile, TV, desktop) at once.
+- Verify
+- Verify Trakt is being used in "Tracking" for all the platformes you use (TV, mobile, desktop), that your Trakt account is linked to Nuvio and that all items are using Trakt for tracking in "Tracking".
 - After applying a change on the website, go check your TV or mobile app to confirm the change was actually applied there.
 
 ##### 🔗 Profile Inheritance & Copying Settings
@@ -279,3 +281,4 @@ After configuring these settings, add your collections to your home screen for e
     - [stremiofr.me](https://stremiofr.me/)
     - [r/Stremio_France](https://www.reddit.com/r/Stremio_France/)
     - [Discord Server](https://discord.gg/KN3vRqTHDa)
+- **Another guide**: [numb3rs.stream — Streaming Perfect Setup, Full and Easy Total Beginner's Guide](https://numb3rs.stream/)
