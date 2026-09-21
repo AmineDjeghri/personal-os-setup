@@ -163,6 +163,33 @@ This guide uses the **template** route.
 
 ---
 
+##### 🔀 Turning an addon off for one device (variant)
+
+A variant is a short script that changes your own configuration for one device — no second configuration, no second link to share.
+
+1. Open the configuration and go to **Miscellaneous → Variants** (Advanced mode).
+2. Add a variant: give it an **Id** (`no-streamfusion` — lowercase letters, digits, `-` and `_` only) and a **Name** (`No Streamfusion`).
+3. In the script box, write the change. To deactivate Streamfusion, that is `disable presets[options.name*="Streamfusion"]`.
+4. Save the configuration.
+
+Example — deactivate Streamfusion on a single device:
+
+| Field | Value |
+|-------|-------|
+| Id | `no-streamfusion` |
+| Name | `No Streamfusion` |
+| Script | `disable presets[options.name*="Streamfusion"]` |
+
+Then go to **Save & Install**, select **No Streamfusion** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusion/manifest.json`. Install that URL as the addon on the device that should lose Streamfusion (remove the old one if you replaced it).
+
+Notes
+
+- Use the **path** form, not `?v=`: clients rebuild the stream requests from the base URL and drop the query string, so only the first request would carry the variant.
+- If the variant preview reports *some instructions matched nothing* for an addon that comes from a parent configuration, that is normal — the preview only sees your own configuration, while the script is applied to the merged one when you play.
+- Select **Base config** on the Save & Install page to keep installing the unchanged configuration.
+
+---
+
 ###### (Optional) — Configure Optional Addons (Disabled by Default)
 The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
