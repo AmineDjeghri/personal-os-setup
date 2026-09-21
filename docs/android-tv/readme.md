@@ -159,6 +159,11 @@ Since addons are hosted in different servers, everytime you add a new addon, you
 - **Template** — for sharing your setup with others, or when you do not want to maintain the configuration afterwards. You publish a JSON file; anyone can import it and gets their own configuration with their own credentials. Nothing links back to yours and there is nothing to keep in sync.
 - **Parent config** — for someone who maintains several configurations. One base config holds everything, the others point at its UUID and inherit it, overriding only the sections you choose; change the base once and they all follow. It stays your setup, with your credentials. You will find it in **Miscellaneous → Parent Config** (Advanced mode).
 
+Setting up a **child configuration**:
+
+- If the child must have different settings: import the template first, then point the configuration at its parent, delete the addons you do not want to keep locally, and use the per-section strategy (*inherit from parent* / *extend parent (add mine)* / *override with mine*) to decide what comes from the parent and what stays yours.
+- If the only thing that will differ is your debrid account, do not import the template at all — create the configuration and point it at the parent, everything is inherited.
+
 This guide uses the **template** route.
 
 ---
