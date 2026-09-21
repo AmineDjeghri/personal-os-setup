@@ -12,21 +12,16 @@ One of the best TV OS is Google TV. Here are some reasons why you should conside
     * [Best google TV apps:](#best-google-tv-apps)
       * [What is Stremio / Nuvio ?](#what-is-stremio--nuvio-)
       * [Installation](#installation)
+      * [🖥️ Manage Nuvio from nuvio.tv (Website)](#-manage-nuvio-from-nuviotv-website)
+        * [🔗 Profile Inheritance & Copying Settings](#-profile-inheritance--copying-settings)
       * [🌐 AIOStreams + Nuvio Configuration Guide](#-aiostreams--nuvio-configuration-guide)
         * [🧩 What is AIOStreams?](#-what-is-aiostreams)
         * [🪪 Step 1 — Login to NuvioTV or NuvioMobile](#-step-1--login-to-nuviotv-or-nuviomobile)
         * [⚙️ Step 2 — Open AIOStreams](#-step-2--open-aiostreams)
-        * [🧱 Step 3 — Create Your Configuration](#-step-3--create-your-configuration)
-        * [📂 Step 4 — Import Your Settings](#-step-4--import-your-settings)
+        * [🧱 Step 3 — Load My Template](#-step-3--load-my-template)
+        * [📂 Step 4 — Create Your Configuration](#-step-4--create-your-configuration)
         * [🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters](#-step-5--enable-your-debrid-services-tmdb-api-and-posters)
         * [(Optional) Step 6 — Configure Optional Addons (Disabled by Default)](#optional-step-6--configure-optional-addons-disabled-by-default)
-          * [⚙️ (optional) Configure *Baguettio (custom)* for French content:](#-optional-configure-baguettio-custom-for-french-content)
-          * [⚙️ (optional) Configure *Streamfusion (custom) for French content*:](#-optional-configure-streamfusion-custom-for-french-content)
-          * [⚙️ (optional) Configure *Statusio (custom)*:](#-optional-configure-statusio-custom)
-          * [⚙️ (optional) Configure *Top-Streaming (custom)* for US catalogs:](#-optional-configure-top-streaming-custom-for-us-catalogs)
-          * [⚙️ (optional) Configure *Top-streaming FR (custom)* for French catalogs:](#-optional-configure-top-streaming-fr-custom-for-french-catalogs)
-          * [⚙️ (optional) Configure *TVMio* for Live TV:](#-optional-configure-tvmio-for-live-tv)
-          * [⚙️ (optional) Configure *AI Search (custom)*:](#-optional-configure-ai-search-custom)
         * [💾 Step 7 — Save and Install](#-step-7--save-and-install)
         * [✅ Step 8 — Test Everything](#-step-8--test-everything)
         * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
@@ -85,7 +80,7 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
   What is a debrid service? A debrid service is an unrestricted multi-hoster that allows you to stream and download videos instantly at the best speeds. In plain English, the debrid services act as a proxy between the BitTorrent tracker and you, so you download the content directly from their servers at high speed. Most of the content is already cached, meaning you can instantly access it. Personnaly, I use ALL Debrid, but others exist like : TorBox, Real Debrid...
 
 #### Installation
-- (Updated April 2026) : This guide applies to Nuvio, but it is also valid for Stremio.
+- (Updated on 20/09/2026) : This guide applies to Nuvio, but it is also valid for Stremio.
 - First of all, you can do everything with your mobile. It's just better if you have a computer, but it's not necessary.
 - If you never used Stremio, I advise you to start with this [fast tutorial](https://arnav.au/2025/04/16/stremio-torrentio-debrid-how-to-guide/)
 - If you want to understand everything, there is [a complete and detailed tutorial](https://guides.viren070.me/stremio/).
@@ -93,16 +88,27 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 - Setup :
     - Log in with your regular account into Stremio or Nuvio.
     - Subscribe to AllDebrid (or Real Debrid or Torbox). For All Debrid : https://alldebrid.com/ , do not select the free trial, it doesn't work.
-    - Configure this addon for example: CometFR addon https://comet.stremiofr.com/ , Add in 'Debrid Service' AllDebrid and put your api key. UNCHECK the 'Enable torrents'
-    - Go back to Stremio/Nuvio -> Addons, install addon -> and copy the manifest URL.
-    - Select a movie, you should see the streams (the results to watch a movie). IF not, go to AllDebrid and accept the IP address request.
 
-🚨 IMPORTANT
-Since addons are hosted in different servers, everytime you add a new addon, you need to go to AllDebrid and validate the IP Address.
+#### 🖥️ Manage Nuvio from nuvio.tv (Website)
 
-- After making any change to any addon, you don't need to close the application to synchronize the changes, just click on the addons tab, and go back to home.
-- My recommended Setup: Install these addons.
-- AIOStreams:
+- It's preferable to manage your account, profiles and integrations from the [nuvio.tv](https://nuvio.tv) website rather than from the TV or mobile app — preferably from a computer. The website gives you a much better overview to handle account settings and integrations across all your systems (mobile, TV, desktop) at once.
+- After applying a change on the website, go check your TV or mobile app to confirm the change was actually applied there.
+
+##### 🔗 Profile Inheritance & Copying Settings
+
+Nuvio lets a profile **inherit settings from another profile**, which is very handy if you use multiple devices and don't want to configure each one separately. What you can inherit:
+
+- **TV settings** — appearance, layout, playback, subtitles, and integration preferences used by NuvioTV.
+- **Mobile settings** — appearance, cards, playback, metadata, and notification preferences used by Nuvio Mobile.
+- **Desktop settings** — appearance, navigation, cards, playback, metadata, and notification preferences used by Nuvio Desktop.
+
+Secondary profiles can also reuse the primary profile's addons and plugins:
+- **Use primary profile addons**
+- **Use primary profile plugins**
+
+You can also **copy settings from one profile to another** directly (instead of setting up inheritance), which is useful for a one-off sync.
+
+- Manage all of this at [nuvio.tv/account?tab=profiles](https://nuvio.tv/account?tab=profiles).
 
 #### 🌐 AIOStreams + Nuvio Configuration Guide
 
@@ -132,14 +138,19 @@ This page is where you manage everything related to your addons.
 ##### 🧱 Step 3 — Load My Template
 1. On the AIOStreams start page, click **Use a Template** — you don't need to build a configuration by hand.
 2. In the template list, choose **Import** and paste one of these links:
-   - **Amine's default config** — everything, including rows for the addons that need a URL of your own (see Step 6), shipped disabled:
+   - **Amine's default config** — everything, including custom addons (like Lumio, Live TV Sports...) that need a URL of your own (see Step 6):
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json`
    - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
-   (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](../../src/personal_os_setup/config/others/aiostreams-template-essentials.json) and import it from your device)
+   (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](aiostreams-template-essentials.json) and import it from your device)
 3. Confirm the template name, then pick the debrid service you use (or press **Skip**). The template ships with **AllDebrid** wired into the stream addons — if you use another provider, see Step 5, it is one dropdown per addon.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
+
+🚨 IMPORTANT
+Since addons are hosted in different servers, everytime you add a new addon, you need to go to AllDebrid and validate the IP Address.
+
+- After making any change to AIOStreams or other addons, you don't need to close the application to synchronize the changes, you can switch between profiles to reload the items.
 
 ---
 
@@ -162,17 +173,17 @@ My addons, filters, sort order and the custom stream formatter load automaticall
 ##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
 The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
-| Addon | What it adds | Configure it at | Resources | Format Passthrough | Result Passthrough | Stremio Addons page |
-|---|---|---|---|---|---|---|
-| *Cinemeta (custom)* | Base metadata + Popular / New / Featured catalogs — **enabled by default** | — | `meta` `catalog` | — | — | — |
-| *Top-Streaming (custom)* | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US) | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
-| *Top-streaming FR (custom)* | The same lists for France (Canal+, Netflix FR, Prime FR…) | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters* | `catalog` | — | — | [top-streaming](https://stremio-addons.net/addons/top-streaming) |
-| *Trakt lists (custom)* | Your Trakt lists, trending and genre lists | <https://trakt.dexter21767.com> — log in with Trakt | `catalog` | — | — | — |
-| *Nuvio Live Sports (custom)* | Live football, NBA, NFL, NHL, F1 | <https://nuvio.moaqeel6679.my.id> | — | ✅ | ✅ | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports) |
-| *Statusio (custom)* | Debrid account health card — provider, username, expiry, days left | <https://statusio.elfhosted.com/configure> | — | ✅ | ✅ | [statusio](https://stremio-addons.net/addons/statusio) |
-| *Lumio (custom)* | French VOD, torrent + direct download | <https://mylumio.tv> | `stream` | — | — | [lumio](https://stremio-addons.net/addons/lumio) |
-| *Streamfusion (custom)* | Extra French streaming sources | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream` | — | — | [streamfusion](https://stremio-addons.net/addons/streamfusion) |
-| *AI Search (custom)* | Recommendations from natural-language queries (needs your own Gemini + TMDB keys; better with Trakt) | see its Stremio Addons page | — | — | — | [ai-search](https://stremio-addons.net/addons/ai-search) |
+| Addon                        | What it adds                                                                                         | Configure it at                                                                 | Resources        | Format Passthrough | Result Passthrough | Stremio Addons page                                                      |
+|------------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------|--------------------|--------------------|--------------------------------------------------------------------------|
+| *Cinemeta (custom)*          | Base metadata + Popular / New / Featured catalogs — **enabled by default**                           | —                                                                               | `meta` `catalog` | —                  | —                  | —                                                                        |
+| *Top-Streaming (custom)*     | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US)                                  | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)         |
+| *Top-streaming FR (custom)*  | The same lists for France (Canal+, Netflix FR, Prime FR…)                                            | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)         |
+| *Trakt lists (custom)*       | Your Trakt lists, trending and genre lists                                                           | <https://trakt.dexter21767.com> — log in with Trakt                             | `catalog`        | —                  | —                  | —                                                                        |
+| *Nuvio Live Sports (custom)* | Live football, NBA, NFL, NHL, F1                                                                     | <https://nuvio.moaqeel6679.my.id>                                               | —                | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports) |
+| *Statusio (custom)*          | Debrid account health card — provider, username, expiry, days left                                   | <https://statusio.elfhosted.com/configure>                                      | —                | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                   |
+| *Lumio (custom)*             | French VOD, torrent + direct download                                                                | <https://mylumio.tv>                                                            | `stream`         | —                  | —                  | [lumio](https://stremio-addons.net/addons/lumio)                         |
+| *Streamfusion (custom)*      | Extra French streaming sources                                                                       | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusion](https://stremio-addons.net/addons/streamfusion)           |
+| *AI Search (custom)*         | Recommendations from natural-language queries (needs your own Gemini + TMDB keys; better with Trakt) | see its Stremio Addons page                                                     | —                | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                 |
 
 **Resources** — leave blank unless you want to restrict what AIOStreams takes from the addon: `stream` = streams only, `catalog` = catalogs only.
 **Format Passthrough** — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
@@ -235,6 +246,11 @@ To fix this:
 #### Collections
 
 Collections allow you to organize your content into custom categories (Netflix, Apple TV, etc.) without needing additional addons.
+
+- The order of your collections and catalogs is handled per-device (not per-profile) and is synced across your devices.
+- **Install the default recommended collection**: go to [nuvio.tv/community-collections](https://nuvio.tv/community-collections) and click "Add to profile" to install a collection. I recommend this one: [Kaptain collection (sorted by popular, no-addon)](https://nuvio.tv/community-collections?sort=popular&readiness=no_addon&q=kaptain).
+- ⚠️ Collections aren't synced between profiles — you need to add them to each profile individually.
+- Once you're done adding/editing collections, sync your profiles at [nuvio.tv/account?tab=profiles](https://nuvio.tv/account?tab=profiles).
 
 1. For detailed setup instructions, follow [this community tutorial](https://www.reddit.com/r/Nuvio/s/7bTcL9OcmZ) starting at 2:35
 2. Go to [Nuvio Collections Manager](https://nuvioapp.space/account?tab=collections) (or use the mobile app, which is easier)
