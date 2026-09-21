@@ -19,11 +19,9 @@ One of the best TV OS is Google TV. Here are some reasons why you should conside
         * [🪪 Step 1 — Login to NuvioTV or NuvioMobile](#-step-1--login-to-nuviotv-or-nuviomobile)
         * [⚙️ Step 2 — Open AIOStreams](#-step-2--open-aiostreams)
         * [🧱 Step 3 — Load My Template](#-step-3--load-my-template)
-        * [📂 Step 4 — Create Your Configuration](#-step-4--create-your-configuration)
-        * [🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters](#-step-5--enable-your-debrid-services-tmdb-api-and-posters)
-        * [(Optional) Step 6 — Configure Optional Addons (Disabled by Default)](#optional-step-6--configure-optional-addons-disabled-by-default)
-        * [💾 Step 7 — Save and Install](#-step-7--save-and-install)
-        * [✅ Step 8 — Test Everything](#-step-8--test-everything)
+          * [(Optional) — Configure Optional Addons (Disabled by Default)](#optional--configure-optional-addons-disabled-by-default)
+        * [💾 Step 4 — Save and Install](#-step-4--save-and-install)
+        * [✅ Step 5 — Test Everything](#-step-5--test-everything)
         * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
       * [Collections](#collections)
       * [Useful Stremio/Nuvio Resources](#useful-stremionuvio-resources)
@@ -92,8 +90,8 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 #### 🖥️ Manage Nuvio from nuvio.tv (Website)
 
 - It's preferable to manage your account, profiles and integrations from the [nuvio.tv](https://nuvio.tv) website rather than from the TV or mobile app — preferably from a computer. The website gives you a much better overview to handle account settings and integrations across all your systems (mobile, TV, desktop) at once.
-- Verify
-- Verify Trakt is being used in "Tracking" for all the platformes you use (TV, mobile, desktop), that your Trakt account is linked to Nuvio and that all items are using Trakt for tracking in "Tracking".
+- Catalogs sorting can be managed through the apps only (TV, mobile, desktop) — they are not available on the website.
+- If you use Trakt, verify that it is being used in "Tracking" for all the platformes you use (TV, mobile, desktop), that your Trakt account is linked to Nuvio and that all items are using Trakt for tracking in "Tracking".
 - After applying a change on the website, go check your TV or mobile app to confirm the change was actually applied there.
 
 ##### 🔗 Profile Inheritance & Copying Settings
@@ -138,14 +136,15 @@ This page is where you manage everything related to your addons.
 ---
 
 ##### 🧱 Step 3 — Load My Template
-1. On the AIOStreams start page, click **Use a Template** — you don't need to build a configuration by hand.
-2. In the template list, choose **Import** and paste one of these links:
-   - **Amine's default config** — everything, including custom addons (like Lumio, Live TV Sports...) that need a URL of your own (see Step 6):
-`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json`
-   - **Amine's default config (essentials)** — the same setup with no addon that needs a URL of your own; nothing to fill in beyond your debrid service:
-`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json`
-   (you can also download [the full template](../../src/personal_os_setup/config/others/aiostreams-template.json) or [the essentials one](aiostreams-template-essentials.json) and import it from your device)
-3. Confirm the template name, then pick the debrid service you use (or press **Skip**). The template ships with **AllDebrid** wired into the stream addons — if you use another provider, see Step 5, it is one dropdown per addon.
+1. On the AIOStreams start page (About tab) -> **our Configuration** -> **Browse ready-made setups** -> -> 'import button',  paste one of these links:
+   - (Recommended) **Amine's default config (essentials)** — nothing to fill in beyond your debrid service:
+`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json`
+   - (Advanced) **Amine's default config (full)** — everything, including custom addons (like Lumio, Live TV Sports...) that need a URL of your own (see Step 6):
+     `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-full.json`
+2. Click on "Use this template now".
+3. Click again on **our Configuration** -> **Browse ready-made setups**, choose the imported template from the list and click on **Use this setup**. The template ships with **AllDebrid** wired into the stream addons — if you use another provider, see Step 5, it is one dropdown per addon.
+4. If you don't want to fill a custom addon URL, put anything in the field then disable the addon later in the "Addons" tab.
+5. If you have a problem with an addon, just disable it in the "Addons" tab and save again.
 
 My addons, filters, sort order and the custom stream formatter load automatically.
 
@@ -154,25 +153,8 @@ Since addons are hosted in different servers, everytime you add a new addon, you
 
 - After making any change to AIOStreams or other addons, you don't need to close the application to synchronize the changes, you can switch between profiles to reload the items.
 
----
 
-##### 📂 Step 4 — Create Your Configuration
-1. Go to the **“Save and Install”** section.
-2. Enter a **password** of your choice — this creates your AIOStreams account.
-3. You’ll receive a **UUID** (like your username).
-4. **Save both the UUID and your password!** You’ll need them to restore your configuration later.
-
----
-
-##### 🔑 Step 5 — Enable Your Debrid Services, TMDB API and Posters
-1. In AIOStreams, go to **Services**.
-2. Enter the API key of your **Debrid service** (e.g., AllDebrid, Real-Debrid, TorBox). I am using All Debrid, which is what the template ships already wired in — on another provider, also switch the service in each stream addon: Torrentio, StremThru Store, MediaFusion and Meteor each have a *Services* dropdown.
-3. Scroll down or check in the tabs to find the `Metadata` section, and look for 'TMDB' and follow the instructions to add your TMDB API keys.
-4. Scroll down or check in the tabs to find the `Posters` section, select RPDB and enter the following api key : `t0-free-rpdb`. Check the options : 'Use Poster Service for Library/Continue Watching' and 'Redirect API'
-
----
-
-##### (Optional) Step 6 — Configure Optional Addons (Disabled by Default)
+###### (Optional) — Configure Optional Addons (Disabled by Default)
 The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
 | Addon                        | What it adds                                                                                         | Configure it at                                                                 | Resources        | Format Passthrough | Result Passthrough | Stremio Addons page                                                      |
@@ -193,14 +175,14 @@ The addons below are in the **full** template and need **your own account or man
 **Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
 ---
 
-##### 💾 Step 7 — Save and Install
+##### 💾 Step 4 — Save and Install
 1. Go back to the **Install** section.
 2. Click **Save** — this saves your configuration to your online AIOStreams account.If you see a timeout error with the name of an addon, it means that this addon is down right now. Just deactivate it and save again (sometimes StremFusion and Opensubtitles V3+ are down)
 3. Then click **Install** and copy the link to Nuvio/Stremio addons. [Nuvio Web](https://nuvioapp.space/account?tab=addons) for example.
 
 ---
 
-##### ✅ Step 8 — Test Everything
+##### ✅ Step 5 — Test Everything
 Open any movie or TV show in Nuvio/Stremio.
 You should now see your addons providing streams.
 After selecting a movie, you should see this (Statutios appears only if you installed it):
@@ -245,6 +227,7 @@ To fix this:
     - If you didn't rate some movies & tv shows, you can add them to history in Trakt to avoid being recommended by the 'AI Search' addon.
     - If you want to synchronize Trakt with IMDB you can use [IMDB-Trakt-Syncer](https://github.com/RileyXX/IMDB-Trakt-Syncer). You can rate what you watch on IMDB or trakt and run the python app to sync everything.
     - You can also import Netflix and Amazon Prime Video watch history to Trakt using this free opensource Chrome/Firefox extension : https://github.com/trakt-tools/universal-trakt-scrobbler
+
 #### Collections
 
 Collections allow you to organize your content into custom categories (Netflix, Apple TV, etc.) without needing additional addons.
