@@ -5,7 +5,8 @@ Explore the documentation using the vertical navbar, or jump straight to a secti
 - **Windows/WSL2**: [docs/windows_workflow](windows_workflow/README.md)
 - **Linux/WSL2**: [docs/linux](linux/README.md)
 - **macOS**: [docs/macos_darwin](macos_darwin/README.md)
-- **TV setup** (Google TV + Stremio): [docs/android-tv](android-tv/readme.md)
+- **TV setup** (Google TV hardware & apps): [docs/android-tv](android-tv/readme.md)
+- **Streaming setup** (Nuvio/Stremio + AIOStreams): [docs/android-tv](android-tv/nuvio-stremio-aiostreams.md)
 - **Home server / Home Assistant**: [docs/home-server](home-server/readme.md)
 - **Apps setup & shortcuts**: [docs/apps](apps/apps_configuration_and_shorcuts.md)
 - **Websites & browser extensions**: [docs/apps](apps/awesome_websites_browser_extensions.md)
@@ -42,4 +43,4 @@ Explore the documentation using the vertical navbar, or jump straight to a secti
     - Add a dedicated **Ubuntu profile** with an icon.
 
 - **Curated documentation**
-    - Windows & Linux workflows, TV setup (Google TV + Stremio), home server (Ubuntu Server + KVM + Home Assistant), app shortcuts, and browser extensions, mirrored to a static site via `properdocs`.
+    - Windows & Linux workflows, TV setup (Google TV hardware & apps), streaming setup (Nuvio/Stremio + AIOStreams), home server (Ubuntu Server + KVM + Home Assistant), app shortcuts, and browser extensions, mirrored to a static site via `properdocs`.

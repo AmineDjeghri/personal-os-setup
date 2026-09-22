@@ -474,6 +474,9 @@ on all three OSes.
 - Install the community themes: TBD
 - Sync: use Google Drive ou GitHub to sync the repositories remotely.
 - Git : always use the git clone with HTTPS and not SSH. Use a classic token and not the password.
+- Use the GitHub CLI to authenticate instead of a token/password: run `gh auth login` and pick the
+  browser flow — this lets you sync Obsidian vaults with GitHub repos without ever handling a
+  token or password manually in obsidia. If obsidian prompts you to login, just close it and reopen it after gh auth login.
 - Run ``git config --global credential.helper store`` to save the credentials for the user after the first push/pull.
 - if you are on Windows. Install git on Windows (PowerShell: 'winget install git.git').
 - You can configure the git plugin in settings to automatically push and pull every x minutes.

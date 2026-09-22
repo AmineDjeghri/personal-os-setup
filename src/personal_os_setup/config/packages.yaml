@@ -35,6 +35,8 @@ packages:
     webinstall:
       Dev_tools:
         - '[Docker](https://doc.ubuntu-fr.org/docker#depot_apt_docker)'
+      Media:
+        - '[Nuvio](https://github.com/NuvioMedia/NuvioDesktop/releases)'
 
     snap:
       apps:
@@ -147,6 +149,8 @@ packages:
         - '[MCPJam Inspector](https://github.com/MCPJam/inspector/releases)'
       Text Editors:
         - '[PDFgear](https://www.pdfgear.com/pdfgear-for-mac/)'
+      Media:
+        - '[Nuvio](https://github.com/NuvioMedia/NuvioDesktop/releases)'
 
   cachyos:
     pacman:
@@ -231,6 +235,7 @@ packages:
         - nautilus-python # extension framework required by most python-based Nautilus plugins
       Desktop:
         - noctalia
+        - hyprpm # Hyprland plugin manager
         - nwg-look # GTK theme/icon/cursor/font configuration GUI for wlroots compositors
         - xorg-xrdb # provides `xrdb`; sets Xft.dpi so XWayland apps (e.g. Steam) scale correctly under xwayland.force_zero_scaling
       Screenshots:
@@ -264,6 +269,7 @@ packages:
         - mpv-thumbfast-git
         - mpv-sponsorblock-git
         - ttf-noto-emoji-monochrome # needed for some mpv scripts to display emojis correctly
+        - nuvio-desktop-bin # https://github.com/NuvioMedia/NuvioDesktop
       Meetings:
         - zoom
       Hardware control (require reboot):
@@ -360,3 +366,5 @@ packages:
       Devices Software:
         - '[Ryzen Master](https://www.amd.com/fr/products/software/ryzen-master.html#download)'
         - '[Turtle Beach](https://support.turtlebeach.com/s/downloads?language=fr#)'
+      Media:
+        - '[Nuvio](https://github.com/NuvioMedia/NuvioDesktop/releases)'
