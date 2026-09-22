@@ -19,7 +19,10 @@ One of the best TV OS is Google TV. Here are some reasons why you should conside
         * [🪪 Step 1 — Login to NuvioTV or NuvioMobile](#-step-1--login-to-nuviotv-or-nuviomobile)
         * [⚙️ Step 2 — Open AIOStreams](#-step-2--open-aiostreams)
         * [🧱 Step 3 — Load My Template](#-step-3--load-my-template)
+        * [🔗 Template or parent config?](#-template-or-parent-config)
+        * [🔀 Turning an addon off for one device (variant)](#-turning-an-addon-off-for-one-device-variant)
           * [(Optional) — Configure Optional Addons (Disabled by Default)](#optional--configure-optional-addons-disabled-by-default)
+  * [⚠️ **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (Example: *Trakt lists*, top-streaming)](#-catalogs-wont-show-up-until-you-fill-in-your-own-url-these-addons-ship-in-the-template-with-a-placeholderexample-url-not-yours-nuvio-will-not-display-their-catalogs-until-you-replace-that-url-with-the-manifest-link-generated-from-your-own-account-example-trakt-lists-top-streaming)
         * [💾 Step 4 — Save and Install](#-step-4--save-and-install)
         * [✅ Step 5 — Test Everything](#-step-5--test-everything)
         * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
@@ -216,6 +219,8 @@ The addons below are in the **full** template and need **your own account or man
 **Format Passthrough** — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
 **Result Passthrough** — results from this addon are never filtered out; its streams always appear in the list.
 **Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
+
+⚠️ **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (Example: *Trakt lists*, top-streaming)
 ---
 
 ##### 💾 Step 4 — Save and Install
