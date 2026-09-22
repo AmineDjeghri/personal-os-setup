@@ -18,6 +18,7 @@ This page takes you from nothing to a working streaming setup on **Nuvio** (ever
     * [Step 6 — Install the addon in Nuvio](#step-6--install-the-addon-in-nuvio)
     * [Step 7 — Test it](#step-7--test-it)
     * [Step 8 — If something doesn't work](#step-8--if-something-doesnt-work)
+    * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
   * [Part 2 — Advanced](#part-2--advanced)
     * [🧩 What is AIOStreams?](#-what-is-aiostreams)
     * [🔗 Template or parent config?](#-template-or-parent-config)
@@ -29,7 +30,6 @@ This page takes you from nothing to a working streaming setup on **Nuvio** (ever
     * [👤 Profiles in Nuvio](#-profiles-in-nuvio)
     * [🗂️ Manage Nuvio from nuvio.tv (Website)](#-manage-nuvio-from-nuviotv-website)
     * [Collections](#collections)
-    * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
     * [Useful Stremio/Nuvio Resources](#useful-stremionuvio-resources)
 <!-- TOC -->
 
@@ -37,20 +37,19 @@ This page takes you from nothing to a working streaming setup on **Nuvio** (ever
 
 ```mermaid
 flowchart LR
-    Client["<img src='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/logos/nuvio.png' width='28'/><br/><b>Nuvio / Stremio</b><br/><sub>TV · phone · desktop</sub>"]
+    Client["📺 Nuvio<br/><sub>TV · phone · desktop</sub>"]
 
-    subgraph ConfigGroup["<img src='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/logos/aiostreams.png' width='24'/> AIOStreams — your saved configuration"]
+    subgraph ConfigGroup["🧩 AIOStreams — your saved configuration"]
         Addons["Addons<br/>Torrentio · Comet · MediaFusion<br/>Streamfusion · Lumio · …"]
     end
 
-    Debrid["<img src='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/logos/alldebrid.png' width='28'/><br/><b>Debrid service</b><br/><sub>AllDebrid · Real-Debrid · TorBox</sub>"]
+    Debrid["⚡ Debrid service<br/><sub>AllDebrid · Real-Debrid · TorBox</sub>"]
 
     List["📋 One clean stream list"]
 
     Client -->|asks for streams| ConfigGroup
     ConfigGroup -->|queries the addons you enabled| Debrid
     Debrid -->|cached file, served straight from their servers| List
-    List --> Client
 ```
 
 Five words are enough to follow the rest of this page:
