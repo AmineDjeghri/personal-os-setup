@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v2.15.1 (2026-09-22)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency build to v1.6.1 (#115)
+  ([#115](https://github.com/AmineDjeghri/personal-os-setup/pull/115),
+  [`d40cf14`](https://github.com/AmineDjeghri/personal-os-setup/commit/d40cf14427043a1c788ed4710192dc2ae461f564))
+
+### Documentation
+
+- **aiostreams**: Publish a shareable template and use it in the Nuvio guide (#118)
+  ([#118](https://github.com/AmineDjeghri/personal-os-setup/pull/118),
+  [`f585389`](https://github.com/AmineDjeghri/personal-os-setup/commit/f5853891fcfbb5f39d629b36f25ed32acc2508bc))
+
+- **skill-deployment**: Distinguish shared vs repo-scoped skill loading (#112)
+  ([#112](https://github.com/AmineDjeghri/personal-os-setup/pull/112),
+  [`7d87b51`](https://github.com/AmineDjeghri/personal-os-setup/commit/7d87b51cfa5d20ab68350c31f72b35a6fee0c25b))
+
+
 ## v2.15.0 (2026-09-16)
 
 ### Features
