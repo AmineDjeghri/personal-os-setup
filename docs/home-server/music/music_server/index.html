@@ -532,6 +532,8 @@
       
         
       
+        
+      
     
     
     
@@ -574,6 +576,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3289,8 +3319,8 @@ Understanding these terms helps clarify how Beets works internally.</p>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">timid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w">                        </span><span class="c1"># if yes, ask for confirmation on every autotagging match, even the ones that seem very close.</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">autotag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w">                      </span><span class="c1"># if yes, enable autotagging</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">duplicate_action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove</span><span class="w">          </span><span class="c1"># remove duplicate files</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">incremental</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w">                  </span><span class="c1"># if yes, don&#39;t reimport a directory we already imported</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nt">incremental_skip_later</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w">       </span><span class="c1"># if yes, don&#39;t reimport an album/track that was skipped (if incremental is yes, this has no effect)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">incremental</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w">                  </span><span class="c1"># if yes, don't reimport a directory we already imported</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nt">incremental_skip_later</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w">       </span><span class="c1"># if yes, don't reimport an album/track that was skipped (if incremental is yes, this has no effect)</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">resume</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ask</span><span class="w">                       </span><span class="c1"># Resume interrupted imports?</span>
 </span></code></pre></div>
 <p>Whenever you run <code>beet import /music</code> with this config, it will:</p>
@@ -3343,7 +3373,7 @@ What I advise to play with is:</li>
 <p>Run this command :<code>beet duplicates -k title -k albumartist --full -p</code></p>
 <p>or to delete : <code>beet duplicates -k title -k albumartist --delete</code></p>
 <p>Add this to your crontab with <code>crontab -e</code>  to run it every 12 hours
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">0</span><span class="w"> </span>*/12<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>date<span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running duplicates...&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>~/.venv/bin/beet<span class="w"> </span>duplicates<span class="w"> </span>-k<span class="w"> </span>title<span class="w"> </span>-k<span class="w"> </span>albumartist<span class="w"> </span>--delete<span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">0</span><span class="w"> </span>*/12<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>date<span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Running duplicates..."</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>~/.venv/bin/beet<span class="w"> </span>duplicates<span class="w"> </span>-k<span class="w"> </span>title<span class="w"> </span>-k<span class="w"> </span>albumartist<span class="w"> </span>--delete<span class="w"> </span>&gt;&gt;<span class="w"> </span>~/beets-duplicates.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 </span></code></pre></div></p>
 <p><a href="https://beets.readthedocs.io/en/stable/plugins/chroma.html#chromaprint-acoustid-plugin">Chroma </a> :</p>
 <p><strong>Chromaprint :</strong>

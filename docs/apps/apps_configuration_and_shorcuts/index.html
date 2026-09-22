@@ -532,6 +532,8 @@
       
         
       
+        
+      
     
     
     
@@ -574,6 +576,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -4959,6 +4989,9 @@ on all three OSes.</p>
 <li>Install the community themes: TBD</li>
 <li>Sync: use Google Drive ou GitHub to sync the repositories remotely.</li>
 <li>Git : always use the git clone with HTTPS and not SSH. Use a classic token and not the password.</li>
+<li>Use the GitHub CLI to authenticate instead of a token/password: run <code>gh auth login</code> and pick the
+  browser flow — this lets you sync Obsidian vaults with GitHub repos without ever handling a
+  token or password manually in obsidia. If obsidian prompts you to login, just close it and reopen it after gh auth login.</li>
 <li>Run <code>git config --global credential.helper store</code> to save the credentials for the user after the first push/pull.</li>
 <li>if you are on Windows. Install git on Windows (PowerShell: 'winget install git.git').</li>
 <li>You can configure the git plugin in settings to automatically push and pull every x minutes.</li>
@@ -5181,7 +5214,7 @@ Defaults (no custom <code>input.conf</code> yet — this repo's <code>~/.config/
 <h4 id="cli-usage-youtube-playback">CLI usage / YouTube playback<a class="headerlink" href="#cli-usage-youtube-playback" title="Permanent link">&para;</a></h4>
 <p>mpv has built-in <code>yt-dlp</code> support (via its bundled <code>ytdl_hook</code> script), so YouTube/other
 supported sites play directly without downloading anything first:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mpv<span class="w"> </span><span class="s2">&quot;https://www.youtube.com/watch?v=njX2bu-_Vw4&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mpv<span class="w"> </span><span class="s2">"https://www.youtube.com/watch?v=njX2bu-_Vw4"</span>
 </span></code></pre></div>
 <table>
 <thead>

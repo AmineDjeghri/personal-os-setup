@@ -532,6 +532,8 @@
       
         
       
+        
+      
     
     
     
@@ -574,6 +576,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3650,8 +3680,8 @@ workstation. It is updated as the setup is tested and refined.</p>
 setup) can still start in <strong>QWERTY</strong>. The layout lives in
 <code>/var/lib/noctalia-greeter/greeter.toml</code>:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">[keyboard]</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fr,us&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;grp:alt_shift_toggle&quot;</span><span class="w">  </span><span class="c1"># switch layouts with Alt+Shift</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fr,us"</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"grp:alt_shift_toggle"</span><span class="w">  </span><span class="c1"># switch layouts with Alt+Shift</span>
 </span></code></pre></div>
 <p>This file is root-owned and lives outside chezmoi's <code>$HOME</code> scope, so it isn't managed
 by this repo yet. This command backs up the original, then upserts the <code>[keyboard]</code>
@@ -3659,13 +3689,13 @@ section (replacing it if it already exists, appending it if not) without touchin
 rest of the file:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml.bak<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s1">  /^\[keyboard\]/ { print; print &quot;layout = \&quot;fr,us\&quot;&quot;; print &quot;options = \&quot;grp:alt_shift_toggle\&quot;&quot;; in_kb=1; done=1; next }</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>awk<span class="w"> </span><span class="s1">'</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s1">  /^\[keyboard\]/ { print; print "layout = \"fr,us\""; print "options = \"grp:alt_shift_toggle\""; in_kb=1; done=1; next }</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="s1">  /^\[/ &amp;&amp; in_kb { in_kb=0 }</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="s1">  in_kb &amp;&amp; /^(layout|options)[[:space:]]*=/ { next }</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="s1">  { print }</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="s1">  END { if (!done) print &quot;\n[keyboard]\nlayout = \&quot;fr,us\&quot;\noptions = \&quot;grp:alt_shift_toggle\&quot;&quot; }</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="s1">&#39;</span><span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml.new<span class="w"> </span>&gt;/dev/null
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="s1">  END { if (!done) print "\n[keyboard]\nlayout = \"fr,us\"\noptions = \"grp:alt_shift_toggle\"" }</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="s1">'</span><span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml.new<span class="w"> </span>&gt;/dev/null
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>sudo<span class="w"> </span>mv<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml.new<span class="w"> </span>/var/lib/noctalia-greeter/greeter.toml
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>greetd
@@ -3863,13 +3893,13 @@ https://www.youtube.com/watch?v=njX2bu-_Vw4 — playing it in mpv fullscreen via
 querying mpv's live negotiated state over its JSON IPC socket rather than trusting the OSD:</p>
 <ol>
 <li>Launch mpv with an IPC socket so its internal state can be queried while playing:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mpv<span class="w"> </span>--input-ipc-server<span class="o">=</span>/tmp/mpvsocket<span class="w"> </span>--fullscreen<span class="w"> </span><span class="s2">&quot;https://www.youtube.com/watch?v=njX2bu-_Vw4&quot;</span>
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mpv<span class="w"> </span>--input-ipc-server<span class="o">=</span>/tmp/mpvsocket<span class="w"> </span>--fullscreen<span class="w"> </span><span class="s2">"https://www.youtube.com/watch?v=njX2bu-_Vw4"</span>
 </span></code></pre></div></li>
 <li>From another terminal, query the three relevant properties via <code>socat</code> (or <code>echo</code> piped to
    <code>nc -U</code>):
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;command&quot;:[&quot;get_property&quot;,&quot;video-params&quot;]}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;command&quot;:[&quot;get_property&quot;,&quot;video-out-params&quot;]}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;command&quot;:[&quot;get_property&quot;,&quot;video-target-params&quot;]}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-out-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-target-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
 </span></code></pre></div></li>
 <li>
 <p>What each answers:</p>
@@ -3903,15 +3933,15 @@ host</strong> — <code>make vm-deps</code> auto-detects <code>pacman</code>/<co
 each. On CachyOS and Ubuntu those packages are also in <code>packages.yaml</code>, so you can install them
 from the app's own Packages tab instead of manually.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>make<span class="w"> </span>vm-deps<span class="w">            </span><span class="c1"># verify qemu/libvirt/virt-manager/virt-viewer are installed, enable libvirtd</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">                         </span><span class="c1"># (install any missing ones from the app&#39;s Packages tab first, if available for your distro)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">                         </span><span class="c1"># (install any missing ones from the app's Packages tab first, if available for your distro)</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>make<span class="w"> </span>vm-cachyos<span class="w">          </span><span class="c1"># CachyOS VM -- manual ISO install, GUI console opens automatically</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>make<span class="w"> </span>vm-ubuntu-server<span class="w">    </span><span class="c1"># Ubuntu Server 26.04 -- unattended autoinstall, no clicking needed</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>make<span class="w"> </span>vm-ubuntu-server-manual<span class="w">  </span><span class="c1"># same ISO, manual click-through install</span>
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>make<span class="w"> </span>vm-ubuntu<span class="w">           </span><span class="c1"># Ubuntu Desktop 26.04 -- manual install</span>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>make<span class="w"> </span>vm-list<span class="w">             </span><span class="c1"># list this project&#39;s VMs and their state</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>make<span class="w"> </span>vm-clean<span class="w">            </span><span class="c1"># destroy/undefine all this project&#39;s VMs, wipe disks (keeps cached ISOs)</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>make<span class="w"> </span>vm-list<span class="w">             </span><span class="c1"># list this project's VMs and their state</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>make<span class="w"> </span>vm-clean<span class="w">            </span><span class="c1"># destroy/undefine all this project's VMs, wipe disks (keeps cached ISOs)</span>
 </span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>make<span class="w"> </span>vm-clean-isos<span class="w">       </span><span class="c1"># delete cached install ISOs too (re-downloaded on next make vm-*)</span>
 </span></code></pre></div>
 <p>Re-running a <code>vm-*</code> target on a VM that already exists just starts it and reopens the GUI

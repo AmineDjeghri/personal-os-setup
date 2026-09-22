@@ -532,6 +532,8 @@
       
         
       
+        
+      
     
     
     
@@ -574,6 +576,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3791,7 +3821,7 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
 <li>I verified that virtualization was supported on the system, checked Secure Boot status:</li>
 <li>Run:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>egrep<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;(vmx|svm)&#39;</span><span class="w"> </span>/proc/cpuinfo
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>egrep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'(vmx|svm)'</span><span class="w"> </span>/proc/cpuinfo
 </span></code></pre></div>
 <p>Should return a number <code>&gt; 0</code>.
 - Sometimes it returns <code>0</code>. In that case you need to check if Virtualization is enabled in your BIOS to ensure compatibility.
@@ -3960,7 +3990,7 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <li>
 <p>Create the VM: ( we are adding --network bridge=br0) to use the bridge.
 If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Home Assistant OS&quot;</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">"Home Assistant OS"</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
 </span></code></pre></div></p>
 </li>
 <li>
@@ -4365,10 +4395,10 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li>Update the config of the addon. Since we changed the N8N_EDITOR_BASE_URL, you will not be able to access it from HAOS Ingress. You must use the new address.
   <div class="language-yaml highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nt">timezone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Paris</span>
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nt">env_vars_list</span><span class="p">:</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;WEBHOOK_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:8081/&quot;</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;N8N_PATH:</span><span class="nv"> </span><span class="s">/&quot;</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;N8N_EDITOR_BASE_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:5678/&quot;</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nt">cmd_line_args</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"WEBHOOK_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:8081/"</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_PATH:</span><span class="nv"> </span><span class="s">/"</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_EDITOR_BASE_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:5678/"</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nt">cmd_line_args</span><span class="p">:</span><span class="w"> </span><span class="s">""</span>
 </span></code></pre></div></li>
 </ul>
 <p>It is better to use an external WEBHOOK_URL for the api so external applications can use it.</p>
@@ -4591,42 +4621,42 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 <h3 id="network-topology-dns-flows">Network topology &amp; DNS flows<a class="headerlink" href="#network-topology-dns-flows" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>graph TB
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    subgraph FreeboxLAN[&quot;🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)&quot;]
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>        Freebox[&quot;Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway / DHCP server&quot;]
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>        LANDevice[&quot;LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x&quot;]
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)"]
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>        Freebox["Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway / DHCP server"]
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>        LANDevice["LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x"]
 </span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    end
 </span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    subgraph KVMServer[&quot;🖥️ KVM Server (Ubuntu host) — 192.168.1.123&quot;]
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>        br0[&quot;br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)&quot;]
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        virbr0[&quot;virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached&quot;]
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        docker0[&quot;docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running&quot;]
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>        br0["br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)"]
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        virbr0["virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached"]
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        docker0["docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running"]
 </span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    end
 </span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
-</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    subgraph NATVMs[&quot;libvirt NAT — 192.168.122.0/24&quot;]
-</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        natVM[&quot;KVM VM in NAT mode&lt;br/&gt;192.168.122.x&quot;]
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        natVM["KVM VM in NAT mode&lt;br/&gt;192.168.122.x"]
 </span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>    end
 </span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
-</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    subgraph HAVM[&quot;🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)&quot;]
-</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        AdGuard[&quot;AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI&quot;]
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)"]
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        AdGuard["AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI"]
 </span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>
-</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        subgraph Hassio1[&quot;hassio network — 172.30.32.0/23&quot;]
-</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>            hassioGw[&quot;gateway&lt;br/&gt;172.30.32.1&quot;]
-</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            hassioDns[&quot;hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy&quot;]
-</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>            haAddons[&quot;other addons&lt;br/&gt;172.30.32.4+&quot;]
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        subgraph Hassio1["hassio network — 172.30.32.0/23"]
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>            hassioGw["gateway&lt;br/&gt;172.30.32.1"]
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            hassioDns["hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy"]
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>            haAddons["other addons&lt;br/&gt;172.30.32.4+"]
 </span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>        end
 </span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>
-</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>        subgraph Hassio2[&quot;2nd HAOS network — 172.30.33.0/23&quot;]
-</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            hermes[&quot;Hermes Agent addon&lt;br/&gt;172.30.33.10&quot;]
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            hermes["Hermes Agent addon&lt;br/&gt;172.30.33.10"]
 </span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        end
 </span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>    end
 </span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
 </span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>    %% DNS flows
-</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>    LANDevice --&gt;|&quot;direct DNS query&quot;| AdGuard
-</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>    haAddons --&gt;|&quot;internal query&quot;| hassioDns
-</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    hermes --&gt;|&quot;internal query&quot;| hassioDns
-</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    hassioDns --&gt;|&quot;forwarded DNS query&quot;| AdGuard
-</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    natVM --&gt;|&quot;query&quot;| virbr0
-</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    virbr0 --&gt;|&quot;forwarded DNS query&quot;| AdGuard
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>    LANDevice --&gt;|"direct DNS query"| AdGuard
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>    haAddons --&gt;|"internal query"| hassioDns
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    hermes --&gt;|"internal query"| hassioDns
+</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    hassioDns --&gt;|"forwarded DNS query"| AdGuard
+</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    natVM --&gt;|"query"| virbr0
+</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    virbr0 --&gt;|"forwarded DNS query"| AdGuard
 </span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>
 </span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>    %% topology / carrier links (not DNS)
 </span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>    Freebox -.-&gt;|LAN| br0

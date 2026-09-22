@@ -521,6 +521,8 @@
       
         
       
+        
+      
     
     
     
@@ -563,6 +565,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docs/android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2900,7 +2930,7 @@ It copies the <code>personal-os-setup/</code> repo into the container user's hom
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>tests/archlinux/Dockerfile<span class="w"> </span>-t<span class="w"> </span>personal-os-setup-arch-test<span class="w"> </span>.
 </span></code></pre></div>
 <h3 id="run-interactive-and-mount">Run (interactive) and mount<a class="headerlink" href="#run-interactive-and-mount" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/home/tester/personal-os-setup&quot;</span><span class="w"> </span>personal-os-setup-arch-test
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>-v<span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/home/tester/personal-os-setup"</span><span class="w"> </span>personal-os-setup-arch-test
 </span></code></pre></div>
 <p>This drops you into <code>bash</code> in:</p>
 <ul>

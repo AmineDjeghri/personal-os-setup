@@ -650,6 +650,8 @@
       
         
       
+        
+      
     
     
     
@@ -692,6 +694,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3143,7 +3173,7 @@ Want to edit the code, or fork and customize this project? See <a href="#develop
 </blockquote>
 <h4 id="linux-wsl2-macos">Linux / WSL2 / macOS<a class="headerlink" href="#linux-wsl2-macos" title="Permanent link">&para;</a></h4>
 <p>Get started with one command in bash/zsh:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>wget<span class="w"> </span>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh<span class="w"> </span>-O<span class="w"> </span>-<span class="k">)</span><span class="s2">"</span>
 </span></code></pre></div>
 <p>The script installs the repository into <code>~/.personal-os-setup</code> (or reuses/updates it if it already exists there) and links a <code>personal-os-setup</code> command into <code>~/.local/bin</code>, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <p>Once installed, just run:</p>
@@ -3151,7 +3181,7 @@ Want to edit the code, or fork and customize this project? See <a href="#develop
 </span></code></pre></div>
 <h4 id="windows-11">Windows 11<a class="headerlink" href="#windows-11" title="Permanent link">&para;</a></h4>
 <p>Get started with one command (run it in PowerShell as administrator):
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">&#39;https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1&#39;</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">&quot;$env:TEMP\install_windows.ps1&quot;</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$u</span><span class="p">=</span><span class="s1">'https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'</span><span class="p">;</span> <span class="nv">$p</span><span class="p">=</span><span class="s2">"$env:TEMP\install_windows.ps1"</span><span class="p">;</span> <span class="nb">iwr </span><span class="nv">$u</span> <span class="n">-UseBasicParsing</span> <span class="n">-OutFile</span> <span class="nv">$p</span><span class="p">;</span> <span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">Bypass</span> <span class="o">-File</span> <span class="nv">$p</span>
 </span></code></pre></div></p>
 <p>The script installs the repository into <code>%USERPROFILE%\.personal-os-setup</code> (or reuses/updates it if it already exists there) and adds a <code>personal-os-setup</code> command to your PATH, so you can run it again from anywhere. If you already have the repo cloned and run the script from inside it, it updates that checkout in place instead.</p>
 <p>Once installed, just run:</p>
@@ -3182,7 +3212,7 @@ review the final diff (<code>git diff --staged</code> or the IDE's local changes
 </blockquote>
 <p>If you want to edit the code or fork and customize this project, clone it instead of using
 the one-liners above:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git<span class="w">   </span><span class="c1"># or your fork&#39;s URL</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git<span class="w">   </span><span class="c1"># or your fork's URL</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>personal-os-setup
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>./install_unix.sh<span class="w">          </span><span class="c1"># Linux / WSL2 / macOS</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># ./install_windows.ps1    # Windows 11 (PowerShell as administrator)</span>
