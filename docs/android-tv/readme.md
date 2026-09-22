@@ -54,14 +54,11 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 
 ![nuvio-ios](nuvio-ios.png)
 
-
-- Stremio/Nuvio are video streaming applications that allows you to watch and organize video content from different services,
+- Nuvio (a new Stremio app-like) is an opensource streaming application that allows you to watch and organize video content from different services,
   including movies, series, live TV and video channels. The content is aggregated by an addon system providing streams
-  from various sources. And with its commitment to security, Stremio/Nuvio are the ultimate choice for a worry-free,
+  from various sources. And with its commitment to security, Nuvio is the ultimate choice for a worry-free,
   high-quality streaming experience.
-
-- Stremio is available on all platforms: Web, Windows, Mac, Linux, Android, iOS, Android TV, Apple TV...
-- For 2026, I recommend using Nuvio. Nuvio is recent, full open source and has a lot of features directly integrated in the app. It is compatible with Stremio Addons. It is available on: Android, iOS, Android TV
+- Nuvio is available on all platforms: Web, Windows, Mac, Linux, Android, iOS, Android TV, Apple TV...
 - Addons...etc will be synchronized between all your devices.
 - For the streams themselves you will use a **debrid service** (AllDebrid, Real-Debrid, TorBox…), which is what makes playback instant and means you never need a VPN. The [streaming page](nuvio-stremio-aiostreams.md) explains it and sets it all up.
 
