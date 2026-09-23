@@ -107,7 +107,8 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 2. Click **Save**. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (Streamfusion and OpenSubtitles V3+ are the usual suspects).
 3. Click **Install**, then copy the manifest link.
 4. Paste it in Nuvio: [nuvioapp.space/account?tab=addons](https://nuvioapp.space/account?tab=addons) (or through the app).
-5. If the link ever changes, the addon has to be reinstalled with the new one — editing the URL in place is not enough.
+5. Nuvio shows what the addon provides, as a count of resources and catalogs (for example `5 resources / 45 catalogs`): a populated count means the addon was added properly.
+6. If the link ever changes, the addon has to be reinstalled with the new one — editing the URL in place is not enough.
 
 ### Step 7 — Test it
 
@@ -152,6 +153,7 @@ It also saves your configuration online, linked to a **UUID** and a **password**
 
 - **Template** — for sharing your setup with others, or when you do not want to maintain the configuration afterwards. You publish a JSON file; anyone can import it and gets their own configuration with their own credentials. Nothing links back to yours and there is nothing to keep in sync.
 - **Parent config** — for someone who maintains several configurations. One base config holds everything, the others point at its UUID and inherit it, overriding only the sections you choose; change the base once and they all follow. It stays your setup, with your credentials. You will find it in **Miscellaneous → Parent Config** (Advanced mode).
+  - You cannot inherit from a configuration that is itself inheriting another one — a configuration can only inherit from the parent directly.
 
 Setting up a **child configuration**:
 
