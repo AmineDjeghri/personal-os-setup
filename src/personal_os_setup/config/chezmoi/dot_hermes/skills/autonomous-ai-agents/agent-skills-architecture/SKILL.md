@@ -127,6 +127,22 @@ cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the s
 - Refresh after `git pull`; the file-level `--source-path` fallback for non-git sources and the full debugging
   trail: `references/chezmoi-dot-claude-deployment.md`.
 
+## Reconciling the two trees (do this BEFORE any cleanup)
+`make skills-status` is the authoritative duplicate list (live own-store copies that duplicate a git-managed name);
+`make skills-diff` reports per skill `OK` / `DIFFERS` / `MISSING`; `make skills-drift` is the deploy's gate.
+
+- **`MISSING` means "the deploy has not landed", never "redundant".** The own-store copy of a shared name can be the
+  only copy the index has — the CLI dedupes by name, so deleting it first makes the skill vanish from the index.
+  Order: deploy → confirm `skills-diff` prints no `MISSING`/`DIFFERS` → only then delete the own-store duplicate.
+- `make skills-deploy` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
+  `SKILLS_FORCE=1 make skills-deploy` is the escape hatch and is safe ONLY once the newer live content has been ported
+  into the source tree — otherwise it overwrites that content for good.
+- **`DIFFERS` never says which side is newer — check per FILE** with `stat -c '%s %y'` on both copies (the drifted set
+  is usually mixed). Live strictly newer → port live→source (sanitized). Source strictly newer → port nothing, the
+  deploy is the fix. A blanket "reconcile live→git" DELETES the newer source content; a blanket deploy reverts the
+  newer live content.
+- Re-run `skills-diff` after the deploy — a clean report is the proof, not the deploy's own output.
+
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` creates/refreshes the git-tracked
   `.agents/skills/<name>` symlink; `make skills-check` must print `OK <name>` for every skill in `.claude/skills`.
@@ -200,6 +216,27 @@ exactly the promoted set, so pin every promoted name.
 - Say plainly which writer owns which file: git owns the promoted names, the hub owns its installs, the addon image
 owns bundled ones.
 
+### Deciding delete vs port (an inventory pass)
+Classify from bookkeeping, never from the category directory a skill sits in: `hermes skills list` prints the Source
+(`local` = own store, `builtin` = shipped in the addon tree) plus a Status column; `.usage.json` carries
+`created_by` / `use_count` / `state` / `pinned`; the addon's read-only `skills/` tree is ground truth for "shipped";
+`.curator_backups/` holds pre-run snapshots for rollback.
+
+- Agent-authored + box-specific → the only promotable kind; port it into git (next section) if it must survive a
+  reinstall.
+- Shipped / hub-installed → NEVER vendor into a Track-1 tree; keep while used, otherwise delete the own-store copy
+  (a deleted bundled skill is not re-seeded; `hermes skills reset <name> --restore` brings stock back).
+- Live-only with 0 uses, superseded by a newer skill, or `state: stale` → delete.
+- A skill dir that is a symlink into a repo → keep the symlink, never add a second copy.
+- A DISABLED skill leaves the index AND is unreadable/unpatchable through the skill tools (`skill_view` refuses) —
+  re-enable it before trying to edit it.
+- Deleting files inside a skill dir leaves dangling `references/`/`scripts/` pointers in its SKILL.md: grep the live
+  skills for the removed filenames afterwards (the deploy clears them when the source version does not reference them).
+- Inventory pitfalls: `find -name SKILL.md` does not descend into symlinked skill dirs (use `ls -la`, `find -L`);
+  `hermes skills list` truncates long names with `…`, so never diff name lists off that table; `.curator_ledger.jsonl`
+  records curator/agent mutations only — a user-side deletion or disable leaves no entry, so an unexplained drop in the
+  count means ask the user before suspecting the tooling.
+
 ### Promoting agent-authored skills into git (publishing gate)
 The git home for promoted skills is a repo that may be **public**, so publishing is a review step, not a copy step:
 
@@ -214,7 +251,9 @@ The git home for promoted skills is a repo that may be **public**, so publishing
    tunnel hostnames, live exposure findings. If a skill fails, sanitize its examples to placeholders first or leave it
    in the own store — never publish it as-is to make the promotion set look complete. Sanitize the REPO copy and leave
    the live store copy untouched (it is private and keeps the real values); placeholder mapping, the pre/post scans and
-   the diff-based proof: `references/sanitizing-skills-for-public-repos.md`.
+   the diff-based proof: `references/sanitizing-skills-for-public-repos.md`. Real values in the own store are only
+   temporary: the next `make skills-deploy` replaces that copy with the sanitized one, so drive the canonical text
+   from the source tree rather than from what the live copy shows.
 4. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
    published) elsewhere; resolve the single source of truth instead of creating a second copy. Keep the symlink and
    drop the duplicate from the deploy source: `make skills-deploy` copies with `cp -R`, which FOLLOWS a symlinked
@@ -231,6 +270,10 @@ your own work inside a bundled skill dir if you want upstream updates — audit 
   and let the user say "prompt me again" to re-fire the exact patch; never retry it and never route the same edit
   through terminal or another file. `git commit`/`git push` need per-action approval every time (a plan, a task
   description or a previous yes is NOT permission); commit email must match existing commits, never invented.
+- Destructive cleanup (`rm -rf`, `git clean -f`, a `tar` into a protected path) raises its OWN approval prompt, and a
+  timed-out prompt is not consent either → stop, report, re-fire only when the user says so. Keep the backup and the
+  delete in ONE command with the backup first, so a timeout at the prompt leaves nothing half-applied, and state the
+  exact file/dir list before each step — this user approves deletions per step, not per plan.
 - The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT
   container does). Vendor via git clone (Track 1) or `claude plugin` (Track 2); do not install Node for this.
 - Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager`

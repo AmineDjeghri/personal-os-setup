@@ -7,12 +7,15 @@ description: Use when explaining Hermes /ctx or /usage context reports.
 
 Use when the user asks "why is X% of my context used?", "are all these tools necessary?", or pastes `/usage` / `/ctx` output and wants it explained. Companion to the bundled `hermes-agent` skill (which owns slash-command registry).
 
-## The two commands (both work in CLI and gateway/Telegram)
+## The commands (all work in CLI and gateway/Telegram)
 
 | Command | Shows |
 |---|---|
-| `/usage` | Token usage + rate limits (billing-oriented) |
+| `/usage` | Token usage + rate limits for THIS session (cumulative per session) |
 | `/ctx` (alias `/context`, sub `all`) | Per-category breakdown + usage gauge: system prompt / tool definitions / subagent defs / memory / conversation |
+| `/insights [days]` (CLI: `hermes insights --days N`) | PERIOD analytics (default 30d): sessions, tokens, estimated cost, models, platforms, top tools/skills |
+
+**`/insights` is the period command** (`hermes insights` is the shellable form the agent can run itself): a "what did I spend this month?" question is answered with `--days <days elapsed>`, not by aggregating `state.db` by hand. Query the DB only for exact calendar-month boundaries or a per-task/per-model split.
 
 **Both are gateway-side commands — the user must type them; the agent cannot invoke slash commands itself.** If the user can't run them, answer from code: `get_model_context_length(model, provider=...)` in `agent/model_metadata.py`, payload shape in `agent/context_breakdown.py`.
 
@@ -41,7 +44,8 @@ Use when the user asks "why is X% of my context used?", "are all these tools nec
 
 - Don't claim "tools eat 68% of my window" — verify against `context_max` first; the breakdown % is share-of-loaded, and deepseek-v4-flash has a 1M window.
 - For Hermes-behavior questions, check the `hermes-agent` skill's `references/slash-commands.md` BEFORE grepping source — the registry of record lives there.
-- `/usage` ≠ `/ctx`: billing vs breakdown. Don't send the user to the wrong one.
+- `/usage` ≠ `/ctx` ≠ `/insights`: session billing vs context breakdown vs period analytics. Don't send the user to the wrong one.
+- **Cost figures are estimates — say what they are.** `/insights` prices tokens from a dated official-rate snapshot; `actual_cost_usd` stays 0 for providers that return no billed amount, and any "no pricing data" sessions make the period total a floor, not a bill. State the peak/off-peak multiplier where the provider has one (deepseek: peak = 2x off-peak) and send the user to the provider console for the authoritative number.
 
 ## Related
 

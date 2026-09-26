@@ -6,7 +6,17 @@ description: Automate YouTube downloads via the yt-dlp library.
 # YouTube Download Automation (yt-dlp library)
 
 ## Trigger
-Building or debugging any script that drives **yt-dlp programmatically** (playlist downloads, per-video metadata overrides, custom naming/tagging, plan-then-download workflows). Concrete instance: the `yt-dlp-music-downloads` skill (music pipeline: YouTube → `/media/music` → beets) — see it for the full workflow; this skill carries the library-level facts.
+Building or debugging any script that drives **yt-dlp programmatically** (playlist downloads, per-video metadata overrides, custom naming/tagging, plan-then-download workflows) — including the music pipeline below.
+
+## The music pipeline (concrete instance: YouTube → `/media/music` → Navidrome/beets)
+Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/` — `yt_dl.py` carries a PEP 723 header, so run it as **`uv run --no-project yt_dl.py …`** from that folder (`--no-project` is load-bearing: the folder sits inside a uv project, bare `uv run` binds to that project's env instead of the script's deps). `.archive.txt`, `.staging/` and `overrides.json` live next to the script; that folder's `README.md` (public doc) holds the overrides format, naming rules and quirks.
+
+- **PLAN FIRST, never download blind:** `yt_dl.py --plan <url>` → per-video id/title/uploader/chapter count. Then read the plan and write `overrides.json` (full map on first run, delta for new videos — the script parses nothing itself, the LLM is 100 % of the metadata decisions). Then `yt_dl.py <url> --overrides overrides.json [--max N] [--log downloads.log]`.
+- Downloads land in `/media/music/YouTube/<folder>/NN - Artist - Title.m4a` (tags embedded by the script); the finished staging folder is moved in with one rename so a watcher imports it whole.
+- **Rule that lives only here — non-music clips (entrances, chants, interviews, fireworks…) are NEVER classified alone:** list them with a proposed handling and wait for the user's confirmation before setting `album`/`folder` to `Other`.
+- **Verify:** files under `/media/music/YouTube/…` (not `.staging/`), the beets add-on log shows the import (`ha_get_logs` source=supervisor slug=<beets add-on>), and report the failed/unavailable videos with reasons + counts.
+- Rate limits: ~1 s/request — a 50-video playlist takes minutes; launch it with `background=true` + `notify_on_complete=true`.
+- Keep live/private specifics (real add-on slugs, host paths) out of that README — it is published.
 
 ## Verified API facts (yt-dlp, Aug 2026, Python 3.14, uv-managed)
 - **Postprocessor keys have NO `PP` suffix.** `{"key": "FFmpegMetadataPP"}` crashes at `YoutubeDL.__init__` with `KeyError: 'FFmpegMetadataPPPP'` (get_postprocessor appends `PP`). Correct: `{"key": "FFmpegMetadata", "add_metadata": True}` and `{"key": "EmbedThumbnail"}`.
