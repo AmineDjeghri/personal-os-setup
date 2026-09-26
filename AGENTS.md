@@ -58,6 +58,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Agent integrations (Cloudflare skills + MCP) | `.claude/skills/cloudflare-agents` |
 | Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
+| Repo development & maintenance (map, doc/build, agent-sharing) | `.claude/skills/personal-os-setup-repo` |
 
 ## Skills & plugins — 2-track governance (decision Sep 2026)
 
