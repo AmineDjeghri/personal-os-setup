@@ -80,9 +80,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
   self-updating (`/plugin update`). NOT committed to this repo; re-register per machine.
   Hermes never loads plugins (skills are the shared currency). Currently:
-  `superpowers` (obra/superpowers, user scope), `cloudflare` (cloudflare/skills — Cloudflare
-  skills + MCP server for both agents, installed with `make agents-cloudflare`; recipe and
-  approval model in `.claude/skills/cloudflare-agents`, never vendored into Track 1).
+  `superpowers` (obra/superpowers, user scope).
 - **Hermes-only (repo = truth, single-agent):** Hermes-authored skills that Claude Code must
   NOT read. Canonical copy in `src/personal_os_setup/config/chezmoi/dot_hermes/skills/<category>/<skill>/`
   → deployed to `~/.hermes/skills` by the same `make skills-deploy`. Deployed names are

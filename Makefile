@@ -15,7 +15,6 @@ include makefiles/ci.mk
 include makefiles/build.mk
 include makefiles/vm.mk
 include makefiles/skills.mk
-include makefiles/agents.mk
 
 .PHONY: all help
 
