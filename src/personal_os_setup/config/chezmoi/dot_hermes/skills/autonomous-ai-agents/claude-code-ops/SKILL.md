@@ -36,6 +36,12 @@ Companion to the bundled `claude-code` skill: delegation workflows (print mode, 
 
 Healthy = `loggedIn: true`, `authMethod: "claude.ai"`, `subscriptionType: "pro"` (this user's account: user@example.com).
 
+**`auth status` is not proof a call will work.** A `-p` run can die in a quarter-second with
+`Failed to authenticate: OAuth session expired and could not be refreshed` (`is_error: true`, `num_turns: 1`,
+nothing written) while `auth status` still reads healthy — the status line reports stored credentials, not a
+live session. Whenever a delegation dies instantly, or right after a re-login, prove auth with one tiny real
+call before re-running the task.
+
 ## Auth — OAuth device flow (THE pattern)
 
 1. Start in a background PTY: `terminal(command="/config/.local/bin/claude auth login", background=true, pty=true)`.
@@ -68,8 +74,21 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
    run, and the shape of the answer you want back. A file brief stays exact and can be re-run or amended.
 2. **Run it tracked and backgrounded** with `notify=true` — real delegation runs exceed the foreground cap and a
    detached `nohup`-style wrapper is refused. Do not re-run it while it is still going.
-3. **Read the result with `jq -r .result /tmp/out.json`** (plus `.subtype`, `.num_turns`, `.cost`) from the terminal;
-   `execute_code` is approval-gated in this environment and returns BLOCKED when the user is away.
+   - **Add `--permission-mode acceptEdits` whenever the run must WRITE files.** `--allowedTools '…,Write,Edit'`
+     alone leaves every write at the consent gate: the run spends its whole budget analysing, stalls on the same
+     call three times, and exits having written only a skeleton — the analysis is not recoverable from disk.
+   - **Never wrap the launch in trailing shell bookkeeping** (`… ; echo "exit=$?" >> log`): the wrapper's own
+     status (0) is what the completion notice reports, so a run that exited 1 is announced as finished normally.
+     The JSON's `is_error` is the truth, not the shell exit code.
+3. **Read the result with `jq -r .result /tmp/out.json`** (plus `.subtype`, `.num_turns`, `.cost`, `.is_error`)
+   from the terminal; `execute_code` is approval-gated in this environment and returns BLOCKED when the user is away.
+   A `result` field that is an error string, or a `num_turns` of 1-2, means it never did the work — check before
+   reporting anything as done.
+   - **A provider spend/session limit kills the run instantly**: `is_error: true`, `num_turns: 1`,
+     `total_cost_usd: 0`, and `.result` is the provider's own limit message (naming the reset time). Nothing was
+     analysed and no file was written — do not retry in a loop. Report the limit plus the reset time, or do the task
+     another way (a smaller model/tool path, or wait for the reset). A wrapper-less background launch makes this
+     indistinguishable from success unless `.is_error` is read.
 4. **A mid-run stop asking for approval is normal, not a failure.** Repos whose `AGENTS.md`/`CLAUDE.md` forbid
    `git commit`/`git push` without per-action approval make Claude Code do the work, run the checks, then halt with
    the changes staged and ask. Two ways through:
@@ -79,6 +98,10 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
    - or answer the question by resuming the same session:
      `claude -p "<approval>" --resume <session_id> --allowedTools … --output-format json`, with `session_id` taken from
      the first run's JSON. Continuation keeps every earlier turn — no re-briefing, no repeated exploration.
+   - **A stall on file writes is not an approval question.** Resume the same `session_id` with the missing flag
+     added (`--permission-mode acceptEdits`) plus one line saying writes are now permitted; flags may change on
+     resume, and the earlier turns — including the analysis already paid for — are kept. Re-briefing the whole task
+     from scratch costs the same again for nothing.
 5. **Verify the artifact, never the summary.** Statements like "pushed and opened PR #N" are self-reports: check
    `git diff origin/main...origin/<branch> --stat`, `gh pr view <n> --json title,files,commits,mergeable`,
    `gh pr checks <n>`, `gh run list --branch <branch>`. Report only what those show.
@@ -113,9 +136,14 @@ Auto-updates are enabled by default (native installs update in place under `/con
 
     `versions/<ver>` is a single binary FILE, not a directory — an `ls -l` on the target is the fastest way to confirm
     that the link (not the install) is what broke.
+11. **A long audit brief needs two extra clauses or its output is lost**: demand incremental writing ("append findings
+    as you go — if you run out of budget the partial report must still be useful") and an explicit OUT-OF-SCOPE list
+    (naming the skill classes the delegate must not analyse). Without the first, one permission wall or turn cap
+    costs the entire run; without the second, a broad brief drifts into advice about things the user excluded.
 
 ## Verification checklist
 
 - [ ] `/config/.local/bin/claude --version` → 2.x
 - [ ] `auth status` → loggedIn:true + correct email + subscriptionType pro
 - [ ] `doctor` → no errors besides the expected PATH warning
+- [ ] a real one-turn `-p` call succeeds — `auth status` alone can read healthy while the session is dead

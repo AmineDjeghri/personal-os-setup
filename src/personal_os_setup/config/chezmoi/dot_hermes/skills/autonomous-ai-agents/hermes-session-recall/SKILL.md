@@ -32,7 +32,3 @@ A follow-up that reads as a continuation ("write a doc about this", "same branch
 - **Do not use `execute_code` for session recovery**: it is approval-gated here, so it returns BLOCKED ("timed out without user response") when the user isn't watching, and it must not be retried as-is.
 - **A message delivered at a session boundary is stored twice** (once in the session being continued, once in the new one): the same text appearing in two sessions is ONE user message, not a repeat. `messages.id` is global and increasing across sessions — order deliveries by id/timestamp and read the copy owned by the session that holds the current turn.
 - **When the user is away, approval-gated tools time out silently**: recovery work should use approval-free reads only (read_file, search_files, session_search discovery/scroll), mirroring the standing rule to use approval-free git ops.
-
-## Related
-
-- `hermes-context-usage` — /ctx and /usage report interpretation (context gauges, NOT session history; don't conflate the two features).

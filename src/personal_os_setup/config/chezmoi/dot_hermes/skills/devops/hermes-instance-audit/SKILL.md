@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [hermes, audit, skills, plugins, platforms, channels, config, versions, curator, sync, read-only]
-    related_skills: [hermes-agent, hermes-addon-troubleshooting, agent-skills-architecture]
+    related_skills: [hermes-agent, agent-skills-architecture]
 ---
 
 # Hermes Instance Audit (read-only)

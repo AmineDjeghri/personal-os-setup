@@ -55,8 +55,6 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Documented-vs-reality drift | `.claude/skills/repo-gotchas` |
 | Tests & coverage | `.claude/skills/run-tests` |
 | Docs site gotchas | `.claude/skills/docs-site` |
-| Agent integrations (Cloudflare skills + MCP) | `.claude/skills/cloudflare-agents` |
-| Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
 | New TUI action / package-manager backend | `.claude/skills/add-system-action` |
 | Chezmoi dotfiles source scripts | `.claude/skills/chezmoi-scripts` |

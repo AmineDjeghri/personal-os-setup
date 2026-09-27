@@ -49,16 +49,7 @@ This is the most portable method — works everywhere, no SSH config needed.
 
 **Step 1: Create a personal access token**
 
-Tell the user to go to: **https://github.com/settings/tokens**
-
-- Click "Generate new token (classic)"
-- Give it a name like "hermes-agent"
-- Select scopes:
-  - `repo` (full repository access — read, write, push, PRs)
-  - `workflow` (trigger and manage GitHub Actions)
-  - `read:org` (if working with organization repos)
-- Set expiration (90 days is a good default)
-- Copy the token — it won't be shown again
+Classic PAT with `repo` + `workflow` scopes (add `read:org` for org repos) at **https://github.com/settings/tokens**.
 
 **Step 2: Configure git to store the token**
 
@@ -89,13 +80,7 @@ git config --global credential.helper 'cache --timeout=28800'
 git remote set-url origin https://<username>:<token>@github.com/<owner>/<repo>.git
 ```
 
-**Step 3: Configure git identity**
-
-```bash
-# Required for commits — set name and email
-git config --global user.name "Their Name"
-git config --global user.email "their-email@example.com"
-```
+**Step 3: Configure git identity** — owned by the `repo-conventions` skill.
 
 **Step 4: Verify**
 
@@ -128,10 +113,7 @@ ssh-keygen -t ed25519 -C "their-email@example.com" -f ~/.ssh/id_ed25519 -N ""
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Tell the user to add the public key at: **https://github.com/settings/keys**
-- Click "New SSH key"
-- Paste the public key content
-- Give it a title like "hermes-agent-<machine-name>"
+Add the public key at **https://github.com/settings/keys**.
 
 **Step 3: Test the connection**
 
@@ -147,12 +129,7 @@ ssh -T git@github.com
 git config --global url."git@github.com:".insteadOf "https://github.com/"
 ```
 
-**Step 5: Configure git identity**
-
-```bash
-git config --global user.name "Their Name"
-git config --global user.email "their-email@example.com"
-```
+**Step 5: Configure git identity** — owned by the `repo-conventions` skill.
 
 ---
 
@@ -198,27 +175,7 @@ gh auth status
 
 ## Using the GitHub API Without gh
 
-When `gh` is not available, you can still access the full GitHub API using `curl` with a personal access token. This is how the other GitHub skills implement their fallbacks.
-
-### Setting the Token for API Calls
-
-```bash
-# Option 1: Export as env var (preferred — keeps it out of commands)
-export GITHUB_TOKEN="<token>"
-
-# Then use in curl calls:
-curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/user
-```
-
-### Extracting the Token from Git Credentials
-
-If git credentials are already configured (via credential.helper store), the token can be extracted:
-
-```bash
-# Read from git credential store
-grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|'
-```
+No `gh`? See `references/rest-api-fallback.md`.
 
 ### Helper: Detect Auth Method
 

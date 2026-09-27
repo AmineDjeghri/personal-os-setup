@@ -21,7 +21,7 @@ Fix repos where line-ending contamination makes small edits diff whole files. Cr
 
 1. Sync the base first: fetch, then `git switch main` (the checkout may sit on an unrelated feature branch) and `git pull --ff-only`.
 2. Branch `chore/normalize-line-endings` and commit `chore: normalize line endings to LF` — `chore:` keeps semantic-release repos from bumping on non-user-visible maintenance.
-3. Author/extend `.gitattributes` — starter in `templates/gitattributes`. `* text=auto`; `eol=lf` for shell scripts and CI workflow files; `eol=crlf` ONLY for Windows-runtime extensions that actually exist in the repo (`.bat`/`.cmd`/`.ps1`/`.reg`). Repos without any `.gitattributes` get the full file.
+3. Author/extend `.gitattributes` — `* text=auto`; `eol=lf` for shell scripts and CI workflow files; `eol=crlf` ONLY for Windows-runtime extensions that actually exist in the repo (`.bat`/`.cmd`/`.ps1`/`.reg`). Repos without any `.gitattributes` get the full file.
 4. `git add --renormalize .` — stages only blobs whose content actually changes; a pure EOL swap shows equal insertions/deletions in `--stat`.
 5. Force the worktree to LF too: `git checkout-index -f --all` — renormalize updates the index but disk copies can stay CRLF, so editors keep tripping.
 6. Verify before commit: `git ls-files --eol | grep -E 'i/(crlf|mixed)'` → empty output.

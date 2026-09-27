@@ -109,21 +109,11 @@ the same skill name confuse the model:
   and scoped tokens over account-wide OAuth.
 
 ## Deploying the shared dir (chezmoi / container)
-```bash
-REPO=/config/workspace/personal-os-setup
-cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the shared skills
-```
-- `--source` = the repo ROOT (git-backed — `.chezmoiroot` points at the nested dir) and run from HOME: targets
-  resolve against CWD. Two gotchas caused "not managed" every time: the nested-dir source and a non-HOME cwd.
-- **Never full-apply in the container** — the source also holds the desktop config (hypr, ghostty, mpv, OpenRGB,
-  coolercontrol…) which must not land in `/config`.
-- The nested `config/chezmoi` dir must never contain its own `.chezmoiroot`: the TUI
-  (`tasks/system/chezmoi.py`) passes that dir directly as `--source`, so a second redirect breaks the app's path.
-- No chezmoi (container/CLI): `cd <repo> && make skills-deploy` copies the same source to `~/.claude/skills`
-  (target lives in `makefiles/skills.mk`, beside `skills-link`/`skills-check`). In the HA webui container run it
-  as `make skills-deploy HOME=/config` — that container's own HOME is overlay.
-- Refresh after `git pull`; the file-level `--source-path` fallback for non-git sources and the full debugging
-  trail: `references/chezmoi-dot-claude-deployment.md`.
+
+Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-deploy` and its
+`SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
+don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
+`--source`, the file-level `--source-path` fallback) is in `references/chezmoi-dot-claude-deployment.md`.
 
 ## Reconciling the two trees (do this BEFORE any cleanup)
 `make skills-status` is the authoritative duplicate list (live own-store copies that duplicate a git-managed name);
@@ -144,6 +134,12 @@ cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the s
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` creates/refreshes the git-tracked
   `.agents/skills/<name>` symlink; `make skills-check` must print `OK <name>` for every skill in `.claude/skills`.
+- **A destination repo with NO skill tooling yet** gets the layout created by hand: `.claude/skills/<name>/` as the
+  canonical copy plus a RELATIVE `.agents/skills/<name>` → `../../.claude/skills/<name>` symlink, file modes
+  normalized (a copy out of the own store arrives `700`, git wants `644`), and a `## Skills` section in that repo's
+  `AGENTS.md` naming the skills plus the placement rule. Without that AGENTS.md line the next session invents a
+  second layout. Repos that already ship the tooling get the same result through `make skills-link` /
+  `make skills-check` instead of by hand.
 - Keep repo-bound runbooks OUT of `docs/`: `properdocs.yml` uses `docs_dir: .` and excludes only what its glob
   lists, so a new `docs/<topic>/` page is PUBLISHED on the public site — skills sit outside `docs/` and stay private.
 - AGENTS.md = canonical rules for ALL agents and is sent with EVERY prompt → keep <150 lines, index-shaped
@@ -160,8 +156,12 @@ repo root AND that root in `skills.trusted_project_dirs` (exact resolved path �
 the session must resolve that root at all: with a global `terminal.cwd` (HOME, no `.git` above it) NO root
 resolves, so trust stays silently inert for chat sessions (upstream defect, fix in review). Consequence: for a
 repo runbook both agents must see from a `/config`-rooted session, list its `.agents/skills` in `external_dirs`
-(one index line per skill) or promote it to Track 1. `config.yaml` is not agent-writable → hand the user the
-fenced block (nothing else) and expect it to take effect in the NEXT session. Full chain, decisive probes,
+(one index line per skill) or promote it to Track 1. `config.yaml` is not writable through the file tools (the
+refusal is explicit: "Refusing to write to Hermes config file … use 'hermes config' instead") — register the dir
+with the CLI, which does take a JSON list:
+`hermes config set skills.external_dirs '["/config/.claude/skills","<repo>/.agents/skills"]'`, read it back with
+`hermes config get skills.external_dirs`, same for `skills.trusted_project_dirs`; any of it takes effect only in the
+NEXT session. Hand the user the fenced block instead when the change is HIS to make (a path he has not approved). Full chain, decisive probes,
 upstream issue/PR handles: `hermes-instance-audit` → `references/skill-loading-resolution.md`.
 
 ## Hermes own store — three writers, and keeping a skill Hermes-only
