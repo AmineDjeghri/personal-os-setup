@@ -1,63 +1,67 @@
 ---
 name: youtube-download-automation
-description: Automate YouTube downloads via the yt-dlp library.
+description: Use when downloading YouTube audio into the music library or driving yt-dlp. Plan first, confirm with the user, then download.
 metadata:
   hermes:
     origin: repo:personal-os-setup
 ---
 
-# YouTube Download Automation (yt-dlp library)
+# YouTube Download Automation (yt-dlp)
 
 ## Trigger
-Building or debugging any script that drives **yt-dlp programmatically** (playlist downloads, per-video metadata overrides, custom naming/tagging, plan-then-download workflows) — including the music pipeline below.
+Any task that drives **yt-dlp** — the YouTube → `/media/music` → Navidrome/beets pipeline below, playlist or single-link downloads, per-video metadata, chapter splitting, debugging the downloader script — and any change to the downloader script itself.
 
-## The music pipeline (concrete instance: YouTube → `/media/music` → Navidrome/beets)
-Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/` — `yt_dl.py` carries a PEP 723 header, so run it as **`uv run --no-project yt_dl.py …`** from that folder (`--no-project` is load-bearing: the folder sits inside a uv project, bare `uv run` binds to that project's env instead of the script's deps). `.archive.txt`, `.staging/` and `overrides.json` live next to the script; that folder's `README.md` (public doc) holds the overrides format, naming rules and quirks.
+## 0. Gate — ask before you touch anything (MANDATORY)
 
-- **PLAN FIRST, never download blind:** `yt_dl.py --plan <url>` → per-video id/title/uploader/chapter count. Then read the plan and write `overrides.json` (full map on first run, delta for new videos — the script parses nothing itself, the LLM is 100 % of the metadata decisions). Then `yt_dl.py <url> --overrides overrides.json [--max N] [--log downloads.log]`.
-- Downloads land in `/media/music/YouTube/<folder>/NN - Artist - Title.m4a` (tags embedded by the script); the finished staging folder is moved in with one rename so a watcher imports it whole.
-- **Rule that lives only here — non-music clips (entrances, chants, interviews, fireworks…) are NEVER classified alone:** list them with a proposed handling and wait for the user's confirmation before setting `album`/`folder` to `Other`.
-- **Verify:** files under `/media/music/YouTube/…` (not `.staging/`), the beets add-on log shows the import (`ha_get_logs` source=supervisor slug=<beets add-on>), and report the failed/unavailable videos with reasons + counts.
-- Rate limits: ~1 s/request — a 50-video playlist takes minutes; launch it with `background=true` + `notify_on_complete=true`.
-- Keep live/private specifics (real add-on slugs, host paths) out of that README — it is published.
+This pipeline writes into the user's music library, and its script is a file in a repo. **Nothing downloads and nothing gets edited until the user has seen the proposal and answered.**
 
-## Verified API facts (yt-dlp, Aug 2026, Python 3.14, uv-managed)
-- **Postprocessor keys have NO `PP` suffix.** `{"key": "FFmpegMetadataPP"}` crashes at `YoutubeDL.__init__` with `KeyError: 'FFmpegMetadataPPPP'` (get_postprocessor appends `PP`). Correct: `{"key": "FFmpegMetadata", "add_metadata": True}` and `{"key": "EmbedThumbnail"}`.
-- **Mutating `ydl.params["outtmpl"]` at runtime requires a DICT, not a string.** yt-dlp normalizes a string outtmpl into `{'default': …}` only inside `__init__`. Assigning a raw string later makes `_prepare_filename` crash on EVERY entry with `AttributeError: 'str' object has no attribute 'get'` → 0 downloads, all entries reported failed. Fix: `ydl.params["outtmpl"] = {"default": str(path)}` per entry.
-- **`ignoreerrors: True` is needed in BOTH metadata-only (plan) and download modes.** Without it, a single unavailable/private video aborts the ENTIRE playlist fetch (`ERROR: [youtube] <id>: Video unavailable`). With it, failed entries come through as `None` — skip them.
-- **Per-video metadata before download**: mutate the extracted entry dict (`e["artist"]`, `e["title"]`, `e["album"]`, `e["track"]`, `e["album_artist"]`, `e["date"]`) then `ydl.process_ie_result(e, download=True)` — the outtmpl template and FFmpegMetadata PP pick up the overridden values. Archive keyed by video ID (`--download-archive` or a manual file) makes re-runs incremental.
-- **Chapter splitting (`FFmpegSplitChapters`)** — verified against `yt_dlp/postprocessor/ffmpeg.py`:
-  - The PP splits whenever `chapters` exists in the entry dict → include the PP globally and `e.pop("chapters", None)` for entries that must NOT split (one PP list is global; there is no per-entry gate).
-  - Chapter file names come from `prepare_filename(info, 'chapter')` → the runtime outtmpl dict needs a `"chapter"` key: `{"default": …, "chapter": str(dir / "%(section_number)02d - %(section_title)s.%(ext)s")}` (fields `section_number`/`section_title`/`section_start`/`section_end` are set by the PP on a copy of the info dict).
-  - The PP does **NOT** delete the original full file (`run()` returns `[], info`), and metadata PPs (FFmpegMetadata/EmbedThumbnail) run on `info['filepath']` — the ORIGINAL. So chapter files come out **untagged** and the full file lingers. Pattern: route the default outtmpl to a throwaway `_full/` subdir, delete it after processing, and tag each chapter file yourself (title = chapter name, track = section number parsed from the filename).
-  - **Registering the PP is mandatory**: add `{"key": "FFmpegSplitChapters"}` FIRST in `opts["postprocessors"]`. Building only the `"chapter"` outtmpl key does nothing — the video downloads as ONE file into the default path and the entry reports "no file produced" (nothing matches the chapter pattern). This exact miss cost a full 2h-video re-download.
-  - A `"split"` flag on a video WITHOUT chapters → PP no-ops; fall back to single-file download (don't treat as failure).
-  - **Duration quirk (cosmetic — accept it, don't chase it)**: split chapter files keep the SOURCE's duration in the container header — ffprobe `format.duration` reports the whole concert while `streams[0].duration` is the correct chapter length. Players (Navidrome, VLC) use the stream duration → playback correct; only mutagen/beets' stored length field is wrong. Remuxing does NOT fix it: `-c copy` preserves the original timestamps/edit list, and `-copyts -start_at_zero` leaves the moov duration unchanged too. Re-encoding would fix the label but costs quality — never do it for this. See `references/chapter-split-duration-quirk.md`.
+- **Before a download — a single link included.** `--plan` first, then show the proposed metadata (`artist | title | album | year | genre | folder`) and ask for the go-ahead. There is no "small enough to skip the gate" case: a one-video link is exactly where a wrong `folder` or a guessed artist is cheapest to prevent and most annoying to undo.
+- **Before editing `yt_dl.py`, the README or the overrides format.** Say what changes, why, and what it affects, then wait. A link that exposes a gap in the pipeline ("genre: rai" when nothing can write a genre) is a **proposal**, not a mandate to patch the pipeline.
+- **Before deleting state.** `.archive.txt` and the library folder are what decide whether a re-run downloads or no-ops — warn explicitly, then confirm.
+- **Before git.** commit / push / PR need explicit per-action approval (repo `AGENTS.md`); a download run never commits.
+- **A timed-out approval prompt is not consent.** Stop; the user re-triggers it.
 
-## Pattern: plan-then-download (LLM-driven metadata)
-1. `extract_info(url, download=False)` → print per-video id/title/uploader/description (the plan). No download.
-2. A human/LLM reviews the plan and writes a per-video override map (artist/title/album/year/folder).
-3. Download: for each entry, resolve metadata (override wins, neutral default otherwise), set entry fields, `ydl.params["outtmpl"] = {"default": …}`, `process_ie_result(e, download=True)`.
-4. **Stage downloads OUTSIDE any watched directory**; move the finished folder into place with one rename so a watcher (e.g. beets inotify) imports it once, whole.
+Asking costs one short message. Guessing wrong costs a re-download, a wrong tag in a 200-file library, or a repo change that has to be unwound.
 
-## Pitfalls
-- `sleep_requests`/`sleep_interval` ~1s per request avoids 429 bursts on big playlists.
-- `writethumbnail` + `EmbedThumbnail` can fail on opus/webm AFTER a good download — keep the file if it exists (check for the audio file before declaring the entry failed; a postprocessor exception after download ≠ failed download).
-- yt-dlp's default no-overwrites silently SKIPS a second video that would produce the same filename (e.g. two live versions of the same song) — detect "no file produced" and do NOT archive it, so the next run retries.
-- **Debugging per-entry failures**: when exceptions are caught and reduced to one line, temporarily add `traceback.print_exc()` in the except branch — one run shows the real stack (this is how the outtmpl-dict bug was found).
-- ffmpeg with an unknown output extension (e.g. `file.m4a.tmp`) fails with `Unable to find a suitable output format` — force the muxer: `-f ipod` for m4a output. (This also bit a scripted `remux_m4a()` that built `.tmp` names; a remux that only repackages won't fix the split duration quirk above, so skip the pass entirely.)
-- **Before running ffmpeg passes (remux/convert) on the user's music library, explain what the pass does and why first** — the user asks "what are you doing?"; remuxing = repackaging the same audio into a new container, no re-encode, no quality change. Explain from first principles, then run.
-- Playlist `playlist_index` shifts on mid-playlist insertions → new files get the current index, existing files keep theirs (cosmetic duplicate track numbers; accepted).
-- `playlist_index` is `None` for single-video URLs (key present with a None value) — `f"{e.get('playlist_index'):>3}"` raises `TypeError`; the `.get(key, default)` default does NOT apply to None values, use `e.get('playlist_index') or '?'`.
-- **Resume safety for interrupted runs**: persist the archive after EACH video, and at the start of a run move leftover `.staging/` audio files into the final library folder. A killed run leaves finished files staged-but-unmoved; the archive skips them on re-run, so without the recovery move they'd be orphaned in staging forever. Tee output to a log file (a `_Tee` stream class wrapping `sys.stdout`/`sys.stderr`, `--log` style) so progress/resume is debuggable outside the terminal.
-- **Re-downloading a video after changing its overrides** (new artist/title, enabling `split`): the archive blocks it. Remove that video's ID from the archive file, delete the old file from the library, re-run — everything else is skipped, so it doubles as a cheap archive test.
-- **Full fresh start** (library folder deleted to re-download everything): the ENTIRE archive must be deleted too — keeping it while the files are gone makes the re-run skip every video as "already downloaded" and move nothing. Warn the user explicitly; the archive is the only thing standing between a re-download and a no-op.
-- **Parsing plan output / coverage-checking overrides**: YouTube video IDs are `[A-Za-z0-9_-]{11}` — hyphens AND underscores. A `\w{11}` regex silently misses IDs like `-ZvsGmYKhcU` or `_eTBcHE-xPQ`, producing false "extra override" alarms (and false "missing" results). This bit a coverage check on a 158-entry playlist; the overrides file was actually complete.
-- **Plan index gaps = unavailable videos**: with `ignoreerrors`, failed entries are OMITTED from the plan listing (indices skip, e.g. [9], [34], [79] missing), not printed inline. Don't treat gaps as parse bugs; count unique IDs from the plan itself (dedupe), don't subtract from the playlist total.
-- **Duplicate IDs in a playlist** (same video listed twice): the archive is keyed by ID → downloaded once, second occurrence skipped. Only ONE override entry is needed per unique ID — a coverage checker must dedupe before reporting "missing". `scripts/validate_overrides.py` automates the whole check (usage in the script docstring).
+## 1. The pipeline (concrete instance)
 
-## Verification checklist
-- [ ] overrides coverage verified against the plan (`scripts/validate_overrides.py <plan.txt> <overrides.json>` → MISSING must be empty)
-- [ ] `--max 1` smoke test before a full playlist run (catches init/PP/outtmpl bugs in seconds)
-- [ ] failed/unavailable videos reported grouped by reason with counts + video IDs
-- [ ] archive file present after success; re-run downloads only new videos
+Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
+
+- `yt_dl.py` carries a PEP 723 header → run it as **`uv run --no-project yt_dl.py …`** from that folder. `--no-project` is load-bearing: the folder sits inside a uv project, and bare `uv run` would bind to that project's env instead of the script's own deps.
+- State lives next to the script: `.archive.txt` (downloaded video IDs), `.staging/` (download target, OUTSIDE the watched root), `overrides.json` (the metadata decisions), `downloads.log`. That folder's `README.md` is the **published** doc for the format and naming rules — no live/private specifics in it (no real add-on slugs, host paths, hostnames).
+- Flow: ① `yt_dl.py --plan <url>` → ② the agent reads the plan and writes `overrides.json` (full map on first run, delta for new videos — the script parses nothing, the LLM is 100 % of the metadata decisions) → ③ **confirm with the user (§0)** → ④ `yt_dl.py <url> --overrides overrides.json [--max N] [--log downloads.log]` → ⑤ verify.
+- Downloads land in `/media/music/YouTube/<folder>/NN - Artist - Title.m4a` with tags embedded by the script; the finished staging folder is moved into the library with one rename so the beets watcher imports it whole.
+- Rate limits: ~1 s/request — a 50-video playlist takes minutes. Launch those with `background=true` + `notify_on_complete=true`, then report.
+
+## 2. The metadata decisions (all of them are the agent's)
+
+| Field | Rule |
+|---|---|
+| `artist` | The performer, not the channel — live-title channels are uploaders, not artists. |
+| `title` | The original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite, never translate; keep `(Live …)` and venue info. |
+| `album` | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist collects `Album contains "Live"` — an album without "Live" silently drops out of it. |
+| `year` | Concert year when it differs from the upload year. |
+| `genre` | From the `"genre"` field in `overrides.json` (e.g. `"rai"`). With **no** genre override, **no genre tag is written at all** — the script neutralises the metadata PP's fallback chain, so YouTube's *category* ("People & Blogs", "Sports" — the values 211 files in the library used to carry) can never land in the tag again. Never hand-tag a file the pipeline owns. |
+| `folder` | **Set it explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the documented `Singles` default rarely fires and you get a folder named after the video. Playlists: folder = playlist title. Non-music clips: `Other`. |
+| `split` | `true` only for videos with YouTube chapters that should become tracks. |
+
+- **Non-music clips (entrances, chants, interviews, fireworks…) are NEVER classified alone**: list them with a proposed handling and wait for the confirmation before setting `album`/`folder` to `Other`.
+- A video the user labels by genre or occasion is a metadata hint, not permission to change the code that writes it.
+
+## 3. Verify before reporting
+
+- Files are under `/media/music/YouTube/…`, **not** left in `.staging/`; spot-check the embedded tags of one file (`ffprobe -v quiet -show_entries format_tags -of default=nw=1 <file>`), genre included when a genre was requested.
+- The beets add-on log shows the import (`ha_get_logs` source=supervisor slug=`<beets add-on>`); without beets the files still reach Navidrome on its own scan.
+- Report downloads and failures: failed/unavailable videos grouped by reason with counts + video IDs, never silently dropped, never invented.
+- Archive file present after success; a re-run downloads only new videos.
+
+## 4. References
+
+- `references/yt-dlp-api-facts.md` — verified yt-dlp internals: PP key names, runtime `outtmpl` dict, `ignoreerrors`, chapter splitting, and which info-dict field feeds which tag.
+- `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
+- `references/chapter-split-duration-quirk.md` — the one cosmetic defect worth accepting as-is.
+- `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
+
+## 5. Where this skill lives
+
+Canonical copy: `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_hermes/skills/media/youtube-download-automation/` (Hermes-only track, not read by Claude Code). Deploy with `make skills-deploy` in that repo, then `hermes curator pin <name>` — see the `skill-deployment` skill. Edits go through the repo's normal flow (delegate the file change; §0 git gate).
