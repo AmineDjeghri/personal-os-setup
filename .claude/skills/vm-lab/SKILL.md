@@ -1,6 +1,9 @@
 ---
 name: vm-lab
 description: Use when working with the local KVM/QEMU VM test lab — "spin up a VM", "test this in a CachyOS/Ubuntu VM", "make vm-*". CachyOS host only (libvirt/pacman-based); documents the required make vm-deps step, why re-running with new credentials does nothing until you clean, and the manual sync requirement against packages.yaml.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Local VM lab (`scripts/vm.sh` + `makefiles/vm.mk`)

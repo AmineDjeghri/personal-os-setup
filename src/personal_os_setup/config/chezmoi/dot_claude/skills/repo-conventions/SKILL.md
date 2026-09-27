@@ -1,6 +1,9 @@
 ---
 name: repo-conventions
 description: Use before committing, pushing, or opening a PR in ANY repo. Universal pre-push checklist plus how to discover each repo's own conventions (AGENTS.md/CLAUDE.md/CONTRIBUTING.md/.claude/skills) — repo-specific rules are NOT encoded here, they live in the repo itself.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Repo conventions (general)

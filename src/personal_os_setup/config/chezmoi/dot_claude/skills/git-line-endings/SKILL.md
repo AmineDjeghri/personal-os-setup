@@ -1,6 +1,9 @@
 ---
 name: git-line-endings
 description: "Use when CRLF/LF churn breaks git diffs in a repo."
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Git Line Endings (.gitattributes / CRLF-LF normalization)

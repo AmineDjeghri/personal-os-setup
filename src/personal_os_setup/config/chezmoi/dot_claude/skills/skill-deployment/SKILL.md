@@ -1,6 +1,9 @@
 ---
 name: skill-deployment
 description: Use when deploying the shared agent skills via chezmoi, or fixing "not managed" errors.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Skill Deployment via chezmoi
@@ -12,6 +15,11 @@ Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` �
 > they live in the repo itself under `.claude/skills/` (Claude Code reads those natively) with
 > git-symlink mirrors in `.agents/skills/` for other agents, kept in sync by `skills.mk`
 > (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
+
+Frontmatter also carries `metadata.hermes.origin` — `agent` (own store only) | `repo:<name>` | `vendored`
+(+ `source: <owner>/<repo>`) | `hub` — plus `exposure: private` on any skill that must never be published.
+The marker travels with the file, so a deploy neither adds nor strips it; canon: the
+`agent-skills-architecture` skill.
 
 **Two loading paths — don't confuse them:**
 

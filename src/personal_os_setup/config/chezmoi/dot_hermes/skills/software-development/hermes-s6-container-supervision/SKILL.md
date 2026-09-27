@@ -6,6 +6,7 @@ author: Hermes Agent
 license: MIT
 metadata:
   hermes:
+    origin: repo:personal-os-setup
     tags: [docker, s6, supervision, gateway, profiles]
     related_skills: [hermes-agent, hermes-agent-dev]
 ---

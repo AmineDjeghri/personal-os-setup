@@ -1,6 +1,9 @@
 ---
 name: fork-and-customize
 description: Use when someone wants to fork this repo to build their own personal OS setup tool, or asks how to rebrand/adapt it — "fork this repo", "make this my own", "use this for my dotfiles", "rebrand this". Covers what to rename/rebrand, how to customize packages.yaml and the chezmoi dotfiles source, and what release/CI plumbing to leave alone.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Forking personal-os-setup for your own setup

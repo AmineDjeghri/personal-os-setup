@@ -1,6 +1,9 @@
 ---
 name: github-actions-trigger-gotchas
 description: Use when GitHub Actions triggers fire wrong or not at all.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # GitHub Actions trigger & scheduling gotchas

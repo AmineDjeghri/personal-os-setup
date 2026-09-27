@@ -1,6 +1,9 @@
 ---
 name: youtube-download-automation
 description: Automate YouTube downloads via the yt-dlp library.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # YouTube Download Automation (yt-dlp library)

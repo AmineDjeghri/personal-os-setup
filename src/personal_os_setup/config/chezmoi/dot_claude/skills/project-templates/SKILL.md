@@ -1,6 +1,9 @@
 ---
 name: project-templates
 description: Use when starting to build a NEW app, package, or project from scratch — pick the right forkable template instead of an empty repo. Lists the user's three templates and their CI/CD + docs setup.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Starting a new project — pick a template

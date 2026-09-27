@@ -1,6 +1,9 @@
 ---
 name: coding-workflow
 description: "Use when doing coding work in any repo: plan, confirm, implement, verify, open a PR."
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Coding workflow (any repo, any coding agent)

@@ -7,6 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
+    origin: repo:personal-os-setup
     tags: [GitHub, SECURITY, LICENSE, CONTRIBUTING, Repository, Health]
     related_skills: [github-repo-management, github-pr-workflow, github-auth]
 ---

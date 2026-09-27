@@ -1,6 +1,9 @@
 ---
 name: docs-site
 description: Use when adding/editing documentation pages, or building/previewing/deploying the properdocs (mkdocs) site — "add a doc page", "preview the docs site", "deploy docs", "why isn't my new page showing up". Covers properdocs.yml's docs_dir:. quirk, the exclude-glob trap for new top-level directories, and the auto-generated API reference/example pages.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Docs site (`properdocs`/mkdocs) in personal-os-setup
