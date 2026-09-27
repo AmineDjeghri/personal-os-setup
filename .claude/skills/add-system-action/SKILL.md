@@ -36,3 +36,17 @@ For anything involving the chezmoi source tree itself (`config/chezmoi/`) — ad
 ## Before opening a PR
 
 Run `make test` and `make pre-commit` — see [[ship-feature]] for the full git/PR workflow. Never click a button wired to a real package-manager/system command from a test; build a synthetic `SystemAction` with an in-memory `run` lambda instead (see `tests/unit/test_app.py`'s confirm-flow test for the pattern).
+
+## Distro-keying facts worth knowing
+
+- Distro keying is exact-match on `/etc/os-release` `ID`, no fallback:
+  `PackageCatalog.for_distro(distro)` → `packages.get(distro, {})` (`detect_os.py`). `packages.yaml`
+  keys are only `cachyos`, `darwin`, `ubuntu`, `windows` — anything else (e.g. Debian) gets an empty
+  Packages tab, silently, with no error. Other tabs (Start/Dotfiles/Docker/zsh) still work since
+  they're keyed on linux/darwin, not distro.
+- Adding a new distro needs entries in THREE places, not just `packages.yaml`: the yaml block itself,
+  `_UI_VISIBLE_MANAGERS_BY_DISTRO` (`factory.py` — which primary managers get a tab/button), and
+  `_PACKAGE_MANAGER_FACTORY_BY_DISTRO` (the backend registration this skill's main procedure covers).
+  Missing any one of the three either hides the tab or crashes at load with a `TypeError`.
+- Don't rename the `ubuntu:` key even to generalize it — it's genuinely Ubuntu-specific (snap, PPAs)
+  and CI's `integration-ubuntu` job depends on it.

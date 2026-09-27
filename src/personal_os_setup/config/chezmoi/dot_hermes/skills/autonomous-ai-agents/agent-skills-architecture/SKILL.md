@@ -8,15 +8,14 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [skills, plugins, architecture, deployment, chezmoi, claude-code, vendor, mcp, external-dirs]
-    related_skills: [hermes-instance-audit, skill-deployment, personal-os-setup-repo, claude-code]
+    related_skills: [hermes-instance-audit, skill-deployment, claude-code]
 ---
 
 # Agent skills & plugins — architecture, deployment, installation
 
 How this user's agent skills and plugins are organized across Hermes and Claude Code, and how to deploy,
 vendor or install them. Canonical governance text: personal-os-setup `AGENTS.md` § "Skills & plugins —
-2-track governance". Verifying what a configured dir actually LOADS → `hermes-instance-audit`; MCP servers
-and per-agent make targets → `personal-os-setup-repo`.
+2-track governance". Verifying what a configured dir actually LOADS → `hermes-instance-audit`.
 
 ## When to use
 - Deploying, vendoring, promoting or installing a skill; "where does this skill belong?"
@@ -107,8 +106,7 @@ the same skill name confuse the model:
   copy in `~/.agents/skills` and symlinks per selected agent, so pass ONLY `--agent hermes-agent` when Claude is
   served by the plugin, or you get duplicate skills. Destination is chosen by agent + scope alone — no `--dir` flag.
 - **Hermes MCP servers** → `hermes mcp add <name> --url <url> --auth oauth`, the `trust: untrusted` write gate,
-  scoped tokens and the idempotent per-agent make targets are documented in the `personal-os-setup-repo` skill
-  (the recipe lives in that repo) — don't restate it here.
+  and scoped tokens over account-wide OAuth.
 
 ## Deploying the shared dir (chezmoi / container)
 ```bash
@@ -215,6 +213,27 @@ exactly the promoted set, so pin every promoted name.
 `hermes update` stop seeding bundled skills (optionally `--remove` unmodified ones). It is not a Curator pin.
 - Say plainly which writer owns which file: git owns the promoted names, the hub owns its installs, the addon image
 owns bundled ones.
+
+### A skill's category is its path, not its frontmatter
+
+`tools/skills_tool.py::_get_category_from_path` derives category from the first path component:
+`<root>/<category>/<skill>/SKILL.md` → that category; a flat `<root>/<skill>/SKILL.md` → blank
+category. Re-filing a skill between categories in the own store is a plain `mv`; for a git-managed
+skill the repo path IS the category, so it's `git mv` in the source tree followed by a redeploy
+(moving only the live copy comes back as `MISSING`/`DIFFERS` on the next diff). Category also forms
+part of the address used in some config references (`category/skill`), so a rename can invalidate a
+config entry pointing at the old address — check for that before renaming a promoted skill.
+
+### Two skills on one topic are not automatically a duplicate to merge
+
+Diff them before pitching a merge. The common legitimate case: one copy carries the runbook
+(trigger → steps → verification) and the other carries library/API depth the runbook itself points
+at (internals, a script, its own `references/`) — that's a deliberate split, not a duplication, and
+proposing to merge it without having diffed first reads as not having done the homework. When it
+really is the same content in two homes, pick the survivor by which one is actually MANAGED (git/
+chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh machine
+won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify
+with a fresh `skills-diff`/`skills-check` pass.
 
 ### Deciding delete vs port (an inventory pass)
 Classify from bookkeeping, never from the category directory a skill sits in: `hermes skills list` prints the Source

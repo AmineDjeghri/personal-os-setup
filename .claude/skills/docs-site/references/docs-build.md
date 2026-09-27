@@ -32,27 +32,3 @@ uv sync --all-groups --python 3.14   # creates venv/ (gitignored); rewrites the 
   are noise, `ERROR` lines are not.
 - mkdocs crawls the local `venv/` created by the sync unless the exclude glob lists it — keep
   `venv/**` in the glob list (`.venv/**` alone is not enough when uv creates `venv/`).
-
-## Restructuring pages (splits, moves) and the coverage check
-
-Splitting a page: write the new page, trim the old one down to its own topic, add the index bullet in
-`docs/index.md`, cross-link both ways. Keep a moved page's images in the folder that still holds them —
-relative image paths break silently if the page leaves its PNGs behind.
-
-Then verify coverage with plain shell one-liners (they pass the approval gate; heredocs, `python -c` and
-the `execute_code` tool stall on it):
-
-```
-git show HEAD:docs/<dir>/<old>.md | grep -oE 'https?://[^ )>`"]+' | sort -u > /tmp/old.urls
-grep -hoE 'https?://[^ )>`"]+' docs/<dir>/<new>.md docs/<dir>/readme.md docs/index.md | sort -u > /tmp/new.urls
-comm -23 /tmp/old.urls /tmp/new.urls    # anything here is a link the rewrite DROPPED
-comm -13 /tmp/old.urls /tmp/new.urls    # only deliberate additions belong here
-```
-
-- `comm -23` output must be empty (or explained) before the restructure is called done; a re-run over the
-  whole rewritten set is cheap, and the URL set is the part of a rewrite that is otherwise unfalsifiable.
-- The URL check says nothing about *prose*, so also re-read the new page for the small stuff a rewrite
-  thins out — UI workarounds ("put anything in the field, then disable the addon"), screenshot captions
-  and caveats are the first casualties.
-- Repoint references before reporting: `grep -rn '<old-path>' docs/ src/ --include=*.md` plus the skill
-  tree, and confirm every relative link in the new page resolves to a real file in its folder.

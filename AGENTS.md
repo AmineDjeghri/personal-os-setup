@@ -58,7 +58,10 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Agent integrations (Cloudflare skills + MCP) | `.claude/skills/cloudflare-agents` |
 | Contributor guide | `CONTRIBUTING.md` |
 | Repo skill layout / adding skills | `.claude/skills/skill-layout` |
-| Repo development & maintenance (map, doc/build, agent-sharing) | `.claude/skills/personal-os-setup-repo` |
+| New TUI action / package-manager backend | `.claude/skills/add-system-action` |
+| Chezmoi dotfiles source scripts | `.claude/skills/chezmoi-scripts` |
+| VM test lab (CachyOS host) | `.claude/skills/vm-lab` |
+| Forking this repo for your own setup | `.claude/skills/fork-and-customize` |
 
 ## Skills & plugins — 2-track governance (decision Sep 2026)
 
