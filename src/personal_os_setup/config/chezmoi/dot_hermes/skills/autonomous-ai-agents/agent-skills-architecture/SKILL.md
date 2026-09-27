@@ -8,15 +8,14 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [skills, plugins, architecture, deployment, chezmoi, claude-code, vendor, mcp, external-dirs]
-    related_skills: [hermes-instance-audit, skill-deployment, personal-os-setup-repo, claude-code]
+    related_skills: [hermes-instance-audit, skill-deployment, claude-code]
 ---
 
 # Agent skills & plugins — architecture, deployment, installation
 
 How this user's agent skills and plugins are organized across Hermes and Claude Code, and how to deploy,
 vendor or install them. Canonical governance text: personal-os-setup `AGENTS.md` § "Skills & plugins —
-2-track governance". Verifying what a configured dir actually LOADS → `hermes-instance-audit`; MCP servers
-and per-agent make targets → `personal-os-setup-repo`.
+2-track governance". Verifying what a configured dir actually LOADS → `hermes-instance-audit`.
 
 ## When to use
 - Deploying, vendoring, promoting or installing a skill; "where does this skill belong?"
@@ -107,29 +106,40 @@ the same skill name confuse the model:
   copy in `~/.agents/skills` and symlinks per selected agent, so pass ONLY `--agent hermes-agent` when Claude is
   served by the plugin, or you get duplicate skills. Destination is chosen by agent + scope alone — no `--dir` flag.
 - **Hermes MCP servers** → `hermes mcp add <name> --url <url> --auth oauth`, the `trust: untrusted` write gate,
-  scoped tokens and the idempotent per-agent make targets are documented in the `personal-os-setup-repo` skill
-  (the recipe lives in that repo) — don't restate it here.
+  and scoped tokens over account-wide OAuth.
 
 ## Deploying the shared dir (chezmoi / container)
-```bash
-REPO=/config/workspace/personal-os-setup
-cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the shared skills
-```
-- `--source` = the repo ROOT (git-backed — `.chezmoiroot` points at the nested dir) and run from HOME: targets
-  resolve against CWD. Two gotchas caused "not managed" every time: the nested-dir source and a non-HOME cwd.
-- **Never full-apply in the container** — the source also holds the desktop config (hypr, ghostty, mpv, OpenRGB,
-  coolercontrol…) which must not land in `/config`.
-- The nested `config/chezmoi` dir must never contain its own `.chezmoiroot`: the TUI
-  (`tasks/system/chezmoi.py`) passes that dir directly as `--source`, so a second redirect breaks the app's path.
-- No chezmoi (container/CLI): `cd <repo> && make skills-deploy` copies the same source to `~/.claude/skills`
-  (target lives in `makefiles/skills.mk`, beside `skills-link`/`skills-check`). In the HA webui container run it
-  as `make skills-deploy HOME=/config` — that container's own HOME is overlay.
-- Refresh after `git pull`; the file-level `--source-path` fallback for non-git sources and the full debugging
-  trail: `references/chezmoi-dot-claude-deployment.md`.
+
+Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-deploy` and its
+`SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
+don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
+`--source`, the file-level `--source-path` fallback) is in `references/chezmoi-dot-claude-deployment.md`.
+
+## Reconciling the two trees (do this BEFORE any cleanup)
+`make skills-status` is the authoritative duplicate list (live own-store copies that duplicate a git-managed name);
+`make skills-diff` reports per skill `OK` / `DIFFERS` / `MISSING`; `make skills-drift` is the deploy's gate.
+
+- **`MISSING` means "the deploy has not landed", never "redundant".** The own-store copy of a shared name can be the
+  only copy the index has — the CLI dedupes by name, so deleting it first makes the skill vanish from the index.
+  Order: deploy → confirm `skills-diff` prints no `MISSING`/`DIFFERS` → only then delete the own-store duplicate.
+- `make skills-deploy` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
+  `SKILLS_FORCE=1 make skills-deploy` is the escape hatch and is safe ONLY once the newer live content has been ported
+  into the source tree — otherwise it overwrites that content for good.
+- **`DIFFERS` never says which side is newer — check per FILE** with `stat -c '%s %y'` on both copies (the drifted set
+  is usually mixed). Live strictly newer → port live→source (sanitized). Source strictly newer → port nothing, the
+  deploy is the fix. A blanket "reconcile live→git" DELETES the newer source content; a blanket deploy reverts the
+  newer live content.
+- Re-run `skills-diff` after the deploy — a clean report is the proof, not the deploy's own output.
 
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` creates/refreshes the git-tracked
   `.agents/skills/<name>` symlink; `make skills-check` must print `OK <name>` for every skill in `.claude/skills`.
+- **A destination repo with NO skill tooling yet** gets the layout created by hand: `.claude/skills/<name>/` as the
+  canonical copy plus a RELATIVE `.agents/skills/<name>` → `../../.claude/skills/<name>` symlink, file modes
+  normalized (a copy out of the own store arrives `700`, git wants `644`), and a `## Skills` section in that repo's
+  `AGENTS.md` naming the skills plus the placement rule. Without that AGENTS.md line the next session invents a
+  second layout. Repos that already ship the tooling get the same result through `make skills-link` /
+  `make skills-check` instead of by hand.
 - Keep repo-bound runbooks OUT of `docs/`: `properdocs.yml` uses `docs_dir: .` and excludes only what its glob
   lists, so a new `docs/<topic>/` page is PUBLISHED on the public site — skills sit outside `docs/` and stay private.
 - AGENTS.md = canonical rules for ALL agents and is sent with EVERY prompt → keep <150 lines, index-shaped
@@ -146,8 +156,12 @@ repo root AND that root in `skills.trusted_project_dirs` (exact resolved path �
 the session must resolve that root at all: with a global `terminal.cwd` (HOME, no `.git` above it) NO root
 resolves, so trust stays silently inert for chat sessions (upstream defect, fix in review). Consequence: for a
 repo runbook both agents must see from a `/config`-rooted session, list its `.agents/skills` in `external_dirs`
-(one index line per skill) or promote it to Track 1. `config.yaml` is not agent-writable → hand the user the
-fenced block (nothing else) and expect it to take effect in the NEXT session. Full chain, decisive probes,
+(one index line per skill) or promote it to Track 1. `config.yaml` is not writable through the file tools (the
+refusal is explicit: "Refusing to write to Hermes config file … use 'hermes config' instead") — register the dir
+with the CLI, which does take a JSON list:
+`hermes config set skills.external_dirs '["/config/.claude/skills","<repo>/.agents/skills"]'`, read it back with
+`hermes config get skills.external_dirs`, same for `skills.trusted_project_dirs`; any of it takes effect only in the
+NEXT session. Hand the user the fenced block instead when the change is HIS to make (a path he has not approved). Full chain, decisive probes,
 upstream issue/PR handles: `hermes-instance-audit` → `references/skill-loading-resolution.md`.
 
 ## Hermes own store — three writers, and keeping a skill Hermes-only
@@ -200,6 +214,48 @@ exactly the promoted set, so pin every promoted name.
 - Say plainly which writer owns which file: git owns the promoted names, the hub owns its installs, the addon image
 owns bundled ones.
 
+### A skill's category is its path, not its frontmatter
+
+`tools/skills_tool.py::_get_category_from_path` derives category from the first path component:
+`<root>/<category>/<skill>/SKILL.md` → that category; a flat `<root>/<skill>/SKILL.md` → blank
+category. Re-filing a skill between categories in the own store is a plain `mv`; for a git-managed
+skill the repo path IS the category, so it's `git mv` in the source tree followed by a redeploy
+(moving only the live copy comes back as `MISSING`/`DIFFERS` on the next diff). Category also forms
+part of the address used in some config references (`category/skill`), so a rename can invalidate a
+config entry pointing at the old address — check for that before renaming a promoted skill.
+
+### Two skills on one topic are not automatically a duplicate to merge
+
+Diff them before pitching a merge. The common legitimate case: one copy carries the runbook
+(trigger → steps → verification) and the other carries library/API depth the runbook itself points
+at (internals, a script, its own `references/`) — that's a deliberate split, not a duplication, and
+proposing to merge it without having diffed first reads as not having done the homework. When it
+really is the same content in two homes, pick the survivor by which one is actually MANAGED (git/
+chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh machine
+won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify
+with a fresh `skills-diff`/`skills-check` pass.
+
+### Deciding delete vs port (an inventory pass)
+Classify from bookkeeping, never from the category directory a skill sits in: `hermes skills list` prints the Source
+(`local` = own store, `builtin` = shipped in the addon tree) plus a Status column; `.usage.json` carries
+`created_by` / `use_count` / `state` / `pinned`; the addon's read-only `skills/` tree is ground truth for "shipped";
+`.curator_backups/` holds pre-run snapshots for rollback.
+
+- Agent-authored + box-specific → the only promotable kind; port it into git (next section) if it must survive a
+  reinstall.
+- Shipped / hub-installed → NEVER vendor into a Track-1 tree; keep while used, otherwise delete the own-store copy
+  (a deleted bundled skill is not re-seeded; `hermes skills reset <name> --restore` brings stock back).
+- Live-only with 0 uses, superseded by a newer skill, or `state: stale` → delete.
+- A skill dir that is a symlink into a repo → keep the symlink, never add a second copy.
+- A DISABLED skill leaves the index AND is unreadable/unpatchable through the skill tools (`skill_view` refuses) —
+  re-enable it before trying to edit it.
+- Deleting files inside a skill dir leaves dangling `references/`/`scripts/` pointers in its SKILL.md: grep the live
+  skills for the removed filenames afterwards (the deploy clears them when the source version does not reference them).
+- Inventory pitfalls: `find -name SKILL.md` does not descend into symlinked skill dirs (use `ls -la`, `find -L`);
+  `hermes skills list` truncates long names with `…`, so never diff name lists off that table; `.curator_ledger.jsonl`
+  records curator/agent mutations only — a user-side deletion or disable leaves no entry, so an unexplained drop in the
+  count means ask the user before suspecting the tooling.
+
 ### Promoting agent-authored skills into git (publishing gate)
 The git home for promoted skills is a repo that may be **public**, so publishing is a review step, not a copy step:
 
@@ -214,7 +270,9 @@ The git home for promoted skills is a repo that may be **public**, so publishing
    tunnel hostnames, live exposure findings. If a skill fails, sanitize its examples to placeholders first or leave it
    in the own store — never publish it as-is to make the promotion set look complete. Sanitize the REPO copy and leave
    the live store copy untouched (it is private and keeps the real values); placeholder mapping, the pre/post scans and
-   the diff-based proof: `references/sanitizing-skills-for-public-repos.md`.
+   the diff-based proof: `references/sanitizing-skills-for-public-repos.md`. Real values in the own store are only
+   temporary: the next `make skills-deploy` replaces that copy with the sanitized one, so drive the canonical text
+   from the source tree rather than from what the live copy shows.
 4. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
    published) elsewhere; resolve the single source of truth instead of creating a second copy. Keep the symlink and
    drop the duplicate from the deploy source: `make skills-deploy` copies with `cp -R`, which FOLLOWS a symlinked
@@ -231,6 +289,10 @@ your own work inside a bundled skill dir if you want upstream updates — audit 
   and let the user say "prompt me again" to re-fire the exact patch; never retry it and never route the same edit
   through terminal or another file. `git commit`/`git push` need per-action approval every time (a plan, a task
   description or a previous yes is NOT permission); commit email must match existing commits, never invented.
+- Destructive cleanup (`rm -rf`, `git clean -f`, a `tar` into a protected path) raises its OWN approval prompt, and a
+  timed-out prompt is not consent either → stop, report, re-fire only when the user says so. Keep the backup and the
+  delete in ONE command with the backup first, so a timeout at the prompt leaves nothing half-applied, and state the
+  exact file/dir list before each step — this user approves deletions per step, not per plan.
 - The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT
   container does). Vendor via git clone (Track 1) or `claude plugin` (Track 2); do not install Node for this.
 - Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager`

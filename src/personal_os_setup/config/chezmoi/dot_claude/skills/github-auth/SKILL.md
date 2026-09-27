@@ -1,6 +1,6 @@
 ---
 name: github-auth
-description: "GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login."
+description: "GitHub auth setup: gh CLI login (default), git-only PAT/SSH as a last resort."
 version: 1.1.0
 author: Hermes Agent
 license: MIT
@@ -13,10 +13,11 @@ metadata:
 
 # GitHub Authentication Setup
 
-This skill sets up authentication so the agent can work with GitHub repositories, PRs, issues, and CI. It covers two paths:
-
-- **`git` (always available)** — uses HTTPS personal access tokens or SSH keys
-- **`gh` CLI (if installed)** — richer GitHub API access with a simpler auth flow
+This skill sets up authentication so the agent can work with GitHub repositories, PRs, issues, and
+CI. **`gh` CLI is the default path — ask to install it if it's missing, don't reach for a personal access
+token instead.** One `gh auth login` wires both API access and git credentials in a single step, no
+manual scope-picking, no long-lived secret to store on disk. The git-only PAT/SSH method further
+down exists only for the rare case where `gh` genuinely cannot be installed.
 
 ## Detection Flow
 
@@ -29,43 +30,115 @@ gh --version 2>/dev/null || echo "gh not installed"
 
 # Check if already authenticated
 gh auth status 2>/dev/null || echo "gh not authenticated"
-git config --global credential.helper 2>/dev/null || echo "no git credential helper"
 ```
 
 **Decision tree:**
-1. If `gh auth status` shows authenticated → you're good, use `gh` for everything
-2. If `gh` is installed but not authenticated → use "gh auth" method below
-3. If `gh` is not installed → use "git-only" method below (no sudo needed)
+1. `gh auth status` shows authenticated → use `gh` for everything.
+2. `gh` is installed but not authenticated → "Method 1: gh CLI" below.
+3. **`gh` is not installed → ask to install it first**, then go to step 2. Only fall through to "Method 2:
+   Git-only" if installation genuinely isn't possible (no package manager, no network access to
+   fetch the binary, no permission to execute a downloaded binary at all).
+
+### Installing `gh` (no sudo needed on any platform)
+
+```bash
+# Linux: prebuilt binary, no root — extract and add to PATH
+curl -fsSL https://github.com/cli/cli/releases/latest/download/gh_*_linux_amd64.tar.gz \
+  | tar -xz -C ~/.local --strip-components=1   # lands at ~/.local/bin/gh
+gh --version
+
+# Linux with a package manager + sudo available
+sudo apt install gh          # Debian/Ubuntu (may need the cli.github.com apt repo first)
+sudo dnf install gh          # Fedora
+sudo pacman -S github-cli    # Arch/CachyOS
+
+# macOS
+brew install gh
+
+# Windows
+winget install --id GitHub.cli
+```
+
+Verify with `gh --version` before moving on. If none of these are possible (fully offline, no
+package manager, no write access to extract a binary anywhere on `PATH`) — that's the actual trigger
+for "Method 2: Git-only" below, not just "gh happens to not be installed yet."
 
 ---
 
-## Method 1: Git-Only Authentication (No gh, No sudo)
+## Method 1: gh CLI Authentication
+
+If `gh` is installed (see above if it isn't), it handles both API access and git credentials in one
+step — this is the default for every scenario, interactive or headless.
+
+### Interactive Browser Login (Desktop)
+
+```bash
+gh auth login
+# Select: GitHub.com
+# Select: HTTPS
+# Authenticate via browser
+```
+
+### Device Code Flow (Headless / Remote Servers)
+
+```bash
+gh auth login
+```
+**Agent Pattern:** Since this is interactive, run it in the background and redirect output to a log
+file (e.g., `gh auth login > /tmp/gh_auth.log 2>&1`) using `terminal(background=true)`. This allows
+the agent to retrieve and share the device code with the user without blocking the session.
+
+1. Run `gh auth login`.
+2. Choose `GitHub.com` -> `HTTPS` -> `Login with a web browser`.
+3. The CLI will output a one-time device code and a link to `github.com/login/device`.
+4. Share the code with the user; they authorize the session in their browser.
+5. Run `gh auth setup-git` to link the authentication to git.
+
+### Token-Based Login (only when a token already exists — e.g. a CI secret)
+
+```bash
+echo "<THEIR_TOKEN>" | gh auth login --with-token
+gh auth setup-git
+```
+
+This is for wiring an *already-issued* token (a scoped CI secret, a fine-grained PAT someone already
+created for automation) into `gh` — it is not a reason to go generate a new PAT for a human's own
+setup when the browser/device flow above is available.
+
+### Verify
+
+```bash
+gh auth status
+```
+
+---
+
+## Method 2: Git-Only Authentication (last resort — `gh` cannot be installed)
 
 This works on any machine with `git` installed. No root access needed.
 
-### Option A: HTTPS with Personal Access Token (Recommended)
+### Option A: HTTPS with Personal Access Token
 
-This is the most portable method — works everywhere, no SSH config needed.
+Only reach for this when `gh` truly cannot be installed (see the Detection Flow above) — a PAT is a
+long-lived, manually-scoped secret that a human has to create, remember to rotate, and store on
+disk, none of which `gh auth login` requires.
 
 **Step 1: Create a personal access token**
 
-Tell the user to go to: **https://github.com/settings/tokens**
-
-- Click "Generate new token (classic)"
-- Give it a name like "hermes-agent"
-- Select scopes:
-  - `repo` (full repository access — read, write, push, PRs)
-  - `workflow` (trigger and manage GitHub Actions)
-  - `read:org` (if working with organization repos)
-- Set expiration (90 days is a good default)
-- Copy the token — it won't be shown again
+Classic PAT with `repo` + `workflow` scopes (add `read:org` for org repos) at **https://github.com/settings/tokens**.
 
 **Step 2: Configure git to store the token**
 
 ```bash
 # Set up the credential helper to cache credentials
-# "store" saves to ~/.git-credentials in plaintext (simple, persistent)
 git config --global credential.helper store
+```
+
+⚠️ **`store` saves the token to `~/.git-credentials` in PLAINTEXT** — anyone who can read that file
+has the token. The `cache` alternative below avoids writing it to disk at all; prefer it unless the
+credentials need to persist across reboots.
+
+```bash
 
 # Now do a test operation that triggers auth — git will prompt for credentials
 # Username: <their-github-username>
@@ -89,13 +162,7 @@ git config --global credential.helper 'cache --timeout=28800'
 git remote set-url origin https://<username>:<token>@github.com/<owner>/<repo>.git
 ```
 
-**Step 3: Configure git identity**
-
-```bash
-# Required for commits — set name and email
-git config --global user.name "Their Name"
-git config --global user.email "their-email@example.com"
-```
+**Step 3: Configure git identity** — owned by the `repo-conventions` skill.
 
 **Step 4: Verify**
 
@@ -128,10 +195,7 @@ ssh-keygen -t ed25519 -C "their-email@example.com" -f ~/.ssh/id_ed25519 -N ""
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Tell the user to add the public key at: **https://github.com/settings/keys**
-- Click "New SSH key"
-- Paste the public key content
-- Give it a title like "hermes-agent-<machine-name>"
+Add the public key at **https://github.com/settings/keys**.
 
 **Step 3: Test the connection**
 
@@ -147,78 +211,14 @@ ssh -T git@github.com
 git config --global url."git@github.com:".insteadOf "https://github.com/"
 ```
 
-**Step 5: Configure git identity**
-
-```bash
-git config --global user.name "Their Name"
-git config --global user.email "their-email@example.com"
-```
-
----
-
-## Method 2: gh CLI Authentication
-
-If `gh` is installed, it handles both API access and git credentials in one step.
-
-### Interactive Browser Login (Desktop)
-
-```bash
-gh auth login
-# Select: GitHub.com
-# Select: HTTPS
-# Authenticate via browser
-```
-
-### Device Code Flow (Headless / Remote Servers)
-Preferred for users who want to avoid creating PATs.
-**Agent Pattern:** Since this is interactive, run it in the background and redirect output to a log file (e.g., `gh auth login > /tmp/gh_auth.log 2>&1`) using `terminal(background=true)`. This allows the agent to retrieve and share the device code with the user without blocking the session.
-
-1. Run `gh auth login`.
-2. Choose `GitHub.com` -> `HTTPS` -> `Login with a web browser`.
-3. The CLI will output a one-time device code and a link to `github.com/login/device`.
-4. Share the code with the user; they authorize the session in their browser.
-5. Run `gh auth setup-git` to link the authentication to git.
-
-### Token-Based Login (Headless / SSH Servers)
-
-```bash
-echo "<THEIR_TOKEN>" | gh auth login --with-token
-
-# Set up git credentials through gh
-gh auth setup-git
-```
-
-### Verify
-
-```bash
-gh auth status
-```
+**Step 5: Configure git identity** — owned by the `repo-conventions` skill.
 
 ---
 
 ## Using the GitHub API Without gh
 
-When `gh` is not available, you can still access the full GitHub API using `curl` with a personal access token. This is how the other GitHub skills implement their fallbacks.
-
-### Setting the Token for API Calls
-
-```bash
-# Option 1: Export as env var (preferred — keeps it out of commands)
-export GITHUB_TOKEN="<token>"
-
-# Then use in curl calls:
-curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/user
-```
-
-### Extracting the Token from Git Credentials
-
-If git credentials are already configured (via credential.helper store), the token can be extracted:
-
-```bash
-# Read from git credential store
-grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|'
-```
+Only needed once `gh` is confirmed uninstallable (see the Detection Flow above) — otherwise install
+`gh` and use `gh api` instead. Genuine fallback: `references/rest-api-fallback.md`.
 
 ### Helper: Detect Auth Method
 
@@ -254,4 +254,4 @@ fi
 | `ssh: connect to host github.com port 22: Connection refused` | Try SSH over HTTPS port: add `Host github.com` with `Port 443` and `Hostname ssh.github.com` to `~/.ssh/config` |
 | Credentials not persisting | Check `git config --global credential.helper` — must be `store` or `cache` |
 | Multiple GitHub accounts | Use SSH with different keys per host alias in `~/.ssh/config`, or per-repo credential URLs |
-| `gh: command not found` + no sudo | Use git-only Method 1 above — no installation needed |
+| `gh: command not found` | Install it — see "Installing `gh`" above, no sudo required (prebuilt binary to `~/.local/bin`) |

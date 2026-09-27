@@ -41,9 +41,6 @@ youtube_ai_download/
 ├── README.md                 # this file
 ├── overrides.json            # per-video LLM decisions (the "brain")
 ├── overrides.example.json    # template
-├── skill/
-│   └── yt-dlp-music-downloads/
-│       └── SKILL.md          # Hermes runbook — symlinked into ~/.hermes/skills
 ├── .staging/                 # downloads land here first (created at run time)
 ├── .archive.txt              # downloaded video IDs — incremental state (not in git)
 └── downloads.log             # tee'd run log (--log) — progress/resume debugging
@@ -126,9 +123,9 @@ The script ends with a readable summary: per-video `Artist - Title [Album] (fold
 
 Downloads appear under **Artists** and as **"Live at …" albums** (album tag) — folders are invisible to Navidrome, no playlists are created. One smart playlist — rule **`Album contains "Live"`** — collects every live download automatically, including future ones. Non-music clips have album `Other` (excluded from that rule).
 
-## The skill
+## The agent runbook
 
-The Hermes runbook (`skill/yt-dlp-music-downloads/SKILL.md`) is symlinked into the agent's skills folder, so it's the live procedure while the source of truth stays here, versioned with the code.
+The agent-facing procedure is the skill `youtube-download-automation` (Hermes track of the personal-os-setup chezmoi source → `~/.hermes/skills`), which points back here for the script, this README and `overrides.json`. Nothing lives under `docs/` on purpose: a skill placed here gets crawled into the published site and is managed by nobody.
 
 ## Prerequisites / assumptions
 

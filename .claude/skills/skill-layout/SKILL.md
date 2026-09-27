@@ -12,3 +12,10 @@ description: Use when adding/modifying agent skills in this repo, or when figuri
 - **Verify:** `make skills-check`
 - Never edit through a symlink — always edit the canonical file
 - Windows note: git symlinks need `core.symlinks=true` on native Windows checkouts
+
+## A repo-bound runbook is a skill, not a `docs/` page
+
+Anything under `docs/` is crawled into the published site unless specifically excluded, and a doc
+only helps a human who remembers to go read it — a skill loads itself at task time, for both agents.
+If a doc starts describing how to *do* something (a procedure, not reference material for readers),
+that's the signal to move it into a skill instead.

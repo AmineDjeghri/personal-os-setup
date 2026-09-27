@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [hermes, audit, skills, plugins, platforms, channels, config, versions, curator, sync, read-only]
-    related_skills: [hermes-agent, hermes-addon-troubleshooting, agent-skills-architecture]
+    related_skills: [hermes-agent, agent-skills-architecture]
 ---
 
 # Hermes Instance Audit (read-only)
@@ -76,7 +76,7 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - Missing bundled skills are therefore NOT corruption → report "removed on your side". User deletions and curator prunes look identical on disk: disambiguate with `.curator_suppressed` + `.curator_backups/<ts>/manifest.json` (curator `prune_builtins: true` CAN prune bundled skills after `stale_after_days`) and by asking the user.
 - **Manifest hashes are DIRECTORY hashes** (rel-path + bytes over every file; sync prefers the sha256 `_content_digest` over the md5 `_dir_hash`). Never compare `md5sum SKILL.md` — it reports EVERY bundled skill as user-modified. Run `scripts/check_bundled_manifest.py` (tries both algorithms, classifies CURRENT / USER-MODIFIED / USER-DELETED / UPSTREAM-CHANGED).
 - **DIFFERS ≠ user-modified**: read the direction (`hermes skills diff <name>`) — STALE stock (older baked copy, no custom content → `reset --restore`) vs USER-MODIFIED (keep; sync protects it).
-- Content sweep one-liner (the truth for stale-vs-modified), `_dir_hash` semantics and the verified 2026-08 baseline: `references/skills-sync-and-bundling.md` + `references/2026-08-28-install-snapshot.md`.
+- Content sweep one-liner (the truth for stale-vs-modified) and `_dir_hash` semantics: `references/skills-sync-and-bundling.md`.
 - Delete vs disable: both cost ~0 at runtime. Disable is reversible, keeps edits and stays visible to the agent; delete is invisible (nothing proposes reinstalling a skill it cannot see) and needs a manual restore — and a restored bundled skill comes back ACTIVE (prompt weight) unless also in `skills.disabled`. Recommend disable unless the goal is prompt-size reduction.
 
 ## Curator behaviour (changed by version!)
@@ -108,12 +108,6 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - **Bundled plugins cannot be removed.** `hermes plugins remove` resolves names under `$HERMES_HOME/plugins/` only and says so in its own error text ("bundled ones can only be enabled or disabled"). Hand-deleting files from `<install>/plugins/` is undone by `hermes update` and can strip LIVE capability, because several kinds are found by directory scan and are NOT gated by `plugins.enabled` — `plugins/model-providers/*` among them, so `hermes plugins info deepseek-provider` answers "not found" while that provider is active and real.
 - Code quotes, plugin kinds, per-platform toolset internals, web backends, the bundled-vs-catalog boundary, the three statuses, removal rules and the documented way to digest the docs catalog page: `references/plugins-platforms-channels.md`.
 
-## Context-usage & token diagnostics
-- Point the user at `/context` (alias `/ctx`, sub `all`) and `/usage` BEFORE source archaeology — both are gateway-side and the agent cannot run them itself.
-- The gauge is context_used/context_max, NOT % of the model window; a short session is relatively dominated by tool_definitions, which is normal. `/usage`'s `Total: N` is CUMULATIVE — read the `Context: X / Y (Z%)` line.
-- Reduction levers (take effect on `/reset`, never mid-conversation — prompt-cache invariant): `agent.disabled_toolsets`, an explicit `platform_toolsets.<platform>` list, `tools.tool_search`. Enabled plugins ≈ zero schema weight unless their `plugin.yaml` kind registers tools (`ctx.register_tool`).
-- Detail: `references/context-usage-diagnostics.md`.
-
 ## Config audit checklist (what goes stale across upgrades)
 - `agent.max_turns`: an explicit old value silently caps runs (default moved 90 → 500 in v0.20.0) — compare against `hermes_cli/config_defaults.py`, the source of truth for current defaults.
 - `approvals.mode: manual` = the user opted OUT of v0.19+'s smart-approvals default.
@@ -137,8 +131,7 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 ## References
 - `references/skill-loading-resolution.md` — the full loading chain (own store → `external_dirs` → project), root resolution + exact-path trust semantics, decisive probes, upstream issue/PR handles, the working config block, and the `/config` vs `/addon_configs` path duality.
 - `references/release-history.md` — version↔tag↔date map, skills/plugin debloat, default-behaviour changes per release, plus the recipe and pitfalls for pulling release bodies.
-- `references/context-usage-diagnostics.md` — context breakdown internals, slash commands, tool-schema composition and reduction levers.
 - `references/plugins-platforms-channels.md` — plugin/platform/channel taxonomy, `plugins.enabled` vs `disabled` with code quotes, bundled-vs-catalog boundary, the three list statuses, removal rules, kind-specific discovery, web backends, per-platform toolsets, audited snapshot.
-- `references/skills-sync-and-bundling.md` — `skills_sync` manifest semantics, repo layout, curator off-limits rule.
-- `references/2026-08-28-install-snapshot.md` — verified baseline of THIS install (v0.20.6): 82 bundled → 70 identical / 10 user-deleted / 2 differing, 37 extras, curator + usage counts, the content-sweep one-liner, delete-vs-disable guidance, Claude Code CLI state.
+- `references/skills-sync-and-bundling.md` — `skills_sync` manifest semantics, repo layout, curator off-limits rule, the content-sweep one-liner, and delete-vs-disable guidance.
+- `references/platform-adapter-dependencies.md` — a chat platform going dark while the gateway stays up (missing per-platform extras, the lazy-install-with-no-pip trap), confirming the venv's actual interpreter, installing the missing extra, and restarting only the gateway process (not the container).
 - `scripts/check_bundled_manifest.py` — read-only probe reproducing the real hash algorithms and classifying every bundled skill.
