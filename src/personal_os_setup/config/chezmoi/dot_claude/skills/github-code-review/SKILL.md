@@ -76,7 +76,7 @@ When reviewing local changes, present findings in this structure:
 
 ## 2. Reviewing a Pull Request on GitHub
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### View PR Details
 

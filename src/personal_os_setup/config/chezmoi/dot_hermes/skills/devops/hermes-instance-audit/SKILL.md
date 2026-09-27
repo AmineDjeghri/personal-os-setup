@@ -133,4 +133,5 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - `references/release-history.md` — version↔tag↔date map, skills/plugin debloat, default-behaviour changes per release, plus the recipe and pitfalls for pulling release bodies.
 - `references/plugins-platforms-channels.md` — plugin/platform/channel taxonomy, `plugins.enabled` vs `disabled` with code quotes, bundled-vs-catalog boundary, the three list statuses, removal rules, kind-specific discovery, web backends, per-platform toolsets, audited snapshot.
 - `references/skills-sync-and-bundling.md` — `skills_sync` manifest semantics, repo layout, curator off-limits rule, the content-sweep one-liner, and delete-vs-disable guidance.
+- `references/platform-adapter-dependencies.md` — a chat platform going dark while the gateway stays up (missing per-platform extras, the lazy-install-with-no-pip trap), confirming the venv's actual interpreter, installing the missing extra, and restarting only the gateway process (not the container).
 - `scripts/check_bundled_manifest.py` — read-only probe reproducing the real hash algorithms and classifying every bundled skill.

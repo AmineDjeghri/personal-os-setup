@@ -15,7 +15,7 @@ metadata:
 
 Create, clone, fork, configure, and manage GitHub repositories.
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ## Prerequisites
 

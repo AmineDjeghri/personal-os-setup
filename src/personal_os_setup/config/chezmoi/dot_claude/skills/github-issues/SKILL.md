@@ -22,7 +22,7 @@ Create, search, triage, and manage GitHub issues with `gh`. Raw REST (`curl`) eq
 
 ## 1. Viewing Issues
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ```bash
 gh issue list
@@ -34,7 +34,7 @@ gh issue view 42
 
 ## 2. Creating Issues
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ```bash
 gh issue create \
@@ -56,7 +56,7 @@ Respect the ?next= query parameter." \
 
 ## 3. Managing Issues
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### Add/Remove Labels
 
@@ -106,7 +106,7 @@ When asked to triage issues:
 gh issue list --label "needs-triage" --state open
 ```
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 2. **Read and categorize** each issue (view details, understand the bug/feature)
 
@@ -118,7 +118,7 @@ No `gh`? See `references/rest-api-fallback.md`.
 
 ## 5. Bulk Operations
 
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 For batch operations, combine API calls with shell scripting:
 

@@ -52,7 +52,12 @@ venv/bin/python -B -c "import importlib;print(importlib.import_module('plugins.p
   `uv pip install --python "$VENV_DIR/bin/python" "hermes-agent[telegram]"` after the `.[all,dev]` line.
   It is not a Hermes setting, and `hermes setup` / `pip install` are dead ends in a venv with no pip.
 
-## 4. Restart only the gateway
+## 4. After updating the Agent, also restart the WebUI add-on (two-container deployments)
+- **Restart the WebUI add-on after every Agent update** — a plain restart (not a rebuild) is
+  enough, since nothing about the WebUI's own image changed; it only needs to re-establish its view
+  of the now-updated shared state.
+
+## 5. Restart only the gateway
 ```
 ps -o pid,ppid,args -p <gateway-pid>   # walk up: gateway → hermes-gateway-supervisor.py → bash /run.sh
 kill -TERM <supervisor-pid>            # forwards SIGTERM to the gateway, exits 0

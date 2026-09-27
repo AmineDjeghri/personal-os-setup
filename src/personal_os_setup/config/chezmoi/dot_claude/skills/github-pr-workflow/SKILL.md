@@ -17,9 +17,11 @@ Complete guide for managing the PR lifecycle with the `gh` CLI. On a machine wit
 
 ## Prerequisites
 
-- Authenticated with GitHub (see `github-auth` skill)
+- Authenticated with GitHub (see `github-auth` skill — ask to install `gh` if it's missing, that's the
+  default path)
 - Inside a git repository with a GitHub remote
-- No `gh` on the machine: `references/rest-api-fallback.md` (auth detection, token setup, REST calls)
+- `gh` genuinely can't be installed: `references/rest-api-fallback.md` (auth detection, token setup,
+  REST calls)
 
 ## 1. Branch Creation
 
@@ -70,7 +72,7 @@ Types: `feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `chore`, `perf`
 Mandatory pre-push checklist: see the `repo-conventions` skill (line endings: see the `git-line-endings` skill).
 
 ## 3. Pushing and Creating a PR
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### Push the Branch (same either way)
 
@@ -98,7 +100,7 @@ Closes #42"
 Options: `--draft`, `--reviewer user1,user2`, `--label "enhancement"`, `--base develop`
 
 ## 4. Monitoring CI Status
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### Check CI Status
 
@@ -113,7 +115,7 @@ gh pr checks --watch
 ```
 
 ## 5. Auto-Fixing CI Failures
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 When CI fails, diagnose and fix. This loop works with either auth method.
 
@@ -155,7 +157,7 @@ When asked to auto-fix CI, follow this loop:
 6. Repeat if still failing (up to 3 attempts, then ask the user)
 
 ## 6. Merging
-No `gh`? See `references/rest-api-fallback.md`.
+No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 **With gh:**
 
