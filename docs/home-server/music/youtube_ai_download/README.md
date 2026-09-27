@@ -85,6 +85,8 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
                         // (Live…) and venue info kept, never rewritten)
     "album":  "...",    // default: playlist title
     "year":   "2018",   // optional: concert year (default: upload year)
+    "genre":  "rai",    // optional: genre tag. Omitted → NO genre tag is written
+                        // (the video's YouTube *category* is never used as a genre)
     "folder": "Other",  // optional: download into YouTube/Other instead of the playlist folder
     "split":  true      // optional: video has YouTube chapters → split into per-chapter
                         // tracks (title = chapter name, track = section number)
@@ -104,6 +106,7 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
 | Artist / Title / Album | **decided by the LLM** in overrides.json |
 | Title | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`| Channel` stripped, leading `Artist - ` dropped, `(Live…)` + venue info kept |
 | Album | typically `Live at <Venue> (<City>, <Year>)` from the description |
+| Genre | optional, from `"genre"` in overrides.json; omitted → no genre tag (never the YouTube category) |
 | Format | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless" |
 
 ## Incremental playlist updates
