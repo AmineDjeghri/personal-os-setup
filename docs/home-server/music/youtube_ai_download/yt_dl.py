@@ -31,6 +31,9 @@ Overrides JSON — the ONLY source of metadata decisions:
     "title":  "...",      # default: video title
     "album":  "...",      # default: playlist title
     "year":   "2018",     # optional: concert year (default: upload year)
+    "genre":  "rai",      # optional: genre tag. Omitted → NO genre tag is
+                          # written (the video's YouTube *category* — "People &
+                          # Blogs", "Sports"… — is never used as a genre)
     "folder": "Other",    # optional: download into YouTube/Other instead of
                           # the playlist folder (e.g. non-music clips)
     "split":  true        # optional: split a video with YouTube chapters into
@@ -131,6 +134,7 @@ def resolve_meta(info: dict, overrides: dict) -> dict:
         or info.get("playlist")
         or YOUTUBE_DIR,
         "year": str(ov.get("year") or (info.get("upload_date") or "")[:4]),
+        "genre": ov.get("genre"),
         "folder": ov.get("folder")
         or (info.get("playlist_title") or info.get("playlist") or SINGLES_NAME),
         "split": bool(ov.get("split", False)),
@@ -170,6 +174,10 @@ def fix_tags(path: Path, meta: dict, track: str, date: str) -> None:
                 f["trkn"] = [(int(track), 0)]
             if date:
                 f["\xa9day"] = [date]
+            if meta.get("genre"):
+                f["\xa9gen"] = [meta["genre"]]
+            else:
+                f.pop("\xa9gen", None)
         else:  # Vorbis (opus/webm); mp3 would land here too but we never produce it
             f["artist"] = meta["artist"]
             f["title"] = meta["title"]
@@ -179,6 +187,10 @@ def fix_tags(path: Path, meta: dict, track: str, date: str) -> None:
                 f["tracknumber"] = str(track)
             if date:
                 f["date"] = date
+            if meta.get("genre"):
+                f["genre"] = meta["genre"]
+            else:
+                f.pop("genre", None)
         f.save()
     except Exception:
         pass
@@ -201,11 +213,11 @@ def find_downloaded(staging_dir: Path, prefix: str) -> list:
     """Audio files actually produced for an entry (excludes thumbnails)."""
     if not staging_dir.exists():
         return []
-    return [
+    return sorted(
         p
-        for p in sorted(staging_dir.glob(f"{prefix}*"))
-        if p.suffix.lower() in (".m4a", ".opus", ".webm", ".mp3")
-    ]
+        for p in staging_dir.iterdir()
+        if p.name.startswith(prefix) and p.suffix.lower() in (".m4a", ".opus", ".webm", ".mp3")
+    )
 
 
 def plan_mode(urls: list, max_items: int) -> int:
@@ -335,6 +347,15 @@ def download_mode(urls: list, overrides: dict, max_items: int) -> int:
                 e["album"] = meta["album"]
                 e["album_artist"] = meta["artist"]
                 e["date"] = date
+                if meta["genre"]:
+                    e["genre"] = meta["genre"]
+                else:
+                    # Without an override, drop every key FFmpegMetadataPP's
+                    # genre field map falls back to (genres/categories/tags) —
+                    # otherwise the YouTube category ("People & Blogs", "Sports"…)
+                    # lands in the genre tag.
+                    for key in ("genre", "genres", "categories", "tags"):
+                        e.pop(key, None)
                 # Chapter split: only for videos flagged "split": true that
                 # actually have chapters; the PP is otherwise kept inert by
                 # removing the chapters key. The full source file is routed to
@@ -429,11 +450,12 @@ def download_mode(urls: list, overrides: dict, max_items: int) -> int:
     if errlog.lines:
         groups = {}
         for ln in errlog.lines:
-            m = re.match(r"^\[([^\]]+)\]\s+([\w-]+):\s*(.+)$", ln)
+            stripped = re.sub(r"^ERROR:\s*", "", ln)
+            m = re.match(r"^\[([^\]]+)\]\s+([\w-]+):\s*(.+)$", stripped)
             if m:
                 groups.setdefault(m.group(3), []).append(m.group(2))
             else:
-                groups.setdefault(ln, [])
+                groups.setdefault(stripped, [])
         total = sum(len(v) for v in groups.values())
         print(f"\nCouldn't download ({total} videos):")
         for reason, vids in sorted(groups.items(), key=lambda kv: -len(kv[1])):
