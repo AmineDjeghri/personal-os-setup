@@ -180,6 +180,17 @@ re-run `skills-diff`/`skills-check`. **Verify the fold against the LOSER, item b
 with rules missing and a delegated merge drops whole sections silently, so a clean diff proves nothing about lost
 content.** Method and the phrase sweep: `references/reviewing-a-rewrite.md`.
 
+### Shortening a skill that has grown verbose
+
+Skills carry a size norm — **~200 lines for a complex SKILL.md, ~100 for a simple one** — so a 400+-line file is a
+compliance failure, not thoroughness, and this user will ask for it to be shortened. Shrink by MOVING, never by
+deleting: cut whole sections at their headings, append them verbatim to `references/<topic>.md`, leave a 3-6 line
+pointer naming what the reference covers and its path, and register it in the References list. A pointer that
+paraphrases a rule instead of pointing at it silently rewrites the skill — keep pointers to coverage + filename,
+and carry over only the one hard rule a caller must not miss. Prove the trim with the same phrase sweep as a merge,
+run against the PRE-trim text (`git show HEAD:<path>`), and report the line/byte before-and-after with the miss
+count.
+
 ### Audit — "too many skills, which can I delete?" (an inventory pass)
 
 The inventory pass — telemetry caveats, the classification order, and the pitfalls that make a proposal wrong:
@@ -237,7 +248,11 @@ no-CLI path and exclusion patterns: `references/community-skills-npx.md`.
   description or a previous yes is NOT permission); commit email must match existing commits, never invented. Keep
   read-only bookkeeping to single-purpose shell one-liners — a compound call embedding an interpreter
   (`python3 -c …`) alongside other commands stalls at the gate and returns BLOCKED, while a one-liner or `read_file`
-  on the JSON returns at once; name any blocked call in the report instead of quietly substituting.
+  on the JSON returns at once — command substitution (`$(…)`), `for` loops and `;`/`&&`-joined subcommands
+  stall the same way, so split a verification bundle (hooks + frontmatter parse + pointer checks) into
+  separate single-purpose calls UP FRONT: one gated link otherwise takes the whole sequence down with it.
+  Name any blocked call instead of quietly substituting. Run multi-source research the same way — direct
+  `web_extract`/`terminal` calls, not a batch through `execute_code`, whose own consent gate can time out.
 - Destructive cleanup (`rm -rf`, `git clean -f`, a `tar` into a protected path) raises its OWN approval prompt, and a
   timed-out prompt is not consent either → stop, report, re-fire only when the user says so. Keep the backup and the
   delete in ONE command with the backup first, so a timeout leaves nothing half-applied, and state the exact
@@ -247,8 +262,8 @@ no-CLI path and exclusion patterns: `references/community-skills-npx.md`.
   hides it — verify with `find -L <every root> -path "*<name>/SKILL.md"` (exactly one hit; plain `find` misses a
   skill reached through a `.agents/skills` symlink, so an empty result is not "the skill vanished").
 - **Copied scripts and templates must pass the target repo's hooks before the commit** — a verbatim copy routinely
-  fails lint/format/YAML hooks (`references/repo-hook-gate.md`), and the staged copy is a SNAPSHOT: an edit made to
-  the live skill after staging is not in the port, so re-copy if the live file moved on.
+  fails lint/format/YAML hooks (`references/repo-hook-gate.md`), and the staged copy is a SNAPSHOT, and live moves while you port: an edit after staging is not in the port,
+  so re-copy if the live file moved on and re-run `make skills-diff` immediately before committing.
 - **Check BOTH path bases before calling a supporting-file reference broken.** `references/…`/`scripts/…` written
   with a slash are skill-relative; a bare `scripts/<name>.py` in prose is usually the REPO root's own directory —
   test `<skill-dir>/<rel>` and `<repo-root>/<rel>` before calling one broken.
@@ -283,6 +298,17 @@ no-CLI path and exclusion patterns: `references/community-skills-npx.md`.
   mtime per FILE and ask whether the source-side edit was deliberate: a deleted install snapshot or context dump must
   be dropped (force-deploy), while a live-only reference the source never had is the one to port in.
 - personal-os-setup: branch/PR from `main` (the `dev` branch is retired).
+
+- **Pre-flight every identifier with `hermes skills inspect <id>` before it reaches the user.** The browsable
+  listing and the install namespace disagree: `official/…` resolves for the optional catalog only, so a name that
+  ships in the addon's active tree (seeded, never installed) answers "Could not find … in any source" while
+  `browse --source official` lists the catalog around it. One inspect per candidate, and never hand over an
+  `official/…` install for a bundled name — point at the re-seed instead.
+- **Check the platform's own equivalent before recommending a third-party meta-skill.** An
+  observation-logging meta-skill duplicates the Curator + `skill_manage` on the Hermes side, and a single-agent fork
+  of a cross-platform framework is worth having only for its vendor-exclusive hooks. State the overlap (and which
+  agent the thing actually reaches — plugins are Claude-only, hub installs are Hermes-only, the deployed shared dir
+  is the one surface both read) rather than listing it as new capability.
 
 ## References
 - `references/store-writers-curator-and-pins.md` — the three writers of the own store, the curator CLI, pin
