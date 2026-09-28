@@ -1,30 +1,31 @@
 # Fermeture des volets à la tombée du jour.
 #
-# Déclencheur solaire, pas d'heure fixe : `sun / sunset` (soleil à -0.8° sous
-# l'horizon) est calculé par HA avec la latitude/longitude de la maison, donc il
-# suit les saisons : ~19 h 35 fin septembre, ~17 h 00 en décembre, ~22 h 00 en
-# juin. Rien à ajuster dans l'année.
-# Pour attendre qu'il fasse vraiment sombre : remplacer `sunset` par `dusk`
+# Déclencheur solaire, pas d'heure fixe : le coucher du soleil est calculé par
+# HA avec la latitude/longitude de la maison, donc il suit les saisons :
+# ~19 h 35 fin septembre, ~17 h 00 en décembre, ~22 h 00 en juin. Rien à
+# ajuster dans l'année.
+# Pour attendre qu'il fasse vraiment sombre : remplacer sun.sunset par sun.dusk
 # (fin du crépuscule civil, soirée ~34 min plus tard).
 #
 # 80 % fermé = position 20 dans Home Assistant (position 0 = fermé, 100 = ouvert).
 alias: 🌆 Fermeture des volets à la tombée du jour
 description: >-
-  Ferme les volets à 80 % au coucher du soleil.
+  Ferme les volets à 80 % au coucher du soleil (position 20 : 0 = fermé, 100 = ouvert).
   Un volet déjà fermé à plus de 80 % n'est pas touché.
 triggers:
-  - trigger: sun
-    event: sunset
-  # Rattrape un redémarrage de HA en pleine nuit : un déclencheur solaire ne
+  - trigger: sun.sunset
+  # Rattrape un redémarrage de HA pendant la nuit : un déclencheur solaire ne
   # rejoue pas un événement déjà passé.
   - trigger: homeassistant
     event: start
 conditions:
-  # Vrai au coucher du soleil et pendant toute la nuit (donc aussi lors d'un
-  # redémarrage le soir), faux après le lever du soleil.
-  - condition: state
-    entity_id: sun.sun
-    state: "below_horizon"
+  # Vrai à l'instant exact du coucher du soleil (borne "after" incluse) et
+  # pendant toute la nuit jusqu'au lever du soleil suivant : couvre donc aussi
+  # un redémarrage nocturne. Évalué en direct sur les horaires solaires, sans
+  # dépendre de l'état de sun.sun (mis à jour de son côté).
+  - condition: sun
+    after: sunset
+    before: sunrise
 actions:
   - repeat:
       for_each:
