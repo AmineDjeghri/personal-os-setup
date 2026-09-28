@@ -1,6 +1,9 @@
 ---
 name: repo-gotchas
 description: Use before trusting CONTRIBUTING.md/Makefile/pre-commit claims literally, or when something documented doesn't behave as expected — "why doesn't X work", "is this hook actually active", "make help is missing stuff". Documents known drift between this repo's docs and its actual behavior.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Known drift between docs and reality in personal-os-setup

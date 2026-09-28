@@ -1,28 +1,33 @@
 ---
 name: agent-skills-architecture
-description: Use when organizing, deploying, or installing agent skills.
+description: Use when organizing, deploying or installing agent skills — or auditing, porting and retiring one.
 version: 2.0.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
+    origin: repo:personal-os-setup
     tags: [skills, plugins, architecture, deployment, chezmoi, claude-code, vendor, mcp, external-dirs]
-    related_skills: [hermes-instance-audit, skill-deployment, claude-code]
+    related_skills: [hermes-instance-audit, skill-deployment, skill-layout]
 ---
 
-# Agent skills & plugins — architecture, deployment, installation
+# Agent skills & plugins — architecture, deployment, installation, audit, port, retire
 
-How this user's agent skills and plugins are organized across Hermes and Claude Code, and how to deploy,
-vendor or install them. Canonical governance text: personal-os-setup `AGENTS.md` § "Skills & plugins —
-2-track governance". Verifying what a configured dir actually LOADS → `hermes-instance-audit`.
+How this user's agent skills and plugins are organized across Hermes and Claude Code: how to deploy,
+vendor or install them, and how to audit, port live-only skills into git, or retire them. Canonical
+governance text: personal-os-setup `AGENTS.md` § "Skills & plugins — 2-track governance". Verifying
+what a configured dir actually LOADS → `hermes-instance-audit`.
 
 ## When to use
 - Deploying, vendoring, promoting or installing a skill; "where does this skill belong?"
 - Installing a Claude Code plugin, or a vendor bundle that ships skills (and MCP) for one or both agents
 - "Why doesn't the agent see skill X" — the wiring side (diagnose with `hermes-instance-audit`)
+- "Too many skills — which can I delete?" · "list my skills with their origin" · "find me skills I'm missing"
+- Porting a live-only skill into git, or reviewing a rewrite the user pushed
 - Repo-local runbooks, AGENTS.md vs CLAUDE.md layout questions
-- Not for: auditing an install, merging duplicate skills, or a repo's own `skills-link`/`skills-check` flow (the repo's `skill-layout` skill).
+- Not for: auditing an install's config/plugins/curator behaviour, or a repo's own `skills-link`/`skills-check`
+  flow (`hermes-instance-audit`, `skill-layout`).
 
 ## The zones
 | Zone | Path | Read by |
@@ -42,6 +47,30 @@ vendor or install them. Canonical governance text: personal-os-setup `AGENTS.md`
 - Shared-dir skills must stay agent-agnostic: terminal/git/gh + stdlib, no Hermes tool references, no single
   repo's workflow, no personal identifiers (names, emails, numeric IDs, home paths). Public
   `github.com/<owner>/<repo>` reference URLs are the deliberate exception and stay as full links.
+
+## Provenance metadata — who owns a skill
+
+Every skill we own records its origin in its own frontmatter, so a reader can tell a repo skill from an
+agent-authored one without reading the box:
+
+```yaml
+metadata:
+  hermes:
+    origin: repo:personal-os-setup   # agent | repo:<name> | vendored | hub
+    exposure: private                # ONLY when the skill must never be published
+```
+
+- `agent` — created in the own store, no git backing (the only promotable kind).
+- `repo:<name>` — the canonical copy lives in that repo and is deployed from it.
+- `vendored` + `source: <owner>/<repo>` — a whole-folder third-party copy.
+- `hub` — installed from the skills hub; tool-managed, never vendored into git.
+- `exposure: private` — never promote or publish as-is; absent = publishable (the default).
+- Bundled (addon-shipped) skills carry **no** marker: editing one freezes its sync forever, and
+  `.bundled_manifest` already records them.
+
+The loader passes unknown frontmatter keys through verbatim, and the marker travels with the file — a
+deploy or a copy never adds or strips it. The inventories below still classify from BOOKKEEPING
+(`created_by`, `.bundled_manifest`); the marker makes the same answer visible in the file itself.
 
 ## 2-track governance (decision Sep 2026)
 - **Track 1 — Curated (repo = truth):** skills the user authors, customizes or pins. Canonical copy in the
@@ -122,6 +151,8 @@ don't restate them here. The container-specific debugging trail (a nested `.chez
 - **`MISSING` means "the deploy has not landed", never "redundant".** The own-store copy of a shared name can be the
   only copy the index has — the CLI dedupes by name, so deleting it first makes the skill vanish from the index.
   Order: deploy → confirm `skills-diff` prints no `MISSING`/`DIFFERS` → only then delete the own-store duplicate.
+- **Deleting a deployed name locally is a no-op** — the next `make skills-deploy` restores it. Tracks 1/2 are
+  deleted by repo PR; say that instead of deleting.
 - `make skills-deploy` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
   `SKILLS_FORCE=1 make skills-deploy` is the escape hatch and is safe ONLY once the newer live content has been ported
   into the source tree — otherwise it overwrites that content for good.
@@ -178,6 +209,14 @@ the file saying who owns it. Establish provenance before touching anything:
 - **Agent-authored** (`author: Hermes Agent`) — nothing manages them: no git, no history, no backup, no update path.
   These are the only ones worth versioning.
 
+**Check order for "is this mine?"**: the addon's active tree `<install>/skills/<cat>/<name>/` → its optional tree
+`optional-skills/` (shipped, NOT active — checking only the active tree yields a false "it's ours") →
+`.bundled_manifest` → `created_by` in `.usage.json` (`agent` = ours, `null`/absent = shipped or hub-installed).
+Counters come from `hermes curator usage`; where no CLI exists (the webui container ships none), read
+`.usage.json` directly for `created_by`/`pinned`/`state` and say which path was used — never hand-reconstruct a
+counter the CLI would print. A name in the optional tree exists on the box but is not in the index: state both
+facts rather than guessing ownership.
+
 **Hermes-only is a placement property, not a naming one.** `dot_claude/skills` → `/config/.claude/skills` is read by
 BOTH agents, so renaming a skill or rewording its description does NOT hide it from Claude Code — it stays in
 Claude's skill index and can still be loaded. A skill only Hermes should see has to live in the own store: version it
@@ -190,7 +229,8 @@ silently overwrites — and keep the promoted names distinct enough to be recogn
 is therefore in a two-writer situation: the Curator — and the autonomous background-review pass — rewrites or
 archives it, and the next `make skills-deploy` overwrites it. **The deploy is one-way and copy-only**: it replaces
 files and DELETES NOTHING, so an in-place edit to a live skill is silently reverted by the next deploy (copy it back
-into the source tree first) and a skill dropped in the repo keeps living in the store (rm the deployed dir by hand).
+into the source tree first) and a skill dropped in the repo keeps living in the store (rm the deployed dir by hand —
+the audit is not finished while an orphan is still indexed).
 Re-homing a skill between the two trees needs BOTH sides: deploy the new location AND delete the old live directory,
 or one name ends up indexed from two sources with no way to tell which copy the agent reads.
 The protection mechanism is the curator CLI, per machine, after the deploy:
@@ -226,16 +266,28 @@ config entry pointing at the old address — check for that before renaming a pr
 
 ### Two skills on one topic are not automatically a duplicate to merge
 
-Diff them before pitching a merge. The common legitimate case: one copy carries the runbook
+Diff them before pitching a merge — this is the single most common audit finding, and often a deliberate split
+(workflow vs internals) rather than duplication. The common legitimate case: one copy carries the runbook
 (trigger → steps → verification) and the other carries library/API depth the runbook itself points
-at (internals, a script, its own `references/`) — that's a deliberate split, not a duplication, and
-proposing to merge it without having diffed first reads as not having done the homework. When it
-really is the same content in two homes, pick the survivor by which one is actually MANAGED (git/
-chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh machine
-won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify
-with a fresh `skills-diff`/`skills-check` pass.
+at (internals, a script, its own `references/`) — proposing to merge without having diffed first reads as not
+having done the homework. When it really is the same content in two homes, pick the survivor by which one is
+actually MANAGED (git/chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh
+machine won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify with a
+fresh `skills-diff`/`skills-check` pass.
 
-### Deciding delete vs port (an inventory pass)
+### Audit — "too many skills, which can I delete?" (an inventory pass)
+
+- **Telemetry covers only what Hermes loaded.** `hermes curator usage` carries no counters for Track 1 or
+  repo-scoped skills, so their demand reads `unverified` — never downgrade that absence into "0 uses" or a delete
+  signal, and never quote a count the CLI did not print.
+- **Real usage outranks size**: demand + no repo backing = *port* candidate, not a delete candidate.
+- **Mid-move state**: while a live copy and a repo copy co-exist, `hermes skills list` shows one row per name and
+  the total drops by one per collision — a falling count is NOT a missing skill.
+- **Sweep the platform's own mutations before reporting** (seeding on update, origin-hash freezing, curator
+  archiving, the unreviewed `pending/` backlog): one read-only pass over `hermes skills list-modified`, the
+  manifest count, `.no-bundled-skills`, `pending/` counts and the relevant `hermes config get` keys — semantics in
+  `references/platform-lifecycle-and-gates.md`.
+
 Classify from bookkeeping, never from the category directory a skill sits in: `hermes skills list` prints the Source
 (`local` = own store, `builtin` = shipped in the addon tree) plus a Status column; `.usage.json` carries
 `created_by` / `use_count` / `state` / `pinned`; the addon's read-only `skills/` tree is ground truth for "shipped";
@@ -256,6 +308,25 @@ Classify from bookkeeping, never from the category directory a skill sits in: `h
   records curator/agent mutations only — a user-side deletion or disable leaves no entry, so an unexplained drop in the
   count means ask the user before suspecting the tooling.
 
+### Origin inventory — "list my skills with their origin"
+
+Answer in TIERS with the arithmetic reconciled (every indexed name lands in exactly one tier); a flat list is the
+wrong shape and a single total for the whole box is always wrong, because the tiers overlap in name only.
+
+One read-only pass over the sources: repo `dot_claude/skills` + `dot_hermes/skills/<cat>/`; the live shared dir
+`/config/.claude/skills`; the own store `$HERMES_HOME/skills/**` (via `find -L`, so symlinked skills count); the
+addon's shipped trees (`skills/` active, `optional-skills/` inactive); `.bundled_manifest`; `.usage.json`
+(`created_by`, `pinned`); and every repo's `.claude/skills` + `.agents/skills`.
+
+Tiers: **shared curated** (repo → deployed, both agents) · **repo-scoped** (that repo's sessions only) ·
+**Hermes-only** (repo → own store) · **live-only agent-authored** (no repo backing — the deletable class) ·
+**addon-shipped with a live copy**. Answer from the FILESYSTEM: `.usage.json` keeps rows for skills already deleted
+from disk, so report those dead rows in one line and never let them inflate the count. A live name ABSENT from
+`.bundled_manifest` is a copy that differs from the shipped one — state that as a fact, never as "broken". Columns
+that worked: skill(s) | origin (repo → path) | tier/owner, grouped by tier, with the reconciliation stated once. Each
+row's `metadata.hermes.origin` (above) must agree with the tier the bookkeeping puts it in — a disagreement means one
+of the two moved without the other.
+
 ### Promoting agent-authored skills into git (publishing gate)
 The git home for promoted skills is a repo that may be **public**, so publishing is a review step, not a copy step:
 
@@ -264,49 +335,116 @@ The git home for promoted skills is a repo that may be **public**, so publishing
    two-writer risk on the ones it actively rewrites.
 2. **Check the destination's visibility:** `gh repo view <owner>/<repo> --json visibility` — a public repo publishes
    every promoted file the moment it is pushed.
-3. **Scan each skill for personal identifiers before copying** (the shared-dir rule already forbids them, but only a
-   scan catches what hides inside `references/` and worked examples): real name, personal email, the numeric GitHub
-   noreply ID (`<id>+<username>@users.noreply.github.com`), LAN/global IPs, MACs, SSIDs, host paths, add-on slugs,
-   tunnel hostnames, live exposure findings. If a skill fails, sanitize its examples to placeholders first or leave it
-   in the own store — never publish it as-is to make the promotion set look complete. Sanitize the REPO copy and leave
-   the live store copy untouched (it is private and keeps the real values); placeholder mapping, the pre/post scans and
-   the diff-based proof: `references/sanitizing-skills-for-public-repos.md`. Real values in the own store are only
-   temporary: the next `make skills-deploy` replaces that copy with the sanitized one, so drive the canonical text
-   from the source tree rather than from what the live copy shows.
-4. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
+3. **Scrub and stage the copy OUTSIDE the repo first** — nothing is written to a repo before the scan comes back
+   clean. Scan for personal identifiers (the shared-dir rule already forbids them, but only a scan catches what
+   hides inside `references/` and worked examples): real name, personal email, the numeric GitHub noreply ID,
+   LAN/global IPs, MACs, SSIDs, host paths, add-on slugs, tunnel hostnames, live exposure findings. Placeholder
+   mapping, the pre/post scans and the diff-based proof: `references/sanitizing-skills-for-public-repos.md`.
+4. **Place it in the tier matching its audience** — `dot_claude/skills/` (shared) or `dot_hermes/skills/<category>/`
+   (Hermes-only); modes 644 for files, 755 for dirs. Repo-scoped placement is the symlink flow in "Repo-local
+   skills" above.
+5. **Verify by resolving the NAME, not the listing** — see the ambiguity-window pitfall below.
+6. **Delete the live copy in the SAME pass** — that is what closes the ambiguity window.
+7. **Content that fails the scrub stays live-only** and gets `hermes curator pin <name>` — never publish it as-is
+   to make the promotion set look complete. Sanitize the REPO copy and leave the live store copy untouched (it is
+   private and keeps the real values); real values there are only temporary since the next `make skills-deploy`
+   replaces that copy with the sanitized one, so drive the canonical text from the source tree.
+8. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
    published) elsewhere; resolve the single source of truth instead of creating a second copy. Keep the symlink and
    drop the duplicate from the deploy source: `make skills-deploy` copies with `cp -R`, which FOLLOWS a symlinked
    destination directory and writes through it into the tracked source file.
-5. Report per skill what was copied and what was refused with the reason — the refusals are the interesting part.
+9. **Report per skill** what was copied, deleted and refused, with the reason — the refusals are the interesting part.
 
 ## Hermes bundled-skill sync (protect your own edits)
 Bundled skills sync from the repo with a per-directory hash manifest: a user-edited copy is skipped forever,
 deletions are respected, and `hermes skills list-modified` / `hermes skills reset <name>` manage it. Don't park
 your own work inside a bundled skill dir if you want upstream updates — audit with `hermes-instance-audit`.
 
+## Reviewing a rewrite the user pushed
+Audit the DIFF, not the result: the old side is where the lost knowledge is, and a rewrite can only be called
+lossless against its baseline. **The pushed work may not be on `main`** — this user pushes follow-ups onto the
+open PR's branch, so review `git log --oneline HEAD..origin/<branch>` / `git diff --stat HEAD origin/<branch>`
+from the existing worktree, not `origin/main`. Find the ref that carries it, sweep every surface for each removed
+or renamed NAME, run the structural + live-vs-source inventory checks, privacy-scan only the touched files, and
+report file:line + fix + severity with anything unconfirmed marked unverified. **Diff before committing a skill
+file you edited earlier** — the user works in the same worktrees concurrently, so a file can gain changes between
+your edit and your commit, and `git add <dir>` sweeps them in under your message; read `git diff --cached` and
+disclose anything you did not author. Full sequence, checks and delegation rules: `references/reviewing-a-rewrite.md`.
+
+## Community discovery — "find me skills I'm missing"
+Never answer from the leaderboard: it is dominated by a handful of mega-suites and says nothing about THIS
+library. Search by DOMAIN across either discovery path, vet each hit on installs + security audits, drop whatever
+the library already covers (an equivalent bundled skill, a vendored Track-1 name, a Track-2 plugin), and return a
+short ranked list plus an explicit "deliberately excluded" line. Installing is a separate, user-gated step, and a
+hub install lands in the own store (Hermes-only, hub-owned) — vendor into Track 1 instead when it should serve
+both agents or carry history. Both discovery mechanisms (`npx skills` git-vendor vs the Hermes hub), vetting
+signals, the no-CLI query path, and exclusion patterns: `references/community-skills-npx.md`.
+
+## Verification checklist
+- [ ] exactly one path serves each ported name (`find -L <every root> -path "*<name>/SKILL.md"` == 1 hit)
+- [ ] the target repo's hooks pass on the staged files, and the commit is only made after a green pass
+- [ ] the scrub scan on the STAGED copy returns 0 identity/secret hits — report the count, an adjective is not evidence
+- [ ] every skill's frontmatter `name` equals its directory name, and no surviving file names a dead skill (body, `related_skills`, `AGENTS.md` index row, help block)
+- [ ] no live store name is left over from a source-tree deletion, and no report claims a count the CLI did not print
+- [ ] a ported/deployed name resolves to the repo path, not the agent store, and private skills carry `pinned: true`
+- [ ] a community recommendation names installs + audit verdict + the overlap check, and says plainly if nothing was installed
+
 ## Pitfalls
 - Approval gates: `AGENTS.md`/`CLAUDE.md` and `config.yaml` writes come back BLOCKED on timeout → STOP, report,
   and let the user say "prompt me again" to re-fire the exact patch; never retry it and never route the same edit
   through terminal or another file. `git commit`/`git push` need per-action approval every time (a plan, a task
-  description or a previous yes is NOT permission); commit email must match existing commits, never invented.
+  description or a previous yes is NOT permission); commit email must match existing commits, never invented. Keep
+  read-only bookkeeping to single-purpose shell one-liners — a compound call embedding an interpreter
+  (`python3 -c …`) alongside other commands stalls at the gate and returns BLOCKED, while a one-liner or
+  `read_file` on the JSON returns at once; name any blocked call in the report instead of quietly substituting.
 - Destructive cleanup (`rm -rf`, `git clean -f`, a `tar` into a protected path) raises its OWN approval prompt, and a
   timed-out prompt is not consent either → stop, report, re-fire only when the user says so. Keep the backup and the
   delete in ONE command with the backup first, so a timeout at the prompt leaves nothing half-applied, and state the
   exact file/dir list before each step — this user approves deletions per step, not per plan.
+- **Ambiguity window breaks loads.** While a live copy and the repo copy co-exist, name-based loading FAILS
+  (`Ambiguous skill name '<n>': 2 skills match across your local skills dir and external_dirs`) and the listing
+  hides it — verify with `find -L <every root> -path "*<name>/SKILL.md"` (exactly one hit; plain `find` misses a
+  skill reached through a `.agents/skills` symlink).
+- **Copied scripts and templates must pass the target repo's hooks before the commit** — a verbatim copy routinely
+  fails lint/format/YAML hooks; running the gate and the recurring fixes: `references/repo-hook-gate.md`.
+- **The staged copy is a snapshot.** An edit made to the live skill after staging is not in the port; re-copy if the
+  live file moved on.
+- **Check BOTH path bases before calling a supporting-file reference broken.** `references/…`/`scripts/…` written
+  with a slash are skill-relative; a bare `scripts/<name>.py` in prose is usually the REPO root's own directory —
+  test both `<skill-dir>/<rel>` and `<repo-root>/<rel>` before calling one broken.
 - The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT
   container does). Vendor via git clone (Track 1) or `claude plugin` (Track 2); do not install Node for this.
 - Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager`
   (PyPI, 2 stars, beta) and `xingkongliang/skills-manager` (Tauri app with its own library + SQLite + git sync).
   Both add a second source of truth parallel to the repo → `.claude/skills` flow — the user rejects that duplication.
-- Community sources worth knowing: the skills.sh marketplace leaderboard; `anthropics/skills` (official — source
-  of `skill-creator`); `obra/superpowers` (methodology suite — Hermes already bundles the equivalents, so its
-  value is Claude-side).
+- **A skill that documents its own PII grep re-trips that gate forever.** Describe the check ("the owner's name,
+  handle, numeric ID, a personal email domain") instead of embedding the literal tokens, so a later scan reports the
+  real hit count instead of matching the instructions themselves.
+- **A curator pass cannot touch a deployed or user-owned name.** Repo-deployed and hand-authored skills carry
+  `created_by=None`, so `skill_manage` refuses the write outright ("not curator-managed … run `hermes curator adopt
+  <name>`"); even an accepted edit to a deployed copy would be reverted or blocked by the next `make skills-deploy`.
+  When a session's lessons belong to such a skill, the write path is the chezmoi source through a delegated in-repo
+  change — not the live copy, and not a new overlapping curator skill. If every skill that needs the lesson is
+  protected, the pass output is "Nothing to save" PLUS the exact edits the repo still needs.
+- **A file the source tree no longer has is not automatically stale live content to port back.** Compare size and
+  mtime per FILE and ask whether the source-side edit was deliberate: a deleted install snapshot or context dump must
+  be dropped (force-deploy), while a live-only reference the source never had is the one to port in.
+- **`find` without `-L` cannot see a skill reached through a `.agents/skills` symlink** — an empty result reads as
+  "the skill vanished"; pair it with `find -name SKILL.md` caveats above.
 - personal-os-setup: branch/PR from `main` (the `dev` branch is retired).
 
 ## References
 - `references/chezmoi-dot-claude-deployment.md` — the working container invocation, why dir-level and target-path
   applies fail, the file-level fallback, and the desktop-config trap.
-- `references/community-skills-npx.md` — the Vercel `skills` CLI (find/add/check/update), its symlink pitfalls,
-  the vendor-into-Track-1 flow, and the community sources considered.
-- `references/sanitizing-skills-for-public-repos.md` — the placeholder mapping, the identifier scan, and the rules
+- `references/community-skills-npx.md` — the Vercel `skills` CLI (find/add/check/update) AND the Hermes hub
+  discovery path, their symlink/no-CLI pitfalls, the vendor-into-Track-1 flow, vetting signals and exclusion
+  patterns, and the community sources considered.
+- `references/sanitizing-skills-for-public-repos.md` — the scan-for list, the placeholder mapping, and the rules
   that keep a sanitized skill reviewable when it is promoted into the public shared dir.
+- `references/repo-hook-gate.md` — running a target repo's hooks on copied skill files, and the lint/YAML fixes
+  that recur.
+- `references/platform-lifecycle-and-gates.md` — what Hermes itself does to the library between sessions (bundled
+  seeding, origin-hash freezing, hub updates, curator archiving, `create_dir`, write-time lints), the memory
+  semantics, and the gates/knobs that make all of it reviewable.
+- `references/reviewing-a-rewrite.md` — the diff-first review of a pushed rewrite, its structural/inventory checks,
+  and the rules for delegating it.

@@ -7,6 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
+    origin: repo:personal-os-setup
     tags: [hermes, audit, skills, plugins, platforms, channels, config, versions, curator, sync, read-only]
     related_skills: [hermes-agent, agent-skills-architecture]
 ---
@@ -21,6 +22,7 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - "Compare it with the latest version / release" · "did they remove the default installed stuff"
 - "Where did skill X go / why is it disabled / can I get deleted skills back"
 - "Why does the dashboard say X" · "why is context at X% / do these tools eat too much"
+- A pasted add-on/gateway BOOT LOG — "why is /dashboard/ dead", "what does this error mean" → boot-log triage below, depth in `references/addon-boot-log-triage.md`
 - Not for installing, vendoring, merging or wiring skills → `agent-skills-architecture`.
 
 ## Hard rules
@@ -116,6 +118,10 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - Missing bundled skills + `prune_builtins: true` → deletion or curator (restore path above).
 
 ## Log triage
+- **Attribute the log to a surface before diagnosing, and lead with the defect.** A pasted log is not necessarily from the install you are running in: two add-ons can share one `HERMES_HOME` with different run scripts, ports and banners. Name the add-on (and its slug) in the FIRST line, then the chain with each link marked verified (log / code / disk) vs inferred, then the remedy — and name any probe that approval-blocked instead of dropping it from the answer.
+- `hermes: source-update completion failed: <err>; running with the previous dependencies — run 'hermes update' to finish it` = the dependency sync ABORTED and the tree is running on its previous dependency generation (`hermes_bootstrap` prints it). The surface that breaks later is a separate process, so follow the follow-on traceback to the interpreter actually running it before blaming config.
+- **A Hermes error path rooted at `/dev/null` is a patched-home smell, not a config problem**: dependency state is `<hermes home>/installs/<sha16 of resolved project root>[/pm-runtime]`, so `/dev/null/installs/<key>/pm-runtime` means home resolution (`hermes_constants.get_default_hermes_root`) was monkeypatched during import — typically by an add-on wrapper. Read that add-on's launcher before reporting; hand over upstream's own remedy plus the one-line unblock, and recommend reporting it to the add-on author.
+- **`connection refused` on `/dashboard/` behind nginx = the dashboard process died, not an nginx or auth fault.** Read its traceback: a `ModuleNotFoundError` there names a base dependency missing from the interpreter that runs that surface (wrappers that start the dashboard as `<install>/venv/bin/python -c "…start_server…"` bypass dependency activation, so a newly required base dep kills the dashboard while the gateway stays healthy). Prove the absence on disk (`search_files target='files'` in that `site-packages`) before asserting it.
 - `logs/gateway-exit-diag.log`: `SystemExit` code 75 = NORMAL scheduled restart (update), not a crash.
 - `logs/gateway.log*`: Telegram "polling conflict … only one bot instance" = TWO gateways ran at once → "ensure only one gateway runs". DNS / `httpx.ReadError` with "fallback IP" is transient/self-healing — mention, no action.
 - `plugins/<name>/` holding only state files is normal for a bundled dashboard plugin (code lives in `<install>/plugins/`).
@@ -129,9 +135,9 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - **Prove absence against a CONTROL, never from one probe's silence.** A check that returns the same negative for items known to work is a broken probe, not a finding: a `dig`/`getent` sweep returned nothing for EVERY hostname including the live ones, while the same sweep using `curl -s -o /dev/null -m 10 -w '%{http_code} %{exitcode}'` with one known-good entry as the control answered properly (a routing error for the dead entry, normal responses for the live ones). Put a known-good input in every multi-item absence check — dir entries, hostnames, skills before declaring one missing — and name the control in the report.
 
 ## References
+- `references/addon-boot-log-triage.md` — attributing a boot log to the right add-on/container, the per-install dependency store and its failure signatures, the `/dev/null` patched-home class with the launcher monkeypatch that causes it, the surface→interpreter map, and the read-only evidence path when the shell is approval-gated.
 - `references/skill-loading-resolution.md` — the full loading chain (own store → `external_dirs` → project), root resolution + exact-path trust semantics, decisive probes, upstream issue/PR handles, the working config block, and the `/config` vs `/addon_configs` path duality.
 - `references/release-history.md` — version↔tag↔date map, skills/plugin debloat, default-behaviour changes per release, plus the recipe and pitfalls for pulling release bodies.
 - `references/plugins-platforms-channels.md` — plugin/platform/channel taxonomy, `plugins.enabled` vs `disabled` with code quotes, bundled-vs-catalog boundary, the three list statuses, removal rules, kind-specific discovery, web backends, per-platform toolsets, audited snapshot.
 - `references/skills-sync-and-bundling.md` — `skills_sync` manifest semantics, repo layout, curator off-limits rule, the content-sweep one-liner, and delete-vs-disable guidance.
-- `references/platform-adapter-dependencies.md` — a chat platform going dark while the gateway stays up (missing per-platform extras, the lazy-install-with-no-pip trap), confirming the venv's actual interpreter, installing the missing extra, and restarting only the gateway process (not the container).
 - `scripts/check_bundled_manifest.py` — read-only probe reproducing the real hash algorithms and classifying every bundled skill.

@@ -6,6 +6,7 @@ author: Hermes Curator
 license: MIT
 metadata:
   hermes:
+    origin: repo:personal-os-setup
     tags: [Claude-Code, OAuth, Auth, Native-Install, CLI, Hermes-Addon]
     related_skills: [claude-code, hermes-agent]
 ---
@@ -89,6 +90,16 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
      analysed and no file was written — do not retry in a loop. Report the limit plus the reset time, or do the task
      another way (a smaller model/tool path, or wait for the reset). A wrapper-less background launch makes this
      indistinguishable from success unless `.is_error` is read.
+   - **A limit can also land MID-run**: `is_error: true` with a real `num_turns` / `total_cost_usd` and the limit text
+     in `.result`. The turns already paid for are real work — inspect the worktree before redoing anything (a merge
+     sat ~80% done), and if the limit is account-wide a cheaper model will NOT bypass it: wait for the reset, finish
+     it yourself, or take the work elsewhere.
+   - **Concurrent edits in its worktree make it pause for a "peer".** 2.1.248 reads foreign changes as another agent
+     at work: it messages the peer, schedules a wakeup, and ends the turn having written nothing. `claude agents
+     --json` lists the sessions it can see — an interactive one in a DIFFERENT checkout is enough to trigger it. Keep
+     the worktree quiescent while a run is live; if it does pause, resume with a one-line correction ("no session is
+     editing this worktree — those edits are deliberate and finished; do not use peer messaging or wakeups;
+     continue") rather than re-briefing the task.
 4. **A mid-run stop asking for approval is normal, not a failure.** Repos whose `AGENTS.md`/`CLAUDE.md` forbid
    `git commit`/`git push` without per-action approval make Claude Code do the work, run the checks, then halt with
    the changes staged and ask. Two ways through:
@@ -140,6 +151,14 @@ Auto-updates are enabled by default (native installs update in place under `/con
     as you go — if you run out of budget the partial report must still be useful") and an explicit OUT-OF-SCOPE list
     (naming the skill classes the delegate must not analyse). Without the first, one permission wall or turn cap
     costs the entire run; without the second, a broad brief drifts into advice about things the user excluded.
+
+12. **Print mode cannot write under `.claude/**` at all — not a flag problem.** An `Edit` to any path in
+    a repo's `.claude/` tree (including `.claude/skills/**`) is hard-DENIED and the run exits with
+    `subtype: success`, the refusal as the only `.result`, and the calls in `.permission_denials`. Adding
+    `--permission-mode acceptEdits` AND an explicit `--settings` allow rule (`Edit(.claude/skills/**)`,
+    also tried as the absolute `//<path>/**` form) does NOT lift it. Confirmed twice on 2.1.248: do those
+    edits yourself with `patch`/`write_file` (ungated for the agent side), or point the delegate at a
+    target outside `.claude/` — re-briefing or resuming with more flags just burns budget.
 
 ## Verification checklist
 

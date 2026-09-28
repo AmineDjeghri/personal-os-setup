@@ -1,6 +1,9 @@
 ---
 name: ship-feature
 description: Use when starting new work in this repo, committing, or opening a PR — "start a new feature", "commit this", "open a PR", "what branch should this target". Covers branch-naming, conventional commits, and the main-targeted squash-merge release flow (semantic-release).
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Shipping a change in personal-os-setup

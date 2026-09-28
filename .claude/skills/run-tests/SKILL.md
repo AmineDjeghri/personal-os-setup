@@ -1,6 +1,9 @@
 ---
 name: run-tests
 description: Use when writing or running tests in this repo, or when a test fails unexpectedly — "add a test", "run the tests", "why did this test fail/get skipped", "test the new manager/action". Covers make test vs make test-integration (the latter is destructive against the host!), the three test suites, and the exact mocking/patching conventions used across tests/unit.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Testing in personal-os-setup

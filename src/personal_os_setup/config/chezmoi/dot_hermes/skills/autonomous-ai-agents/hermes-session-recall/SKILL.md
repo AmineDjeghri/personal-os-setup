@@ -1,6 +1,9 @@
 ---
 name: hermes-session-recall
 description: Use when recalling past or continued Hermes sessions.
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Hermes Session Recall (session_search)

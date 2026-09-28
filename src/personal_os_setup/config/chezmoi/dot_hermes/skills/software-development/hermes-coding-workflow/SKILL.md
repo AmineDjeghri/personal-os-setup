@@ -1,6 +1,9 @@
 ---
 name: hermes-coding-workflow
 description: Use when the Hermes orchestrator plans, delegates or reviews coding work (Hermes-only).
+metadata:
+  hermes:
+    origin: repo:personal-os-setup
 ---
 
 # Coding Workflow — Hermes & Claude Code
