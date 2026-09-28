@@ -1,27 +1,30 @@
-# Fermeture des volets à la tombée de la nuit.
+# Fermeture des volets à la tombée du jour.
 #
-# Déclencheur solaire, pas d'heure fixe : `sun / dusk` = fin du crépuscule civil
-# (soleil à -6° sous l'horizon), calculé par HA avec la latitude/longitude de la
-# maison. Chez nous : ~20 h 10 fin septembre, ~17 h 45 en décembre, ~22 h 35 en
-# juin — rien à ajuster au fil des saisons.
+# Déclencheur solaire, pas d'heure fixe : `sun / sunset` (soleil à -0.8° sous
+# l'horizon) est calculé par HA avec la latitude/longitude de la maison, donc il
+# suit les saisons : ~19 h 35 fin septembre, ~17 h 00 en décembre, ~22 h 00 en
+# juin. Rien à ajuster dans l'année.
+# Pour attendre qu'il fasse vraiment sombre : remplacer `sunset` par `dusk`
+# (fin du crépuscule civil, soirée ~34 min plus tard).
 #
 # 80 % fermé = position 20 dans Home Assistant (position 0 = fermé, 100 = ouvert).
-alias: 🌆 Fermeture des volets au crépuscule
+alias: 🌆 Fermeture des volets à la tombée du jour
 description: >-
-  Ferme les volets à 80 % quand la nuit tombe (fin du crépuscule civil).
+  Ferme les volets à 80 % au coucher du soleil.
   Un volet déjà fermé à plus de 80 % n'est pas touché.
 triggers:
   - trigger: sun
-    event: dusk
+    event: sunset
   # Rattrape un redémarrage de HA en pleine nuit : un déclencheur solaire ne
   # rejoue pas un événement déjà passé.
   - trigger: homeassistant
     event: start
 conditions:
-  # Vrai à dusk (soleil à -6°) et lors d'un redémarrage nocturne, faux lors d'un
-  # redémarrage le matin.
-  - condition: template
-    value_template: "{{ state_attr('sun.sun', 'elevation') | float(0) < -4 }}"
+  # Vrai au coucher du soleil et pendant toute la nuit (donc aussi lors d'un
+  # redémarrage le soir), faux après le lever du soleil.
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
 actions:
   - repeat:
       for_each:
