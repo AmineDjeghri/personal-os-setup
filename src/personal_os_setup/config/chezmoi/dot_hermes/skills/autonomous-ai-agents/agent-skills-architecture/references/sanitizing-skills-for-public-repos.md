@@ -66,3 +66,34 @@ copy after the pass and report how many hits remain — the count is the evidenc
 - **Genericize personal profile paths in examples** (`C:\Users\<user>`, `/home/<user>/…`) even when a rule says they
   are "documentation, not PII" — the repo is public and the same gate greps them.
 - **Keep the recipe version that produced the clean scan with the report**, so the next port repeats the same scan.
+
+
+## Promoting agent-authored skills into git (the nine steps)
+
+### Promoting agent-authored skills into git (publishing gate)
+The git home for promoted skills is a repo that may be **public**, so publishing is a review step, not a copy step:
+
+1. **Prioritise with telemetry, not intuition:** `hermes curator usage` prints use/view/patches counts and last
+   activity per skill. Skip promoting skills at 0 activity, and read the Curator's `patches` count as the quantified
+   two-writer risk on the ones it actively rewrites.
+2. **Check the destination's visibility:** `gh repo view <owner>/<repo> --json visibility` — a public repo publishes
+   every promoted file the moment it is pushed.
+3. **Scrub and stage the copy OUTSIDE the repo first** — nothing is written to a repo before the scan comes back
+   clean. Scan for personal identifiers (the shared-dir rule already forbids them, but only a scan catches what
+   hides inside `references/` and worked examples): real name, personal email, the numeric GitHub noreply ID,
+   LAN/global IPs, MACs, SSIDs, host paths, add-on slugs, tunnel hostnames, live exposure findings. Placeholder
+   mapping, the pre/post scans and the diff-based proof: `references/sanitizing-skills-for-public-repos.md`.
+4. **Place it in the tier matching its audience** — `dot_claude/skills/` (shared) or `dot_hermes/skills/<category>/`
+   (Hermes-only); modes 644 for files, 755 for dirs. Repo-scoped placement is the symlink flow in "Repo-local
+   skills" above.
+5. **Verify by resolving the NAME, not the listing** — see the ambiguity-window pitfall below.
+6. **Delete the live copy in the SAME pass** — that is what closes the ambiguity window.
+7. **Content that fails the scrub stays live-only** and gets `hermes curator pin <name>` — never publish it as-is
+   to make the promotion set look complete. Sanitize the REPO copy and leave the live store copy untouched (it is
+   private and keeps the real values); real values there are only temporary since the next `make skills-deploy`
+   replaces that copy with the sanitized one, so drive the canonical text from the source tree.
+8. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
+   published) elsewhere; resolve the single source of truth instead of creating a second copy. Keep the symlink and
+   drop the duplicate from the deploy source: `make skills-deploy` copies with `cp -R`, which FOLLOWS a symlinked
+   destination directory and writes through it into the tracked source file.
+9. **Report per skill** what was copied, deleted and refused, with the reason — the refusals are the interesting part.
