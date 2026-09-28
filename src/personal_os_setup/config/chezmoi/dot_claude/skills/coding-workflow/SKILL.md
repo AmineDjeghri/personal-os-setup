@@ -19,10 +19,13 @@ the design branch by branch until nothing is left open.
 
 ## 2. Confirm before mutating
 
-- Per-action approval for system changes (package installs, `chezmoi apply`, driver/VM/WSL work, `sudo`),
-  destructive commands, `git push`, opening/merging a PR and release actions.
+- Per-action approval for `git commit` and `git push`, system changes (package installs, `chezmoi apply`,
+  driver/VM/WSL work, `sudo`), destructive commands, opening/merging a PR and release actions.
 - A previous "yes", a plan or a task description is NOT standing approval — ask again, every time, and run
-  exactly what was approved.
+  exactly what was approved. Commit and push are separate approvals: a yes to one is not a yes to the other.
+- When the repo's own rules say nothing about committing, ask before the FIRST commit of a task; "implement
+  this" is not permission to commit. A delegated brief must never pre-authorise a commit the user did not
+  approve for that task.
 - Never bypass a tool's own confirmation dialog.
 
 ## 3. Work in reviewable steps
