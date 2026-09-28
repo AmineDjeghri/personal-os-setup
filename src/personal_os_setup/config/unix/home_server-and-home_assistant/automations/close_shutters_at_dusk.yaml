@@ -1,0 +1,42 @@
+# Fermeture des volets à la tombée de la nuit.
+#
+# Déclencheur solaire, pas d'heure fixe : `sun / dusk` = fin du crépuscule civil
+# (soleil à -6° sous l'horizon), calculé par HA avec la latitude/longitude de la
+# maison. Chez nous : ~20 h 10 fin septembre, ~17 h 45 en décembre, ~22 h 35 en
+# juin — rien à ajuster au fil des saisons.
+#
+# 80 % fermé = position 20 dans Home Assistant (position 0 = fermé, 100 = ouvert).
+alias: 🌆 Fermeture des volets au crépuscule
+description: >-
+  Ferme les volets à 80 % quand la nuit tombe (fin du crépuscule civil).
+  Un volet déjà fermé à plus de 80 % n'est pas touché.
+triggers:
+  - trigger: sun
+    event: dusk
+  # Rattrape un redémarrage de HA en pleine nuit : un déclencheur solaire ne
+  # rejoue pas un événement déjà passé.
+  - trigger: homeassistant
+    event: start
+conditions:
+  # Vrai à dusk (soleil à -6°) et lors d'un redémarrage nocturne, faux lors d'un
+  # redémarrage le matin.
+  - condition: template
+    value_template: "{{ state_attr('sun.sun', 'elevation') | float(0) < -4 }}"
+actions:
+  - repeat:
+      for_each:
+        - cover.volet_salon
+        - cover.volet_chambre
+      sequence:
+        - if:
+            # position inconnue (volet hors ligne) -> on ne touche à rien
+            - condition: template
+              value_template: >-
+                {{ state_attr(repeat.item, 'current_position') | int(0) > 20 }}
+          then:
+            - action: cover.set_cover_position
+              target:
+                entity_id: "{{ repeat.item }}"
+              data:
+                position: 20
+mode: single
