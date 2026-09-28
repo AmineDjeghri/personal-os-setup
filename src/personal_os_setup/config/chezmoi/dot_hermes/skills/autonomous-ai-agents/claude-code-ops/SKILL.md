@@ -73,6 +73,11 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
    --allowedTools 'Read,Edit,Write,Bash' --max-turns 45-80 --output-format json > /tmp/out.json`. The brief must carry:
    goal, the exact files, forbidden actions ("do not push, do not commit, do not touch X"), the validation commands to
    run, and the shape of the answer you want back. A file brief stays exact and can be re-run or amended.
+   - **Feed that file on stdin** — `claude -p "Execute the task in the document on stdin." < /tmp/task.md` —
+     whenever the brief contains parentheses, quotes or backticks. A brief pasted inline (`claude -p 'Task: … (A) …'`)
+     dies in the SHELL before claude starts: `bash: syntax error near unexpected token '('`. Nothing is spent and no
+     session exists, but the error reads like a run that happened. Stdin is quoting-proof; keep the `-p` text itself
+     to one instruction line and let the file carry the detail.
 2. **Run it tracked and backgrounded** with `notify=true` — real delegation runs exceed the foreground cap and a
    detached `nohup`-style wrapper is refused. Do not re-run it while it is still going.
    - **Add `--permission-mode acceptEdits` whenever the run must WRITE files.** `--allowedTools '…,Write,Edit'`
@@ -90,6 +95,10 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
      analysed and no file was written — do not retry in a loop. Report the limit plus the reset time, or do the task
      another way (a smaller model/tool path, or wait for the reset). A wrapper-less background launch makes this
      indistinguishable from success unless `.is_error` is read.
+   - **When the action was already approved by the user, ask ONCE whether to do the edit inline yourself instead of
+     stalling until the reset** — a cap can sit hours away. If they say yes, run the same gates you would have asked
+     the delegate for, and state plainly in the report that the change came from Hermes, not the delegate: the
+     delegation rule is the user's, so only the user can waive it for a run.
    - **A limit can also land MID-run**: `is_error: true` with a real `num_turns` / `total_cost_usd` and the limit text
      in `.result`. The turns already paid for are real work — inspect the worktree before redoing anything (a merge
      sat ~80% done), and if the limit is account-wide a cheaper model will NOT bypass it: wait for the reset, finish
@@ -159,6 +168,21 @@ Auto-updates are enabled by default (native installs update in place under `/con
     also tried as the absolute `//<path>/**` form) does NOT lift it. Confirmed twice on 2.1.248: do those
     edits yourself with `patch`/`write_file` (ungated for the agent side), or point the delegate at a
     target outside `.claude/` — re-briefing or resuming with more flags just burns budget.
+
+13. **Never pipe a gate through `head`/`tail` inside an `&&` chain.** `uv run pre-commit run --files … | tail -6 &&
+    git commit …` reports the PAGER's exit status (0), so a gate that never ran at all (the tool missing from that
+    worktree's env → `Failed to spawn: pre-commit`) reads as a pass and the chain commits anyway. Run the gate as its
+    own command and check its status; if you already committed, re-run the gate on the final content. From a worktree
+    whose project env lacks the tool, inject it: `uv run --with pre-commit pre-commit run --files <paths>`.
+
+14. **Confirm WHERE the target branch lives before committing a follow-up.** A worktree can sit on a branch whose PR
+    is already merged (remote branch deleted, and its local commits are leftovers that must NOT be pushed) while the
+    only open PR is checked out in a DIFFERENT worktree. Check `gh pr list --state open`, `gh pr list --state all
+    --head <branch>`, `git worktree list` and `git rev-list --left-right --count origin/main...HEAD` BEFORE writing;
+    then do the work where that branch is checked out — copy the changed files into that worktree, commit there,
+    `git push origin HEAD` — and never commit the same change in both. A target worktree's files may also carry
+    frontmatter/metadata the copy would drop (re-add it). Verify from the REMOTE, never the local tree:
+    `git show origin/<branch>:<path> | head`, `gh pr view <n> --json files,state`.
 
 ## Verification checklist
 
