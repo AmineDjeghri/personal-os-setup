@@ -1,7 +1,7 @@
 ---
 name: claude-code-ops
-description: "Install/auth/troubleshoot Claude Code CLI on this box."
-version: 1.0.0
+description: "Install/auth/model defaults for Claude Code CLI on this box (Sonnet, never Opus)."
+version: 1.1.0
 author: Hermes Curator
 license: MIT
 metadata:
@@ -20,6 +20,30 @@ metadata:
 - Any session that needs to verify the Claude Code install (version / auth / health) before delegating work to it.
 
 Companion to the bundled `claude-code` skill: delegation workflows (print mode, tmux, flags, hooks) live there; INSTALL / AUTH / UPDATE operations for THIS machine live here.
+
+## Model defaults (cost rule — user's standing instruction, 2026-09-28)
+
+- **Model = the newest Sonnet, always explicit:** `--model claude-sonnet-5-5` (or the alias
+  `--model sonnet`, same family). The user's words: *"use Claude 5.5 sonnet per default … don't use
+  opus because it is very expensive"*.
+- **Never `--model opus`, any version.** The bundled `claude-code` skill's "`--model opus` for complex
+  multi-step work" line is **superseded here** — buy reasoning with `--effort high|xhigh`, not with a
+  pricier model. `--model haiku` is fine only for a trivial 1-turn task and as `--fallback-model haiku`.
+- **Pass `--model` on every run** instead of relying on the account default, so a config/subscription
+  change can never silently swap in an expensive model.
+- **The newest Sonnet id only appears after `claude update`.** Verified 2026-09-28: Claude Code
+  2.1.248 topped out at `claude-sonnet-5`; updating to 2.1.284 added **`claude-sonnet-5-5`**. So when
+  the user names a model you cannot find, update first, then re-check the binary:
+
+  ```bash
+  HOME=/config /config/.local/bin/claude update
+  grep -aoE 'claude-(sonnet|opus|fable)-[0-9][a-z0-9.-]*' \
+    $(readlink -f /config/.local/bin/claude) | sort -u | tail
+  ```
+
+- **Re-link relative after every update.** The updater rewrites `~/.local/bin/claude` as an ABSOLUTE
+  symlink (`/config/.local/share/claude/versions/<ver>`); pitfall 10 wants the relative form:
+  `cd ~/.local/bin && ln -sfn ../share/claude/versions/<ver> claude && HOME=/config ./claude --version`.
 
 ## Environment facts (verified Aug 2026)
 
@@ -116,6 +140,14 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
 5. **Verify the artifact, never the summary.** Statements like "pushed and opened PR #N" are self-reports: check
    `git diff origin/main...origin/<branch> --stat`, `gh pr view <n> --json title,files,commits,mergeable`,
    `gh pr checks <n>`, `gh run list --branch <branch>`. Report only what those show.
+   - **Also `git status` the worktree before you report.** A delegate told to write only its verdict
+     file may still edit the artifacts under review: an audit run left a 9-line "fix" inside the very
+     YAML file it was auditing (invisible to the PR's reviewers, and inconsistent with what was live).
+     Revert anything the brief did not authorise, then say so.
+   - **A delegate's verdict is a claim, not a finding.** Cross-check each named defect against the live
+     system or the primary doc yourself: in that same audit the "`note:` is not a valid trigger key"
+     verdict was wrong — the field is documented (HA 2026.6+ per-block annotation) and it round-tripped
+     through HA's own schema validation with the notes intact. Keep what survives, report what doesn't.
 6. **Follow-ups go on the same branch as new commits** (no force-push) — squash-merge collapses the review noise the
    extra commits create; a new PR for a correction the user did not ask for is the wrong move.
 
