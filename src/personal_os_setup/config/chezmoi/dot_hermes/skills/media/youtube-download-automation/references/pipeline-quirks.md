@@ -14,6 +14,8 @@ Bugs and near-misses from real runs. Each one cost a re-download, an orphaned fi
 
 yt-dlp's default no-overwrites behaviour silently **skips** a second video that would produce the same filename (two live versions of the same song, same artist/title). Detect the case (no matching audio file after `process_ie_result`) and do **not** archive that ID, so the next run retries it — otherwise a real video is lost with no error.
 
+The warning also fires when a previous run already produced the file and moved it into the library: the re-run writes nothing new, so `Downloaded: 0  Failed: 0` printed next to it is **not** a missing video. Look the file up under `/media/music/YouTube/<folder>/` before telling the user anything was lost.
+
 ## Resume safety for interrupted runs
 
 - Persist the archive after each video (above) and, at the start of a run, move leftover `.staging/` audio files into the final library folder. A killed run leaves finished files staged-but-unmoved; the archive then skips them on re-run, so without that recovery move they stay orphaned in staging forever.
@@ -28,6 +30,7 @@ yt-dlp's default no-overwrites behaviour silently **skips** a second video that 
 
 - `playlist_index` shifts when someone inserts a video mid-playlist → new files get the current index, existing files keep theirs (cosmetic duplicate track numbers; accepted).
 - `playlist_index` is `None` for single-video URLs (key present, value `None`). `f"{e.get('playlist_index'):>3}"` raises `TypeError` — `.get(key, default)` does NOT cover a present-but-None value; use `e.get('playlist_index') or '?'`.
+- Consequence: a single-video download lands with **no `NNN - ` prefix** (`Artist - Title.m4a`) beside numbered siblings in the same folder — expected, not the leftover of a partial run.
 - For a single video, `playlist_title` is the video's own title: the plan header prints `## Playlist: <video title> (1 videos)` and the folder default becomes a folder named after the video. Set `folder` explicitly for single links (see SKILL.md §2).
 - Index gaps in the plan are unavailable videos (see below), not a parse bug.
 
@@ -35,6 +38,10 @@ yt-dlp's default no-overwrites behaviour silently **skips** a second video that 
 
 - YouTube video IDs match `[A-Za-z0-9_-]{11}` — hyphens AND underscores. A `\w{11}` regex silently misses IDs like `-ZvsGmYKhcU` or `_eTBcHE-xPQ`, producing false "extra override" alarms *and* false "missing" results. This bit a coverage check on a 158-entry playlist; the overrides file was actually complete. `scripts/validate_overrides.py` does the check properly.
 - **Plan index gaps = unavailable videos.** With `ignoreerrors`, failed entries are OMITTED from the listing (indices skip, e.g. [9], [34], [79]) rather than printed inline. Count unique IDs from the plan itself (deduped) — don't subtract from the playlist total.
+
+## Searching for a video ID
+
+IDs can begin with `-` or `_`. A search pattern starting with `-` is parsed as an option and matches **nothing, silently** — drop the leading dash (`pattern="9Ad5NZLAHo"`), never trust a zero-match result for such an ID.
 
 ## Debugging per-entry failures
 

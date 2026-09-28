@@ -160,6 +160,23 @@ don't restate them here. The container-specific debugging trail (a nested `.chez
   is usually mixed). Live strictly newer → port live→source (sanitized). Source strictly newer → port nothing, the
   deploy is the fix. A blanket "reconcile live→git" DELETES the newer source content; a blanket deploy reverts the
   newer live content.
+- **When the gate ABORTS, attribute the drift and SHOW the delta before acting on it.** `hermes curator ledger` names
+  the pass that patched the live copy and when — a curator/background-review patch minutes after your own deploy is
+  the signature, and it means that live content is knowledge, not noise. Then render the delta per drifted skill with
+  `scripts/review-drift.py <source-root> <live-root> <skill-dir>…` (writes `drift-<skill>.diff`, classifies the change,
+  scrubs the added lines), hand the user the diff files plus what the added lines actually SAY, state which side is
+  strictly newer, and recommend — do not force-deploy or port on their behalf. This user reads the delta before
+  agreeing to keep it, and a forced deploy discards the passed lesson for good.
+- **Classify additions vs a rewrite before copying either way.** Live-only lines with zero source-only lines = pure
+  addition, so live→source is lossless. Source-only lines present = the live side rewrote something: read those lines
+  before discarding either side — they are often a rule the live version CORRECTED, and restoring a superseded claim
+  from the source is worse than the drift you set out to fix.
+- **An autonomous rewrite is a PROPOSAL, not a fact — verify its claims against the implementation before publishing
+  them into git.** Such a pass writes plausible, well-phrased assertions; run the decisive check (read the guard or
+  function it names, or drive the code in a scratch script) and port only what holds, restating it with the scope the
+  code actually has. A claim can be directionally right and still wrong in scope — a refusal list that omits
+  `external_dirs` and an actor gate both send the next session to the wrong place. Report anything you could not
+  verify as unverified instead of merging it on tone.
 - Re-run `skills-diff` after the deploy — a clean report is the proof, not the deploy's own output.
 
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
@@ -274,6 +291,23 @@ having done the homework. When it really is the same content in two homes, pick 
 actually MANAGED (git/chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh
 machine won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify with a
 fresh `skills-diff`/`skills-check` pass.
+
+**Verify the FOLD against the loser, never by re-reading the survivor.** A folded body reads fine even when rules
+were dropped — the gaps are invisible from the inside, and a delegated merge loses whole sections silently. Before
+deleting the loser, walk its body and its `references/` item by item:
+
+- every section heading and pitfall bullet, grepped in the survivor by a distinctive phrase of each
+  (`grep -c "<phrase>" <survivor>/SKILL.md`): a 0 means dropped, not reworded — restore it into the section it
+  belongs to rather than appending a catch-all at the end;
+- the `references/` mapping is 1:1 — each loser file is either copied in or merged into a surviving file on the same
+  topic, and both the References list and every in-body pointer name the surviving filename (a stale pointer is a
+  dead end for the next session);
+- the frontmatter `description`/trigger now covers the loser's trigger words, or the merged half never loads for the
+  tasks it was written for.
+
+**File-level and content-level are different proofs, and you need both.** `skills-diff`/`skills-check` after a
+merge show that the two trees agree — nothing about whether the merge lost anything; the phrase sweep above is the
+only check for that. Never report a merge as lossless on the strength of a clean diff.
 
 ### Audit — "too many skills, which can I delete?" (an inventory pass)
 
@@ -420,12 +454,27 @@ signals, the no-CLI query path, and exclusion patterns: `references/community-sk
 - **A skill that documents its own PII grep re-trips that gate forever.** Describe the check ("the owner's name,
   handle, numeric ID, a personal email domain") instead of embedding the literal tokens, so a later scan reports the
   real hit count instead of matching the instructions themselves.
-- **A curator pass cannot touch a deployed or user-owned name.** Repo-deployed and hand-authored skills carry
-  `created_by=None`, so `skill_manage` refuses the write outright ("not curator-managed … run `hermes curator adopt
-  <name>`"); even an accepted edit to a deployed copy would be reverted or blocked by the next `make skills-deploy`.
-  When a session's lessons belong to such a skill, the write path is the chezmoi source through a delegated in-repo
-  change — not the live copy, and not a new overlapping curator skill. If every skill that needs the lesson is
-  protected, the pass output is "Nothing to save" PLUS the exact edits the repo still needs.
+- **The refusal list IS the drift set, and it is scoped to one ACTOR.** `_background_review_write_guard`
+  (`tools/skill_manager_guards.py`) returns immediately unless the write origin is `background_review`
+  (`tools/skill_provenance.py` — a ContextVar), so the autonomous pass is refused on: pinned names, bundled and
+  protected built-ins, hub installs, anything under `skills.external_dirs` (EVERY Track-1 shared skill), and any
+  name with no curator record (`created_by` absent or `None` — "not curator-managed … run `hermes curator adopt
+  <name>`"). What it CAN write is therefore exactly the own-store `created_by: agent` unpinned names — the same set
+  that drifts against the chezmoi source. Foreground actors (CLI, gateway, cron, subagent) are subject to none of
+  it: a pinned skill can be edited there, and `_pinned_guard` blocks only its DELETION. Never describe "the
+  curator" as one actor with one rulebook.
+- **Test such a guard without touching a skill.** In a scratch script set
+  `tools.skill_provenance.set_current_write_origin("background_review")`, call
+  `skill_manager_guards._background_review_preflight(action, name)` for each name of interest, reset the token, then
+  repeat in the default origin to prove the scope. It reads usage records and resolves paths and writes nothing —
+  never test a write guard by attempting a real write to a live skill.
+- Repo-*deployed* names that an autonomous pass promoted DO carry `created_by: agent` and its write goes through,
+  so the lesson then differs from the chezmoi source: the next `make skills-deploy` either ABORTS on the fresh
+  `DIFFERS` or a `SKILLS_FORCE=1` run overwrites the lesson you just saved. Either way the lesson is now repo work:
+  the write path for a deployed skill is the source tree (an in-repo change on the open branch), never the live copy,
+  and never a new overlapping curator skill. If every skill that needs the lesson is genuinely protected, the pass
+  output is "Nothing to save" PLUS the exact edits the repo still needs — and name any drift you caused, with the
+  file, so it gets ported instead of force-overwritten.
 - **A file the source tree no longer has is not automatically stale live content to port back.** Compare size and
   mtime per FILE and ask whether the source-side edit was deliberate: a deleted install snapshot or context dump must
   be dropped (force-deploy), while a live-only reference the source never had is the one to port in.
@@ -448,3 +497,5 @@ signals, the no-CLI query path, and exclusion patterns: `references/community-sk
   semantics, and the gates/knobs that make all of it reviewable.
 - `references/reviewing-a-rewrite.md` — the diff-first review of a pushed rewrite, its structural/inventory checks,
   and the rules for delegating it.
+- `scripts/review-drift.py` — source-vs-live drift review for one skill or a whole tree: per-skill unified diffs,
+  addition-vs-rewrite classification, and a scrub of the added lines before anything is ported or force-deployed.
