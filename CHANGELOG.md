@@ -2,6 +2,21 @@
 
 <!-- version list -->
 
+## v2.16.0 (2026-09-28)
+
+### Documentation
+
+- **android-tv**: Note the parent-config limit and the addon resource count (#119)
+  ([#119](https://github.com/AmineDjeghri/personal-os-setup/pull/119),
+  [`68ac0f1`](https://github.com/AmineDjeghri/personal-os-setup/commit/68ac0f16c59e688f7303cbe96858a43395316bec))
+
+### Features
+
+- **home-server**: Add a sunset shutter automation (#124)
+  ([#124](https://github.com/AmineDjeghri/personal-os-setup/pull/124),
+  [`dbfc63b`](https://github.com/AmineDjeghri/personal-os-setup/commit/dbfc63bc89998a871b80f389964c63d9820e68fb))
+
+
 ## v2.15.1 (2026-09-22)
 
 ### Bug Fixes
