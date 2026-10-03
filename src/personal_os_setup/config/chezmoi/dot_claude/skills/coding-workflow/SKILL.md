@@ -26,6 +26,10 @@ the design branch by branch until nothing is left open.
 - When the repo's own rules say nothing about committing, ask before the FIRST commit of a task; "implement
   this" is not permission to commit. A delegated brief must never pre-authorise a commit the user did not
   approve for that task.
+- Never fold `git commit` / `git push` into a longer compound command (verify + commit + push on one line).
+  The sandbox approval scanner only fires on flagged patterns, so a plain push executes with nobody asked and
+  the user never sees a prompt — the gate becomes the scanner, not the user. Ask in chat, wait for the yes,
+  then run the git action as its own command.
 - Never bypass a tool's own confirmation dialog.
 
 ## 3. Work in reviewable steps
