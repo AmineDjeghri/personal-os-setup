@@ -23,6 +23,8 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - "Where did skill X go / why is it disabled / can I get deleted skills back"
 - "Why does the dashboard say X" · "why is context at X% / do these tools eat too much"
 - A pasted add-on/gateway BOOT LOG — "why is /dashboard/ dead", "what does this error mean" → boot-log triage below, depth in `references/addon-boot-log-triage.md`
+- "Analyse the storage of this add-on (agent + webui)" · "what can we delete to clean the space" → depth in `references/storage-and-cache-map.md`
+- "hermes update" · "is an update already running" · "the update looks stuck / the version didn't change" → depth in `references/update-lifecycle.md`
 - Not for installing, vendoring, merging or wiring skills → `agent-skills-architecture`.
 
 ## Hard rules
@@ -133,8 +135,18 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - `reset --restore` on a skill that DOES carry user content destroys that content — read the diff first.
 - `hermes plugins info <name>` → "not found" does NOT prove absence: kind-specific discovery (`plugins/model-providers/*`, `dashboard_auth/*`) is invisible to the general plugin scanner, so a live, active plugin reads as missing. Open the kind directory's `plugin.yaml` before calling an entry in `plugins.enabled` stale or dead.
 - **Prove absence against a CONTROL, never from one probe's silence.** A check that returns the same negative for items known to work is a broken probe, not a finding: a `dig`/`getent` sweep returned nothing for EVERY hostname including the live ones, while the same sweep using `curl -s -o /dev/null -m 10 -w '%{http_code} %{exitcode}'` with one known-good entry as the control answered properly (a routing error for the dead entry, normal responses for the live ones). Put a known-good input in every multi-item absence check — dir entries, hostnames, skills before declaring one missing — and name the control in the report.
+- **A missing `make` / `hermes` / `npx` is the CONTAINER, not a broken install.** One Hermes brain runs in two
+  HA add-on containers over the same `/config`, and a session can be served by EITHER of them. The webui side
+  ships no Node.js and no `make`, so the tool is genuinely absent there, and the Hermes CLI on that side also
+  fails its dependency preflight (`.hermes/tools/.staging-*/tree/bin/node: libatomic.so.1: cannot open shared
+  object file` → it then reports `no dependency environment is committed for this install; run hermes pm repair`).
+  Check `hostname` first — `<slug>-hermes-agent` is the agent container — before diagnosing a missing tool, a PATH
+  fault or an add-on breakage. Three false diagnoses in one session came from reading a webui-served session as an
+  add-on fault; nothing was actually wrong with either container.
 
 ## References
+- `references/storage-and-cache-map.md` — where an HA add-on's space actually goes (path → meaning → verdict), the probe recipe, and the per-item rules for git packfiles, model caches, uv-managed interpreters, PM install generations and the live runtime dirs.
+- `references/update-lifecycle.md` — what `hermes update` does phase by phase, the in-progress marker and the two-run guard, log/receipt map, read-only pre-checks, post-update verification order, flags and pitfalls.
 - `references/addon-boot-log-triage.md` — attributing a boot log to the right add-on/container, the per-install dependency store and its failure signatures, the `/dev/null` patched-home class with the launcher monkeypatch that causes it, the surface→interpreter map, and the read-only evidence path when the shell is approval-gated.
 - `references/skill-loading-resolution.md` — the full loading chain (own store → `external_dirs` → project), root resolution + exact-path trust semantics, decisive probes, upstream issue/PR handles, the working config block, and the `/config` vs `/addon_configs` path duality.
 - `references/release-history.md` — version↔tag↔date map, skills/plugin debloat, default-behaviour changes per release, plus the recipe and pitfalls for pulling release bodies.

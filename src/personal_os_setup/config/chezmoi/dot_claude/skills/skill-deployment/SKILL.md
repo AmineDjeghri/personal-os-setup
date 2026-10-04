@@ -19,7 +19,7 @@ Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` �
 Frontmatter also carries `metadata.hermes.origin` — `agent` (own store only) | `repo:<name>` | `vendored`
 (+ `source: <owner>/<repo>`) | `hub` — plus `exposure: private` on any skill that must never be published.
 The marker travels with the file, so a deploy neither adds nor strips it; canon: the
-`agent-skills-architecture` skill.
+`agent-skills-architecture` skill (Hermes-only — a Claude Code reader cannot load it).
 
 **Two loading paths — don't confuse them:**
 
@@ -88,6 +88,60 @@ first, then deploy; or force the overwrite with `make skills-deploy SKILLS_FORCE
 GNU Make gotcha: `export VAR = x   # comment` keeps the comment's leading whitespace inside the
 value, so keep such comments on their own line.
 
+GNU Make gotcha #2 (**each recipe line is its own shell**): an early `exit 0` on its own line does
+NOT abort the rest of the target — make just runs the next line, so a target can print "not installed
+here" and then fail on the guard that follows. Join every guard that must short-circuit into ONE
+recipe line with `; \` continuations (`fi; \`). Hit while writing `skills-thirdparty` in
+`makefiles/skills.mk`; caught only by running the target, not by `make -n`.
+
+## Third-party skills — `npx skills` (skills-only packs)
+
+For a third-party repo that ships **only** a `skills/` tree (no plugin manifest per harness). Packs
+that ship their own per-harness plugins (hooks, slash commands) are a different case — see the end
+of this section.
+
+```bash
+npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y   # one skill
+npx skills add <owner>/<repo> -g -y                             # whole pack
+```
+
+- **Target `-a claude-code` only — it already reaches Hermes.** Hermes reads `~/.claude/skills` via
+  `skills.external_dirs`, so the Claude symlink serves both. Adding `-a hermes-agent` puts the same
+  name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
+  that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
+- **Where it lands:** real files in `~/.agents/skills/<skill>/`; symlinks into
+  `~/.claude/skills/<skill>` (flat — the entry shows a blank category in `hermes skills list`).
+- **The lock is OUTSIDE any repo:** `~/.agents/.skill-lock.json` (v3: `source`, `sourceType`,
+  `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
+  the live lock is never the record we ship. Replay/drift: `make skills-thirdparty` in
+  `makefiles/skills.mk`.
+- **Updating:** `npx skills update` is broken (vercel-labs/skills#484 — reports "up to date" while
+  upstream moved). Re-add is the update path: `-s <name> -y` refetches and bumps the hash; diff the
+  lock to see what moved. Renovate has no skills.sh manager yet (discussion #41841), so automation =
+  a scheduled workflow that re-adds and opens a lock-bump PR.
+- **Before installing, check the names.** Hermes has no namespacing, so a third-party name that
+  collides with a shipped or deployed skill breaks that name for both. Compare against
+  `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
+- **Symlink regressions exist** (#851 global, #1355 project) → verify the entry actually resolves in
+  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy`. A symlink that exists is not
+  proof the agent listed it.
+- **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
+  a replay cannot re-prove it.
+- **Node is only in the agent container.** The webui container ships no Node by design, so `npx`
+  does not exist there.
+
+**Packs that ship their own per-harness plugins are NOT this flow.** Install them per harness through
+that harness's native channel, one canal per agent — never plugin *and* npx for the same agent.
+Worked example, `obra/superpowers` (ships `.claude-plugin/`, `.codex-plugin/`, `.hermes-plugin/`,
+`.cursor-plugin/`, … plus a SessionStart hook and a `pre_llm_call` bootstrap):
+
+- Claude Code: `/plugin install superpowers@claude-plugins-official`
+- Hermes: `hermes plugins install obra/superpowers` — registers every skill namespaced as
+  `superpowers:<name>` (so no collision with shipped names) and injects the first-turn bootstrap
+- Codex (if ever used): its own plugin marketplace, `/plugins`
+- `npx skills add obra/superpowers` on a harness that has the plugin = the same 15 skills twice, and
+  it silently drops the bootstrap hook. Don't.
+
 ## Bundled (addon-shipped) skills are read-only
 
 Bundled skills sync from the addon with a per-directory hash manifest, so a copy we edited is skipped
@@ -99,6 +153,16 @@ forever and upstream improvements never reach us. Never edit one. When we want a
 3. `hermes skills reset <name>` — clears the "user-modified" flag so updates work again; it does not
    touch the content. `hermes skills reset <name> --restore` also reverts to stock.
 4. Confirm with `hermes skills list-modified`; the next addon update brings the stock version.
+
+⚠️ **`hermes skills reset` blocks on an interactive prompt — never call it from a non-interactive
+surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out
+(5 minutes in practice) and **changes nothing**, because the prompt is never answered. Drive it from a
+PTY, or skip it: to de-fork, refresh the live copy from the stock tree with a plain copy —
+`cp -R /config/skills/<category>/<name>/. ~/.hermes/skills/<category>/<name>/` — which leaves the live
+copy byte-identical to stock with no prompt. **Refresh, don't delete**: deleting the own-store copy
+drops that name out of Hermes' index (the add-on's shipped tree is not indexed on its own, and a name
+absent from `.bundled_manifest` has no reseed path) — so a skill with real usage disappears.
+`hermes skills diff <name>` is the read-only way to see what a reset would change.
 
 Local additions we dropped when un-freezing (kept here for reference; upstream may adopt them):
 `pdf` (scanned-PDF hand-off to `ocr-and-documents`, `--meta` inspect step, `related_skills` frontmatter),

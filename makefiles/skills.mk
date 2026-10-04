@@ -2,7 +2,7 @@
 # Canonical skills live in .claude/skills; .agents/skills holds git symlinks so
 # non-Claude agents (Hermes, Codex, OpenCode, skills CLI) see the same files.
 
-.PHONY: skills-link skills-check skills-deploy skills-diff skills-drift skills-status
+.PHONY: skills-link skills-check skills-deploy skills-diff skills-drift skills-status skills-thirdparty skills-thirdparty-save skills-thirdparty-replay
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
@@ -101,3 +101,63 @@ skills-status: ## Show git-managed skills and live copies that duplicate a manag
 	done; [ $$n -gt 0 ] || echo "  (none)"; \
 	echo "== note: everything else under $(HERMES_SKILLS_DST) is unmanaged (bundled, hub-installed or live-only)"; \
 	echo "         list it with: hermes skills list --source local --enabled-only"
+
+# ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
+# `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
+# (for a global install: $(HOME)/.agents/.skill-lock.json), so the committed COPY below is what
+# makes a new machine rebuildable. The copy deliberately does NOT sit in the chezmoi source: a
+# `chezmoi apply` must never overwrite the tool's live lock with a stale record.
+#
+# The jq paths below are the ONLY place the lock schema is expressed, so a schema bump is a
+# one-line fix. v3 lock shape: .skills.<name> = { source, sourceType, sourceUrl, skillPath,
+# skillFolderHash }. VALIDATE ON FIRST REAL INSTALL (`make skills-thirdparty-save`) — written from
+# the documented v3 shape, not yet from a lock produced on this box.
+THIRD_PARTY_LOCK := third-party-skills.lock.json
+LIVE_SKILLS_LOCK := $(HOME)/.agents/.skill-lock.json
+JQ_TP_NAMES := .skills | keys[]
+JQ_TP_HASH  := (.skills[$$n].skillFolderHash // "-")
+JQ_TP_SRC   := (.skills[$$n].source // .skills[$$n].sourceUrl // "?")
+
+skills-thirdparty: ## Report drift between the committed third-party lock and the live one (read-only)
+	@if [ ! -f "$(LIVE_SKILLS_LOCK)" ]; then \
+		printf 'no live lock at %s -- no third-party pack installed on this machine\n' "$(LIVE_SKILLS_LOCK)"; exit 0; \
+	fi; \
+	if [ ! -f "$(THIRD_PARTY_LOCK)" ]; then \
+		printf 'no committed lock (%s) -- record the live one with: make skills-thirdparty-save\n' "$(THIRD_PARTY_LOCK)"; exit 1; \
+	fi; \
+	rc=0; \
+	for n in $$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK)); do \
+		want=$$(jq -r --arg n "$$n" '$(JQ_TP_HASH)' $(THIRD_PARTY_LOCK)); \
+		src=$$(jq -r --arg n "$$n" '$(JQ_TP_SRC)' $(THIRD_PARTY_LOCK)); \
+		have=$$(jq -r --arg n "$$n" '$(JQ_TP_HASH)' $(LIVE_SKILLS_LOCK) 2>/dev/null); \
+		if [ -z "$$have" ] || [ "$$have" = "-" ]; then \
+			printf '  MISSING  %s (%s) -- replay: make skills-thirdparty-replay\n' "$$n" "$$src"; rc=1; \
+		elif [ "$$have" != "$$want" ]; then \
+			printf '  CHANGED  %s (%s)\n           committed %s\n           live      %s\n' "$$n" "$$src" "$$want" "$$have"; rc=1; \
+		else \
+			printf '  OK       %s\n' "$$n"; \
+		fi; \
+	done; \
+	for n in $$(jq -r '$(JQ_TP_NAMES)' $(LIVE_SKILLS_LOCK)); do \
+		if ! jq -e --arg n "$$n" '.skills[$$n]' $(THIRD_PARTY_LOCK) >/dev/null 2>&1; then \
+			printf '  EXTRA    %s -- installed here but absent from the committed lock; record it: make skills-thirdparty-save\n' "$$n"; rc=1; \
+		fi; \
+	done; \
+	if [ $$rc -ne 0 ]; then echo "skills-thirdparty: DRIFT (see above)"; else echo "skills-thirdparty: no drift"; fi; \
+	exit $$rc
+
+skills-thirdparty-save: ## Copy the live npx lock into the repo (the record we ship)
+	@test -f "$(LIVE_SKILLS_LOCK)" || { printf 'no live lock at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
+	@cp "$(LIVE_SKILLS_LOCK)" "$(THIRD_PARTY_LOCK)"
+	@printf 'recorded %s -- %s entries\n' "$(THIRD_PARTY_LOCK)" "$$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK) | wc -l | tr -d ' ')"
+
+skills-thirdparty-replay: ## Re-install every pack in the committed lock, then re-check (the update path)
+	@test -f "$(THIRD_PARTY_LOCK)" || { printf 'no committed lock at %s\n' "$(THIRD_PARTY_LOCK)"; exit 1; }
+	@command -v npx >/dev/null || { echo "npx is not present (agent container only)"; exit 1; }
+	@for n in $$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK)); do \
+		src=$$(jq -r --arg n "$$n" '$(JQ_TP_SRC)' $(THIRD_PARTY_LOCK)); \
+		if [ -z "$$src" ] || [ "$$src" = "?" ]; then printf 'skip %s: no source recorded\n' "$$n"; continue; fi; \
+		printf 're-add %s from %s\n' "$$n" "$$src"; \
+		npx -y skills add "$$src" -s "$$n" -a claude-code -g -y; \
+	done
+	@$(MAKE) --no-print-directory skills-thirdparty
