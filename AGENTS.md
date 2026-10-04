@@ -68,7 +68,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Authored / pinned, useful to any agent | repo `dot_claude/skills/` → `~/.claude/skills` (deployed) | Claude + Hermes |
 | Authored, agent-specific (s6, TUI, add-on ops, Hermes-internal workflows) | repo `dot_hermes/skills/<category>/<skill>/` → `~/.hermes/skills` (same `make skills-deploy`) | Hermes only |
 | Authored but contains private details (`exposure: private`) | live only + `hermes curator pin` — **this repo is PUBLIC** | Hermes only |
-| Third-party, skills-only | `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y`; the skill is **copied** into the agent dir and the lock (`~/.agents/.skill-lock.json`) is copied into the repo | the agents you target |
+| Third-party, skills-only | `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`; `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the lock (`~/.agents/.skill-lock.json`) is copied into the repo | the agents you target |
 | Third-party pack that ships its own per-harness plugins | that harness's own channel (`/plugin install`, `hermes plugins install <owner>/<repo>`), one install per harness | that harness |
 | Shipped by the agent (bundled / official optional) | the agent's own install — never copied into the repo | that agent |
 | Agent-created (Curator) | live only, temporary → triage: promote, pin-private, delete | — |
@@ -79,21 +79,27 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   *and* npx for the same agent (the model then sees one name twice).
 - **Transport for our own content is git + `make` only** — our skills never go through npx, a
   plugin, or a lock file; a tool that owns a directory must not own ours.
-- **npx targeting:** `-a claude-code` alone already reaches Hermes (it reads `~/.claude/skills`);
-  adding `-a hermes-agent` puts the same name in two roots and Hermes refuses it. Keep third-party
-  names disjoint from shipped/deployed ones, and check before installing.
+- **npx targeting — one name must be reachable by each agent exactly once.** `-a claude-code` alone
+  already reaches Hermes (it reads `~/.claude/skills`), so never add `-a hermes-agent`: two roots
+  Hermes reads → `Ambiguous skill name … Refusing to guess`. `-a claude-code -a codex` is safe
+  (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
+  disjoint from shipped/deployed ones, and check before installing.
 - **Currently shared (Track 1):** `coding-workflow`, `repo-conventions`, `project-templates`,
-  `skill-deployment`, `skill-creator` (vendored from anthropics/skills, Apache-2.0 — keep its
-  `LICENSE.txt`), `github-auth`, `github-code-review`, `github-issue-to-pr`, `github-issues`,
+  `skill-deployment`, `github-auth`, `github-code-review`, `github-issue-to-pr`, `github-issues`,
   `github-repo-management`, `git-line-endings`, `github-actions-trigger-gotchas`,
-  `github-pr-workflow`, `github-community-health-files`, `nicegui-frontend-testing`,
-  `template-adoption`.
+  `github-pr-workflow`, `github-community-health-files`, `template-adoption`.
 - **Currently Hermes-only:** `agent-skills-architecture`, `claude-code-ops`, `hermes-session-recall`,
   `hermes-instance-audit`, `youtube-download-automation`, `debugging-hermes-tui-commands`,
-  `hermes-coding-workflow`, `hermes-s6-container-supervision`. Deployed names are Curator-protected
+  `hermes-coding-workflow`. Deployed names are Curator-protected
   (`hermes curator pin <skill>` per machine after deploy). `hermes-coding-workflow` keeps only the
   orchestration/delegation rules — the agent-agnostic plan/confirm/review/PR workflow stays shared
   in `coding-workflow`.
+- **Three former entries are no longer in this repo:** `skill-creator` was vendored from
+  `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name
+  collides with it and makes the name **unloadable in Hermes**. `hermes-s6-container-supervision` was
+  a stale fork of the agent's official optional skill and is now installed from there instead
+  (`hermes skills repair-official <name> --restore --yes`), not from this repo.
+  `nicegui-frontend-testing` was removed as unused.
 - **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
   put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
   see `.claude/skills/skill-deployment`.

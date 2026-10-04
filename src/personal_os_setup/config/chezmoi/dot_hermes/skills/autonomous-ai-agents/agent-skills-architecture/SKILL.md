@@ -78,8 +78,9 @@ deploy or a copy never adds or strips it. The inventories below still classify f
   via `skills.external_dirs`, Claude Code via its global skills dir — one copy, both agents. Changes go
   through PRs. The authoritative "Currently:" enumeration is the one in that AGENTS.md section — read it there
   rather than trusting a copy here (any list duplicated in this skill goes stale the moment a Track-1 name gets
-  re-homed). Durable fact: `skill-creator` is vendored from `anthropics/skills` (Apache-2.0 — keep its
-  `LICENSE.txt`).
+  re-homed). Durable fact: `skill-creator` is NOT vendored here — a repo copy of that name collides with the
+Claude account-synced copy in `~/.claude/skills/synced/<uuid>/` and makes the name unloadable in Hermes
+(`Ambiguous skill name … Refusing to guess`), so the account copy is the only one kept.
 - **Track 2 — Managed (tool = truth):** fast-moving third-party suites via Claude Code's native plugin
   marketplace → `~/.claude/plugins/`, self-updating (`/plugin update`). NOT committed to the repo; re-register
   per machine. Hermes never loads plugins. Currently: `superpowers` (obra/superpowers; registers under

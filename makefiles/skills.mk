@@ -158,6 +158,6 @@ skills-thirdparty-replay: ## Re-install every pack in the committed lock, then r
 		src=$$(jq -r --arg n "$$n" '$(JQ_TP_SRC)' $(THIRD_PARTY_LOCK)); \
 		if [ -z "$$src" ] || [ "$$src" = "?" ]; then printf 'skip %s: no source recorded\n' "$$n"; continue; fi; \
 		printf 're-add %s from %s\n' "$$n" "$$src"; \
-		npx -y skills add "$$src" -s "$$n" -a claude-code -g -y; \
+		npx -y skills add "$$src" -s "$$n" -a claude-code -g -y --copy; \
 	done
 	@$(MAKE) --no-print-directory skills-thirdparty

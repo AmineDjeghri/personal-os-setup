@@ -111,9 +111,9 @@ npx skills add <owner>/<repo> -g -y                             # whole pack
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
 - **Where it lands — verified against a real install (v3 CLI), NOT as the docs describe:** the skill files are
   **copied straight into the agent dir** (`~/.claude/skills/<skill>/` is a real directory, *not* a symlink) and
-  **there is no `~/.agents/skills/` canonical store** — the only thing `~/.agents/` contains is the lock. The
-  `--copy` flag exists, so symlinking may be the multi-agent default, but do not assume a canonical store on this
-  version; check the filesystem, never the CLI's success message. Consequences still hold: `-a claude-code` gives
+  **there is no `~/.agents/skills/` canonical store** — the only thing `~/.agents/` contains is the lock. We pass **`--copy`** on every install (including `make skills-thirdparty-replay`), so the agent dir holds real
+  files regardless of the CLI's symlink default; even so, check the filesystem, never the CLI's success
+  message. Consequences still hold: `-a claude-code` gives
   Hermes the skill for free (it reads that dir), while `-a hermes-agent` would copy it a *second* time into
   `~/.hermes/skills` — two roots, one name. Flat placement, so the entry shows a blank category in `hermes skills list`.
 - **Verified end to end:** `npx skills add trailofbits/skills -s differential-review -a claude-code -g -y` → real dir
@@ -161,6 +161,14 @@ forever and upstream improvements never reach us. Never edit one. When we want a
 3. `hermes skills reset <name>` — clears the "user-modified" flag so updates work again; it does not
    touch the content. `hermes skills reset <name> --restore` also reverts to stock.
 4. Confirm with `hermes skills list-modified`; the next addon update brings the stock version.
+
+⚠️ **`hermes skills repair-official <name> --restore` writes its backup INSIDE the skills tree** —
+to `~/.hermes/skills/.restore-backups/<ts>/<category>/<name>/`. That directory is *not* in Hermes'
+excluded-scan list, so the backup is a second copy of the same name and the skill becomes
+**unloadable**: `Ambiguous skill name … Refusing to guess` (verified — it broke
+`hermes-s6-container-supervision` the minute the restore finished). Move the backup out of the
+scanned root straight after any restore:
+`mv ~/.hermes/skills/.restore-backups ~/.hermes/backups/restore-backups-<date>`.
 
 ⚠️ **`hermes skills reset` blocks on an interactive prompt — never call it from a non-interactive
 surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out
