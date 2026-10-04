@@ -1,0 +1,24 @@
+{
+  "version": 3,
+  "skills": {
+    "differential-review": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/trailofbits/skills.git",
+      "skillPath": "plugins/differential-review/skills/differential-review/SKILL.md",
+      "skillFolderHash": "09ff02c96f84ad4b98184bcd5efae5b218caa910",
+      "installedAt": "2026-10-04T01:11:59.596Z",
+      "updatedAt": "2026-10-04T01:11:59.596Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
+      "installedAt": "2026-10-04T01:13:44.242Z",
+      "updatedAt": "2026-10-04T01:13:44.242Z"
+    }
+  },
+  "dismissed": {}
+}

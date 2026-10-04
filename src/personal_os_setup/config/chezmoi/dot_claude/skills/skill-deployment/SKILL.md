@@ -109,8 +109,16 @@ npx skills add <owner>/<repo> -g -y                             # whole pack
   `skills.external_dirs`, so the Claude symlink serves both. Adding `-a hermes-agent` puts the same
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Where it lands:** real files in `~/.agents/skills/<skill>/`; symlinks into
-  `~/.claude/skills/<skill>` (flat — the entry shows a blank category in `hermes skills list`).
+- **Where it lands — verified against a real install (v3 CLI), NOT as the docs describe:** the skill files are
+  **copied straight into the agent dir** (`~/.claude/skills/<skill>/` is a real directory, *not* a symlink) and
+  **there is no `~/.agents/skills/` canonical store** — the only thing `~/.agents/` contains is the lock. The
+  `--copy` flag exists, so symlinking may be the multi-agent default, but do not assume a canonical store on this
+  version; check the filesystem, never the CLI's success message. Consequences still hold: `-a claude-code` gives
+  Hermes the skill for free (it reads that dir), while `-a hermes-agent` would copy it a *second* time into
+  `~/.hermes/skills` — two roots, one name. Flat placement, so the entry shows a blank category in `hermes skills list`.
+- **Verified end to end:** `npx skills add trailofbits/skills -s differential-review -a claude-code -g -y` → real dir
+  in `~/.claude/skills/`, one row in `hermes skills list`, lock written to `~/.agents/.skill-lock.json`, then
+  `make skills-thirdparty-save` + `make skills-thirdparty` both clean.
 - **The lock is OUTSIDE any repo:** `~/.agents/.skill-lock.json` (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
   the live lock is never the record we ship. Replay/drift: `make skills-thirdparty` in

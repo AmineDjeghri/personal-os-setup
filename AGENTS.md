@@ -68,7 +68,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | Authored / pinned, useful to any agent | repo `dot_claude/skills/` → `~/.claude/skills` (deployed) | Claude + Hermes |
 | Authored, agent-specific (s6, TUI, add-on ops, Hermes-internal workflows) | repo `dot_hermes/skills/<category>/<skill>/` → `~/.hermes/skills` (same `make skills-deploy`) | Hermes only |
 | Authored but contains private details (`exposure: private`) | live only + `hermes curator pin` — **this repo is PUBLIC** | Hermes only |
-| Third-party, skills-only | `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y`; real files in `~/.agents/skills/`, lock copied into the repo | the agents you target |
+| Third-party, skills-only | `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y`; the skill is **copied** into the agent dir and the lock (`~/.agents/.skill-lock.json`) is copied into the repo | the agents you target |
 | Third-party pack that ships its own per-harness plugins | that harness's own channel (`/plugin install`, `hermes plugins install <owner>/<repo>`), one install per harness | that harness |
 | Shipped by the agent (bundled / official optional) | the agent's own install — never copied into the repo | that agent |
 | Agent-created (Curator) | live only, temporary → triage: promote, pin-private, delete | — |
