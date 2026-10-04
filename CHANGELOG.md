@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v2.16.1 (2026-10-04)
+
+### Bug Fixes
+
+- **config**: Update temperature settings and widget display options
+  ([`794e011`](https://github.com/AmineDjeghri/personal-os-setup/commit/794e011104fc11a4e8596dc3aaacf6037765d3c4))
+
+### Documentation
+
+- **skills**: Never fold git commit/push into a compound command (#128)
+  ([#128](https://github.com/AmineDjeghri/personal-os-setup/pull/128),
+  [`267ee38`](https://github.com/AmineDjeghri/personal-os-setup/commit/267ee38b8c23586d35acdf810c16fbe047c6afbb))
+
+- **skills**: Require per-action approval for git commit in coding-workflow (#126)
+  ([#126](https://github.com/AmineDjeghri/personal-os-setup/pull/126),
+  [`c861901`](https://github.com/AmineDjeghri/personal-os-setup/commit/c861901aa84f140db0faffac81a36f4469c20dcf))
+
+
 ## v2.16.0 (2026-09-28)
 
 ### Documentation
