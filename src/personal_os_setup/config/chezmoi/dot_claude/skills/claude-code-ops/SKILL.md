@@ -1,6 +1,6 @@
 ---
 name: claude-code-ops
-description: "Install/auth/model defaults for Claude Code CLI on this box (Sonnet, never Opus)."
+description: "Hermes box: install/auth/model defaults for Claude Code CLI on this box (Sonnet, never Opus)."
 version: 1.1.0
 author: Hermes Curator
 license: MIT

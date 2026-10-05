@@ -5,9 +5,9 @@ Usage:
   review-drift.py <source-root> <live-root> <rel-dir> [<rel-dir> ...]
   review-drift.py <source-root> <live-root> --all
 
-  <source-root>  the git/chezmoi tree, e.g. <repo>/src/personal_os_setup/config/chezmoi/dot_hermes/skills
-  <live-root>    the deployed store, e.g. /config/.hermes/skills
-  <rel-dir>      skill dir relative to BOTH roots, e.g. devops/hermes-instance-audit
+  <source-root>  the git/chezmoi tree, e.g. <repo>/src/personal_os_setup/config/chezmoi/dot_claude/skills
+  <live-root>    the deployed store, e.g. /config/.claude/skills
+  <rel-dir>      skill dir relative to BOTH roots, e.g. hermes-instance-audit
   --all          every skill present in both trees; unchanged ones print OK
   --out DIR      where the .diff files go (default: the current directory)
 

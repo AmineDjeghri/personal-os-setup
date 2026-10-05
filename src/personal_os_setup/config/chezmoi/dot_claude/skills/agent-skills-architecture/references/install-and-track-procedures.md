@@ -10,7 +10,7 @@ Track-2 suite into Track 1 — it fights its own updater).
 3. Copy the whole skill folder — including its `LICENSE` — into the chezmoi source dir above.
 4. Deploy live in the same step: copy the folder to `/config/.claude/skills/<name>/` so both agents pick it up
    immediately; keep live == repo.
-5. Update the AGENTS.md § 2-track "Currently:" Track-1 list (skills are enumerated there). That file is
+5. Add the name to `skills.keep` (`make skills-keep NAME=<name>` does copy + list). AGENTS.md no longer enumerates skills; it is
    agent-protected: the edit approval often times out unattended → the write comes back BLOCKED. Stop and have
    the user say "prompt me again" to re-fire the exact patch; never retry it via another path.
 6. Pre-commit rejects vendored content in up to three rounds — fix all before committing: ruff-format rewrites

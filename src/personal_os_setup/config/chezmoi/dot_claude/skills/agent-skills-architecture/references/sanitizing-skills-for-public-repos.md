@@ -83,8 +83,8 @@ The git home for promoted skills is a repo that may be **public**, so publishing
    hides inside `references/` and worked examples): real name, personal email, the numeric GitHub noreply ID,
    LAN/global IPs, MACs, SSIDs, host paths, add-on slugs, tunnel hostnames, live exposure findings. Placeholder
    mapping, the pre/post scans and the diff-based proof: `references/sanitizing-skills-for-public-repos.md`.
-4. **Place it in the tier matching its audience** — `dot_claude/skills/` (shared) or `dot_hermes/skills/<category>/`
-   (Hermes-only); modes 644 for files, 755 for dirs. Repo-scoped placement is the symlink flow in "Repo-local
+4. **Place it in `dot_claude/skills/<name>/`** (flat, the one authored tree; state a Hermes-only intent in
+   the `description`); modes 644 for files, 755 for dirs. Repo-scoped placement is the symlink flow in "Repo-local
    skills" above.
 5. **Verify by resolving the NAME, not the listing** — see the ambiguity-window pitfall below.
 6. **Delete the live copy in the SAME pass** — that is what closes the ambiguity window.

@@ -66,4 +66,4 @@ Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
 
 ## 5. Where this skill lives
 
-Canonical copy: `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_hermes/skills/media/youtube-download-automation/` (Hermes-only track, not read by Claude Code). Deploy with `make skills-deploy` in that repo, then `hermes curator pin <name>` — see the `skill-deployment` skill. Edits go through the repo's normal flow (delegate the file change; §0 git gate).
+Canonical copy: `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/youtube-download-automation/` (the one authored tree; deployed to `~/.claude/skills`, which Hermes also reads). Deploy with `make skills-deploy` in that repo, then `hermes curator pin <name>` — see the `skill-deployment` skill. Edits go through the repo's normal flow (delegate the file change; §0 git gate).

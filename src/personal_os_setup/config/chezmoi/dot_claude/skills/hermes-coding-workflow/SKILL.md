@@ -8,7 +8,7 @@ metadata:
 
 # Coding Workflow — Hermes & Claude Code
 
-Hermes-only orchestration rules for coding tasks: how the Hermes orchestrator plans work, briefs the Claude Code delegate, and verifies the result. Claude Code does not read this skill — it follows each repo's own `AGENTS.md` / `CLAUDE.md`.
+Hermes-only orchestration rules for coding tasks: how the Hermes orchestrator plans work, briefs the Claude Code delegate, and verifies the result. It lives in the shared tree, but Claude Code has no use for it — it follows each repo's own `AGENTS.md` / `CLAUDE.md`.
 
 ## 1. Division of labor
 

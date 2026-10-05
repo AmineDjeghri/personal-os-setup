@@ -1,6 +1,6 @@
 # The Hermes own store — writers, the Curator and pins
 
-## Hermes own store — three writers, and keeping a skill Hermes-only
+## Hermes own store — three writers, and one authored tree
 
 `~/.hermes/skills/<category>/<skill>/SKILL.md` (= `/config/.hermes/skills/…`; per-profile under
 `~/.hermes/profiles/<name>/`) is fed by three owners mixed into ONE flat `category/skill` namespace, with nothing on
@@ -22,12 +22,11 @@ Counters come from `hermes curator usage`; where no CLI exists (the webui contai
 counter the CLI would print. A name in the optional tree exists on the box but is not in the index: state both
 facts rather than guessing ownership.
 
-**Hermes-only is a placement property, not a naming one.** `dot_claude/skills` → `/config/.claude/skills` is read by
-BOTH agents, so renaming a skill or rewording its description does NOT hide it from Claude Code — it stays in
-Claude's skill index and can still be loaded. A skill only Hermes should see has to live in the own store: version it
-as `chezmoi/dot_hermes/skills/<category>/<skill>/` and have `make skills-deploy` copy it into `~/.hermes/skills/…`
-beside the shared deploy. Keep the curated set disjoint from bundled/hub names — one namespace, so a collision
-silently overwrites — and keep the promoted names distinct enough to be recognisable as curated.
+**One authored tree, no Hermes-only placement.** `dot_claude/skills` → `/config/.claude/skills` is read by BOTH
+agents, so every authored skill is visible to both; a Hermes-only intent is stated in the skill's `description`
+(e.g. "Hermes-only: …"), not by placement. Never copy an authored name into `~/.hermes/skills` — two roots, one name
+is unloadable; `make skills-status` flags it. Keep the curated set disjoint from bundled/hub names — one namespace,
+so a collision silently overwrites — and keep the promoted names distinct enough to be recognisable as curated.
 
 **The Curator edits this store in place** (`curator:` in `config.yaml` — interval, `stale_after_days`,
 `archive_after_days`, `prune_builtins`, backups in `.curator_backups/`). Anything you deploy into the store from git

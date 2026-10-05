@@ -8,7 +8,7 @@ metadata:
 
 # Skill Deployment via chezmoi
 
-Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` → `~/.claude/skills`
+Authored skills (ONE tree): repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` → `~/.claude/skills`
 (Claude Code + Hermes external_dirs). Desktops: TUI dotfiles tab. Container/CLI:
 
 > Scope: this deploys only the **general/shared** skills. Repo-specific skills are NOT part of it —
@@ -19,17 +19,17 @@ Shared skills: repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` �
 Frontmatter also carries `metadata.hermes.origin` — `agent` (own store only) | `repo:<name>` | `vendored`
 (+ `source: <owner>/<repo>`) | `hub` — plus `exposure: private` on any skill that must never be published.
 The marker travels with the file, so a deploy neither adds nor strips it; canon: the
-`agent-skills-architecture` skill (Hermes-only — a Claude Code reader cannot load it).
+`agent-skills-architecture` skill (Hermes-oriented reference).
 
 **Two loading paths — don't confuse them:**
 
-- **Shared (Track 1)** → `skills.external_dirs` in the Hermes config: always in the index, every
+- **Global (the one tree)** → `skills.external_dirs` in the Hermes config: always in the index, every
   session, any cwd. That one entry (`~/.claude/skills`) is what both agents load.
 - **Repo-scoped** → `<repo>/.hermes/skills` + `.agents/skills` load *only* when the session's
   working dir resolves to the repo's git root **and** that root is in `skills.trusted_project_dirs`.
   A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads — upstream
   Hermes bug #103423, fix in review as PR #103424. Never park repo skills in `external_dirs`
-  (N repos × M skills doesn't scale): promote a repo's skills to Track 1 if they must be
+  (N repos × M skills doesn't scale): promote a repo's skills to the global tree if they must be
   always-on, otherwise they're read on demand.
 
 ```bash
@@ -51,12 +51,10 @@ nested `.chezmoiroot` would double-redirect and break the app's deploy path.
 
 Refresh after `git pull`. On the container deploy only `.claude` (full apply would dump desktop dotfiles).
 
-**Hermes-only (not Track 1):** `dot_hermes/skills/<category>/<skill>/` → `~/.hermes/skills/`,
-deployed by the same `make skills-deploy` (mode 644 dirs preserved). Renaming a skill does NOT
-hide it from Claude Code — only living under `dot_hermes/` does; the shared Track-1 list no
-longer includes the coding workflow (now `hermes-coding-workflow`, Hermes-only). The deployed
-names are protected from the Curator: bundled/hub-installed skills are never touched by it, only
-agent-created ones — exactly this promoted set. Pin them per machine after each deploy:
+**Wiring rule:** Hermes reads `~/.claude/skills` (`skills.external_dirs`), so `make skills-deploy` writes ONE
+destination and nothing is ever duplicated into `~/.hermes/skills` — a name in both roots is unloadable
+(`Ambiguous skill name … Refusing to guess`). A Hermes-only intent is stated in the skill's `description`, not by
+placement. Pin the deployed names against the Curator per machine after each deploy:
 `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
 **Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-deploy` is
@@ -75,9 +73,10 @@ copy-only: it overwrites whatever is live and deletes nothing.
   tracked source. Keep the symlink, don't duplicate the directory.
 
 **Checking drift (read-only, no deploy):** `make skills-diff` compares repo vs live for both
-trees and exits non-zero on any MISSING/DIFFERS. `make skills-status` lists every git-managed
-skill plus any live `~/.hermes/skills` copy that duplicates a now-git-managed name (leftover from
-before promotion — safe to remove, the next deploy overwrites it anyway).
+tree and exits non-zero on any MISSING/DIFFERS. `make skills-status` lists every git-managed
+skill, flags any name present in BOTH `~/.claude/skills` and `~/.hermes/skills` (the ambiguity bug —
+remove the `~/.hermes` copy) and any repo skill missing from `skills.keep`. Save a live skill into the repo:
+`make skills-keep NAME=<name>`.
 
 **`skills-deploy` refuses on drift.** Before copying, it runs `make skills-drift` — same scan as
 `skills-diff` but MISSING (never deployed yet) is fine; only a DIFFERS aborts the deploy, so an

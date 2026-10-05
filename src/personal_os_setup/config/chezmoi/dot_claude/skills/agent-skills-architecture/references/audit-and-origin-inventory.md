@@ -41,13 +41,13 @@ Classify from bookkeeping, never from the category directory a skill sits in: `h
 Answer in TIERS with the arithmetic reconciled (every indexed name lands in exactly one tier); a flat list is the
 wrong shape and a single total for the whole box is always wrong, because the tiers overlap in name only.
 
-One read-only pass over the sources: repo `dot_claude/skills` + `dot_hermes/skills/<cat>/`; the live shared dir
+One read-only pass over the sources: repo `dot_claude/skills` (the only authored tree); the live shared dir
 `/config/.claude/skills`; the own store `$HERMES_HOME/skills/**` (via `find -L`, so symlinked skills count); the
 addon's shipped trees (`skills/` active, `optional-skills/` inactive); `.bundled_manifest`; `.usage.json`
 (`created_by`, `pinned`); and every repo's `.claude/skills` + `.agents/skills`.
 
 Tiers: **shared curated** (repo → deployed, both agents) · **repo-scoped** (that repo's sessions only) ·
-**Hermes-only** (repo → own store) · **live-only agent-authored** (no repo backing — the deletable class) ·
+**live-only agent-authored** (no repo backing — the deletable class) ·
 **addon-shipped with a live copy**. Answer from the FILESYSTEM: `.usage.json` keeps rows for skills already deleted
 from disk, so report those dead rows in one line and never let them inflate the count. A live name ABSENT from
 `.bundled_manifest` is a copy that differs from the shipped one — state that as a fact, never as "broken". Columns

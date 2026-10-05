@@ -33,9 +33,8 @@ what a configured dir actually LOADS → `hermes-instance-audit`.
 | Zone | Path | Read by |
 |---|---|---|
 | Hermes own store | `/config/.hermes/skills/` | Hermes only |
-| Hermes-only — SOURCE (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_hermes/skills/<category>/<skill>/` | Hermes only, via `make skills-deploy` |
-| Shared general — SOURCE (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | both agents, via deployment |
-| Shared general — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global) + Hermes `external_dirs` |
+| Authored — SOURCE, the ONE tree (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | both agents, via deployment |
+| Authored — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global) + Hermes `external_dirs` |
 | Repo-specific | `<repo>/.claude/skills/` + `.agents/skills/` git symlinks | Claude Code in that repo; Hermes only from a session rooted there or via `external_dirs` |
 | Track 2 (not skill files) | `~/.claude/plugins/`, `$HERMES_HOME/mcp-tokens/` | Claude plugins; Hermes MCP servers |
 
@@ -76,9 +75,8 @@ deploy or a copy never adds or strips it. The inventories below still classify f
 - **Track 1 — Curated (repo = truth):** skills the user authors, customizes or pins. Canonical copy in the
   chezmoi source `dot_claude/skills/<name>/` → deployed to `/config/.claude/skills/<name>/`; Hermes loads it
   via `skills.external_dirs`, Claude Code via its global skills dir — one copy, both agents. Changes go
-  through PRs. The authoritative "Currently:" enumeration is the one in that AGENTS.md section — read it there
-  rather than trusting a copy here (any list duplicated in this skill goes stale the moment a Track-1 name gets
-  re-homed). Durable fact: `skill-creator` is NOT vendored here — a repo copy of that name collides with the
+  through PRs. The authoritative enumeration is `skills.keep` at the repo root (`make skills-status` audits it) — read it
+  there rather than trusting a copy here (any list duplicated in this skill goes stale). Durable fact: `skill-creator` is NOT vendored here — a repo copy of that name collides with the
 Claude account-synced copy in `~/.claude/skills/synced/<uuid>/` and makes the name unloadable in Hermes
 (`Ambiguous skill name … Refusing to guess`), so the account copy is the only one kept.
 - **Track 2 — Managed (tool = truth):** fast-moving third-party suites via Claude Code's native plugin
@@ -154,8 +152,9 @@ tree (shipped, NOT active — checking only the active tree yields a false "it's
 `created_by` in `.usage.json` (`agent` = ours). Counters come from `hermes curator usage`; where no CLI exists
 (the webui container), read `.usage.json` and say which path you used.
 
-- **Hermes-only is a PLACEMENT property, not a naming one:** `dot_claude/skills` → `/config/.claude/skills` is
-  read by BOTH agents, so only a `dot_hermes/skills/<category>/` copy is Hermes-only.
+- **One authored tree:** `dot_claude/skills` → `/config/.claude/skills` is read by BOTH agents (Hermes via
+  `external_dirs`); there is no second tree. Never duplicate a name into `~/.hermes/skills` (unloadable;
+  `make skills-status` flags it). A Hermes-only intent goes in the `description`. The saved set is `skills.keep`.
 - The store has TWO unattended writers (the Curator and the background-review pass) against git's one-way deploy:
   an in-place live edit is reverted by the next deploy unless it is ported into the source tree first, and a skill
   dropped from the repo keeps living live until its deployed dir is removed by hand. `hermes curator pin <name>` is
