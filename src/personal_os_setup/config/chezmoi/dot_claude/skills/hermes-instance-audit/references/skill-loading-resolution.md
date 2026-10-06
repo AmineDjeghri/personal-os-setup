@@ -3,15 +3,6 @@
 Depth for the "Skills: what's on disk vs what actually loads" section. Authority = `agent/skill_utils.py`
 in the installed checkout — read it there when a detail matters.
 
-## The tiers as they exist on this box
-| Tier | Canonical location | Read by |
-|---|---|---|
-| Hermes own store | `/config/.hermes/skills/<category>/<name>/` | Hermes (always) |
-| Shared (Track 1) — source | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | both agents, via deploy |
-| Shared — deployed | `/config/.claude/skills/` (`make skills-deploy`) | Claude Code (global) + Hermes `external_dirs` |
-| Repo runbooks | `<repo>/.claude/skills/` (+ `.agents/skills/` symlinks via `make skills-link`) | Claude in-repo; Hermes only via `external_dirs` or a session rooted there |
-| Track 2 (not skill files) | `~/.claude/plugins/`, `$HERMES_HOME/mcp-tokens/` | Claude plugins; Hermes MCP servers |
-
 ## What loads, in order
 - `get_skills_dirs()` = local `$HERMES_HOME/skills/` → the create dir → every EXISTING `skills.external_dirs`
   entry. External dirs are unconditional: the same list in every session, whatever the working directory.
@@ -48,24 +39,11 @@ byte-stable) — moving around with `cd` mid-session adds no skills.
 - **Cost model**: the prompt carries the skill INDEX (name + description, ~1 line each); a body enters
   context only when the skill is opened. Keep `external_dirs` small, and put always-on skills in the shared
   deployed dir — never accumulate per-repo `external_dirs` lines.
-- **Path entries resolve literally.** A real install carried `/addon_configs/<repo>_<slug>/.claude/skills`
-  plus `/addon_configs/<repo>_<slug>/workspace/<repo>` while the container's HOME is `/config` and
-  `/addon_configs` does not exist inside it → the shared skills AND the repo skills loaded for neither agent,
-  with no warning anywhere. Audit form: `ls -d <each entry>`, then re-point at `/config/...`. Keep both
-  spellings listed only when the same `config.yaml` is read from the webui add-on (its HOME *is* `/addon_configs/...`).
-- `skills.external_dirs` must hold CONTAINER paths — `/config/.claude/skills` (plus
-  `/config/workspace/personal-os-setup/.agents/skills` when the repo tier must load). The five shared skills
-  only appeared after the switch off the `/addon_configs/...` form.
+- **Path entries resolve literally.** `skills.external_dirs` must hold CONTAINER paths (`/config/.claude/skills`, plus `/config/workspace/personal-os-setup/.agents/skills` when the repo tier must load); `/addon_configs/...` does not exist inside the agent container and a dead entry is skipped with no warning. Audit form: `ls -d <each entry>`; keep both spellings only when the same `config.yaml` is read from the webui add-on (its HOME *is* `/addon_configs/...`).
 
 ## Upstream tracking (re-check, don't design around it)
 The root-resolution behavior above is an open upstream defect — the effective session cwd is supposed to win,
-but `find_project_root()` reads only the scoped/global `TERMINAL_CWD`. Handles:
-
-- issue `NousResearch/hermes-agent#103423` — "Project-local skills discovery ignores session.cwd when
-  TERMINAL_CWD is set" (P2; a second reporter named `find_project_root()` at the buggy lines on Linux/TUI).
-- fix PR `#103424` — "fix(skills): honor session cwd during project discovery" (targets `main`, in review).
-- related: one-shot CLI resolving project context against `$HOME` (#95577), linked git worktrees of an
-  already-trusted repo (#99566), and the EPIC reworking project-local state with consent gating (#48970).
+but `find_project_root()` reads only the scoped/global `TERMINAL_CWD`.
 
 Re-check after each `hermes update`:
 
@@ -115,8 +93,7 @@ skills:
 ```
 
 `trusted_project_dirs` is kept for sessions that genuinely run inside the repo; `external_dirs` is what makes
-the repo runbooks visible from a `/config`-rooted session. Verified after the switch: the five shared skills
-and the ten repo skills all report `enabled` under `--source local`.
+the repo runbooks visible from a `/config`-rooted session.
 
 ## Loading a repo's skills without hand-editing config
 - `hermes skills trust [path]` — the CLI writes the `trusted_project_dirs` entry itself.
@@ -126,12 +103,8 @@ and the ten repo skills all report `enabled` under `--source local`.
 - Otherwise: read the `SKILL.md` on demand (a repo's AGENTS.md index usually points at it) or promote those
   skills into the shared deployed dir so they are always-on.
 
-## Add-on path duality (why host paths appear in this file's history)
-The agent add-on's HOME is the app-config tree mounted at `/config`; the same directory is
-`/addon_configs/<repo>_<slug>` (renamed `/app_configs/...` on newer Home Assistant) from the host and from
-add-ons that map `all_addon_configs`. The WebUI add-on symlinks `/config` to that view on every start, so
-`/config/...` resolves identically in both containers — always write `/config/...` in agent-side config, and
-probe both spellings in add-on scripts.
+## Add-on path duality
+The agent add-on's HOME is the app-config tree mounted at `/config` — the same directory the host (and add-ons mapping `all_addon_configs`) sees as `/addon_configs/<repo>_<slug>`; the WebUI add-on symlinks `/config` to that view on every start. Always write `/config/...` in agent-side config; probe both spellings in add-on scripts.
 
 ## Reporting rule
 Name the missing layer before proposing a fix: path form (container-native vs host-side), root resolution

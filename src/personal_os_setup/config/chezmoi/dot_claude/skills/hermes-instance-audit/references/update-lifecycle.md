@@ -13,11 +13,7 @@ user asks for it.
 - While it exists, the launcher stub prints
   `hermes: source-update completion failed: an update is still running; wait for it to exit, then relaunch Hermes; running with the previous dependencies`
   on every new `hermes` launch, and `hermes update` refuses to start another run.
-- Process shapes to recognise (one update = a runner plus a completion child):
-  - runner: `python3 -I -c "import sys, runpy; sys.path.insert(0, '<install>'); sys.argv = ['<install>/venv/bin/hermes', 'update']; runpy.run_path(...)"`
-  - completion: `<python> -I -S -u -X pycache_prefix=$HERMES_HOME/cache/scratch/hermes-completion-<id>/bytecode <install>/hermes_cli/update_completion.py <scratch>/request.json <scratch>/result.json [--prepared]`
-  - the `--prepared` child runs under a prepared-environment interpreter:
-    `$HERMES_HOME/installs/<sha16 of resolved project root>/environments/<id>/venv/bin/python`.
+- One update = a runner (`python3 -I -c …` running `<install>/venv/bin/hermes update`) plus a completion child (`hermes_cli/update_completion.py`; `--prepared` runs under `$HERMES_HOME/installs/<sha16>/environments/<id>/venv/bin/python`).
 - Probes: `ls -la $HERMES_HOME/.hermes-update-in-progress`, `ps -o pid,ppid,etime,stat,cmd -p <pid>`,
   `ps -o pid,ppid,etime,stat,cmd --ppid <pid>`. The pid in the marker is the runner, not the
   completion child.
@@ -27,32 +23,16 @@ user asks for it.
 
 ## 2. Never run two at once
 
-`logs/update.log` gains a header per attempt (`=== hermes update started <iso> ===`). A refused
-attempt logs:
+`logs/update.log` gains a header per attempt (`=== hermes update started <iso> ===`).
 
-```
-✗ Another Hermes update is already running (started 1m 7s ago, process 1092).
-  Running two at once would corrupt the install. Wait for it to finish
-  (watch `hermes logs`), or close the Desktop/dashboard window that
-  started it, then run `hermes update` again.
-```
+A refused attempt logs `✗ Another Hermes update is already running (started … ago, process <pid>)` and says to wait for it.
 
 So when the user asks for an update and one is already running, the job is to monitor and verify
 that run — never to start a parallel one, and never to kill it.
 
 ## 3. Launcher phase (order of a run)
 
-Landmarks, in the order they appear: fleet scan (`→ Fleet: N running service(s) across profiles:
-<names>`) · npm lockfile churn discarded · `→ Update channel: <name>` · stale-autostash warning ·
-fetch · `→ Local changes detected — stashing before update...` and
-`Saved working directory and index state On main: hermes-update-autostash-<ts>` ·
-`→ Found N new commit(s)` (or `✓ Already up to date.`) · pull · restore prompt
-`Restore local changes now? [Y/n]` then the restore · `✓ Cleared N stale __pycache__ directories` ·
-Node dependencies · TUI build (`ui-tui/dist/entry.js`) · web UI build (vite →
-`hermes_cli/web_dist`) · `✓ Code updated!` · bundled-skills sync (user-modified skills are KEPT and
-counted, with the `hermes skills list-modified` hint) · config-format migration
-(`ℹ Updating config format (vN → vM)…`) · then
-`✓ Update complete! (<old version> → <new version>) [<branch> @ <sha>]`.
+Landmarks to look for: fleet scan → autostash of local changes → pull → builds → `✓ Code updated!` → bundled-skills sync → config-format migration → `✓ Update complete! (<old version> → <new version>)`.
 
 Flags that matter here:
 
@@ -65,15 +45,10 @@ Flags that matter here:
 
 ## 4. Completion phase
 
-After the launcher phase, `update_completion.py` re-installs Python dependencies into the prepared
-environment. Visible landmarks: `→ Preparing pinned cua-driver (Computer Use)…` then the fleet
-drain `→ <profile>: draining gateway PID N (up to <1995-2025>s)…` and
-`✓ Handed gateway profile(s) back to their external supervisor: <profiles>`.
+After the launcher phase, `update_completion.py` re-installs Python dependencies into the prepared environment and drains the fleet (`→ <profile>: draining gateway PID N (up to ~2000 s)…`).
 
-- The drain ceiling is roughly 2000 s (~33 min). A run that looks hung is usually waiting on the
-  gateway to exit; read the log tail before concluding anything, and never kill it.
-- The version string only moves at the end of this phase. `hermes --version` mid-run still reports
-  the OLD version (often with a `.dirty` suffix) — that is not evidence of failure.
+- The drain ceiling is roughly 2000 s (~33 min): a run that looks hung is usually waiting on the gateway to exit — read the log tail and never kill it.
+- The version string only moves at the end; `hermes --version` mid-run still reports the OLD version (often `.dirty`) — not evidence of failure.
 
 ## 5. Logs and receipts
 
@@ -118,3 +93,10 @@ rewritten with `\r`, so line-oriented tail can look empty or repeated). `hermes 
 - `.dirty` after an update means the autostash was restored, not that the update failed.
 - Report shape: version transition (old → new), gateway state, what came back dirty, what is parked
   (stale stashes) — short bullets, no narration of the steps taken.
+
+## 9. Platform adapters after an update
+
+- **Restart the WebUI add-on after every Agent update** (two-container deployments) — a plain restart is enough.
+- **Restart only the gateway** with `kill -TERM <supervisor-pid>` (walk up from the gateway pid: gateway → `hermes-gateway-supervisor.py` → `bash /run.sh`), never SIGKILL, never the whole add-on: a non-zero supervisor exit is treated as unsafe and stops the restart loop.
+- A chat platform (e.g. Telegram) can go dark while the gateway stays up: a uv-created venv has no `pip`, so the lazy "attempting install" can never succeed. Install `hermes-agent[<platform>]` into the venv and verify the adapter's own gate (`check_telegram_requirements()`) is True BEFORE restarting. (Check first whether the add-on has since installed the extras itself.)
+- Restarts are system-modifying → approval gate; a BLOCKED/timeout result is NOT consent — report the exact pending command and wait for the user's word.

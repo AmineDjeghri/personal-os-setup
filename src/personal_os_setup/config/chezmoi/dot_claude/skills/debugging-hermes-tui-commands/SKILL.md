@@ -18,8 +18,6 @@ metadata:
 
 Hermes slash commands span three layers — Python command registry, tui_gateway JSON-RPC bridge, and the Ink/TypeScript frontend. When a command misbehaves (missing from autocomplete, works in CLI but not TUI, config persists but UI doesn't update), the bug is almost always one layer being out of sync with another.
 
-Use this skill when you encounter issues with slash commands in the Hermes TUI, particularly when commands aren't showing in autocomplete, aren't working properly in the TUI, or need to be added/updated.
-
 ## When to Use
 
 - A slash command exists in one part of the codebase but doesn't work fully
@@ -44,29 +42,10 @@ Command definitions must be registered consistently across Python and TypeScript
 
 ## Investigation Steps
 
-1. **Check if the command exists in the TUI frontend:**
-   ```bash
-   search_files --pattern "/commandname" --file_glob "*.ts" --path ui-tui/
-   search_files --pattern "/commandname" --file_glob "*.tsx" --path ui-tui/
-   ```
-
-2. **Examine the TUI command definition:**
-   ```bash
-   read_file ui-tui/src/app/slash/commands/core.ts
-   # If not there:
-   search_files --pattern "commandname" --path ui-tui/src/app/slash/commands --target files
-   ```
-
-3. **Check if the command exists in the Python backend:**
-   ```bash
-   search_files --pattern "CommandDef" --file_glob "*.py" --path hermes_cli/
-   search_files --pattern "commandname" --path hermes_cli/commands.py --context 3
-   ```
-
-4. **Examine the gateway implementation:**
-   ```bash
-   search_files --pattern "complete.slash|slash.exec" --path tui_gateway/
-   ```
+1. **TUI frontend:** search for `/commandname` under `ui-tui/` (`*.ts`, `*.tsx`).
+2. **TUI command definitions:** `ui-tui/src/app/slash/commands/core.ts`.
+3. **Python backend:** `hermes_cli/commands.py` (`COMMAND_REGISTRY`, `CommandDef`).
+4. **Gateway:** `tui_gateway/server.py` (`slash.exec` / `complete.slash`).
 
 ## Fix: Missing Command Autocomplete
 
@@ -88,17 +67,9 @@ If a command exists in the TUI but doesn't show in autocomplete:
 
 3. Ensure `subcommands` matches the expected tab-completion options shown by the TUI.
 
-4. If the command runs server-side, add a handler in `HermesCLI.process_command()` in `cli.py`:
-   ```python
-   elif canonical == "commandname":
-       self._handle_commandname(cmd_original)
-   ```
+4. If the command runs server-side, add a handler in `HermesCLI.process_command()` in `cli.py`.
 
-5. For gateway-available commands, add a handler in `gateway/run.py`:
-   ```python
-   if canonical == "commandname":
-       return await self._handle_commandname(event)
-   ```
+5. For gateway-available commands, add an `if canonical == "commandname":` handler in `gateway/run.py`.
 
 ## Common Issues
 
@@ -108,7 +79,7 @@ If a command exists in the TUI but doesn't show in autocomplete:
 
 3. **Command behavior differs between CLI and TUI.** The command might have different implementations. Check both `cli.py::process_command` and the TUI's local handler. Local TUI handlers take precedence over gateway dispatch.
 
-4. **Command persists config but doesn't apply live.** For TUI-local commands, updating `config.set` is not enough. Also patch the relevant nanostore state immediately (usually `patchUiState(...)`) and pass any new state through rendering components. Example: `/details collapsed` must update live detail visibility, not just save `details_mode`; in-session global `/details <mode>` may need a separate command-override flag so live commands can override built-in section defaults while startup/config sync preserves default-expanded thinking/tools behavior.
+4. **Command persists config but doesn't apply live.** For TUI-local commands, `config.set` is not enough — also `patchUiState(...)` and thread the new state through every render path: live `StreamingAssistant`/`ToolTrail` and transcript/pending `MessageLine` rows (a `/clean` pass should check both).
 
 5. **Gateway dispatch silently ignores the command.** The gateway only dispatches commands it knows about. Check `GATEWAY_KNOWN_COMMANDS` (derived from `COMMAND_REGISTRY` automatically) includes the canonical name. If the command is `cli_only` with a `gateway_config_gate`, verify the gated config value is truthy.
 
@@ -120,34 +91,10 @@ When surface-level inspection doesn't reveal the bug:
 - **Ink side not reacting:** use the `node-inspect-debugger` skill to break in `app.tsx`'s slash dispatch or the local command branch. `sb('dist/app.js', <line>)` after `npm run build`.
 - **Registry mismatch / unclear which side is wrong:** compare the canonical `COMMAND_REGISTRY` entry against the TUI's local command list side-by-side.
 
-## Pitfalls
-
-- Don't forget to set the appropriate category for the command in `CommandDef` (e.g., "Session", "Configuration", "Tools & Skills", "Info", "Exit")
-- Make sure any aliases are properly registered in the `aliases` tuple — no other file changes are needed, everything downstream (Telegram menu, Slack mapping, autocomplete, help) derives from it
-- For commands with subcommands, ensure the `subcommands` tuple in `CommandDef` matches what's in the TUI code
-- `cli_only=True` commands won't work in gateway/messaging platforms — unless you add a `gateway_config_gate` and the gate is truthy
-- After adding live UI state, search every consumer of the old prop/helper and thread the new state through all render paths, not just the active streaming path. TUI detail rendering has at least two important paths: live `StreamingAssistant`/`ToolTrail` and transcript/pending `MessageLine` rows. A `/clean` pass should explicitly check both.
-- Rebuild the TUI (`npm --prefix ui-tui run build`) before testing — tsx watch mode may lag on first launch
-
 ## Verification
 
-After fixing:
+After fixing (run in the hermes-agent checkout):
 
-1. Rebuild the TUI:
-   ```bash
-   cd /home/bb/hermes-agent && npm --prefix ui-tui run build
-   ```
-
-2. Run the TUI and test the command:
-   ```bash
-   hermes --tui
-   ```
-
-3. Type `/` and verify the command appears in autocomplete suggestions with the expected description and args hint.
-
-4. Execute the command and confirm:
-   - Expected behavior fires
-   - Any persisted config updates correctly (`read_file ~/.hermes/config.yaml`)
-   - Live UI state reflects the change immediately (not just after restart)
-
-5. If the command is also gateway-available, test it from at least one messaging platform (or run the gateway tests: `scripts/run_tests.sh tests/gateway/`).
+- Rebuild and launch: `npm --prefix ui-tui run build`, then `hermes --tui`.
+- Type `/` and verify the command appears in autocomplete with the expected description and args hint; execute it and confirm the behavior fires, any persisted config updates (`~/.hermes/config.yaml`) and live UI state changes immediately (not just after restart).
+- If the command is also gateway-available, test it from at least one messaging platform (or run the gateway tests: `scripts/run_tests.sh tests/gateway/`).

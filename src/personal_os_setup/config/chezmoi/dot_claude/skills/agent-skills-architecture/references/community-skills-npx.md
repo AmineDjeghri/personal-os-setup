@@ -1,66 +1,26 @@
 # Community skills — two independent discovery paths
 
 There are two unrelated ways to pull in a community skill. Pick by WHO should see it: the Vercel
-`skills` CLI vendors into git (both agents, via the shared dir); the Hermes hub installs straight
+`skills` CLI installs a real directory into `~/.claude/skills` (both agents, via the shared dir); the Hermes hub installs straight
 into the own store (Hermes-only, tool-managed). Never treat them as the same pipeline.
 
-## Path 1 — `npx skills` (git-vendor path, both agents)
+## Path 1 — `npx skills` (shared dir, both agents)
 
-Verified from docs/GitHub (Aug 2026) — step 5 of the mission, NOT yet executed locally. Commands below are official; treat local behavior as unverified until run.
-
-### What it is
-
-- `npx skills` = package manager for the open agent skills ecosystem (vercel-labs/skills, ~21.7K★, skills.sh / agenticskills.io).
-- Registry = GitHub: ANY public repo with a SKILL.md at root is installable. Works with 40-73+ agents (claude-code, codex, cursor, opencode…).
-- Manifest: `.skills.json`; lock file: `skills-lock.json` (tracks sourceUrl + skillFolderHash).
-
-### Commands
-
-```
-npx skills find [query]                         # search (interactive or keyword)
-npx skills add <owner/repo> [--skill <name>] [--all] [-a claude-code] [-g] [-y] [--list] [--copy]
-npx skills list / remove <name> / init <name>   # day-2 management
-npx skills check                                # compare lock hashes vs server → what changed
-npx skills update                               # reinstall ONLY out-of-date skills (lock-driven)
-```
-
-- `-g` = global (user-level), omit = project scope. `-a claude-code` targets Claude Code. `--copy` copies files instead of symlinking.
-- Version pinning (supply chain): `npx skills add owner/repo@<commit-or-tag>` or `gh skill install <owner/repo> <skill> --pin <hash>`.
-- Update model: pull-to-update, never auto — Matt Pocock's README: "Nothing updates behind your back; pull my latest changes when you want them with npx skills update."
+Install per `AGENTS.md` (`npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy`); `--copy` makes the agent dir hold a real directory.
 
 ### Known pitfalls
 
-- Symlink bug: `npx skills add -a claude-code` installs to `~/.agents/skills/<name>/` and is SUPPOSED to symlink into `~/.claude/skills/<name>` — regressions tracked in vercel-labs/skills issues #851 (global) and #1355 (project). Claude Code only reads `.claude/skills/`, so VERIFY the skill is actually visible there (or use --copy).
 - Installer may write into repo-relative paths when run from a project dir — run from a neutral cwd for global installs.
-
-### This user's flow (decided architecture)
-
-1. `npx skills add <owner/repo> --skill <name> -a claude-code -g -y` (or pinned @commit)
-2. COPY the skill folder into the shared dir: `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/<name>/`
-3. Commit (`feat(skills): vendor <name>`) → PR → merge → chezmoi deploys to /config/.claude/skills on all machines; Hermes reads the same dir via external_dirs.
-4. Updates: `npx skills check` → `npx skills update` → diff → commit (`feat(skills): update <name>`) → PR.
-
-Why vendor: npx skills installs only into agent dirs — Hermes would never see them unless they land in the shared dir.
-
-### Example
-
-- `grill-me` (interview-the-user-relentlessly about a plan): from `mattpocock/skills`, install `npx skills@latest add mattpocock/skills --skill grill-me`. Fits the user's plan-first philosophy.
-- Anthropic's own examples: `anthropics/skills` (document-skills, etc.) — installable as a Claude Code plugin marketplace or via skills CLI.
 
 ## Path 2 — Hermes hub discovery (own-store install, Hermes-only)
 
 ### Where the community lives
 
-- CLI: `hermes skills search <query> [--source <src>]`, `hermes skills inspect <id>`,
-  `hermes skills install <id> [--force]` (also reachable in-chat as `/skills <subcommand>`).
-- Sources: `official` (the shipped optional catalog), `skills-sh` (the skills.sh registry), `well-known:<site-url>`
-  (a site publishing `/.well-known/skills/index.json`), `browse-sh`, and custom taps added with
-  `hermes skills tap add <owner>/<repo>`.
 - Hub state sits in `$HERMES_HOME/skills/.hub/` (`taps.json`, `index-cache/`, `lock.json`, `quarantine/`,
   `audit.log`). `{"taps": []}` means no custom tap is registered — the built-in sources still work, so an empty
   tap list is not "no community available".
-- Installs land in the own store: Hermes-only, hub-owned, and a name that collides with a vendored Track-1 skill
-  gives two copies of one name. Vendor into the shared dir instead when both agents should see it.
+- Installs land in the own store: Hermes-only, hub-owned, and a name that collides with an authored or `npx`-installed skill
+  gives two copies of one name. Use `npx` into the shared dir instead when both agents should see it.
 
 ### Querying the registry when the CLI is absent
 
@@ -83,7 +43,7 @@ paging a leaderboard.
   `Fail` means skip it.
 - The all-time leaderboard is dominated by a few mega-suites (frontend design, vendor SDK packs, cloud vendors) and
   is not a shopping list for a homelab/infra library.
-- Overlap first: bundled equivalent, vendored Track-1 name, or a Track-2 Claude plugin already covering it — drop
+- Overlap first: bundled equivalent, an authored/`npx`-installed name, or a Claude plugin pack already covering it — drop
   those before ranking anything.
 
 ### Exclusion patterns
@@ -102,3 +62,16 @@ Ranked short list (5 max), one line each: `owner/repo/skill` — installs, audit
 fills in THIS library. Then one "deliberately excluded" line naming the near-misses and why, so the user can see
 what was considered and rejected. Give the exact install command, note where it lands, and if you could not run
 it, say plainly that nothing was installed and the install path is unverified.
+
+### Pitfalls
+
+- **Pre-flight every identifier with `hermes skills inspect <id>` before it reaches the user.** The browsable
+  listing and the install namespace disagree: `official/…` resolves for the optional catalog only, so a name that
+  ships in the addon's active tree (seeded, never installed) answers "Could not find … in any source" while
+  `browse --source official` lists the catalog around it. One inspect per candidate, and never hand over an
+  `official/…` install for a bundled name — point at the re-seed instead.
+- **Check the platform's own equivalent before recommending a third-party meta-skill.** An
+  observation-logging meta-skill duplicates the Curator + `skill_manage` on the Hermes side, and a single-agent fork
+  of a cross-platform framework is worth having only for its vendor-exclusive hooks. State the overlap (and which
+  agent the thing actually reaches — plugins are Claude-only, hub installs are Hermes-only, the deployed shared dir
+  is the one surface both read) rather than listing it as new capability.

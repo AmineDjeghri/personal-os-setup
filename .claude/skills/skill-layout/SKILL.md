@@ -16,33 +16,13 @@ metadata:
 - Never edit through a symlink — always edit the canonical file
 - Windows note: git symlinks need `core.symlinks=true` on native Windows checkouts
 
-## Every skill carries its origin in the frontmatter
-
-Frontmatter records who owns the canonical copy, so a reader can tell a repo skill from one the agent
-created on its own:
-
-```yaml
-metadata:
-  hermes:
-    origin: repo:personal-os-setup   # agent | repo:<name> | vendored | hub
-    exposure: private                # ONLY when the skill must never be published
-```
-
-- `origin: agent` — created in the Hermes own store by the agent, no git backing.
-- `origin: repo:<name>` — the canonical copy lives in that repo (this file's case).
-- `origin: vendored` + `source: <owner>/<repo>` — a whole-folder third-party copy.
-- `origin: hub` — installed from the skills hub; tool-managed, never vendored into git.
-- `exposure: private` — never promote, publish or copy into a public repo as-is; sanitize first.
-  Absent = publishable (the default).
-- Addon-shipped (bundled) skills carry **no** marker — editing one freezes its sync forever, and their
-  provenance is already authoritative in `.bundled_manifest` and the addon's own `skills/` tree.
-
-The marker travels with the file (a deploy or copy never adds or strips it). Canonical spec:
-the `agent-skills-architecture` skill.
+Every skill's frontmatter records its origin in `metadata.hermes.origin` (`agent` | `repo:<name>` |
+`vendored` + `source:` | `hub`), plus `exposure: private` when it must never be published; bundled
+addon-shipped skills carry no marker. The marker travels with the file — a deploy or copy never adds or
+strips it. Values and their consequences: `agent-skills-architecture`.
 
 ## A repo-bound runbook is a skill, not a `docs/` page
 
-Anything under `docs/` is crawled into the published site unless specifically excluded, and a doc
-only helps a human who remembers to go read it — a skill loads itself at task time, for both agents.
-If a doc starts describing how to *do* something (a procedure, not reference material for readers),
-that's the signal to move it into a skill instead.
+Anything under `docs/` is crawled into the published site unless excluded, and a doc only helps a human
+who remembers to go read it — a skill loads itself at task time, for both agents. When a doc starts
+describing how to *do* something (a procedure, not reference material for readers), move it into a skill.

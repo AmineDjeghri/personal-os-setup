@@ -23,21 +23,20 @@ gh api repos/O/R/branches/main/protection ; gh api repos/O/R/rulesets   # what a
 
 On a rebase/force-push (Renovate does this), GitHub evaluates the push path filter against everything the branch
 *gained* relative to its previous tip — including files `main` picked up since the branch was created. Symptom: an
-add-on CI fires on a `renovate/*` push whose PR only touches one unrelated folder; correlation is exact (only the
-folders added to `main` after the branch was cut fire).
+add-on CI fires on a `renovate/*` push whose PR only touches one unrelated folder.
 
 **Fix:** scope the push trigger to the branch that matters (`push: branches: [main]`), keep validation on
 `pull_request` (whose `paths` uses the PR diff, correctly). Do not add `paths-ignore` hacks.
 
 Same pattern causes **double CI on every PR** (`push` + `pull_request` both match). Pick one trigger — usually drop
 `push` unless a push without a PR must be validated. Check first whether protection/rulesets require those checks
-(often none).
+(often none). After changing triggers, verify with `gh run list --branch <branch>`: no push-event run should appear on the branch you push.
 
 ## 2. Job-level `concurrency` cancels a run's OWN sibling jobs
 
 `jobs.<id>.concurrency` with the default queue holds **one running + one pending** per group: each newly queued job
 **cancels the pending one** (`cancel-in-progress: false` only protects the *running* job). With N jobs starting
-together (cron, fan-out), all but ~2 get cancelled every run — worse than the race you were fixing.
+together (cron, fan-out), all but ~2 get cancelled every run.
 `queue: max` (up to 100 pending) fixes it, but an unsupported key invalidates the whole workflow file (all runs stop),
 so for a critical job prefer mechanisms with no new syntax.
 
@@ -56,8 +55,5 @@ have been true (find a commit that changed the file the guard tests) and check t
 ## 4. Rules of thumb
 
 - Never trust a workflow file's *intent* comments — read the triggers, the `if:` guards and the step ids.
-- Two runs with the same check name from different events = duplication, not flakiness.
-- After changing triggers, verify with `gh run list --branch <branch>`: the fix is visible immediately (no push-event
-  run appears on the branch you push).
 - A red nightly run nobody noticed means the fix must also *fail loudly* (annotations/`::error::`) and be verified
   with a `workflow_dispatch` run once merged.

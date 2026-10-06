@@ -1,6 +1,6 @@
 # Verified yt-dlp API facts
 
-All verified against the installed yt-dlp source / a real run (Aug–Sep 2026, Python 3.14, uv-managed env). Cite the source line when re-checking after a yt-dlp upgrade.
+All verified against the installed yt-dlp source / a real run (Python 3.14, uv-managed env). Cite the source line when re-checking after a yt-dlp upgrade.
 
 ## Postprocessor keys have NO `PP` suffix
 
@@ -47,23 +47,8 @@ The `outtmpl` template and the metadata PP both read the mutated values. An arch
 |---|---|
 | artist | `artist`, `artists`, `creator`, `creators`, `uploader`, `uploader_id` |
 | genre | `genre`, `genres`, `categories`, `tags` |
-| album_artist | `album_artist`, `album_artists` |
-| (+ album, title, track, date, description, comment …) | same first-present-wins pattern |
 
-**The genre fallback is a data-corruption trap.** The pipeline sets no `genre` key, so the PP walks down to `categories` — YouTube's *category*. Measured across the library (211 m4a files):
-
-```
- 89  Music
- 76  <none>
- 28  People & Blogs
-  9  Sports
-  6  Entertainment
-  1  Gaming / Howto & Style / Travel & Events (each)
-```
-
-So a downloaded file ends up tagged `genre=People & Blogs`, and beets does not clean it up: `lastgenre` resolves nothing for rai/Arabic tracks (`lastgenre: Resolved (fallback unconfigured): []`) and the add-on runs `genre_mode: combine` (keep existing + merge resolved) → the category tag survives import. Neutralize it by setting `e["genre"]` from an explicit decision, or by popping `categories`/`tags`/`genres`/`genre` so nothing is written.
-
-Tag writing from the script side (belt-and-suspenders pass, `mutagen`): MP4 uses the `©gen` atom, Vorbis/opus uses `genre`; artist/title/album/albumartist are `©ART`/`©nam`/`©alb`/`aART` (MP4) and `artist`/`title`/`album`/`albumartist` (Vorbis).
+**The genre fallback is a data-corruption trap.** With no `genre` key, `FFmpegMetadataPP` falls through `genres`/`categories`/`tags` and writes YouTube's *category* ("People & Blogs", "Sports"…) as the genre; beets does not clean it up. Set `e["genre"]` from an explicit decision, or pop `categories`/`tags`/`genres`/`genre` so nothing is written.
 
 ## Chapter splitting (`FFmpegSplitChapters`)
 
@@ -71,7 +56,7 @@ Tag writing from the script side (belt-and-suspenders pass, `mutagen`): MP4 uses
 - Chapter filenames come from `prepare_filename(info, 'chapter')` → the runtime outtmpl dict needs a `"chapter"` key:
   `{"default": …, "chapter": str(dir / "%(section_number)02d - %(section_title)s.%(ext)s")}`
   (`section_number`/`section_title`/`section_start`/`section_end` are set by the PP on a copy of the info dict).
-- **Registering the PP is mandatory**: add `{"key": "FFmpegSplitChapters"}` **first** in `opts["postprocessors"]`. Building only the `"chapter"` outtmpl key does nothing — the video downloads as ONE file into the default path and the entry reports "no file produced" (nothing matches the chapter pattern). This exact miss cost a full 2-hour-video re-download.
+- **Registering the PP is mandatory**: add `{"key": "FFmpegSplitChapters"}` **first** in `opts["postprocessors"]`. Building only the `"chapter"` outtmpl key does nothing — the video downloads as ONE file into the default path and the entry reports "no file produced" (nothing matches the chapter pattern).
 - The PP does **NOT** delete the original full file (`run()` returns `[], info`), and the metadata PPs run on `info["filepath"]` — the ORIGINAL. So chapter files come out **untagged** and the full file lingers. Pattern: route the default outtmpl into a throwaway `_full/` subdir, delete it after processing, and tag each chapter file in the script (title = chapter name, track = section number parsed from the filename).
 - `"split": true` on a video WITHOUT chapters → the PP no-ops; fall back to a single-file download (not a failure).
-- **Cosmetic duration quirk — accept it, don't chase it**: split chapter files keep the SOURCE duration in the container header (ffprobe `format.duration` = whole concert, `streams[0].duration` = the chapter). Players use the stream duration, so playback is correct; only the stored length in mutagen/beets is wrong. Remuxing does not fix it (timestamps preserved; `-copyts -start_at_zero` leaves the moov duration unchanged). Re-encoding would, at a quality cost — never do it for this. Details: `chapter-split-duration-quirk.md`.
+- **Cosmetic duration quirk — accept it, don't chase it**: split chapter files keep the SOURCE duration in the container header (ffprobe `format.duration` = whole concert, `streams[0].duration` = the chapter). Players use the stream duration, so playback is correct; only the stored length in mutagen/beets is wrong. Remuxing does not fix it (timestamps preserved; `-copyts -start_at_zero` leaves the moov duration unchanged). Re-encoding would, at a quality cost — never do it for this.

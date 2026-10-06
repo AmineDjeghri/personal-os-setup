@@ -2,7 +2,7 @@
 
 ### Audit — "too many skills, which can I delete?" (an inventory pass)
 
-- **Telemetry covers only what Hermes loaded.** `hermes curator usage` carries no counters for Track 1 or
+- **Telemetry covers only what Hermes loaded.** `hermes curator usage` carries no counters for external-dir (shared) or
   repo-scoped skills, so their demand reads `unverified` — never downgrade that absence into "0 uses" or a delete
   signal, and never quote a count the CLI did not print.
 - **Real usage outranks size**: demand + no repo backing = *port* candidate, not a delete candidate.
@@ -20,7 +20,7 @@ Classify from bookkeeping, never from the category directory a skill sits in: `h
 
 - Agent-authored + box-specific → the only promotable kind; port it into git (next section) if it must survive a
   reinstall.
-- Shipped / hub-installed → NEVER vendor into a Track-1 tree; keep while used, otherwise delete the own-store copy
+- Shipped / hub-installed → NEVER vendor into the shared external-dir tree; keep while used, otherwise delete the own-store copy
   (a deleted bundled skill is not re-seeded; `hermes skills reset <name> --restore` brings stock back).
 - Live-only with 0 uses, superseded by a newer skill, or `state: stale` → delete.
 - A skill dir that is a symlink into a repo → keep the symlink, never add a second copy.
@@ -35,8 +35,6 @@ Classify from bookkeeping, never from the category directory a skill sits in: `h
 
 
 ## Origin inventory — "list my skills with their origin"
-
-### Origin inventory — "list my skills with their origin"
 
 Answer in TIERS with the arithmetic reconciled (every indexed name lands in exactly one tier); a flat list is the
 wrong shape and a single total for the whole box is always wrong, because the tiers overlap in name only.

@@ -2,7 +2,7 @@
 # GitHub environment detection helper for Hermes Agent skills.
 #
 # Usage (via terminal tool):
-#   source skills/github/github-auth/scripts/gh-env.sh
+#   source scripts/gh-env.sh   (relative to the github-auth skill dir)
 #
 # After sourcing, these variables are set:
 #   GH_AUTH_METHOD  - "gh", "curl", or "none"

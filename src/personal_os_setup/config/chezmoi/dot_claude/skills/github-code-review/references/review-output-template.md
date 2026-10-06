@@ -50,25 +50,8 @@ Use this as the structure for PR review summary comments. Copy and fill in the s
 
 ## For Inline Comments
 
-Prefix inline comments with the severity icon so they're scannable:
-
-```
-🔴 **Critical:** User input passed directly to SQL query — use parameterized queries to prevent injection.
-```
-
-```
-⚠️ **Warning:** This error is silently swallowed. At minimum, log it.
-```
-
-```
-💡 **Suggestion:** This could be simplified with a dict comprehension:
-`{k: v for k, v in items if v is not None}`
-```
-
-```
-✅ **Nice:** Good use of context manager here — ensures cleanup on exceptions.
-```
+Prefix inline comments with the severity icon so they're scannable: 🔴 Critical / ⚠️ Warning / 💡 Suggestion / ✅ Nice.
 
 ## For Local (Pre-Push) Review
 
-When reviewing locally before push, use the same structure but present it as a message to the user instead of a PR comment. Skip the PR metadata header and just start with the severity sections.
+Use the same structure as a message to the user: skip the PR metadata header and start with the severity sections.

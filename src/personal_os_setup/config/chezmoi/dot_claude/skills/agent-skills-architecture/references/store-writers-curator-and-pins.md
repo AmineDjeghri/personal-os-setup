@@ -1,7 +1,5 @@
 # The Hermes own store — writers, the Curator and pins
 
-## Hermes own store — three writers, and one authored tree
-
 `~/.hermes/skills/<category>/<skill>/SKILL.md` (= `/config/.hermes/skills/…`; per-profile under
 `~/.hermes/profiles/<name>/`) is fed by three owners mixed into ONE flat `category/skill` namespace, with nothing on
 the file saying who owns it. Establish provenance before touching anything:
@@ -57,3 +55,20 @@ exactly the promoted set, so pin every promoted name.
 `hermes update` stop seeding bundled skills (optionally `--remove` unmodified ones). It is not a Curator pin.
 - Say plainly which writer owns which file: git owns the promoted names, the hub owns its installs, the addon image
 owns bundled ones.
+
+## Background-review write guard
+
+- **The refusal list IS the drift set, and it is scoped to one ACTOR.** `_background_review_write_guard`
+  (`tools/skill_manager_guards.py`) returns immediately unless the write origin is `background_review`
+  (`tools/skill_provenance.py` — a ContextVar), so the autonomous pass is refused on: pinned names, bundled and
+  protected built-ins, hub installs, anything under `skills.external_dirs` (EVERY shared external-dir skill), and any
+  name with no curator record (`created_by` absent or `None` — "not curator-managed … run `hermes curator adopt
+  <name>`"). What it CAN write is therefore exactly the own-store `created_by: agent` unpinned names — the same set
+  that drifts against the chezmoi source. Foreground actors (CLI, gateway, cron, subagent) are subject to none of
+  it: a pinned skill can be edited there, and `_pinned_guard` blocks only its DELETION. Never describe "the
+  curator" as one actor with one rulebook.
+- **Test such a guard without touching a skill.** In a scratch script set
+  `tools.skill_provenance.set_current_write_origin("background_review")`, call
+  `skill_manager_guards._background_review_preflight(action, name)` for each name of interest, reset the token, then
+  repeat in the default origin to prove the scope. It reads usage records and resolves paths and writes nothing —
+  never test a write guard by attempting a real write to a live skill.

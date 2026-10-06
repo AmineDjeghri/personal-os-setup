@@ -1,6 +1,5 @@
 # Reconciling the two trees (do this BEFORE any cleanup)
 
-## Reconciling the two trees (do this BEFORE any cleanup)
 `make skills-status` is the authoritative duplicate list (live own-store copies that duplicate a git-managed name);
 `make skills-diff` reports per skill `OK` / `DIFFERS` / `MISSING`; `make skills-drift` is the deploy's gate.
 

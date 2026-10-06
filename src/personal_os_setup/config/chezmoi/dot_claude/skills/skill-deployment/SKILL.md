@@ -11,39 +11,27 @@ metadata:
 Authored skills (ONE tree): repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` → `~/.claude/skills`
 (Claude Code + Hermes external_dirs). Desktops: TUI dotfiles tab. Container/CLI:
 
-> Scope: this deploys only the **general/shared** skills. Repo-specific skills are NOT part of it —
-> they live in the repo itself under `.claude/skills/` (Claude Code reads those natively) with
-> git-symlink mirrors in `.agents/skills/` for other agents, kept in sync by `skills.mk`
-> (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
-
-Frontmatter also carries `metadata.hermes.origin` — `agent` (own store only) | `repo:<name>` | `vendored`
-(+ `source: <owner>/<repo>`) | `hub` — plus `exposure: private` on any skill that must never be published.
-The marker travels with the file, so a deploy neither adds nor strips it; canon: the
-`agent-skills-architecture` skill (Hermes-oriented reference).
-
-**Two loading paths — don't confuse them:**
-
-- **Global (the one tree)** → `skills.external_dirs` in the Hermes config: always in the index, every
-  session, any cwd. That one entry (`~/.claude/skills`) is what both agents load.
-- **Repo-scoped** → `<repo>/.hermes/skills` + `.agents/skills` load *only* when the session's
-  working dir resolves to the repo's git root **and** that root is in `skills.trusted_project_dirs`.
-  A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads — upstream
-  Hermes bug #103423, fix in review as PR #103424. Never park repo skills in `external_dirs`
-  (N repos × M skills doesn't scale): promote a repo's skills to the global tree if they must be
-  always-on, otherwise they're read on demand.
-
 ```bash
 REPO=/config/workspace/personal-os-setup
 cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the skills
 ```
 
+> Scope: repo-specific skills are NOT deployed here — they live in `.claude/skills/` + `.agents/skills/` (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
+
+Repo-scoped skills (`<repo>/.hermes/skills` + `.agents/skills`) load *only* when the session's
+working dir resolves to the repo's git root **and** that root is in `skills.trusted_project_dirs`.
+A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads — upstream
+Hermes bug #103423, fix in review as PR #103424. Never park repo skills in `external_dirs`
+(N repos × M skills doesn't scale): promote a repo's skills to the global tree if they must be
+always-on, otherwise they're read on demand.
+
+Loading internals: `agent-skills-architecture` → "What actually loads".
+
 **No chezmoi (HA container/CLI):** `cd <repo> && make skills-deploy` — copies the same source
 to `~/.claude/skills`. The make target lives in `makefiles/skills.mk` (same file as
 `skills-link`/`skills-check`).
 
-Two gotchas (both previously caused "not managed"):
-1. `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nested dir) — never the nested dir
-2. Run from **HOME** — targets resolve against CWD
+Rules: `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nested dir — never the nested dir); run from **HOME** (targets resolve against CWD).
 
 ⚠️ The nested `config/chezmoi` dir must **never** contain its own `.chezmoiroot`: the app
 (`src/personal_os_setup/tasks/system/chezmoi.py`) passes that dir directly as `--source`, so a
@@ -51,47 +39,16 @@ nested `.chezmoiroot` would double-redirect and break the app's deploy path.
 
 Refresh after `git pull`. On the container deploy only `.claude` (full apply would dump desktop dotfiles).
 
-**Wiring rule:** Hermes reads `~/.claude/skills` (`skills.external_dirs`), so `make skills-deploy` writes ONE
-destination and nothing is ever duplicated into `~/.hermes/skills` — a name in both roots is unloadable
-(`Ambiguous skill name … Refusing to guess`). A Hermes-only intent is stated in the skill's `description`, not by
-placement. Pin the deployed names against the Curator per machine after each deploy:
-`hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
+Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
 **Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-deploy` is
 copy-only: it overwrites whatever is live and deletes nothing.
 
-- A skill edited in place (foreground agent, `hermes skills` editor) is reverted by the next
-  deploy — copy it back into the source tree first, then deploy.
-- The Curator and the background-review pass patch agent-created skills in place, so unpinned
-  promoted skills drift and the deploy silently wins. Pin every deployed name.
-- `hermes update` needs no action here: these names are not bundled (absent from
-  `.bundled_manifest`), and the bundled sync never overwrites a same-named local skill — it warns
-  and keeps yours.
-- Deleting a skill in the repo does not delete it live: `rm` the deployed dir by hand.
 - Never deploy a skill that already lives elsewhere in the repo and is symlinked into the store
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Checking drift (read-only, no deploy):** `make skills-diff` compares repo vs live for both
-tree and exits non-zero on any MISSING/DIFFERS. `make skills-status` lists every git-managed
-skill, flags any name present in BOTH `~/.claude/skills` and `~/.hermes/skills` (the ambiguity bug —
-remove the `~/.hermes` copy) and any repo skill missing from `skills.keep`. Save a live skill into the repo:
-`make skills-keep NAME=<name>`.
-
-**`skills-deploy` refuses on drift.** Before copying, it runs `make skills-drift` — same scan as
-`skills-diff` but MISSING (never deployed yet) is fine; only a DIFFERS aborts the deploy, so an
-in-place edit isn't silently reverted. Run `make skills-diff` for a full report or `make
-skills-drift` to just check the gate. Fix a DIFFERS by porting the live edit into the repo (PR)
-first, then deploy; or force the overwrite with `make skills-deploy SKILLS_FORCE=1`.
-
-GNU Make gotcha: `export VAR = x   # comment` keeps the comment's leading whitespace inside the
-value, so keep such comments on their own line.
-
-GNU Make gotcha #2 (**each recipe line is its own shell**): an early `exit 0` on its own line does
-NOT abort the rest of the target — make just runs the next line, so a target can print "not installed
-here" and then fail on the guard that follows. Join every guard that must short-circuit into ONE
-recipe line with `; \` continuations (`fi; \`). Hit while writing `skills-thirdparty` in
-`makefiles/skills.mk`; caught only by running the target, not by `make -n`.
+**Drift:** `make skills-diff` (read-only; non-zero on MISSING/DIFFERS), `make skills-status`, `make skills-drift` (the deploy's gate: only a DIFFERS aborts). Override with `make skills-deploy SKILLS_FORCE=1` only after porting the live edit into the repo — see `agent-skills-architecture` → `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-keep NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
@@ -128,24 +85,15 @@ that ship their own per-harness plugins (hooks, slash commands) are a different 
 of this section.
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y   # one skill
-npx skills add <owner>/<repo> -g -y                             # whole pack
+npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy   # one skill
+npx skills add <owner>/<repo> -g -y --copy                             # whole pack
 ```
 
 - **Target `-a claude-code` only — it already reaches Hermes.** Hermes reads `~/.claude/skills` via
   `skills.external_dirs`, so the Claude symlink serves both. Adding `-a hermes-agent` puts the same
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Where it lands — verified against a real install (v3 CLI), NOT as the docs describe:** the skill files are
-  **copied straight into the agent dir** (`~/.claude/skills/<skill>/` is a real directory, *not* a symlink) and
-  **there is no `~/.agents/skills/` canonical store** — the only thing `~/.agents/` contains is the lock. We pass **`--copy`** on every install (including `make skills-thirdparty-replay`), so the agent dir holds real
-  files regardless of the CLI's symlink default; even so, check the filesystem, never the CLI's success
-  message. Consequences still hold: `-a claude-code` gives
-  Hermes the skill for free (it reads that dir), while `-a hermes-agent` would copy it a *second* time into
-  `~/.hermes/skills` — two roots, one name. Flat placement, so the entry shows a blank category in `hermes skills list`.
-- **Verified end to end:** `npx skills add trailofbits/skills -s differential-review -a claude-code -g -y` → real dir
-  in `~/.claude/skills/`, one row in `hermes skills list`, lock written to `~/.agents/.skill-lock.json`, then
-  `make skills-thirdparty-save` + `make skills-thirdparty` both clean.
+- **Lands as a real directory** in `~/.claude/skills/<skill>/` (we pass `--copy` on every install, incl. `make skills-thirdparty-replay`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
 - **The lock is OUTSIDE any repo:** `~/.agents/.skill-lock.json` (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
   the live lock is never the record we ship. Replay/drift: `make skills-thirdparty` in
@@ -157,7 +105,7 @@ npx skills add <owner>/<repo> -g -y                             # whole pack
 - **Before installing, check the names.** Hermes has no namespacing, so a third-party name that
   collides with a shipped or deployed skill breaks that name for both. Compare against
   `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
-- **Symlink regressions exist** (#851 global, #1355 project) → verify the entry actually resolves in
+- **Symlink regressions exist** → verify the entry actually resolves in
   each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy`. A symlink that exists is not
   proof the agent listed it.
 - **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
@@ -192,23 +140,15 @@ forever and upstream improvements never reach us. Never edit one. When we want a
 ⚠️ **`hermes skills repair-official <name> --restore` writes its backup INSIDE the skills tree** —
 to `~/.hermes/skills/.restore-backups/<ts>/<category>/<name>/`. That directory is *not* in Hermes'
 excluded-scan list, so the backup is a second copy of the same name and the skill becomes
-**unloadable**: `Ambiguous skill name … Refusing to guess` (verified — it broke
-`hermes-s6-container-supervision` the minute the restore finished). Move the backup out of the
+**unloadable**: `Ambiguous skill name … Refusing to guess`. Move the backup out of the
 scanned root straight after any restore:
 `mv ~/.hermes/skills/.restore-backups ~/.hermes/backups/restore-backups-<date>`.
 
 ⚠️ **`hermes skills reset` blocks on an interactive prompt — never call it from a non-interactive
-surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out
-(5 minutes in practice) and **changes nothing**, because the prompt is never answered. Drive it from a
+surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out and **changes nothing**, because the prompt is never answered. Drive it from a
 PTY, or skip it: to de-fork, refresh the live copy from the stock tree with a plain copy —
 `cp -R /config/skills/<category>/<name>/. ~/.hermes/skills/<category>/<name>/` — which leaves the live
 copy byte-identical to stock with no prompt. **Refresh, don't delete**: deleting the own-store copy
 drops that name out of Hermes' index (the add-on's shipped tree is not indexed on its own, and a name
 absent from `.bundled_manifest` has no reseed path) — so a skill with real usage disappears.
 `hermes skills diff <name>` is the read-only way to see what a reset would change.
-
-Local additions we dropped when un-freezing (kept here for reference; upstream may adopt them):
-`pdf` (scanned-PDF hand-off to `ocr-and-documents`, `--meta` inspect step, `related_skills` frontmatter),
-`grounded-citations` (hand-off to `research-paper-writing`), `hermes-agent` (`/background`, `/busy` rows,
-the OPT-IN plugin note), `hermes-agent-skill-authoring` (`related_skills` line). `claude-code`'s additions
-live in `claude-code-ops`. `docx` / `xlsx` were already identical to stock.

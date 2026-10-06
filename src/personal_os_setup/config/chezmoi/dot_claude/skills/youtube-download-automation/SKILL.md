@@ -16,14 +16,12 @@ Any task that drives **yt-dlp** — the YouTube → `/media/music` → Navidrome
 This pipeline writes into the user's music library, and its script is a file in a repo. **Nothing downloads and nothing gets edited until the user has seen the proposal and answered.**
 
 - **Check for an existing import BEFORE you plan.** Grep the video ID in `.archive.txt` and `overrides.json`, then look for the file under `/media/music/YouTube/`. Already imported → the reply is its verified state (library path + `ffprobe` tags), **not** a metadata proposal; only propose when something is genuinely missing or wrong. The plan's status column is not an archive check.
-- **Say what governed the run, in one line.** Name this skill and what you did not do (no download / no edit / no git). The user asks "did you read the skill first?" whenever that isn't visible in the first reply to a dropped link.
+- **Say what governed the run, in one line.** Name this skill and what you did not do (no download / no edit / no git).
 - **Before a download — a single link included.** `--plan` first, then show the proposed metadata (`artist | title | album | year | genre | folder`) and ask for the go-ahead. There is no "small enough to skip the gate" case: a one-video link is exactly where a wrong `folder` or a guessed artist is cheapest to prevent and most annoying to undo.
 - **Before editing `yt_dl.py`, the README or the overrides format.** Say what changes, why, and what it affects, then wait. A link that exposes a gap in the pipeline ("genre: rai" when nothing can write a genre) is a **proposal**, not a mandate to patch the pipeline.
 - **Before deleting state.** `.archive.txt` and the library folder are what decide whether a re-run downloads or no-ops — warn explicitly, then confirm.
 - **Before git.** commit / push / PR need explicit per-action approval (repo `AGENTS.md`); a download run never commits.
 - **A timed-out approval prompt is not consent.** Stop; the user re-triggers it.
-
-Asking costs one short message. Guessing wrong costs a re-download, a wrong tag in a 200-file library, or a repo change that has to be unwound.
 
 ## 1. The pipeline (concrete instance)
 
@@ -43,7 +41,7 @@ Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
 | `title` | The original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite, never translate; keep `(Live …)` and venue info. |
 | `album` | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist collects `Album contains "Live"` — an album without "Live" silently drops out of it. |
 | `year` | Concert year when it differs from the upload year. |
-| `genre` | From the `"genre"` field in `overrides.json` (e.g. `"rai"`). With **no** genre override, **no genre tag is written at all** — the script neutralises the metadata PP's fallback chain, so YouTube's *category* ("People & Blogs", "Sports" — the values 211 files in the library used to carry) can never land in the tag again. Never hand-tag a file the pipeline owns. |
+| `genre` | From the `"genre"` field in `overrides.json` (e.g. `"rai"`). With **no** genre override, **no genre tag is written at all** — the script neutralises the metadata PP's fallback chain, so YouTube's *category* ("People & Blogs", "Sports") can never land in the tag again. Never hand-tag a file the pipeline owns. |
 | `folder` | **Set it explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the documented `Singles` default rarely fires and you get a folder named after the video. Playlists: folder = playlist title. Non-music clips: `Other`. |
 | `split` | `true` only for videos with YouTube chapters that should become tracks. |
 
@@ -61,9 +59,4 @@ Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
 
 - `references/yt-dlp-api-facts.md` — verified yt-dlp internals: PP key names, runtime `outtmpl` dict, `ignoreerrors`, chapter splitting, and which info-dict field feeds which tag.
 - `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
-- `references/chapter-split-duration-quirk.md` — the one cosmetic defect worth accepting as-is.
 - `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
-
-## 5. Where this skill lives
-
-Canonical copy: `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/youtube-download-automation/` (the one authored tree; deployed to `~/.claude/skills`, which Hermes also reads). Deploy with `make skills-deploy` in that repo, then `hermes curator pin <name>` — see the `skill-deployment` skill. Edits go through the repo's normal flow (delegate the file change; §0 git gate).

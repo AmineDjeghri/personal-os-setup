@@ -1,9 +1,5 @@
 # Direct reads of the Hermes session DB
 
-When `session_search` scroll/read spills (nested session dumps → 200KB+ single-line JSON), read the DB
-itself: `~/.hermes/state.db` (= `/config/.hermes/state.db` on the HA addons). Terminal + `sqlite3` is
-approval-free in this setup, unlike `execute_code`.
-
 ## Rules that keep the output small
 
 - **Always `substr(...)`** the content columns — a single assistant message can embed a whole nested
@@ -43,10 +39,3 @@ Useful when a tool result (spillover, error) quotes an id and you need its conve
 ```bash
 sqlite3 ~/.hermes/state.db "select session_id, role from messages where id=<id>;"
 ```
-
-## Reading a session you were told about
-
-`session_search(session_id=..., around_message_id=...)` remains the right first move for a *bounded*
-window: shrink `window` (1–5) after any spill, and prefer re-querying with distinctive tail wording over
-scrolling. If the ids come back out of range, the anchor belongs to a different session lineage — check
-`max(id)` for that session instead of bisecting.

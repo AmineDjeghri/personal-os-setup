@@ -1,6 +1,6 @@
 # Sanitizing a skill before publishing it into a public repo
 
-The shared / Track-1 dir is backed by a PUBLIC repository, so a promoted file is published the moment it is pushed.
+The shared external-dir is backed by a PUBLIC repository, so a promoted file is published the moment it is pushed.
 The shared-dir rule already forbids personal identifiers; this is the procedure that makes a failing skill
 publishable instead of dropping it.
 
@@ -70,7 +70,6 @@ copy after the pass and report how many hits remain — the count is the evidenc
 
 ## Promoting agent-authored skills into git (the nine steps)
 
-### Promoting agent-authored skills into git (publishing gate)
 The git home for promoted skills is a repo that may be **public**, so publishing is a review step, not a copy step:
 
 1. **Prioritise with telemetry, not intuition:** `hermes curator usage` prints use/view/patches counts and last

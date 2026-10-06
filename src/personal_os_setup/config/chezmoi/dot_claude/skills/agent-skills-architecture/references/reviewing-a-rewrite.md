@@ -17,6 +17,8 @@ side is where the lost knowledge is, and a rewrite can only be called lossless a
 5. **Privacy-scan only the files the push touched** (`git diff --name-only <range>`). A repo-wide scan drowns the
    real hit under the user's own CHANGELOG/CONTRIBUTING credits and LAN-IP docs, and reports noise as findings.
 6. Report per item: file:line, what is wrong, the fix, severity — and mark anything unconfirmed as unverified.
+7. **Diff before committing a skill file you edited earlier** — the user works in the same worktrees concurrently, so
+   `git add <dir>` sweeps in changes you did not author; read `git diff --cached` and disclose them.
 
 ## Delegating the review or the edit
 
@@ -46,6 +48,16 @@ having done the homework. When it really is the same content in two homes, pick 
 actually MANAGED (git/chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh
 machine won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify with a
 fresh `skills-diff`/`skills-check` pass.
+
+**Merge procedure (Hermes live store) — steps a merger must not skip:**
+
+1. Archive the losers to a tarball **outside** the skills tree before deleting anything
+   (`tar czf ~/.hermes/archive/skills-<topic>.tar.gz -C $HERMES_HOME/skills …`).
+2. Rewrite the survivor in **one** `skill_manage` patch that carries the full frontmatter.
+3. Delete each loser as a sole op.
+4. Verify the old names are gone with `search_files` across every root (a `.curator_ledger.jsonl` match is a
+   correct hit, not a leftover).
+5. Choose the survivor by **job**, not by size or age.
 
 **Verify the FOLD against the loser, never by re-reading the survivor.** A folded body reads fine even when rules
 were dropped — the gaps are invisible from the inside, and a delegated merge loses whole sections silently. Before

@@ -8,7 +8,7 @@ metadata:
 
 # Hermes Session Recall (session_search)
 
-Recovering state from past conversations: where a task left off, what question was pending, what a session's final message said. Triggered by "prompt me again" after an approval timeout, "where did we leave off", or any recall request about earlier sessions.
+Recover where a task left off, what question was pending, or what a session's final message said — e.g. after "prompt me again" following an approval timeout, or "where did we leave off".
 
 ## Procedure
 
@@ -19,7 +19,7 @@ Recovering state from past conversations: where a task left off, what question w
 
 ## When the prior conversation is NOT in this context
 
-A follow-up that reads as a continuation ("write a doc about this", "same branch as before") often arrives in a NEW session created seconds earlier: none of the earlier conversation is in context, and the referring words ("this", "both", "the PR") are unresolvable from the message alone. Resolve the referent before acting on it.
+A follow-up that reads as a continuation ("write a doc about this", "same branch as before") often arrives in a NEW session with none of the earlier conversation in context. Resolve the referent before acting; browse with `session_search()` (no args).
 
 1. **Browse live activity, never infer it**: `session_search()` with no args lists the most recently ACTIVE sessions (started_at / last_active + preview). The session whose last_active is minutes old is the conversation being continued — confirm from its preview, then read or scroll it.
 2. **Bound the browse with `after="<date>")`** when several sessions compete. The bound applies to session START, so a long-running session that spans days falls outside a recent bound — drop the filter for those and rank by last_active instead.
@@ -28,10 +28,8 @@ A follow-up that reads as a continuation ("write a doc about this", "same branch
 
 ## Pitfalls
 
-- **Scroll-anchor errors are diagnostics, not dead ends.** "around_message_id N not in session" → N lies outside the session's id range (above its last message). "scroll rejected: anchor lives in the current session lineage" → N is INSIDE this conversation's own lineage (this delivery is a continuation of that session): scrolls there are always rejected — the content is nominally "already in your active context" but a fresh delivery does NOT replay it. On the first in-lineage rejection, stop bisecting and switch to the discovery-phrasing route (step 2).
-- **Never bisect for a session's tail with scroll anchors**: each attempt only tells you which side of the range you're on (one message per call), and repeated identical calls trip the harness tool-loop hard stop within ~8 failures. Change strategy on the second rejection, not the eighth.
-- **Avoid whole-session reads and wide scroll windows**: a full-session read or a `window=20` scroll spills a ~150–200KB SINGLE-LINE JSON into a cache spillover file. read_file pages by line, so a one-line file is capped at ~100K chars with no way to reach the tail. Keep every `session_search` read narrow (low limit, small window, `role_filter`) — and switch to the DB route below before widening anything.
+- **Scroll-anchor rejections are diagnostics:** "N not in session" = outside the session's id range; "anchor lives in the current session lineage" = always rejected (a fresh delivery does NOT replay it) → stop and use phrase-match (step 2); never bisect (the harness hard-stops after ~8 identical failures).
+- **Keep reads narrow** (low limit, small window, `role_filter`): a whole-session read or wide scroll window spills a single-line JSON that `read_file` cannot page — switch to the DB route below before widening anything.
 - **Read the session DB directly, through `sqlite3` in the terminal**: it is approval-free here and returns plain, pre-truncated rows — the cheapest way to get a session's user/assistant timeline, its tail, or a duplicate check. Recipes: `references/state-db-queries.md`.
-- **Do not use `execute_code` for session recovery**: it is approval-gated here, so it returns BLOCKED ("timed out without user response") when the user isn't watching, and it must not be retried as-is.
+- **Do not use `execute_code` for session recovery; use approval-free reads only** (read_file, search_files, session_search discovery/scroll, terminal `sqlite3`): approval-gated tools return BLOCKED / time out silently when the user is away and must not be retried as-is.
 - **A message delivered at a session boundary is stored twice** (once in the session being continued, once in the new one): the same text appearing in two sessions is ONE user message, not a repeat. `messages.id` is global and increasing across sessions — order deliveries by id/timestamp and read the copy owned by the session that holds the current turn.
-- **When the user is away, approval-gated tools time out silently**: recovery work should use approval-free reads only (read_file, search_files, session_search discovery/scroll), mirroring the standing rule to use approval-free git ops.

@@ -1,9 +1,5 @@
 # What Hermes itself does to the library — and the gates that stop it
 
-Verified against the shipped docs on this box (`/config/.hermes/hermes-agent/website/docs/user-guide/features/`:
-`skills.md`, `memory.md`, `curator.md`). Re-read those files when behaviour matters — they are the source of truth and
-they move; this page is the operational distillation.
-
 ## Mutations nobody asked for
 
 - **Bundled seeding.** Install and *every* `hermes update` copy newly bundled skills into the live store: new

@@ -1,4 +1,4 @@
-# Claude Code remote control — headless-container runbook (verified Sep 2026)
+# Claude Code remote control — headless-container runbook
 
 Goal: run a Claude Code session on an HA addon container and steer it from the Claude mobile app (Code tab) or claude.ai/code.
 
@@ -23,12 +23,11 @@ It answers two interactive prompts: `Enable Remote Control? (y/n)` → `y`; then
 
 ## Pairing & use
 
-- User opens the Claude mobile app → **Code tab** → the machine/session appears; or browses to the printed `claude.ai/code?environment=…` URL.
-- Sessions spawn in the remote-control workdir; user can start tasks, watch, steer, and approve permission prompts from the phone. Superpowers (plugin) is active in these sessions.
-- The tmux window holds the server; kill with `tmux kill-session -t claude-rc`.
+- User opens the Claude mobile app → **Code tab** (or the printed `claude.ai/code?environment=…` URL) and can start tasks, watch, steer and approve permission prompts from the phone; kill the server with `tmux kill-session -t claude-rc`.
 
 ## Traps
 
-- The OAuth URL Claude prints wraps across pane lines at its own width — `tmux capture-pane -J` still won't join it (hard newlines). Grab it from the pane before the prompt overwrites, or re-run `claude auth login` for a clean single-line device flow instead.
-- Interactive first-run onboarding forces a login-method screen even with valid credentials on disk — do not complete it; `claude auth login` (device flow) is the supported path (see `auth-device-flow.md`).
+- Interactive first-run onboarding forces a login screen even with valid credentials on disk — do not complete it; use `claude auth login`.
 - remote-control sessions belong to the directory they started in; move between projects by starting another remote-control in that directory (or `--spawn=worktree` per session).
+- Sessions run from the Claude mobile app / claude.ai/code (remote-control spawns) may have NO local transcript under `~/.claude/projects/` — they sync cloud-side. Don't burn turns grepping local JSONL for a phone-run session's findings; ask the user to paste the verdict.
+- `claude remote-control` sits on an empty-looking screen while healthy (the pane may show nothing until a prompt like "Enable Remote Control? (y/n)"); check aliveness with `tmux list-panes -F '#{pane_pid} #{pane_dead}'` and `capture-pane -S -60`, not by the visible output alone.

@@ -8,7 +8,7 @@ startup output and asks what is wrong.
 Two Home Assistant add-ons run Hermes against ONE shared `HERMES_HOME`
 (`/addon_configs/<repo>_<slug>/.hermes`): the third-party **Hermes Agent** add-on
 (`<vendor>/<addon-repo>`, add-on dir `<slug>/`) and the user's own
-**hermes-webui** add-on (his `ha-addons` repo, `addons/hermes-webui/`). They are different
+**hermes-webui** add-on (from the user's `ha-addons` repo, `addons/hermes-webui/`). They are different
 containers with different run scripts, ports and banners — a pasted log may not be from the
 container you are running in.
 
@@ -24,24 +24,11 @@ naming it. The Agent add-on runs ONE shared clone + venv (`$HOME/.hermes/hermes-
 
 ## 2. Dependency-store (PM) layout — what to read when a sync fails
 
-- `<hermes home>/installs/<key>/` — key = `sha256(resolved project root)[:16]`
-  (`pm/environments.py: install_key`). Under it: `pm-runtime/` (PM's runtime env + `pm-runtime.json`),
-  `facts.json`, `inputs/` stamps, and the `source-completion-pending` marker.
-- `hermes_bootstrap.py` — module-level code runs on import: it calls
-  `hermes_cli.venv_sync.prepare_launch(project_root, argv)`; on any exception it prints
-  `hermes: source-update completion failed: <err>; running with the previous dependencies — run 'hermes update' to finish it`
-  and continues on the previous generation. That message is where a failed sync becomes visible.
-- `hermes_cli/venv_sync.py` — `prepare_launch` (gates on `.git`, `pyproject.toml`, the install
-  stamp), `_finish_source_update`, `_sync_source_dependencies`, `completion_pending_path`.
-- `relaunch_command()` prints the interpreter as
-  `python -I -c "import sys, runpy; sys.path.insert(0, '<root>'); sys.argv = [...]; exec(...)"`.
-  Seeing that string as your traceback's outer frame means the process was RE-EXECUTED into
-  another interpreter — it was not written by the add-on. Compare `sys.executable` with
-  `hermes_cli/_launchers.resolve_store_python(root)`: a different interpreter triggers the re-exec.
-- Base dependencies are Python-version gated (e.g. `ruamel.yaml` only for
-  `python_version >= '3.14'`) while some modules import them unconditionally
-  (`hermes_yaml.py: from ruamel.yaml import YAML`) → an environment built on the wrong Python,
-  or one whose sync never committed, dies at import with `ModuleNotFoundError`.
+- `<hermes home>/installs/<key>/` (key = sha256 of the resolved project root, first 16 hex) holds `pm-runtime/`, `facts.json`, `inputs/` stamps and the `source-completion-pending` marker.
+- A failed sync becomes visible as `hermes: source-update completion failed: <err>; running with the previous dependencies — run 'hermes update' to finish it` (printed on import by `hermes_bootstrap.py`; the process continues on the previous generation).
+- A traceback whose outer frame is `python -I -c "import sys, runpy; sys.path.insert(0, '<root>'); …"` means the process was RE-EXECUTED into another interpreter — it was not written by the add-on; compare `sys.executable` with the store's Python.
+- Base dependencies are Python-version gated (e.g. `ruamel.yaml` only for `python_version >= '3.14'`) while some modules import them unconditionally → an environment built on the wrong Python, or one whose sync never committed, dies at import with `ModuleNotFoundError`.
+
 
 ## 3. Failure signatures
 
@@ -75,23 +62,10 @@ naming it. The Agent add-on runs ONE shared clone + venv (`$HOME/.hermes/hermes-
   `pyproject.toml` gate), and recommend reporting the patch collision to the add-on author.
   Never "fix" it by editing the shared checkout in place.
 
-## 5. Read-only evidence path (works while the shell is approval-gated)
+## 5. Read-only evidence path
 
-Approval-gated `terminal`/`execute_code` can time out to BLOCKED; multi-line scripts, `python -c`
-and `curl | python` shapes are the worst offenders, so do not plan a diagnosis that needs them.
-Done without the shell, in this order:
+No shell → `read_file`/`search_files`/`web_extract`/MCP `ha_get_app` (approval-gate rules: SKILL.md).
 
-1. `read_file` / `search_files` over the shared checkout (`$HERMES_HOME/hermes-agent`) for every
-   symbol in the traceback — this is what turns "plausible story" into a mechanism (function name,
-   call site, line).
-2. `search_files(target='files', pattern='<dep>*')` inside the failing interpreter's
-   `site-packages` to prove a missing dependency on disk.
-3. `web_extract` the add-on's own scripts from its GitHub repo to see what it sets, patches and
-   launches (the launcher's monkeypatch and the dashboard's interpreter are both only visible there).
-4. MCP `ha_get_app` / `ha_get_logs(source='supervisor', slug=…)` for add-on options and its log stream.
-
-Several small file-tool calls beat one clever shell one-liner; if a shell probe is genuinely
-needed, ask for it explicitly and never retry a call that was blocked.
 
 ## 6. Surface → interpreter map (Agent add-on)
 

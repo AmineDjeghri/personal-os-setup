@@ -12,6 +12,9 @@ Update logic:
 - **DELETED by user** (in manifest, absent from user dir): **respected, never re-added**. ← explains
   "missing bundled skills"
 - **REMOVED from bundled** (in manifest, gone from repo): cleaned from manifest.
+- **A newly shipped bundled skill is never written over a same-named local skill**: the sync keeps yours,
+  warns that a bundled version shipped under a name you already own, and baselines the manifest only when
+  the files are byte-identical. Adopting the bundled one is a deliberate `hermes skills reset <name>`.
 
 Opt-out marker: `~/.hermes/.no-bundled-skills` (written by installer `--no-skills` or `hermes
 profile create --no-skills`). When present, sync is a no-op — delete the file to opt back in.
@@ -23,16 +26,6 @@ Curator interplay: bundled + hub-installed skills are off-limits to the curator
 (`tools/skill_usage.py` `off_limits = bundled | hub_installed`); it only marks stale/reactivates.
 User-deleted bundled skills are NOT re-added by sync.
 
-## Repo layout
-
-| Zone | Content | Synced to user dir? |
-|---|---|---|
-| `<repo>/skills/` | bundled skills | Yes (manifest-based) |
-| `<repo>/optional-skills/` | optional skills | No (installed on demand) |
-| `<repo>/plugins/` | bundled plugins (browser, context_engine, cron_providers, dashboard_auth, disk-cleanup, google_meet, hermes-achievements, image_gen, kanban, memory backends, model-providers, observability, platforms, security-guidance, spotify, teams_pipeline, video_gen, web backends) | Loaded from repo; `~/.hermes/plugins/` is for user plugins |
-
-Exact bundled/optional counts drift every release — don't hardcode them here; `skills_list`
-(session tool) or `ls <repo>/skills | wc -l` gets the live number.
 
 ## Running a diff sweep (the reusable technique — rerun this, don't re-paste old output)
 
@@ -54,19 +47,10 @@ MISSING = user-deleted (respected). DIFFERS = stale stock OR user-modified → `
   reinstalling a skill it can't see. Restore is manual: `hermes skills reset <name>` + `hermes
   update` (or copy the dir from `<repo>/skills/`, offline-safe). Optional skills: `hermes skills
   repair-official <name> --restore`.
+  A restored bundled skill comes back **ACTIVE** unless its name is also in `skills.disabled` — recommend
+  disabling it unless the point was reducing prompt size.
 - **Disable** (`hermes skills config` / `skills.disabled:`): same zero runtime cost, reversible,
   keeps edits, still discoverable by the agent. Default recommendation: disable, delete only when
   sure.
 - The curator already auto-prunes stale bundled skills (idle past `stale_after_days`) with backups
   in `.curator_backups/<ts>/` — manual deletion is only needed for "definitely never" calls.
-
-**Approval-gate behavior for audits**: read-only plain-shell one-liners (git fetch, find, diff -rq,
-md5sum, grep) pass the gate; `execute_code` scripts and `python -c`/heredoc scripts get blocked by
-consent timeout. For an audit, prefer read-only shell one-liners and native file tools (read_file /
-search_files / web_extract) over scripted checks — never retry a blocked call.
-
-## Release-note grepping tip
-
-GitHub release JSON via `web_extract` lands as ONE giant line in the cache file —
-`read_file`/grep by line fails. Use `execute_code` with `re.finditer` over the raw text and slice
-`[i-150:i+220]` for context.
