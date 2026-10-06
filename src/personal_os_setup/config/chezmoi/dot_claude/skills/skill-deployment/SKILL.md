@@ -95,6 +95,34 @@ recipe line with `; \` continuations (`fi; \`). Hit while writing `skills-thirdp
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
+**Who deploys what (one split, no overlap):**
+
+- **Authored tree** → chezmoi. `dot_claude/skills/` is ordinary managed files, so `chezmoi apply` writes
+  them; there is deliberately **no `run_` script for the copy** (`make skills-deploy` is the no-chezmoi twin).
+- **npx replay** → the one thing chezmoi cannot do. Script:
+  `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`
+  (plain shell, no template vars). It replays every entry of `third-party-skills.lock.json` with
+  `npx -y skills add <source> -s <name> -a "$AGENT" -g -y --copy`.
+- **make** → `make skills-thirdparty-replay [AGENT=codex]` calls that same script (with `FORCE=1`, so it
+  always replays). Env: `AGENT` (default `claude-code`), `LOCK`, `FORCE`, `STAMP`.
+
+Script behaviour to know:
+
+- **`run_after_`, not `run_onchange_`:** onchange keys on the script's own content, which a template-free
+  file never changes, so a lock edit would never re-fire it. chezmoi runs it every apply; the script
+  hashes the lock (+ `AGENT`) against `~/.cache/personal-os-setup/skills-replay.stamp` and does nothing
+  when unchanged. The stamp is written only after a fully clean run (no `FAIL`, no `SKIP`), so
+  failures are retried — all entries again, not just the failed ones. A failing run makes `chezmoi apply` exit non-zero.
+- **Hand-deleted skills are not restored by a plain apply** (the stamp says "done"); use
+  `make skills-thirdparty-replay` (or delete the stamp).
+- **The lock is found by walking up from `$CHEZMOI_SOURCE_DIR`**, so the chezmoi source must sit inside
+  the repo checkout; a source cloned elsewhere needs `LOCK=<path>` or the script exits 1.
+- **No `npx` (webui container) or Windows → warning on stderr, exit 0.** An unwritable stamp dir only warns.
+- **Lock carve-out:** the lock also holds `claude-code`, `hermes-agent` and `hermes-agent-skill-authoring`
+  (from `NousResearch/hermes-agent`), names Hermes also ships. That is intentional here — they are installed
+  into `~/.claude/skills` only. On a box where Hermes's bundled sync puts them in `~/.hermes/skills`, the
+  name becomes `Ambiguous skill name … Refusing to guess`: run `make skills-status` and remove one copy.
+
 For a third-party repo that ships **only** a `skills/` tree (no plugin manifest per harness). Packs
 that ship their own per-harness plugins (hooks, slash commands) are a different case — see the end
 of this section.

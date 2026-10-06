@@ -8,7 +8,7 @@
       "skillPath": "plugins/differential-review/skills/differential-review/SKILL.md",
       "skillFolderHash": "09ff02c96f84ad4b98184bcd5efae5b218caa910",
       "installedAt": "2026-10-04T01:11:59.596Z",
-      "updatedAt": "2026-10-04T01:11:59.596Z"
+      "updatedAt": "2026-10-06T21:47:45.630Z"
     },
     "find-skills": {
       "source": "vercel-labs/skills",
@@ -17,7 +17,34 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-10-04T01:13:44.242Z",
-      "updatedAt": "2026-10-04T01:13:44.242Z"
+      "updatedAt": "2026-10-06T21:47:46.635Z"
+    },
+    "claude-code": {
+      "source": "NousResearch/hermes-agent",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
+      "skillPath": "skills/autonomous-ai-agents/claude-code/SKILL.md",
+      "skillFolderHash": "cc2e05d23617439d9584568a76cb3b933e21bb24",
+      "installedAt": "2026-10-05T00:46:59.030Z",
+      "updatedAt": "2026-10-06T21:47:42.796Z"
+    },
+    "hermes-agent": {
+      "source": "NousResearch/hermes-agent",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
+      "skillPath": "skills/autonomous-ai-agents/hermes-agent/SKILL.md",
+      "skillFolderHash": "aaeb3f712b639d58478f3e8334139e42160289af",
+      "installedAt": "2026-10-05T00:47:41.166Z",
+      "updatedAt": "2026-10-06T21:48:05.198Z"
+    },
+    "hermes-agent-skill-authoring": {
+      "source": "NousResearch/hermes-agent",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
+      "skillPath": "skills/software-development/hermes-agent-skill-authoring/SKILL.md",
+      "skillFolderHash": "796e6ba601e650c93d8c8b83591078453e3dd602",
+      "installedAt": "2026-10-05T00:48:04.771Z",
+      "updatedAt": "2026-10-06T21:48:29.971Z"
     }
   },
   "dismissed": {}

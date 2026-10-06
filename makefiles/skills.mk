@@ -155,14 +155,9 @@ skills-thirdparty-save: ## Copy the live npx lock into the repo (the record we s
 
 AGENT ?= claude-code
 
-skills-thirdparty-replay: ## Re-install every pack in the committed lock for AGENT (default claude-code), then re-check
+# The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
+THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
-	@test -f "$(THIRD_PARTY_LOCK)" || { printf 'no committed lock at %s\n' "$(THIRD_PARTY_LOCK)"; exit 1; }
-	@command -v npx >/dev/null || { echo "npx is not present (agent container only)"; exit 1; }
-	@for n in $$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK)); do \
-		src=$$(jq -r --arg n "$$n" '$(JQ_TP_SRC)' $(THIRD_PARTY_LOCK)); \
-		if [ -z "$$src" ] || [ "$$src" = "?" ]; then printf 'skip %s: no source recorded\n' "$$n"; continue; fi; \
-		printf 're-add %s from %s\n' "$$n" "$$src"; \
-		npx -y skills add "$$src" -s "$$n" -a $(AGENT) -g -y --copy; \
-	done
+skills-thirdparty-replay: ## Re-install every pack in the committed lock for AGENT (default claude-code), then re-check
+	@AGENT="$(AGENT)" LOCK="$(CURDIR)/$(THIRD_PARTY_LOCK)" FORCE=1 bash $(THIRD_PARTY_REPLAY)
 	@$(MAKE) --no-print-directory skills-thirdparty

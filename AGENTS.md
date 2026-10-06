@@ -87,7 +87,8 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   already reaches Hermes (it reads `~/.claude/skills`), so never add `-a hermes-agent`: two roots
   Hermes reads → `Ambiguous skill name … Refusing to guess`. `-a claude-code -a codex` is safe
   (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
-  disjoint from shipped/deployed ones, and check before installing.
+  disjoint from shipped/deployed ones, and check before installing (the lock's three
+  `NousResearch/hermes-agent` names are a documented exception — see `skill-deployment`).
 - **Three former entries are no longer in this repo:** `skill-creator` was vendored from
   `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name
   collides with it and makes the name **unloadable in Hermes**. `hermes-s6-container-supervision` was
