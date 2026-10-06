@@ -45,6 +45,7 @@ repos:
                    '--exclude-files', '\.(png|gif|zip|jpg|jpeg|ico)$',
                    '--exclude-files', 'uv\.lock',
                    '--exclude-lines','infoHash.*c352d6801679cb6561060988a89458f6728b4377',
+                   '--exclude-lines','"skillFolderHash": "[0-9a-f]{40,}"',
             ]
 
   - repo: https://github.com/commitizen-tools/commitizen

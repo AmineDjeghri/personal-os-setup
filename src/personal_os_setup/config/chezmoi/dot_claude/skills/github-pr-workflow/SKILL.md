@@ -14,15 +14,9 @@ metadata:
 
 # GitHub Pull Request Workflow
 
-Complete guide for managing the PR lifecycle with the `gh` CLI. On a machine without `gh`, see `references/rest-api-fallback.md`.
+Complete guide for managing the PR lifecycle with the `gh` CLI. No `gh`? Install it (see `github-auth`) — fallback: `github-auth/references/rest-api-fallback.md`.
 
-## Prerequisites
-
-- Authenticated with GitHub (see `github-auth` skill — ask to install `gh` if it's missing, that's the
-  default path)
-- Inside a git repository with a GitHub remote
-- `gh` genuinely can't be installed: `references/rest-api-fallback.md` (auth detection, token setup,
-  REST calls)
+Needs `gh` auth (`github-auth` — ask to install `gh` if it's missing) inside a git repository with a GitHub remote.
 
 ## 1. Branch Creation
 
@@ -46,19 +40,12 @@ Branch naming conventions:
 
 ## 2. Making Commits
 
-Use the agent's file tools (`write_file`, `patch`) to make changes, then commit:
-
 ```bash
 # Stage specific files
 git add src/auth.py src/models/user.py tests/test_auth.py
 
 # Commit with a conventional commit message
-git commit -m "feat: add JWT-based user authentication
-
-- Add login/register endpoints
-- Add User model with password hashing
-- Add auth middleware for protected routes
-- Add unit tests for auth flow"
+git commit -m "feat: add JWT-based user authentication"
 ```
 
 Commit message format (Conventional Commits):
@@ -70,10 +57,11 @@ Longer explanation if needed. Wrap at 72 characters.
 
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `chore`, `perf`
 
+Use `!` or a `BREAKING CHANGE:` footer for majors.
+
 Mandatory pre-push checklist: see the `repo-conventions` skill (line endings: see the `git-line-endings` skill).
 
 ## 3. Pushing and Creating a PR
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### Push the Branch (same either way)
 
@@ -98,10 +86,9 @@ gh pr create \
 Closes #42"
 ```
 
-Options: `--draft`, `--reviewer user1,user2`, `--label "enhancement"`, `--base develop`
+Follow-up commits: confirm where the open PR's branch is checked out first (`gh pr list --state open`, `git worktree list`) — never push leftover commits of a branch whose PR is already merged.
 
 ## 4. Monitoring CI Status
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
 ### Check CI Status
 
@@ -116,49 +103,23 @@ gh pr checks --watch
 ```
 
 ## 5. Auto-Fixing CI Failures
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
-
-When CI fails, diagnose and fix. This loop works with either auth method.
-
-### Step 1: Get Failure Details
-
-**With gh:**
 
 ```bash
-# List recent workflow runs on this branch
-gh run list --branch $(git branch --show-current) --limit 5
-
-# View failed logs
-gh run view <RUN_ID> --log-failed
+gh run list --branch $(git branch --show-current) --limit 5   # recent runs on this branch
+gh run view <RUN_ID> --log-failed                            # failed logs
 ```
 
-### Step 2: Fix and Push
+Loop: check CI (`gh pr checks`) → read the failure logs → fix the code → **ask the user for approval to commit, and separately to push** (each is its own per-action approval; never fold `git add`/`git commit`/`git push` into one command) → re-check CI. After 3 failed attempts, stop and ask the user.
 
-After identifying the issue, use file tools (`patch`, `write_file`) to fix it:
-
-```bash
-git add <fixed_files>
-git commit -m "fix: resolve CI failure in <check_name>"
-git push
-```
-
-### Step 3: Verify
-
-Re-check CI status using the commands from Section 4 above.
-
-### Auto-Fix Loop Pattern
-
-When asked to auto-fix CI, follow this loop:
-
-1. Check CI status → identify failures
-2. Read failure logs → understand the error
-3. Use `read_file` + `patch`/`write_file` → fix the code
-4. `git add . && git commit -m "fix: ..." && git push`
-5. Wait for CI → re-check status
-6. Repeat if still failing (up to 3 attempts, then ask the user)
+CI failure facts worth checking:
+- a missing `permissions:` block in the workflow, or secrets that fork PRs never get (by design) — needs the user;
+- a hung job → add `timeout-minutes:` to the step;
+- `ModuleNotFoundError` in CI = a dependency missing in CI;
+- compare the local vs CI Python/Node version.
 
 ## 6. Merging
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
+
+Merging needs the user's per-action approval.
 
 **With gh:**
 
@@ -169,16 +130,3 @@ gh pr merge --squash --delete-branch
 # Enable auto-merge (merges when all checks pass)
 gh pr merge --auto --squash --delete-branch
 ```
-
-## Useful PR Commands Reference
-
-REST equivalents for these commands: `references/rest-api-fallback.md`.
-
-| Action | gh |
-|--------|-----|
-| List my PRs | `gh pr list --author @me` |
-| View PR diff | `gh pr diff` |
-| Add comment | `gh pr comment N --body "..."` |
-| Request review | `gh pr edit N --add-reviewer user` |
-| Close PR | `gh pr close N` |
-| Check out someone's PR | `gh pr checkout N` |

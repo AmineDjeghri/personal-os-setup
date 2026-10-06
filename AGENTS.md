@@ -61,34 +61,40 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 | VM test lab (CachyOS host) | `.claude/skills/vm-lab` |
 | Forking this repo for your own setup | `.claude/skills/fork-and-customize` |
 
-## Skills & plugins — 2-track governance (decision Sep 2026)
+## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
-- **Track 1 — Curated (repo = truth):** skills the user authors, customizes, or pins.
-  Canonical copy in `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (chezmoi
-  source) → deployed to `~/.claude/skills` (= `/config/.claude/skills` on the HA addons).
-  Hermes loads them via `skills.external_dirs`; Claude Code via its global skills dir —
-  one copy, both agents. Changes go through PRs. Currently: `coding-workflow`, `repo-conventions`,
-  `project-templates`, `skill-deployment`, `skill-creator`
-  (vendored from anthropics/skills, Apache-2.0 — keep its `LICENSE.txt`), `github-auth`,
-  `github-code-review`, `github-issue-to-pr`, `github-issues`, `github-repo-management`,
-  `git-line-endings`, `github-actions-trigger-gotchas`, `github-pr-workflow`,
-  `github-community-health-files`.
-- **Track 2 — Managed (tool = truth):** fast-moving third-party suites installed via
-  Claude Code's native marketplace (`claude plugin marketplace add <owner>/<repo>` →
-  `claude plugin install <name>@<marketplace>`), stored in `~/.claude/plugins/`,
-  self-updating (`/plugin update`). NOT committed to this repo; re-register per machine.
-  Hermes never loads plugins (skills are the shared currency). Currently:
-  `superpowers` (obra/superpowers, user scope).
-- **Hermes-only (repo = truth, single-agent):** Hermes-authored skills that Claude Code must
-  NOT read. Canonical copy in `src/personal_os_setup/config/chezmoi/dot_hermes/skills/<category>/<skill>/`
-  → deployed to `~/.hermes/skills` by the same `make skills-deploy`. Deployed names are
-  Curator-protected (`hermes curator pin <skill>` per machine after deploy) — see
-  `.claude/skills/skill-deployment`. Includes `hermes-coding-workflow`, which keeps only the
-  orchestration/delegation rules (division of labor, briefing, verification) — the agent-agnostic
-  plan/confirm/review/PR workflow stays shared in Track 1's `coding-workflow`.
-- **Decision rule:** want to control/customize/pin a version → **Track 1** (vendor into
-  the chezmoi source). Want upstream's latest automatically → **Track 2** (plugin).
-  Never hand-copy a Track-2 suite into Track 1 — it fights its own update mechanism.
+- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-deploy`).
+  Hermes reads `~/.claude/skills` too (`skills.external_dirs`), so nothing is duplicated into
+  `~/.hermes/skills` — a name in both roots is unloadable (`Ambiguous skill name … Refusing to guess`);
+  `make skills-status` flags it. The saved set is listed in `skills.keep`; save a live skill into the
+  repo with `make skills-keep NAME=<name>`.
+- **Private content stays out:** an `exposure: private` skill is live only (`hermes curator pin`) —
+  **this repo is PUBLIC**.
+- **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;
+  `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the
+  lock (`~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-save`;
+  `make skills-thirdparty-replay [AGENT=codex]` reinstalls).
+- **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
+  own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).
+  Agent-created (Curator) skills are live only until triaged: promote, pin-private, or delete.
+
+- **Corollaries:** no third-party pack vendored as a copy; no upstream-shipped skill forked into
+  the repo; no agent-created name left untriaged. **One canal per pack per agent** — never plugin
+  *and* npx for the same agent (the model then sees one name twice).
+- **Transport for our own content is git + `make` only** — our skills never go through npx, a
+  plugin, or a lock file; a tool that owns a directory must not own ours.
+- **npx targeting — one name must be reachable by each agent exactly once.** `-a claude-code` alone
+  already reaches Hermes (it reads `~/.claude/skills`), so never add `-a hermes-agent`: two roots
+  Hermes reads → `Ambiguous skill name … Refusing to guess`. `-a claude-code -a codex` is safe
+  (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
+  disjoint from shipped/deployed ones, and check before installing (the lock's three
+  `NousResearch/hermes-agent` names are a documented exception — see `skill-deployment`).
+- **Three former entries are no longer in this repo:** `skill-creator` was vendored from
+  `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name
+  collides with it and makes the name **unloadable in Hermes**. `hermes-s6-container-supervision` was
+  a stale fork of the agent's official optional skill and is now installed from there instead
+  (`hermes skills repair-official <name> --restore --yes`), not from this repo.
+  `nicegui-frontend-testing` was removed as unused.
 - **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
   put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
   see `.claude/skills/skill-deployment`.
