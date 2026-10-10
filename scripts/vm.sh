@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # KVM/QEMU/libvirt VM helper for `make vm-*` targets. Linux host only.
 #
-# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|windows|list|clean}
+# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|windows|macos|list|clean}
 set -euo pipefail
 
 # A venv on PATH breaks virt-install's python3 shebang (no system PyGObject).
@@ -40,6 +40,12 @@ WIN_ISO="${WIN_ISO:-}"
 WIN_ISO_SHA256="${WIN_ISO_SHA256:-}"
 WIN_VERSION="${WIN_VERSION:-11}"
 WIN_DISK_GB="${WIN_DISK_GB:-80}"
+
+# macOS guest (`make vm-macos`) -- Quickemu, not libvirt; see cmd_macos.
+#   MACOS_VERSION  mojave catalina big-sur monterey ventura sonoma sequoia tahoe (default: sequoia --
+#                  CI tests on `macos-latest`, and sequoia is a current, still-supported release)
+MACOS_VERSION="${MACOS_VERSION:-sequoia}"
+MACOS_DIR="$VM_DIR/macos"
 
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -376,6 +382,67 @@ cmd_windows() {
         "${tpm_args[@]}"
 }
 
+# macOS can't go through virt-install: guests need the OpenCore bootloader plus Apple's recovery
+# image, which Quickemu (a QEMU wrapper, NOT libvirt) automates. `quickget macos <release>` fetches
+# both (and OVMF firmware) into ./macos-<release>/ and writes ./macos-<release>.conf; `quickemu
+# --vm <conf>` then runs it as a plain QEMU process under your user.
+#
+# Design decisions:
+#  * Everything lives under .vm/macos/ (quickget/quickemu run with that as cwd), so `make vm-clean`
+#    wipes it. The recovery image is inside the guest dir, so a clean means a re-download.
+#  * Because it is not libvirt-managed, the guest is invisible to `make vm-list` (virsh only), has
+#    no virt-manager/virsh entry, and ensure_hypervisor_access is not needed. Upstream has no
+#    supported import into libvirt (quickemu issue #437), so none is attempted here.
+#  * Quickemu is a manual install (see require_quickemu), deliberately not part of `make vm-deps`.
+#  * Limits (Quickemu's own): no GPU acceleration; virtio-net/ballooning only on Big Sur+; native
+#    virtio-sound on Monterey+; SPICE copy/paste is unavailable on macOS. CPU: SSE4.1 for Sierra+,
+#    AVX2 for Ventura+. Some AMD Ryzen mobile CPUs (Renoir/Cezanne, some Zen4 mobile) have an
+#    unstable TSC on Ventura+ -- the Quickemu wiki's macOS page documents a `tsc=reliable`
+#    workaround, and `qe_mac_apid` for Apple-ID/App-Store serial randomization.
+#  * Apple's EULA restricts macOS guests to Apple hardware -- whether that matters is your call.
+require_quickemu() {
+    local bin
+    for bin in quickemu quickget; do
+        command -v "$bin" >/dev/null 2>&1 && continue
+        if command -v pacman >/dev/null 2>&1; then
+            die "$bin not found -- Quickemu isn't part of 'make vm-deps'; install it from the AUR with: paru -S quickemu"
+        fi
+        die "$bin not found -- Quickemu isn't part of 'make vm-deps'; install it for your distro by following the install section of https://github.com/quickemu-project/quickemu"
+    done
+}
+
+cmd_macos() {
+    case "$MACOS_VERSION" in
+    mojave | catalina | big-sur | monterey | ventura | sonoma | sequoia | tahoe) ;;
+    *) die "MACOS_VERSION must be one of: mojave catalina big-sur monterey ventura sonoma sequoia tahoe (got '$MACOS_VERSION')" ;;
+    esac
+    require_quickemu
+
+    grep -qw sse4_1 /proc/cpuinfo 2>/dev/null || die "this CPU doesn't report SSE4.1, which macOS guests need"
+    case "$MACOS_VERSION" in
+    ventura | sonoma | sequoia | tahoe)
+        grep -qw avx2 /proc/cpuinfo 2>/dev/null || die "macOS $MACOS_VERSION guests need AVX2 and this CPU doesn't report it -- try MACOS_VERSION=monterey (or older)"
+        ;;
+    esac
+
+    local conf="macos-$MACOS_VERSION.conf"
+    mkdir -p "$MACOS_DIR"
+    cd "$MACOS_DIR"
+
+    if [ -f "$conf" ]; then
+        ok "cached: $MACOS_DIR/$conf"
+    else
+        log "fetching macOS $MACOS_VERSION via quickget (Apple's multi-GB recovery image + OpenCore) into $MACOS_DIR"
+        quickget macos "$MACOS_VERSION"
+        [ -f "$conf" ] || die "quickget finished but $MACOS_DIR/$conf is missing -- check its output above"
+        log "first boot lands in macOS Recovery: erase the virtual disk in Disk Utility, then choose 'Reinstall macOS'"
+        log "Ventura+ hangs on some AMD Ryzen mobile CPUs (unstable TSC) -- see the macOS page of the Quickemu wiki"
+    fi
+
+    log "starting macOS $MACOS_VERSION with quickemu (a window opens; this is not listed by 'make vm-list')"
+    quickemu --vm "$conf"
+}
+
 cmd_list() {
     virsh list --all --name 2>/dev/null | grep "^${NAME_PREFIX}" || echo "(no ${NAME_PREFIX}* VMs)"
 }
@@ -388,7 +455,13 @@ cmd_clean() {
         virsh undefine "$name" --nvram --tpm >/dev/null 2>&1 || virsh undefine "$name" --nvram >/dev/null 2>&1 || virsh undefine "$name" >/dev/null 2>&1 || true
     done
     rm -rf "$DISK_DIR" "$SEED_DIR"
-    ok "VM disks and cloud-init seeds wiped. Cached ISOs kept in $ISO_DIR."
+    # The Quickemu macOS guest is plain QEMU, not libvirt, so the loop above never saw it.
+    if pgrep -f -- "$MACOS_DIR" >/dev/null 2>&1; then
+        log "macOS guest (Quickemu) is still running -- shut it down, then re-run to wipe $MACOS_DIR"
+    else
+        rm -rf "$MACOS_DIR"
+    fi
+    ok "VM disks, cloud-init seeds and the Quickemu macOS guest wiped. Cached ISOs kept in $ISO_DIR."
 }
 
 cmd_clean_isos() {
@@ -460,10 +533,11 @@ ubuntu-desktop) cmd_ubuntu_desktop ;;
 ubuntu-server-manual) cmd_ubuntu_server_manual ;;
 ubuntu-server-auto) cmd_ubuntu_server_auto ;;
 windows) cmd_windows ;;
+macos) cmd_macos ;;
 list) cmd_list ;;
 clean) cmd_clean ;;
 clean-isos) cmd_clean_isos ;;
 ufw-allow) cmd_ufw_allow ;;
 ufw-revert) cmd_ufw_revert ;;
-*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|windows|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
+*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|windows|macos|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
 esac

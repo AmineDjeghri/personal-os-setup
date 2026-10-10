@@ -80,3 +80,40 @@ sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sud
 
 - Some apps do not have import/export settings and require manual configuration (e.g. Ice, AltTab).
 - Some apps might need manual installation (e.g. Badgeify).
+
+
+## 6. Testing the macOS flow in a VM
+
+You can exercise the macOS flow (the app's darwin tasks drive Homebrew) end to end in a disposable VM from a Linux host,
+with [Quickemu](https://github.com/quickemu-project/quickemu) — **not** libvirt, so this works differently from the other
+`make vm-*` targets. The caveats (CPU requirements, no GPU acceleration, why `make vm-list` doesn't show it, the Apple
+EULA) are listed in [Testing this project in a VM](../linux/CachyOS.md#testing-this-project-in-a-vm).
+
+1. Install Quickemu on the Linux host once (it isn't part of `make vm-deps`): `paru -S quickemu` on Arch/CachyOS, or the
+   install section of its README elsewhere.
+2. Download and boot the guest (several GB from Apple; a window opens; pick another release with
+   `MACOS_VERSION=sonoma`):
+   ```bash
+   make vm-macos
+   ```
+   First boot lands in macOS Recovery: erase the virtual disk in *Disk Utility*, then *Reinstall macOS* and click through
+   Setup Assistant. Re-running `make vm-macos` later just starts the existing guest again.
+3. Inside the guest, open Terminal and install the **Command Line Tools** (they provide `git` and `make`, which
+   `install_unix.sh` needs):
+   ```bash
+   xcode-select --install
+   ```
+4. Install **Homebrew** (the app finds it via `PATH`, and its macOS package tasks report `brew` as missing without it):
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   The guest is Intel (x86_64), so Homebrew installs under `/usr/local`. Open a new Terminal tab and check
+   `brew --version` before going on.
+5. Run the app with the one-liner from the [README](../../README.md#linux--wsl2--macos) (it clones the repo into
+   `~/.personal-os-setup`, runs `make install` and `make run`), then use `personal-os-setup` for later runs. Exercise the
+   Packages tab (brew formulae/casks), the Zsh and dotfiles sections, etc.
+6. `make vm-clean` deletes the guest and its disk (`.vm/macos/`) — including Apple's recovery image, which the next
+   `make vm-macos` downloads again.
+
+The automated half of this lives in CI: the `integration-macos` job runs the integration tests on a hosted `macos-latest`
+runner. The VM is for the click-through parts CI doesn't cover.
