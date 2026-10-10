@@ -5,7 +5,6 @@ runs:
   using: 'composite'
   steps:
 
-    # Linux/macOS: the Makefile drives everything (install uv, then uv sync).
     - name: Install Python Dependencies
       if: runner.os != 'Windows'
       shell: bash
@@ -13,9 +12,7 @@ runs:
         make install-uv
         make install-dev
 
-    # Windows: windows-latest ships neither GNU make nor uv (see the runner-images manifest),
-    # so install uv with the official action and run what `make install-dev` runs.
-    # setup-uv has no floating major tag (only vX.Y.Z), so it must be pinned exactly.
+    # windows-latest has no GNU make/uv: pin setup-uv (no floating major tag), then run what `make install-dev` runs.
     - name: Install uv (Windows)
       if: runner.os == 'Windows'
       uses: astral-sh/setup-uv@v10.3.0

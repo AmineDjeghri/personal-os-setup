@@ -425,8 +425,8 @@ macOS guests need the OpenCore bootloader plus Apple's recovery image; `quickget
   import into libvirt ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)), so the two worlds stay split.
 - **`make vm-clean` does wipe it** (`.vm/macos/`), including the recovery image — the next `make vm-macos` downloads it again.
   If the guest is still running, `vm-clean` leaves it alone and tells you to shut it down first.
-- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; the default is `sequoia` (override with
-  `MACOS_VERSION`), picked because the app's CI tests on `macos-latest`. First boot lands in macOS Recovery: erase the
+- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; the default is `tahoe` (macOS 26, what
+  `macos-latest` currently runs in CI; override with `MACOS_VERSION`). First boot lands in macOS Recovery: erase the
   virtual disk in Disk Utility, then *Reinstall macOS*.
 - CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo` first). Some AMD Ryzen mobile CPUs
   (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a

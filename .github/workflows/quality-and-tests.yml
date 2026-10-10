@@ -131,8 +131,7 @@ jobs:
       - name: Install Python Dependencies
         uses: ./.github/actions/install-python-deps
 
-      # windows-latest has no GNU make (MSYS2 is on disk but not on PATH), so call pytest
-      # directly instead of `make test-integration`. Git Bash is preinstalled -> shell: bash.
+      # windows-latest has no GNU make on PATH, so run pytest directly instead of `make test-integration`.
       - name: Run Integration Tests
         id: integration_tests_windows
         shell: bash

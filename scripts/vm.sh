@@ -31,20 +31,14 @@ NAME_PREFIX="pos-"
 AUTOINSTALL_USER="${AUTOINSTALL_USER:-pos-dev}"
 AUTOINSTALL_PASSWORD="${AUTOINSTALL_PASSWORD:-$AUTOINSTALL_USER}"
 
-# Windows guest (`make vm-windows`) -- see cmd_windows for the reasoning behind these defaults.
-#   WIN_ISO         (required) path to a Windows ISO you downloaded yourself
-#   WIN_ISO_SHA256  (optional) checksum from Microsoft's download page, verified when set
-#   WIN_VERSION     11 (default: UEFI + Secure Boot + emulated TPM 2.0) or 10 (no TPM needed)
-#   WIN_DISK_GB     virtual disk size, default 80 (Windows 11 setup refuses disks under 64 GB)
+# `make vm-windows` knobs: WIN_ISO (required), WIN_ISO_SHA256 (verified when set), WIN_VERSION 11|10, WIN_DISK_GB.
 WIN_ISO="${WIN_ISO:-}"
 WIN_ISO_SHA256="${WIN_ISO_SHA256:-}"
 WIN_VERSION="${WIN_VERSION:-11}"
 WIN_DISK_GB="${WIN_DISK_GB:-80}"
 
-# macOS guest (`make vm-macos`) -- Quickemu, not libvirt; see cmd_macos.
-#   MACOS_VERSION  mojave catalina big-sur monterey ventura sonoma sequoia tahoe (default: sequoia --
-#                  CI tests on `macos-latest`, and sequoia is a current, still-supported release)
-MACOS_VERSION="${MACOS_VERSION:-sequoia}"
+# `make vm-macos`: the default release tracks what `macos-latest` currently runs in CI (macOS 26 = tahoe).
+MACOS_VERSION="${MACOS_VERSION:-tahoe}"
 MACOS_DIR="$VM_DIR/macos"
 
 YELLOW='\033[0;33m'
@@ -301,25 +295,8 @@ EOF
         --boot uefi
 }
 
-# Windows can't be fetched automatically: Microsoft's licence/download flow needs a browser
-# session and the URLs expire, so (unlike the Linux guests) the ISO is supplied by the user via
-# WIN_ISO and only copied into the .vm/ cache so libvirt's QEMU user can read it.
-#
-# Design decisions (all chosen so the plain Microsoft ISO boots with NO extra download):
-#  * Windows 11 (default) needs UEFI + Secure Boot capability + TPM 2.0. libvirt provides all
-#    three without touching the guest: OVMF with Microsoft keys enrolled (secure-boot +
-#    enrolled-keys firmware features, libvirt >= 7.2) and swtpm as an emulated tpm-crb 2.0
-#    device. This avoids the LabConfig/registry bypass hacks during setup.
-#  * Windows 10 (WIN_VERSION=10) is only a fallback for hosts without swtpm: it boots with
-#    plain UEFI and no TPM. It is past Microsoft's end of support, so prefer 11.
-#  * Disk = SATA and NIC = e1000e, video = vga: Windows ships inbox drivers for AHCI and the
-#    Intel e1000e, so setup sees the disk and has network with no driver ISO. virtio disk/net
-#    (virtio-win) is faster, but its driver ISO is a separate download and the disk driver has
-#    to be loaded by hand in the installer, so it is deliberately NOT the default path.
-#  * Disk is 80 GB (qcow2, sparse): Windows 11 setup rejects disks smaller than 64 GB, which
-#    the 40 GB used for the Linux guests would trip.
-#  * No --noreboot (unlike the Linux guests): Windows setup reboots several times, and virt-install
-#    must restart the domain itself after the first one instead of leaving it powered off.
+# Win 11 needs UEFI + Secure Boot + TPM 2.0 (OVMF + swtpm); SATA disk + e1000e NIC use inbox drivers (no virtio-win ISO).
+# 80 GB because setup rejects disks < 64 GB; no --noreboot because setup reboots several times.
 cmd_windows() {
     local name="${NAME_PREFIX}windows"
     start_if_exists "$name" && return 0
@@ -382,24 +359,8 @@ cmd_windows() {
         "${tpm_args[@]}"
 }
 
-# macOS can't go through virt-install: guests need the OpenCore bootloader plus Apple's recovery
-# image, which Quickemu (a QEMU wrapper, NOT libvirt) automates. `quickget macos <release>` fetches
-# both (and OVMF firmware) into ./macos-<release>/ and writes ./macos-<release>.conf; `quickemu
-# --vm <conf>` then runs it as a plain QEMU process under your user.
-#
-# Design decisions:
-#  * Everything lives under .vm/macos/ (quickget/quickemu run with that as cwd), so `make vm-clean`
-#    wipes it. The recovery image is inside the guest dir, so a clean means a re-download.
-#  * Because it is not libvirt-managed, the guest is invisible to `make vm-list` (virsh only), has
-#    no virt-manager/virsh entry, and ensure_hypervisor_access is not needed. Upstream has no
-#    supported import into libvirt (quickemu issue #437), so none is attempted here.
-#  * Quickemu is a manual install (see require_quickemu), deliberately not part of `make vm-deps`.
-#  * Limits (Quickemu's own): no GPU acceleration; virtio-net/ballooning only on Big Sur+; native
-#    virtio-sound on Monterey+; SPICE copy/paste is unavailable on macOS. CPU: SSE4.1 for Sierra+,
-#    AVX2 for Ventura+. Some AMD Ryzen mobile CPUs (Renoir/Cezanne, some Zen4 mobile) have an
-#    unstable TSC on Ventura+ -- the Quickemu wiki's macOS page documents a `tsc=reliable`
-#    workaround, and `qe_mac_apid` for Apple-ID/App-Store serial randomization.
-#  * Apple's EULA restricts macOS guests to Apple hardware -- whether that matters is your call.
+# Quickemu is a QEMU wrapper, not libvirt: the guest lives under .vm/macos/ so `vm-clean` wipes it and `vm-list` never shows it.
+# CPU requirements, limits and the Apple EULA note: docs/linux/CachyOS.md#testing-this-project-in-a-vm.
 require_quickemu() {
     local bin
     for bin in quickemu quickget; do

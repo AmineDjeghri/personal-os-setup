@@ -1,12 +1,12 @@
 # Virtual machine targets (KVM/QEMU/libvirt) for testing this app in a clean OS.
 # Linux host only, any distro -- vm-deps auto-detects pacman/apt/dnf.
 # VM disks/ISOs are cached under .vm/ (gitignored); see scripts/vm.sh for the logic.
-# Exception: vm-macos is Quickemu (plain QEMU), not libvirt -- Quickemu is a manual install, not part of vm-deps.
+# vm-macos is Quickemu (plain QEMU, not libvirt) and a manual install, not part of vm-deps.
 
 .PHONY: vm-deps vm-cachyos vm-ubuntu-server vm-ubuntu-server-manual vm-ubuntu vm-windows vm-macos vm-list vm-clean vm-clean-isos vm-ufw-allow vm-ufw-revert
 
 # Package names mirror packages.yaml's Dev_tools VM entries (cachyos/ubuntu/debian) -- keep in sync.
-# swtpm (+ swtpm-tools where split out) is the emulated TPM 2.0 the Windows 11 guest (vm-windows) needs.
+# swtpm is the emulated TPM 2.0 for vm-windows.
 vm-deps: ## Verify qemu/libvirt/virt-manager are installed and enable libvirtd
 	@echo "${YELLOW}=========> checking qemu/libvirt/virt-manager are installed ${NC}"
 	@if command -v pacman >/dev/null 2>&1; then \
@@ -51,7 +51,7 @@ vm-ubuntu: ## Create/start an Ubuntu Desktop 26.04 VM (manual ISO install, GUI c
 vm-windows: ## Create/start a Windows VM from YOUR ISO: WIN_ISO=/path/to.iso make vm-windows (UEFI+TPM, GUI console)
 	@./scripts/vm.sh windows
 
-vm-macos: ## Create/start a macOS guest via Quickemu (not libvirt, not in vm-list): MACOS_VERSION=sonoma make vm-macos (default sequoia)
+vm-macos: ## Create/start a macOS guest via Quickemu (not libvirt, not in vm-list): MACOS_VERSION=sonoma make vm-macos (default tahoe = macos-latest)
 	@./scripts/vm.sh macos
 
 vm-list: ## List this project's libvirt VMs and their state (the Quickemu macOS guest is not shown)
