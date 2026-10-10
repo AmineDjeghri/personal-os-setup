@@ -116,3 +116,31 @@ jobs:
       - name: Cleanup Artifacts
         if: always()
         uses: ./.github/actions/cleanup-artifacts
+
+  integration-windows:
+    name: "🪟 Integration Tests (Windows latest)"
+    runs-on: windows-latest
+    needs: pre-commit
+    timeout-minutes: 20
+    steps:
+      - name: Check Out
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install Python Dependencies
+        uses: ./.github/actions/install-python-deps
+
+      # windows-latest has no GNU make (MSYS2 is on disk but not on PATH), so call pytest
+      # directly instead of `make test-integration`. Git Bash is preinstalled -> shell: bash.
+      - name: Run Integration Tests
+        id: integration_tests_windows
+        shell: bash
+        run: |
+          echo "::group::Integration tests output"
+          uv run pytest tests/integration -v
+          echo "::endgroup::"
+
+      - name: Cleanup Artifacts
+        if: always()
+        uses: ./.github/actions/cleanup-artifacts

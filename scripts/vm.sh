@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # KVM/QEMU/libvirt VM helper for `make vm-*` targets. Linux host only.
 #
-# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|list|clean}
+# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|windows|list|clean}
 set -euo pipefail
 
 # A venv on PATH breaks virt-install's python3 shebang (no system PyGObject).
@@ -30,6 +30,16 @@ NAME_PREFIX="pos-"
 # (password falls back to the resolved user value when left unset)
 AUTOINSTALL_USER="${AUTOINSTALL_USER:-pos-dev}"
 AUTOINSTALL_PASSWORD="${AUTOINSTALL_PASSWORD:-$AUTOINSTALL_USER}"
+
+# Windows guest (`make vm-windows`) -- see cmd_windows for the reasoning behind these defaults.
+#   WIN_ISO         (required) path to a Windows ISO you downloaded yourself
+#   WIN_ISO_SHA256  (optional) checksum from Microsoft's download page, verified when set
+#   WIN_VERSION     11 (default: UEFI + Secure Boot + emulated TPM 2.0) or 10 (no TPM needed)
+#   WIN_DISK_GB     virtual disk size, default 80 (Windows 11 setup refuses disks under 64 GB)
+WIN_ISO="${WIN_ISO:-}"
+WIN_ISO_SHA256="${WIN_ISO_SHA256:-}"
+WIN_VERSION="${WIN_VERSION:-11}"
+WIN_DISK_GB="${WIN_DISK_GB:-80}"
 
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -285,6 +295,87 @@ EOF
         --boot uefi
 }
 
+# Windows can't be fetched automatically: Microsoft's licence/download flow needs a browser
+# session and the URLs expire, so (unlike the Linux guests) the ISO is supplied by the user via
+# WIN_ISO and only copied into the .vm/ cache so libvirt's QEMU user can read it.
+#
+# Design decisions (all chosen so the plain Microsoft ISO boots with NO extra download):
+#  * Windows 11 (default) needs UEFI + Secure Boot capability + TPM 2.0. libvirt provides all
+#    three without touching the guest: OVMF with Microsoft keys enrolled (secure-boot +
+#    enrolled-keys firmware features, libvirt >= 7.2) and swtpm as an emulated tpm-crb 2.0
+#    device. This avoids the LabConfig/registry bypass hacks during setup.
+#  * Windows 10 (WIN_VERSION=10) is only a fallback for hosts without swtpm: it boots with
+#    plain UEFI and no TPM. It is past Microsoft's end of support, so prefer 11.
+#  * Disk = SATA and NIC = e1000e, video = vga: Windows ships inbox drivers for AHCI and the
+#    Intel e1000e, so setup sees the disk and has network with no driver ISO. virtio disk/net
+#    (virtio-win) is faster, but its driver ISO is a separate download and the disk driver has
+#    to be loaded by hand in the installer, so it is deliberately NOT the default path.
+#  * Disk is 80 GB (qcow2, sparse): Windows 11 setup rejects disks smaller than 64 GB, which
+#    the 40 GB used for the Linux guests would trip.
+#  * No --noreboot (unlike the Linux guests): Windows setup reboots several times, and virt-install
+#    must restart the domain itself after the first one instead of leaving it powered off.
+cmd_windows() {
+    local name="${NAME_PREFIX}windows"
+    start_if_exists "$name" && return 0
+    ensure_dirs
+    ensure_hypervisor_access
+    require_bin virt-install
+
+    case "$WIN_VERSION" in
+    11 | 10) ;;
+    *) die "WIN_VERSION must be 11 or 10 (got '$WIN_VERSION')" ;;
+    esac
+    [ -n "$WIN_ISO" ] || die "WIN_ISO is not set. Windows ISOs can't be downloaded automatically (Microsoft licensing) -- download one from https://www.microsoft.com/software-download/ and re-run with: WIN_ISO=/path/to/windows.iso make vm-windows"
+    [ -f "$WIN_ISO" ] || die "WIN_ISO='$WIN_ISO' is not a file -- download a Windows ISO from https://www.microsoft.com/software-download/ and point WIN_ISO at it"
+
+    if [ -n "$WIN_ISO_SHA256" ]; then
+        local actual
+        actual="$(sha256sum "$WIN_ISO" | awk '{print $1}')"
+        [ "${actual,,}" = "${WIN_ISO_SHA256,,}" ] || die "checksum mismatch for $WIN_ISO (expected $WIN_ISO_SHA256, got $actual)"
+        ok "checksum ok: $(basename "$WIN_ISO")"
+    else
+        log "WIN_ISO_SHA256 not set -- the ISO is not verified. Microsoft lists the SHA-256 on its download page."
+    fi
+
+    local iso_path
+    iso_path="$ISO_DIR/$(basename "$WIN_ISO")"
+    if [ -s "$iso_path" ] && [ "$(stat -c %s "$iso_path")" = "$(stat -c %s "$WIN_ISO")" ]; then
+        ok "cached: $iso_path"
+    else
+        log "copying $WIN_ISO into $ISO_DIR (so libvirt can read it)"
+        cp --reflink=auto "$WIN_ISO" "$iso_path.part"
+        mv "$iso_path.part" "$iso_path"
+    fi
+
+    # Arrays are never empty, so they stay safe under `set -u` on older bash.
+    local boot_args tpm_args osinfo
+    if [ "$WIN_VERSION" = "11" ]; then
+        require_bin swtpm
+        require_bin swtpm_setup
+        boot_args=(--boot "uefi,firmware.secure-boot=yes,firmware.enrolled-keys=yes")
+        tpm_args=(--tpm "backend.type=emulator,backend.version=2.0,model=tpm-crb")
+        osinfo="detect=on,name=win11,require=off"
+    else
+        boot_args=(--boot uefi)
+        tpm_args=(--tpm none)
+        osinfo="detect=on,name=win10,require=off"
+    fi
+
+    log "creating $name (Windows $WIN_VERSION, manual install -- a GUI console window will open)"
+    log "click into the console and press a key at 'Press any key to boot from CD or DVD' (it times out after a few seconds)"
+    virt-install \
+        --name "$name" \
+        --memory "$RAM_MB" --vcpus "$VCPUS" \
+        --disk "path=$DISK_DIR/$name.qcow2,size=$WIN_DISK_GB,format=qcow2,bus=sata" \
+        --cdrom "$iso_path" \
+        --osinfo "$osinfo" \
+        --network network=default,model=e1000e \
+        --graphics spice --video vga \
+        --clock offset=localtime \
+        "${boot_args[@]}" \
+        "${tpm_args[@]}"
+}
+
 cmd_list() {
     virsh list --all --name 2>/dev/null | grep "^${NAME_PREFIX}" || echo "(no ${NAME_PREFIX}* VMs)"
 }
@@ -294,7 +385,7 @@ cmd_clean() {
     for name in $(virsh list --all --name 2>/dev/null | grep "^${NAME_PREFIX}" || true); do
         log "destroying $name"
         virsh destroy "$name" >/dev/null 2>&1 || true
-        virsh undefine "$name" --nvram >/dev/null 2>&1 || virsh undefine "$name" >/dev/null 2>&1 || true
+        virsh undefine "$name" --nvram --tpm >/dev/null 2>&1 || virsh undefine "$name" --nvram >/dev/null 2>&1 || virsh undefine "$name" >/dev/null 2>&1 || true
     done
     rm -rf "$DISK_DIR" "$SEED_DIR"
     ok "VM disks and cloud-init seeds wiped. Cached ISOs kept in $ISO_DIR."
@@ -368,10 +459,11 @@ cachyos) cmd_cachyos ;;
 ubuntu-desktop) cmd_ubuntu_desktop ;;
 ubuntu-server-manual) cmd_ubuntu_server_manual ;;
 ubuntu-server-auto) cmd_ubuntu_server_auto ;;
+windows) cmd_windows ;;
 list) cmd_list ;;
 clean) cmd_clean ;;
 clean-isos) cmd_clean_isos ;;
 ufw-allow) cmd_ufw_allow ;;
 ufw-revert) cmd_ufw_revert ;;
-*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
+*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|windows|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
 esac

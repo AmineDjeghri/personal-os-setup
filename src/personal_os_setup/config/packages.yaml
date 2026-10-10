@@ -14,6 +14,8 @@ packages:
         - dnsmasq-base # provides dnsmasq for libvirt networking
         - ovmf # provides UEFI firmware for VMs
         - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
+        - swtpm # emulated TPM 2.0 for the Windows 11 VM (`make vm-windows`)
+        - swtpm-tools # provides swtpm_setup, used by libvirt to initialise the TPM
       terminal_tools:
         - git
         - curl
@@ -57,6 +59,8 @@ packages:
         - dnsmasq-base # provides dnsmasq for libvirt networking
         - ovmf # provides UEFI firmware for VMs
         - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
+        - swtpm # emulated TPM 2.0 for the Windows 11 VM (`make vm-windows`)
+        - swtpm-tools # provides swtpm_setup, used by libvirt to initialise the TPM
       terminal_tools:
         - git
         - curl
@@ -170,6 +174,7 @@ packages:
         - dnsmasq
         - edk2-ovmf
         - cloud-image-utils
+        - swtpm # emulated TPM 2.0 (+ swtpm_setup) for the Windows 11 VM (`make vm-windows`)
 
       terminal_tools:
         - git

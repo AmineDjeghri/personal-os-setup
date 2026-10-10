@@ -390,13 +390,14 @@ each. On CachyOS and Ubuntu those packages are also in `packages.yaml`, so you c
 from the app's own Packages tab instead of manually.
 
 ```bash
-make vm-deps            # verify qemu/libvirt/virt-manager/virt-viewer are installed, enable libvirtd
+make vm-deps            # verify qemu/libvirt/virt-manager/virt-viewer/swtpm are installed, enable libvirtd
                          # (install any missing ones from the app's Packages tab first, if available for your distro)
 
 make vm-cachyos          # CachyOS VM -- manual ISO install, GUI console opens automatically
 make vm-ubuntu-server    # Ubuntu Server 26.04 -- unattended autoinstall, no clicking needed
 make vm-ubuntu-server-manual  # same ISO, manual click-through install
 make vm-ubuntu           # Ubuntu Desktop 26.04 -- manual install
+WIN_ISO=/path/to/windows.iso make vm-windows  # Windows 11 (UEFI + Secure Boot + emulated TPM) -- manual install, you supply the ISO
 
 make vm-list             # list this project's VMs and their state
 make vm-clean            # destroy/undefine all this project's VMs, wipe disks (keeps cached ISOs)
@@ -406,6 +407,12 @@ make vm-clean-isos       # delete cached install ISOs too (re-downloaded on next
 Re-running a `vm-*` target on a VM that already exists just starts it and reopens the GUI
 console instead of recreating it. Everything (ISOs, disk images, cloud-init seeds) is cached
 under `.vm/` (gitignored) — repo-local, so deleting the repo also cleans it all up.
+
+**`make vm-windows` is the one target that can't download its own ISO** (Microsoft licensing): get a Windows ISO from
+[Microsoft's download page](https://www.microsoft.com/software-download/) and pass it as `WIN_ISO`. It boots from that ISO alone — no
+driver ISO needed (SATA disk + e1000e NIC use Windows' inbox drivers). Optional env vars: `WIN_ISO_SHA256` (verify the ISO),
+`WIN_VERSION=10` (fallback without TPM; default is `11`), `WIN_DISK_GB` (default `80`, Windows 11 needs ≥ 64). The full
+end-to-end walkthrough is in [Testing the Windows flow in a VM](../windows_workflow/README.md#5-testing-the-windows-flow-in-a-vm).
 
 **If a VM has no internet access during install**, it's very likely your host's firewall
 blocking NAT'd VM traffic on libvirt's `virbr0` bridge, even though libvirt sets up its own

@@ -2,23 +2,24 @@
 # Linux host only, any distro -- vm-deps auto-detects pacman/apt/dnf.
 # VM disks/ISOs are cached under .vm/ (gitignored); see scripts/vm.sh for the logic.
 
-.PHONY: vm-deps vm-cachyos vm-ubuntu-server vm-ubuntu-server-manual vm-ubuntu vm-list vm-clean vm-clean-isos vm-ufw-allow vm-ufw-revert
+.PHONY: vm-deps vm-cachyos vm-ubuntu-server vm-ubuntu-server-manual vm-ubuntu vm-windows vm-list vm-clean vm-clean-isos vm-ufw-allow vm-ufw-revert
 
-# Package names mirror packages.yaml's Dev_tools VM entries (cachyos/ubuntu) -- keep in sync.
+# Package names mirror packages.yaml's Dev_tools VM entries (cachyos/ubuntu/debian) -- keep in sync.
+# swtpm (+ swtpm-tools where split out) is the emulated TPM 2.0 the Windows 11 guest (vm-windows) needs.
 vm-deps: ## Verify qemu/libvirt/virt-manager are installed and enable libvirtd
 	@echo "${YELLOW}=========> checking qemu/libvirt/virt-manager are installed ${NC}"
 	@if command -v pacman >/dev/null 2>&1; then \
-		pkgs="qemu-full libvirt virt-manager virt-viewer dnsmasq edk2-ovmf cloud-image-utils"; \
+		pkgs="qemu-full libvirt virt-manager virt-viewer dnsmasq edk2-ovmf cloud-image-utils swtpm"; \
 		check() { pacman -Qi "$$1" >/dev/null 2>&1; }; \
 	elif command -v apt-get >/dev/null 2>&1; then \
-		pkgs="qemu-system qemu-utils libvirt-daemon-system libvirt-clients virtinst virt-manager virt-viewer dnsmasq-base ovmf cloud-image-utils"; \
+		pkgs="qemu-system qemu-utils libvirt-daemon-system libvirt-clients virtinst virt-manager virt-viewer dnsmasq-base ovmf cloud-image-utils swtpm swtpm-tools"; \
 		check() { dpkg -s "$$1" >/dev/null 2>&1; }; \
 	elif command -v dnf >/dev/null 2>&1; then \
-		pkgs="qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq edk2-ovmf cloud-utils"; \
+		pkgs="qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq edk2-ovmf cloud-utils swtpm swtpm-tools"; \
 		check() { rpm -q "$$1" >/dev/null 2>&1; }; \
 	else \
 		echo "Unsupported package manager (no pacman/apt/dnf found)."; \
-		echo "Install qemu/kvm, libvirt, virt-manager, virt-viewer, dnsmasq, OVMF firmware, and cloud-image-utils manually for your distro, then re-run 'make vm-deps'."; \
+		echo "Install qemu/kvm, libvirt, virt-manager, virt-viewer, dnsmasq, OVMF firmware, cloud-image-utils, and swtpm manually for your distro, then re-run 'make vm-deps'."; \
 		exit 1; \
 	fi; \
 	missing=""; \
@@ -45,6 +46,9 @@ vm-ubuntu-server-manual: ## Create/start an Ubuntu Server 26.04 VM (manual ISO i
 
 vm-ubuntu: ## Create/start an Ubuntu Desktop 26.04 VM (manual ISO install, GUI console)
 	@./scripts/vm.sh ubuntu-desktop
+
+vm-windows: ## Create/start a Windows VM from YOUR ISO: WIN_ISO=/path/to.iso make vm-windows (UEFI+TPM, GUI console)
+	@./scripts/vm.sh windows
 
 vm-list: ## List this project's VMs and their state
 	@./scripts/vm.sh list

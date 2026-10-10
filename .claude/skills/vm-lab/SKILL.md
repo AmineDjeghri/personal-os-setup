@@ -1,6 +1,6 @@
 ---
 name: vm-lab
-description: Use when working with the local KVM/QEMU VM test lab — "spin up a VM", "test this in a CachyOS/Ubuntu VM", "make vm-*". CachyOS host only (libvirt/pacman-based); documents the required make vm-deps step, why re-running with new credentials does nothing until you clean, and the manual sync requirement against packages.yaml.
+description: Use when working with the local KVM/QEMU VM test lab — "spin up a VM", "test this in a CachyOS/Ubuntu/Windows VM", "make vm-*". CachyOS host only (libvirt/pacman-based); documents the required make vm-deps step, why re-running with new credentials does nothing until you clean, and the manual sync requirement against packages.yaml.
 metadata:
   hermes:
     origin: repo:personal-os-setup
@@ -14,7 +14,7 @@ A libvirt/QEMU helper for booting throwaway VMs to test OS-setup flows without t
 
 ## One-time setup
 
-`make vm-deps` checks for `qemu-full libvirt virt-manager dnsmasq edk2-ovmf cloud-image-utils` via `pacman -Qi`. If anything's missing, it tells you to install it **through the app's own Packages tab** (Dev_tools category) rather than installing it itself — this is deliberate, keeping package installs funneled through the TUI's package-manager code path rather than duplicated in Make.
+`make vm-deps` checks for `qemu-full libvirt virt-manager virt-viewer dnsmasq edk2-ovmf cloud-image-utils swtpm` via `pacman -Qi` (apt/dnf equivalents on those hosts; `swtpm` = the emulated TPM 2.0 for the Windows guest). If anything's missing, it tells you to install it **through the app's own Packages tab** (Dev_tools category) rather than installing it itself — this is deliberate, keeping package installs funneled through the TUI's package-manager code path rather than duplicated in Make.
 
 ⚠️ This package list is a **manual mirror** of `packages.yaml`'s `cachyos.pacman.Dev_tools` VM-related entries — nothing checks that they stay in sync. If you add/remove a VM dependency, update both places.
 
@@ -22,7 +22,9 @@ After deps are present, `make vm-deps` also does `sudo systemctl enable --now li
 
 ## Commands
 
-`scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|list|clean}`, wrapped by `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu-server-manual` / `make vm-ubuntu` / `make vm-list` / `make vm-clean`.
+`scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|windows|list|clean}`, wrapped by `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu-server-manual` / `make vm-ubuntu` / `make vm-windows` / `make vm-list` / `make vm-clean`.
+
+`make vm-windows` is different: Windows ISOs can't be downloaded automatically (Microsoft licensing), so run it as `WIN_ISO=/path/to/windows.iso make vm-windows` (the script copies the ISO into `.vm/isos/` and dies with an actionable message if `WIN_ISO` is unset). Defaults: Windows 11, UEFI + Secure Boot + `swtpm` TPM 2.0, SATA disk + e1000e NIC (inbox drivers, so no virtio-win ISO), 80 GB disk (Win11 setup rejects < 64 GB). Env knobs: `WIN_ISO_SHA256`, `WIN_VERSION=10` (no-TPM fallback), `WIN_DISK_GB`. The reasoning lives in the comment above `cmd_windows` in `scripts/vm.sh`; the end-to-end test walkthrough (boot → `install_windows.ps1` → TUI) is in `docs/windows_workflow/README.md`.
 
 State (ISOs, disks, cloud-init seeds) lives under `.vm/` at repo root (gitignored).
 
@@ -33,6 +35,7 @@ State (ISOs, disks, cloud-init seeds) lives under `.vm/` at repo root (gitignore
 - `AUTOINSTALL_USER`/`AUTOINSTALL_PASSWORD` default to `pos-dev` (the password falls back to the resolved user value when unset) — a throwaway credential, acceptable only because it's scoped to an ephemeral local dev VM, not anything network-exposed. Override via env vars for anything longer-lived.
 - The CachyOS ISO URL is scraped from SourceForge's RSS feed (no official stable "latest" URL exists) and is **not cryptographically verified** — only presence/size is trusted. If SourceForge changes its markup, `fetch_cachyos_iso_url()` breaks and tells you to download manually rather than silently using a bad URL.
 - Ubuntu image URLs are hardcoded to a specific release (currently `26.04`) inside `scripts/vm.sh` — bump this manually when a new LTS/interim release ships, it isn't derived dynamically.
+- **`vm-windows` can't be validated without KVM and a real ISO.** The `virt-install` flags (`--boot uefi,firmware.secure-boot=yes,firmware.enrolled-keys=yes`, `--tpm backend.type=emulator,backend.version=2.0,model=tpm-crb`) were checked against virt-install's source/man page, not by booting. Unlike the Linux guests it omits `--noreboot` on purpose (Windows setup reboots repeatedly). At the installer, click into the console and press a key at "Press any key to boot from CD or DVD".
 - The Ubuntu auto-install flow attaches the cloud-init seed ISO as the *second* CD-ROM device (`/dev/sr1`) — this is order-of-operations dependent on how `virt-install`'s `--disk`/`--location` args are ordered in the script; don't reorder those args without re-testing a full auto-install run.
 
 Requires `virt-install`, `cloud-localds` (auto-install path only), `curl`, `openssl`, `sha256sum`, `virsh` on `PATH` — `scripts/vm.sh` fails fast with a clear "run `make vm-deps` first" message if any are missing.
