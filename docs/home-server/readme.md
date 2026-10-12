@@ -613,6 +613,7 @@ This next section is about controllers / routers add-ons :
      - Transform any device into a Matter device.
      - Use it with Alexa and Google Home. If Alexa doesn't discover the hub, use Google Home app, then add it to Alexa from Google Home.
      - You need to add labels to entities (not devices).
+     - ⚠️ Renaming an entity ID makes the bridge re-create its endpoint. The assistant keeps the device name but **loses the room**, so a generic phrase ("turn off the light in the kitchen") answers *this action isn't supported* while the exact device name still works. Fix = re-assign the room in the assistant's app. Full guide: [Matter bridge & Alexa / Google voice control](matter-hub-and-alexa.md).
 
 * **Matter Server**
 
