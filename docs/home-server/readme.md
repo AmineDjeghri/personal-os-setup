@@ -636,6 +636,17 @@ This next section is about controllers / routers add-ons :
    - Docs: https://www.home-assistant.io/integrations/alexa_media_player/
 
 * **Android TV Remote** : Control your TV.
+   - Docs: https://www.home-assistant.io/integrations/androidtv_remote/
+   - A `remote` entity (keys, app launch) and a `media_player` (power, volume). The same box also shows up through **Google Cast** under the same name, and that second entity is where the playing content comes from — this media player is `assumed_state` and never knows it. Merge the two into one TV entity with a [Universal Media Player](https://www.home-assistant.io/integrations/universal/) before using them in a dashboard.
+   - **Turning on and turning off are the same `POWER` key — a toggle — sent over the network; there is no wake-on-LAN packet.** Turn-on therefore only works while the device keeps its network/remote service alive in standby. If turn-off works but turn-on doesn't, check in this order:
+     1. How the streaming device is powered: **wall outlet, never the TV's USB port** (that port dies with the panel, so nothing is left to wake).
+     2. Streaming device → **Settings → System → Power & Energy → Network standby ON** (plus *Screenless service* where offered). Eco/deep standby powers the radio down and nothing can reach the device.
+     3. TV side: **HDMI-CEC / "One Touch Play" ON** for that HDMI input, and quick-start standby rather than eco — waking the streaming device must also switch the panel on.
+     4. Last, the integration's own *Limitations* (and clear *Android TV Remote Service* storage on the device if it keeps flapping unavailable).
+   - **Test that separates a state bug from a real wake failure:** power the TV on with its own remote → turn it **off from Home Assistant** → turn it **on from Home Assistant**.
+     - If that last step works, nothing is broken: the entity is `assumed_state` and `turn_on` only sends the key when it *believes* the device is off, so a stale "on" turns the action into a silent no-op — and since `POWER` is a toggle, Home Assistant's belief has to match the panel before the key means "on". Driving the off yourself resynchronises both sides and proves the standby connection is alive.
+     - If it still fails, the device is not reachable in standby → fix points 1–3.
+   - Apps and keys: `media_player.play_media` (`media_content_type: app` + package id, e.g. `com.netflix.ninja`) and `remote.send_command` for D-pad/menu. Ready-made remote card: see [Dashboard & Cards](#dashboard--cards).
 
 * **Backup** :
 
@@ -654,6 +665,11 @@ This next section is about controllers / routers add-ons :
 
 * **Freebox** : https://www.home-assistant.io/integrations/freebox/
 
+* **Google Cast**
+   - Docs: https://www.home-assistant.io/integrations/cast/
+   - One `media_player` per Cast device. It gives the full playback detail (title, art, play/pause, duration) but an **unreliable power state** — an Android TV sitting on its home screen still reads `off`.
+   - For an Android TV / Google TV device, take the power/volume commands from **Android TV Remote** and use this integration only as the playback/browse source, combined through a Universal Media Player (see the *Android TV Remote* entry).
+
 * **HACS**: The best is to use Home Assistant Community Store integrations when available; they often have more features.
 
 
@@ -670,14 +686,25 @@ This next section is about controllers / routers add-ons :
 
 * **MQTT**
   * Volets Profalux Zigbee: https://perso.aquilenet.fr/~sven337/francais/2023/06/02/Appairage-de-volets-Profalux-Zigbee.html
-  * Windows (start, lock, restart, sleep...) :  [HASS Agent](https://github.com/hass-agent/HASS.Agent)
+  * Workstation control — power off, restart, sleep, lock, plus host sensors. Pick the branch that matches the OS:
+    * **Windows 11 — [HASS.Agent](https://github.com/hass-agent/HASS.Agent)** : the Windows side of this, and .NET/Windows-only (there is no Linux build). It publishes its sensors and command buttons over MQTT discovery, so they simply appear in Home Assistant.
+    * **Linux (CachyOS) — [Go Hass Agent](https://github.com/joshuar/go-hass-agent)** : the Linux equivalent, packaged for Arch (`go-hass-agent` in the AUR). Power off / reboot / suspend go through `systemd-logind` and come with the host sensors (CPU, memory, disks, network, hardware sensors, power profiles). It talks to Home Assistant's **native-app API with a long-lived token**, so it is *not* an MQTT device.
+      * Run it as a user service **and enable lingering** (`loginctl enable-linger`) — otherwise the power controls only work while somebody is logged in.
+      * Powering the machine **on** is **Wake on LAN**'s job (see that entry below): no agent can do it from a powered-off OS.
+    * **Not an option any more**: *HASS Workstation Service* — repository archived (Mar 2025) and Windows-installer-only, despite advertising cross-platform support.
 
 
 * **Open Thread Border Router**
 
 * **SmartThinQ LGE Sensors** : https://github.com/ollo69/ha-smartthinq-sensors
 
+* **SmartThings** : https://www.home-assistant.io/integrations/smartthings/
+   - Cloud integration for Samsung devices (the local/open-source route is preferred when the device supports it).
+
 * **Sun**
+
+* **System Monitor**
+   - CPU/RAM/disk/network load of the Home Assistant host itself, handy to alert on before an add-on or the VM starves.
 
 * **Tapo: Cameras Control**
 
@@ -685,7 +712,12 @@ This next section is about controllers / routers add-ons :
 
 * **TP-Link Smart Home**
 
-
+* **Wake on LAN**
+   - Docs: https://www.home-assistant.io/integrations/wake_on_lan/
+   - One `button` per configured MAC address: press = power that machine on. This is the **only** part of "turn my PC on" that works from a powered-off machine — an agent inside the OS cannot do it (see the *MQTT* entry above).
+   - Machine side: BIOS "Wake on LAN" / "Power on by PCIe" enabled and ErP/deep-sleep disabled, **wired Ethernet** (WoWLAN over Wi-Fi is a different, far less reliable feature), and on Linux the NIC must still be armed for WoL after a clean shutdown (`ethtool -s <nic> wol g`, persisted by a systemd unit or a NetworkManager connection setting).
+   - Note the Freebox device tracker for the machine (`device_tracker.<pc>`) already tells you whether it is really off before you blame the button — a `not_home` state with `last_time_reachable` is the confirmation.
+   - Turning a machine **off**, restarting it or locking it is not this integration's job (see the *MQTT* entry above).
 
 * HA Label State: https://github.com/andrew-codechimp/HA-Label-State
   * Create two helpers for : entities & addons(apps) with 4 status: off,unavailable, unknown, not_home (away=not_home in raw format)
@@ -698,6 +730,18 @@ This next section is about controllers / routers add-ons :
 * **Kiosk Mode**: https://github.com/NemesisRE/kiosk-mode
 * **Mushroom cards** : https://github.com/piitaya/lovelace-mushroom#installation
 * **Universal Remote Card** : https://github.com/Nerwyn/universal-remote-card
+  * The whole Android TV remote in a single card — touchpad, power, volume and media keys — built on the `remote` entity for the keys and the `media_player` entity for power/volume. This is the card used on the TV remote dashboard view:
+    ```yaml
+    type: custom:universal-remote-card
+    platform: Android TV
+    remote_id: remote.chromecast_amine
+    media_player_id: media_player.chromecast_amine_2
+    rows:
+      - [back, power, home, menu, keyboard]
+      - [touchpad, [volume_buttons]]
+      - [rewind, previous, play_pause, next, fast_forward]
+    ```
+  * `power`, the D-pad names and the media keys are built-in key codes, so no `custom_actions` block is needed for a standard Android TV remote; add one only for buttons the TV does not expose by default.
 
 
 ### Automations, Scenes, Script, Helpers and Entities
