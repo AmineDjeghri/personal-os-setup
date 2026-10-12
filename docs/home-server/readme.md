@@ -613,7 +613,10 @@ This next section is about controllers / routers add-ons :
      - Transform any device into a Matter device.
      - Use it with Alexa and Google Home. If Alexa doesn't discover the hub, use Google Home app, then add it to Alexa from Google Home.
      - You need to add labels to entities (not devices).
-     - ⚠️ Renaming an entity ID makes the bridge re-create its endpoint. The assistant keeps the device name but **loses the room**, so a generic phrase ("turn off the light in the kitchen") answers *this action isn't supported* while the exact device name still works. Fix = re-assign the room in the assistant's app. Full guide: [Matter bridge & Alexa / Google voice control](matter-hub-and-alexa.md).
+     - Rooms are assigned by hand in the assistant's app (nothing reads the HA area) — re-assign the room after anything that makes Alexa re-import the device.
+     - ⚠️ Renaming an entity ID re-creates its endpoint: the device keeps its name but **loses its room**, so a generic phrase ("turn off the light in the kitchen") answers *this action isn't supported* while the exact device name still works. Fix = set the room again in the assistant's app.
+     - ⚠️ A room phrase turns on/off every **light and switch** in that room — including exposed scripts and remotes (the assistant sees them as switches). Keep scripts, remotes and media players out of the rooms you talk to; shutters and the vacuum are other categories and can't be reached that way.
+     - Scripts are momentary (on → off a second later) and some Echos choke on that: after one runs, Alexa can stop answering for the whole bridge until restart. Entity Mapping → "Do not report the on/off flip after a run" avoids it.
 
 * **Matter Server**
 
