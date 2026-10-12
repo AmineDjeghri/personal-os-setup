@@ -77,11 +77,11 @@ phrase, while saying the device name out loud keeps working perfectly:
    and Alexa all ignore it, so every accessory must be put in a room in the assistant's app itself,
    after pairing. That is also why a re-import leaves the accessory room-less instead of restoring it.
 
-## A room phrase commands *everything* on/off in that room
+## A room phrase commands every *light and switch* in that room
 
-"Turn on/off the light in the <room>" is not a lights-only command. The assistant applies the verb to
-**every on/off accessory assigned to that room in its own app** — whatever the accessory's category.
-Measured on a live setup: a single *"turn on the light in the salon"* produced five commands inside
+"Turn on/off the light in the <room>" is not limited to lights — but it is not "everything" either:
+the assistant applies the verb to the accessories it classifies as **lights and switches/plugs**.
+Measured on a live setup, a single *"turn on the light in the salon"* produced five commands inside
 one second.
 
 ```
@@ -92,15 +92,17 @@ script.<clean_salon>   -> script.turn_on     (started a robot-vacuum cleaning ru
 light.<led_strip>      -> light.turn_on      (wanted)
 ```
 
-The unintended ones were a **script** and a **remote** that had been exposed and landed in the same
-room. The pattern is assistant-side, not invented by the bridge: "turn on the living-room light
-powers on the whole living-room group" is a long-standing Alexa user report.
-
-- **Room membership is functional, not cosmetic.** Keep exposed scripts, remotes, media players and
-  the robot vacuum **out of** any room you address with a light phrase — set those devices to *no
-  room* (or a dedicated "commands" room) in the assistant's app. They still work when you say their
-  name.
-- Only what you actually want switched belongs in the room: bulbs, strips, plugs.
+- **What was NOT touched is as informative as what was.** The shutters (`cover.*`) and the robot
+  vacuum's own accessory are in other assistant categories, so the phrase never reaches them. The
+  casualties here were the exposed **script** and **remote**, which the assistant presents as
+  switches — that is how a cleaning script starts the vacuum even though the vacuum itself is safe.
+- **Room membership is functional, not cosmetic.** Keep exposed scripts, remotes and media players
+  **out of** any room you address with a light phrase — set those devices to *no room* (or a dedicated
+  "commands" room) in the assistant's app. They still work when you say their name.
+- So the rule is: only lights, strips and plugs belong in a room you address by voice. Covers and the
+  vacuum need no such care — they can't be reached by a room phrase (they're addressed by name only).
+- The pattern is assistant-side, not invented by the bridge: "turn on the living-room light powers on
+  the whole living-room group" is a long-standing Alexa user report.
 - Diagnose it the same way: one spoken phrase shows up in the bridge log as several invokes within a
   second, and each line names the entity it touched.
 
