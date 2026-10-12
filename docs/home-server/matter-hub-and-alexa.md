@@ -53,6 +53,9 @@ phrase, while saying the device name out loud keeps working perfectly:
 2. Delete duplicates **only if** you actually find some (the rarer case), then re-discover.
 3. Restarting the bridge add-on forces one clean re-import — but it does **not** restore rooms by
    itself.
+4. If the *bridge itself* shows up twice in the assistant (seen after a factory-reset or a re-created
+   bridge while the old pairing still existed), delete the stale bridge in the assistant and pair
+   again. Duplicated **accessories** are the other half of that same symptom.
 
 ## Debugging "the voice command does nothing"
 
@@ -69,6 +72,51 @@ phrase, while saying the device name out loud keeps working perfectly:
    confirmation).
 5. **Name exposed entities uniquely** and prefer the exact name in the phrase — two devices answering
    to "the lamp" is the usual cause of intermittent voice control.
+6. **Rooms are always assigned by hand.** The bridge *does* publish each entity's Home Assistant area
+   (as a Matter `FixedLabel` `room`), but **no major controller reads it** — Google Home, Apple Home
+   and Alexa all ignore it, so every accessory must be put in a room in the assistant's app itself,
+   after pairing. That is also why a re-import leaves the accessory room-less instead of restoring it.
+
+## A room phrase commands *everything* on/off in that room
+
+"Turn on/off the light in the <room>" is not a lights-only command. The assistant applies the verb to
+**every on/off accessory assigned to that room in its own app** — whatever the accessory's category.
+Measured on a live setup: a single *"turn on the light in the salon"* produced five commands inside
+one second.
+
+```
+light.<salon_light>    -> light.turn_on      (wanted)
+script.<air_quality>   -> script.turn_on     (fired a spoken notification on the Echo)
+remote.<tv>_onoff      -> remote.turn_on     (switched the TV on)
+script.<clean_salon>   -> script.turn_on     (started a robot-vacuum cleaning run)
+light.<led_strip>      -> light.turn_on      (wanted)
+```
+
+The unintended ones were a **script** and a **remote** that had been exposed and landed in the same
+room. The pattern is assistant-side, not invented by the bridge: "turn on the living-room light
+powers on the whole living-room group" is a long-standing Alexa user report.
+
+- **Room membership is functional, not cosmetic.** Keep exposed scripts, remotes, media players and
+  the robot vacuum **out of** any room you address with a light phrase — set those devices to *no
+  room* (or a dedicated "commands" room) in the assistant's app. They still work when you say their
+  name.
+- Only what you actually want switched belongs in the room: bulbs, strips, plugs.
+- Diagnose it the same way: one spoken phrase shows up in the bridge log as several invokes within a
+  second, and each line names the entity it touched.
+
+## Scripts and scenes are *momentary* — and can wedge the assistant
+
+A `script`, `scene`, `automation` or `input_button` has no real Matter equivalent, so the bridge
+publishes it as an on/off accessory that reports **on**, then resets to **off** about a second later.
+
+- Voice control of them is legitimate (one phrase = one whole routine), but they are exactly the
+  accessories a room phrase catches by mistake — see above.
+- Some Echo models get stuck on that on/off pair: after running one of these, **Alexa stops
+  forwarding commands to the whole bridge** until it is restarted. Commands going dead right after a
+  script ran is that bug, not a Matter problem.
+- Mitigation, in the bridge add-on's UI: **Entity Mapping → "Do not report the on/off flip after a
+  run"** (`disableMomentaryFlip`). The Home Assistant action still runs; the entity just stops
+  reporting the flip, so the assistant has nothing to choke on.
 
 ## Known assistant limits
 
