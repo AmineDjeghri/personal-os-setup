@@ -30,6 +30,7 @@
     * [Dashboard & Cards](#dashboard--cards)
     * [Automations, Scenes, Script, Helpers and Entities](#automations-scenes-script-helpers-and-entities)
   * [AdGuard Home address naming resolution using the router (Freebox)](#adguard-home-address-naming-resolution-using-the-router-freebox)
+    * [Sync the names from the Freebox (script + cron)](#sync-the-names-from-the-freebox-script--cron)
     * [Network topology & DNS flows](#network-topology--dns-flows)
 * [todo:](#todo)
 <!-- TOC -->
@@ -617,6 +618,8 @@ This next section is about controllers / routers add-ons :
      - ⚠️ Renaming an entity ID re-creates its endpoint: the device keeps its name but **loses its room**, so a generic phrase ("turn off the light in the kitchen") answers *this action isn't supported* while the exact device name still works. Fix = set the room again in the assistant's app.
      - ⚠️ A room phrase turns on/off every **light and switch** in that room — including exposed scripts and remotes (the assistant sees them as switches). Keep scripts, remotes and media players out of the rooms you talk to; shutters and the vacuum are other categories and can't be reached that way.
      - Scripts are momentary (on → off a second later) and some Echos choke on that: after one runs, Alexa can stop answering for the whole bridge until restart. Entity Mapping → "Do not report the on/off flip after a run" avoids it.
+     - Alexa only matches the exposed entity's *name*: a French phrase like "lance le nettoyage" does nothing on the bridge. Create an Alexa routine that maps **several spoken sentences** ("lance le nettoyage", "nettoie la maison"…) to the exposed script as its action.
+     - Expect this mapping step until Alexa handles intent natively: routines are the glue between how you speak and the script name.
 
 * **Matter Server**
 
@@ -771,13 +774,27 @@ This next section is about controllers / routers add-ons :
 
 
 ## AdGuard Home address naming resolution using the router (Freebox)
-- You must have ONLY ONE DHCP server on the network
-- adguard can be used as DNS and DHCP. If so, Go to Freebox Settings -> DHCP -> first, put your  Adguard DNS server, save then deactivate the DHCP server then save again.
+
+Who hands out the addresses, and who publishes the names:
+
+- **One DHCP server, one reservation table.** AdGuard Home serves DHCPv4 here, so every fixed IPv4 address belongs in AdGuard Home → DHCP settings → *Add static lease* (IP + MAC + hostname). The one exception is the machine that runs DNS/DHCP itself: it keeps a fixed address configured on its own OS (that is why the Home Assistant VM's IPv4 is set in HAOS) so it can boot without a lease.
+- **Reserve the address in DHCP instead of setting it on the device.** A device that assigns its own address gets no lease, and a DHCP server only publishes names for the leases it hands out — that device is exactly the one whose name stops resolving. If a device genuinely must self-assign, give it a DNS rewrite instead.
+- **The published name is the DHCP hostname**, appended to the local domain: `<hostname>.<local_domain_name>` (`lan` by default, configurable in `AdGuardHome.yaml`), answered only from inside the LAN.
+- ⚠️ AdGuard does not tell clients which suffix to use (it sends no DHCP option 15), so only the full `<name>.<local-domain>` resolves — a bare `<name>` works only where a search domain is set on the client.
+- **IPv6 has no reservations yet**: the Freebox still assigns IPv6 addresses (RA / SLAAC), so there is nothing to freeze in the DHCP table. Keep the DNS server the router advertises over IPv6 pointed at AdGuard, and let the sync script keep adding each MAC's IPv6 addresses to its AdGuard client — identifying a client by MAC only works while AdGuard is the DHCP server.
+- **A rename reaches DNS only.** Renaming a device in the router or in AdGuard does not rename it in Home Assistant (device and entity names come from the integration — rename in Settings → Devices) nor in the Matter/Alexa exposure (re-sync the controller afterwards).
+- While AdGuard owns DHCP + DNS, the Freebox's own local-domain setting stays unused; it counts again only if the Freebox takes that role back, in which case the reservations move to Paramètres (mode avancé) → DHCP → baux permanents.
+
+- You must have ONLY ONE DHCP server on the network: AdGuard Home is the one (DHCPv4 + DNS), the Freebox DHCP is off.
+- Order matters: in Freebox Settings -> DHCP, put the AdGuard DNS server first and save, then deactivate the DHCP server and save again.
 - Check the address here
 - Don't touch the IPV6 settings.
-- Set static IPs in adguard Home. If  you previously had devices using a bridge network, and you did reset that bridge, check again their mac addresses and set static IPs in adguard home and restart the network / devices .
+- ⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.
 - Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)
-- The following will show you how to get the names of the devices in AdGuard home using your router (this example is for Freebox API).
+
+### Sync the names from the Freebox (script + cron)
+
+- The following will show you how to get the names of the devices in AdGuard Home using your router (this example uses the Freebox API).
 - You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).
 - We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.
 - Steps:
@@ -786,7 +803,7 @@ This next section is about controllers / routers add-ons :
     - [freebox_auth.py](adguard_freebox/freebox_auth.py)
     - [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py)
   - I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token ``uv run freebox_auth.py``
-  - then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to automatically resolve IPV6 addresses and clients names. ``uv run sync_adguard_home_ip_mac.py``
+  - then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. ``uv run sync_adguard_home_ip_mac.py``
   - Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the path of uv and the script)
 ````sh
 # For example
@@ -795,13 +812,14 @@ This next section is about controllers / routers add-ons :
 
 - Check Settings -> Client settings -> **Persistent clients settings** .
 - This script will run every minute. If it discovers a new device, it will update the log file ``sync_agh.log`` with the latest sync information.
+- ⚠️ The name it takes from the Freebox (``primary_name``, i.e. the name you set on the device's page) is used **only when it creates a client**. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).
 
 ### Network topology & DNS flows
 
 ```mermaid
 graph TB
-    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)"]
-        Freebox["Freebox router<br/>192.168.1.254<br/>gateway / DHCP server"]
+    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (IPv4 leases by AdGuard Home · Freebox = gateway + IPv6)"]
+        Freebox["Freebox router<br/>192.168.1.254<br/>gateway (DHCPv4 off)"]
         LANDevice["LAN device (phone, laptop...)<br/>192.168.1.x"]
     end
 
@@ -815,7 +833,7 @@ graph TB
         natVM["KVM VM in NAT mode<br/>192.168.122.x"]
     end
 
-    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)"]
+    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged; IPv4 fixed in HAOS)"]
         AdGuard["AdGuard Home (addon, host network)<br/>192.168.1.119:53 DNS · :8082 web UI"]
 
         subgraph Hassio1["hassio network — 172.30.32.0/23"]
