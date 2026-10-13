@@ -733,7 +733,7 @@ This next section is about controllers / routers add-ons :
 
 Who hands out the addresses, and who publishes the names:
 
-- **One DHCP server, one reservation table.** AdGuard Home serves DHCPv4 here, so every fixed IPv4 address belongs in AdGuard Home → DHCP settings → *Add static lease* (IP + MAC + hostname), and the Freebox DHCPv4 stays off. The one exception is the machine that runs DNS/DHCP itself: it keeps a fixed address configured on its own OS (that is why the Home Assistant VM's IPv4 is set in HAOS) so it can boot without a lease.
+- **One DHCP server, one reservation table.** AdGuard Home serves DHCPv4 here, so every fixed IPv4 address belongs in AdGuard Home → DHCP settings → *Add static lease* (IP + MAC + hostname). The one exception is the machine that runs DNS/DHCP itself: it keeps a fixed address configured on its own OS (that is why the Home Assistant VM's IPv4 is set in HAOS) so it can boot without a lease.
 - **Reserve the address in DHCP instead of setting it on the device.** A device that assigns its own address gets no lease, and a DHCP server only publishes names for the leases it hands out — that device is exactly the one whose name stops resolving. If a device genuinely must self-assign, give it a DNS rewrite instead.
 - **The published name is the DHCP hostname**, appended to the local domain: `<hostname>.<local_domain_name>` (`lan` by default, configurable in `AdGuardHome.yaml`), answered only from inside the LAN.
 - ⚠️ AdGuard does not tell clients which suffix to use (it sends no DHCP option 15), so only the full `<name>.<local-domain>` resolves — a bare `<name>` works only where a search domain is set on the client.
@@ -741,9 +741,10 @@ Who hands out the addresses, and who publishes the names:
 - **A rename reaches DNS only.** Renaming a device in the router or in AdGuard does not rename it in Home Assistant (device and entity names come from the integration — rename in Settings → Devices) nor in the Matter/Alexa exposure (re-sync the controller afterwards).
 - While AdGuard owns DHCP + DNS, the Freebox's own local-domain setting stays unused; it counts again only if the Freebox takes that role back, in which case the reservations move to Paramètres (mode avancé) → DHCP → baux permanents.
 
+- You must have ONLY ONE DHCP server on the network: AdGuard Home is the one (DHCPv4 + DNS), the Freebox DHCP is off.
+- Order matters: in Freebox Settings -> DHCP, put the AdGuard DNS server first and save, then deactivate the DHCP server and save again.
 - Check the address here
 - Don't touch the IPV6 settings.
-- Set up order on the router: Freebox Settings -> DHCP -> put the AdGuard DNS server first, save, then deactivate the router DHCP and save again.
 - ⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.
 - Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)
 
