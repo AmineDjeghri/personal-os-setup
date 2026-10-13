@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.14.*"
 
 [[package]]
@@ -651,8 +651,9 @@ wheels = [
 
 [[package]]
 name = "personal-os-setup"
-version = "2.16.0"
+version = "2.16.1"
 source = { editable = "." }
+default-groups = []
 dependencies = [
     { name = "build" },
     { name = "loguru" },
