@@ -21,15 +21,12 @@ the design branch by branch until nothing is left open.
 
 - Per-action approval for `git commit` and `git push`, system changes (package installs, `chezmoi apply`,
   driver/VM/WSL work, `sudo`), destructive commands, opening/merging a PR and release actions.
-- A previous "yes", a plan or a task description is NOT standing approval — ask again, every time, and run
-  exactly what was approved. Commit and push are separate approvals: a yes to one is not a yes to the other.
-- When the repo's own rules say nothing about committing, ask before the FIRST commit of a task; "implement
-  this" is not permission to commit. A delegated brief must never pre-authorise a commit the user did not
-  approve for that task.
-- Never fold `git commit` / `git push` into a longer compound command (verify + commit + push on one line).
-  The sandbox approval scanner only fires on flagged patterns, so a plain push executes with nobody asked and
-  the user never sees a prompt — the gate becomes the scanner, not the user. Ask in chat, wait for the yes,
-  then run the git action as its own command.
+- A previous "yes", a plan, a task description or "implement this" is NOT standing approval — ask again, every
+  time, and run exactly what was approved. Commit and push are separate approvals: a yes to one is not a yes to
+  the other. When the repo's own rules say nothing about committing, ask before the FIRST commit of a task. A
+  delegated brief must never pre-authorise a commit the user did not approve for that task.
+- Never fold `git commit`/`git push` into a compound command — the gate becomes the scanner, not the user. Ask
+  in chat, wait for the yes, run the git action as its own command.
 - Never bypass a tool's own confirmation dialog.
 
 ## 3. Work in reviewable steps
@@ -37,8 +34,7 @@ the design branch by branch until nothing is left open.
 - One concern per change; keep diffs small enough to read.
 - Run the repo's own gates before proposing a PR: its `make test` / `make pre-commit` (or the documented
   CI-equivalent) — a local pass is the only signal before CI.
-- Review your own diff against the base branch before pushing; check git identity first (a wrong email
-  creates phantom commit authors).
+- Review your own diff against the base branch before pushing.
 - Never commit secrets; follow the repo's convention for suppression (inline allowlist comments, never
   whole-file excludes).
 
@@ -46,7 +42,6 @@ the design branch by branch until nothing is left open.
 
 - Branch from the repo's base branch (`main` unless the repo says otherwise); conventional commit and PR
   title — most repos squash-merge, so the PR title becomes the released commit message.
-- Target the base branch the repo uses; follow its review/merge policy.
 - Verify the real artifact, not the summary: the diff, the CI run status, the PR state.
 
 ## 5. Per-repo specifics

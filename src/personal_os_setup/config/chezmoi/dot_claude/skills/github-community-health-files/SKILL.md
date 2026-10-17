@@ -14,9 +14,7 @@ metadata:
 
 # GitHub Community Health Files
 
-Detect which GitHub standard/community files a repo is missing, then generate them
-with ready-to-use templates and open a PR. Applies to any public (or private) repo
-that should pass GitHub's community-profile health check.
+Detect which GitHub community/health files a repo is missing, then generate them from the templates.
 
 ## Trigger conditions
 
@@ -63,70 +61,32 @@ release tooling) to the actual project — read README / repository.yaml / CI fi
 
 ## 3. Pitfalls
 
-- **Privacy rule: NEVER write a *personal* email into any public
-  repo file or commit metadata.** The personal Gmail (user@example.com) must
-  never appear. However a **dedicated public contact email** (e.g. `contact@example.com`)
-  IS acceptable if the user explicitly provides one — ask or use one they supply. Contact
-  points in SECURITY.md / CODE_OF_CONDUCT.md default to GitHub private vulnerability
-  reporting; add the public email only if the user gives it. Set the commit author to the
-  GitHub **noreply** email so the personal email never appears as git author:
+- **Privacy rule: NEVER put a personal email in any public repo file or commit metadata.** Contact = GitHub private
+  vulnerability reporting, plus a dedicated public email only if the user supplies one; commit as
+  `<id>+<login>@users.noreply.github.com` (id/login from `gh api user`). If one leaked, removing it is urgent.
   ```bash
   git config user.name "Your Name"
   git config user.email "12345678+your-username@users.noreply.github.com"
   ```
-  (Derive the id+username from `gh api user --jq '.id'` + `.login` if unknown.) If the
-  user says a personal email leaked, treat removing it as urgent.
-- **"Match another repo's templates" = adapt, don't verbatim-copy.** When the user wants
-  CONTRIBUTING/LICENSE "the same as <other-repo>", the other repo's CONTRIBUTING often
-  references tooling the target repo lacks (make/uv/pyproject.toml, a `dev` branch,
-  gh-pages docs, Polars). Copying verbatim ships wrong instructions. Adapt to the target
-  repo's actual stack while keeping the same structure/style/sections. The LICENSE can
-  usually be copied near-verbatim.
-- **Removing an email trace from a pushed PR.** If the email leaked via a PR, the file
-  contents AND the git commit author both carry it (the branch's commits contain the
-  author email). Close + delete the remote branch in one step so no commit reaches the
-  remote:
-  ```bash
-  gh pr close <N> --delete-branch
-  ```
-  Verify it's really gone: check `gh pr view <N> --json body` (body), issue comments
-  (`/issues/<N>/comments`), review comments (`/pulls/<N>/comments`), the PR diff
-  (`gh pr diff`), and that the commit's `%ae` on the pushed branch uses the noreply
-  email. When you then recreate the files on a new branch, remember the old branch's
-  working-tree files were removed by the branch switch — re-create them. Re-branch from
-  `main` so only the single new clean commit ships.
-- **FUNDING.yml is optional — don't assume the user wants it.** This user explicitly
-  declined it ("we don't need funding file"). Offer it, don't bundle it by default, and
-  drop it immediately if the user rejects it.
-- **Monorepo / multi-add-on repo → lean umbrella CONTRIBUTING, not a tooling dump.**
-  In a repo with several add-ons where ONE sub-project (e.g. `addons/personal-app`)
-  ships its OWN Makefile / uv / pyproject.toml / pre-commit / CONTRIBUTING.md, the root
-  CONTRIBUTING should be a short umbrella guide that DEFERS to that sub-project's own
-  guide (via an overview table + "its guide wins" note) and only documents tooling that
-  genuinely applies repo-wide (the shell-based add-ons). Don't restate the sub-project's
-  Python tooling as if it were repo-wide. Before writing, inspect the tree
-  (`git ls-tree -r --name-only HEAD | grep <subdir>`) to see which add-ons have their
-  own tooling.
-- **gh-pages branch existing ≠ a live site.** A `gh-pages` branch can exist with fully
-  built MkDocs content but not actually be deployed/enabled. If the user says they don't
-  have a live gh-pages site, don't claim it is deployed — phrase docs as "may be
-  published to `gh-pages` in the future" and offer to enable GitHub Pages (Source:
-  `gh-pages` branch) rather than asserting it's live.
+- **"Match another repo's templates" = adapt, don't verbatim-copy.** The other repo's CONTRIBUTING often references tooling the target lacks
+  (make/uv/pyproject.toml, a `dev` branch, gh-pages docs); adapt to the target's actual stack, same structure. The LICENSE can be copied.
+- **Removing an email trace from a pushed PR.** Contents AND commit author carry it:
+  - `gh pr close <N> --delete-branch` (no commit reaches the remote)
+  - verify PR body, issue comments (`/issues/<N>/comments`), review comments (`/pulls/<N>/comments`), the diff (`gh pr diff`) and the commit `%ae`
+  - re-branch from `main` so only one clean commit ships — the branch switch removed the working-tree files, so re-create them on the new branch
+- **FUNDING.yml is optional** — offer, don't bundle; the user has declined it before.
+- **Monorepo / multi-add-on repo → lean umbrella CONTRIBUTING, not a tooling dump.** The root CONTRIBUTING defers to a sub-project's own guide
+  and documents only repo-wide tooling; inspect `git ls-tree -r --name-only HEAD | grep <subdir>` first.
+- **A `gh-pages` branch is not proof of a live site** — say "may be published", never "is deployed".
 - **Issue templates don't fully clear the health check.** Having only YAML forms in
   `.github/ISSUE_TEMPLATE/` (no legacy `ISSUE_TEMPLATE.md` and no `config.yml` chooser)
   still flags `issue_template` as missing. Add a `config.yml` or the legacy file if
   the user wants it green. Minor — the YAML forms still work.
-- **Destructive git ops get blocked in the Hermes agent terminal.** `git reset --hard`,
-  `git clean -fd`, and `rm -rf` are gated behind a consent prompt and time out with no
-  user response. If a local clone is stale/behind origin, DON'T force-reset it — clone
-  fresh into a new unique directory instead:
+- **Destructive git ops are consent-gated** (`git reset --hard`, `git clean -fd`, `rm -rf` time out with no response) — don't reset a stale clone; clone fresh and set the identity before committing:
   ```bash
   D="repo-$$"; gh repo clone owner/repo "$D"; cd "$D"
+  git config user.name "..."; git config user.email "..."
   ```
-  A fresh clone has no git identity — set it before committing:
-  `git config user.name "..."; git config user.email "..."`
-- **Work on a branch + PR.** Create a `docs/...` branch, commit with a conventional
-  commit message, push, then `gh pr create`. Keep PR description to 1–2 lines.
 
 ## Support files
 
