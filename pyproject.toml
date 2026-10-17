@@ -3,7 +3,7 @@ name = "personal-os-setup"
 version = "2.16.1"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.14,<3.16"
 dependencies = [
     # Engineering
     "textual==8.2.8",
