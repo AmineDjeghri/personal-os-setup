@@ -30,7 +30,8 @@
       "description": "requires-python: widen the range (keep the lower bound, only raise the upper bound) instead of replacing it",
       "matchManagers": ["pep621"],
       "matchDepNames": ["python"],
-      "rangeStrategy": "widen"
+      "rangeStrategy": "widen",
+      "semanticCommitType": "fix"
     },
     {
       "description": "Group pre-commit updates (tooling only, no release)",
