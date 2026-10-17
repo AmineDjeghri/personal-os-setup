@@ -27,6 +27,12 @@
   "pinDigests": false,
   "packageRules": [
     {
+      "description": "requires-python: widen the range (keep the lower bound, only raise the upper bound) instead of replacing it",
+      "matchManagers": ["pep621"],
+      "matchDepNames": ["python"],
+      "rangeStrategy": "widen"
+    },
+    {
       "description": "Group pre-commit updates (tooling only, no release)",
       "matchManagers": ["pre-commit"],
       "groupName": "pre-commit dependencies",
