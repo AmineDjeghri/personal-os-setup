@@ -1233,6 +1233,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#sync-the-names-from-the-freebox-script-cron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync the names from the Freebox (script + cron)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-topology-dns-flows" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3466,6 +3477,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#sync-the-names-from-the-freebox-script-cron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync the names from the Freebox (script + cron)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-topology-dns-flows" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3602,6 +3624,7 @@
 </ul>
 </li>
 <li><a href="#adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)</a><ul>
+<li><a href="#sync-the-names-from-the-freebox-script--cron">Sync the names from the Freebox (script + cron)</a></li>
 <li><a href="#network-topology--dns-flows">Network topology &amp; DNS flows</a></li>
 </ul>
 </li>
@@ -4267,6 +4290,12 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li>Transform any device into a Matter device.</li>
 <li>Use it with Alexa and Google Home. If Alexa doesn't discover the hub, use Google Home app, then add it to Alexa from Google Home.</li>
 <li>You need to add labels to entities (not devices).</li>
+<li>Rooms are assigned by hand in the assistant's app (nothing reads the HA area) — re-assign the room after anything that makes Alexa re-import the device.</li>
+<li>⚠️ Renaming an entity ID re-creates its endpoint: the device keeps its name but <strong>loses its room</strong>, so a generic phrase ("turn off the light in the kitchen") answers <em>this action isn't supported</em> while the exact device name still works. Fix = set the room again in the assistant's app.</li>
+<li>⚠️ A room phrase turns on/off every <strong>light and switch</strong> in that room — including exposed scripts and remotes (the assistant sees them as switches). Keep scripts, remotes and media players out of the rooms you talk to; shutters and the vacuum are other categories and can't be reached that way.</li>
+<li>Scripts are momentary (on → off a second later) and some Echos choke on that: after one runs, Alexa can stop answering for the whole bridge until restart. Entity Mapping → "Do not report the on/off flip after a run" avoids it.</li>
+<li>Alexa only matches the exposed entity's <em>name</em>: a French phrase like "lance le nettoyage" does nothing on the bridge. Create an Alexa routine that maps <strong>several spoken sentences</strong> ("lance le nettoyage", "nettoie la maison"…) to the exposed script as its action.</li>
+<li>Expect this mapping step until Alexa handles intent natively: routines are the glue between how you speak and the script name.</li>
 </ul>
 </li>
 <li>
@@ -4305,6 +4334,23 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li>
 <p><strong>Android TV Remote</strong> : Control your TV.</p>
 </li>
+<li>Docs: https://www.home-assistant.io/integrations/androidtv_remote/</li>
+<li>A <code>remote</code> entity (keys, app launch) and a <code>media_player</code> (power, volume). The same box also shows up through <strong>Google Cast</strong> under the same name, and that second entity is where the playing content comes from — this media player is <code>assumed_state</code> and never knows it. Merge the two into one TV entity with a <a href="https://www.home-assistant.io/integrations/universal/">Universal Media Player</a> before using them in a dashboard.</li>
+<li><strong>Turning on and turning off are the same <code>POWER</code> key — a toggle — sent over the network; there is no wake-on-LAN packet.</strong> Turn-on therefore only works while the device keeps its network/remote service alive in standby. If turn-off works but turn-on doesn't, check in this order:<ol>
+<li>How the streaming device is powered: <strong>wall outlet, never the TV's USB port</strong> (that port dies with the panel, so nothing is left to wake).</li>
+<li>Streaming device → <strong>Settings → System → Power &amp; Energy → Network standby ON</strong> (plus <em>Screenless service</em> where offered). Eco/deep standby powers the radio down and nothing can reach the device.</li>
+<li>TV side: <strong>HDMI-CEC / "One Touch Play" ON</strong> for that HDMI input, and quick-start standby rather than eco — waking the streaming device must also switch the panel on.</li>
+<li>Last, the integration's own <em>Limitations</em> (and clear <em>Android TV Remote Service</em> storage on the device if it keeps flapping unavailable).</li>
+</ol>
+</li>
+<li><strong>Test that separates a state bug from a real wake failure:</strong> power the TV on with its own remote → turn it <strong>off from Home Assistant</strong> → turn it <strong>on from Home Assistant</strong>.<ul>
+<li>If that last step works, nothing is broken: the entity is <code>assumed_state</code> and <code>turn_on</code> only sends the key when it <em>believes</em> the device is off, so a stale "on" turns the action into a silent no-op — and since <code>POWER</code> is a toggle, Home Assistant's belief has to match the panel before the key means "on". Driving the off yourself resynchronises both sides and proves the standby connection is alive.</li>
+<li>If it still fails, the device is not reachable in standby → fix points 1–3.</li>
+</ul>
+</li>
+<li>
+<p>Apps and keys: <code>media_player.play_media</code> (<code>media_content_type: app</code> + package id, e.g. <code>com.netflix.ninja</code>) and <code>remote.send_command</code> for D-pad/menu. Ready-made remote card: see <a href="#dashboard--cards">Dashboard &amp; Cards</a>.</p>
+</li>
 <li>
 <p><strong>Backup</strong> :</p>
 </li>
@@ -4333,6 +4379,14 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <p><strong>Freebox</strong> : https://www.home-assistant.io/integrations/freebox/</p>
 </li>
 <li>
+<p><strong>Google Cast</strong></p>
+</li>
+<li>Docs: https://www.home-assistant.io/integrations/cast/</li>
+<li>One <code>media_player</code> per Cast device. It gives the full playback detail (title, art, play/pause, duration) but an <strong>unreliable power state</strong> — an Android TV sitting on its home screen still reads <code>off</code>.</li>
+<li>
+<p>For an Android TV / Google TV device, take the power/volume commands from <strong>Android TV Remote</strong> and use this integration only as the playback/browse source, combined through a Universal Media Player (see the <em>Android TV Remote</em> entry).</p>
+</li>
+<li>
 <p><strong>HACS</strong>: The best is to use Home Assistant Community Store integrations when available; they often have more features.</p>
 </li>
 <li>
@@ -4358,7 +4412,14 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </li>
 <li>Volets Profalux Zigbee: https://perso.aquilenet.fr/~sven337/francais/2023/06/02/Appairage-de-volets-Profalux-Zigbee.html</li>
 <li>
-<p>Windows (start, lock, restart, sleep...) :  <a href="https://github.com/hass-agent/HASS.Agent">HASS Agent</a></p>
+<p>Workstation control — power off, restart, sleep, lock, plus host sensors. Pick the branch that matches the OS:</p>
+<ul>
+<li><strong>Windows 11 — <a href="https://github.com/hass-agent/HASS.Agent">HASS.Agent</a></strong> : the Windows side of this, and .NET/Windows-only (there is no Linux build). It publishes its sensors and command buttons over MQTT discovery, so they simply appear in Home Assistant.</li>
+<li><strong>Linux (CachyOS) — <a href="https://github.com/joshuar/go-hass-agent">Go Hass Agent</a></strong> : the Linux equivalent, packaged for Arch (<code>go-hass-agent</code> in the AUR). Power off / reboot / suspend go through <code>systemd-logind</code> and come with the host sensors (CPU, memory, disks, network, hardware sensors, power profiles). It talks to Home Assistant's <strong>native-app API with a long-lived token</strong>, so it is <em>not</em> an MQTT device.</li>
+<li>Run it as a user service <strong>and enable lingering</strong> (<code>loginctl enable-linger</code>) — otherwise the power controls only work while somebody is logged in.</li>
+<li>Powering the machine <strong>on</strong> is <strong>Wake on LAN</strong>'s job (see that entry below): no agent can do it from a powered-off OS.</li>
+<li><strong>Not an option any more</strong>: <em>HASS Workstation Service</em> — repository archived (Mar 2025) and Windows-installer-only, despite advertising cross-platform support.</li>
+</ul>
 </li>
 <li>
 <p><strong>Open Thread Border Router</strong></p>
@@ -4367,7 +4428,19 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <p><strong>SmartThinQ LGE Sensors</strong> : https://github.com/ollo69/ha-smartthinq-sensors</p>
 </li>
 <li>
+<p><strong>SmartThings</strong> : https://www.home-assistant.io/integrations/smartthings/</p>
+</li>
+<li>
+<p>Cloud integration for Samsung devices (the local/open-source route is preferred when the device supports it).</p>
+</li>
+<li>
 <p><strong>Sun</strong></p>
+</li>
+<li>
+<p><strong>System Monitor</strong></p>
+</li>
+<li>
+<p>CPU/RAM/disk/network load of the Home Assistant host itself, handy to alert on before an add-on or the VM starves.</p>
 </li>
 <li>
 <p><strong>Tapo: Cameras Control</strong></p>
@@ -4377,6 +4450,16 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </li>
 <li>
 <p><strong>TP-Link Smart Home</strong></p>
+</li>
+<li>
+<p><strong>Wake on LAN</strong></p>
+</li>
+<li>Docs: https://www.home-assistant.io/integrations/wake_on_lan/</li>
+<li>One <code>button</code> per configured MAC address: press = power that machine on. This is the <strong>only</strong> part of "turn my PC on" that works from a powered-off machine — an agent inside the OS cannot do it (see the <em>MQTT</em> entry above).</li>
+<li>Machine side: BIOS "Wake on LAN" / "Power on by PCIe" enabled and ErP/deep-sleep disabled, <strong>wired Ethernet</strong> (WoWLAN over Wi-Fi is a different, far less reliable feature), and on Linux the NIC must still be armed for WoL after a clean shutdown (<code>ethtool -s &lt;nic&gt; wol g</code>, persisted by a systemd unit or a NetworkManager connection setting).</li>
+<li>Note the Freebox device tracker for the machine (<code>device_tracker.&lt;pc&gt;</code>) already tells you whether it is really off before you blame the button — a <code>not_home</code> state with <code>last_time_reachable</code> is the confirmation.</li>
+<li>
+<p>Turning a machine <strong>off</strong>, restarting it or locking it is not this integration's job (see the <em>MQTT</em> entry above).</p>
 </li>
 <li>
 <p>HA Label State: https://github.com/andrew-codechimp/HA-Label-State</p>
@@ -4392,6 +4475,17 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li><strong>Kiosk Mode</strong>: https://github.com/NemesisRE/kiosk-mode</li>
 <li><strong>Mushroom cards</strong> : https://github.com/piitaya/lovelace-mushroom#installation</li>
 <li><strong>Universal Remote Card</strong> : https://github.com/Nerwyn/universal-remote-card</li>
+<li>The whole Android TV remote in a single card — touchpad, power, volume and media keys — built on the <code>remote</code> entity for the keys and the <code>media_player</code> entity for power/volume. This is the card used on the TV remote dashboard view:
+    <div class="language-yaml highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom:universal-remote-card</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Android TV</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nt">remote_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote.chromecast_amine</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nt">media_player_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">media_player.chromecast_amine_2</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nt">rows</span><span class="p">:</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">back</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">power</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">home</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">menu</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">keyboard</span><span class="p p-Indicator">]</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">touchpad</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">volume_buttons</span><span class="p p-Indicator">]]</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">rewind</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">previous</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">play_pause</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">next</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">fast_forward</span><span class="p p-Indicator">]</span>
+</span></code></pre></div></li>
+<li><code>power</code>, the D-pad names and the media keys are built-in key codes, so no <code>custom_actions</code> block is needed for a standard Android TV remote; add one only for buttons the TV does not expose by default.</li>
 </ul>
 <h3 id="automations-scenes-script-helpers-and-entities">Automations, Scenes, Script, Helpers and Entities<a class="headerlink" href="#automations-scenes-script-helpers-and-entities" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4430,14 +4524,29 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </li>
 </ul>
 <h2 id="adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)<a class="headerlink" href="#adguard-home-address-naming-resolution-using-the-router-freebox" title="Permanent link">&para;</a></h2>
+<p>Who hands out the addresses, and who publishes the names:</p>
 <ul>
-<li>You must have ONLY ONE DHCP server on the network</li>
-<li>adguard can be used as DNS and DHCP. If so, Go to Freebox Settings -&gt; DHCP -&gt; first, put your  Adguard DNS server, save then deactivate the DHCP server then save again.</li>
+<li><strong>One DHCP server, one reservation table.</strong> AdGuard Home serves DHCPv4 here, so every fixed IPv4 address belongs in AdGuard Home → DHCP settings → <em>Add static lease</em> (IP + MAC + hostname). The one exception is the machine that runs DNS/DHCP itself: it keeps a fixed address configured on its own OS (that is why the Home Assistant VM's IPv4 is set in HAOS) so it can boot without a lease.</li>
+<li><strong>Reserve the address in DHCP instead of setting it on the device.</strong> A device that assigns its own address gets no lease, and a DHCP server only publishes names for the leases it hands out — that device is exactly the one whose name stops resolving. If a device genuinely must self-assign, give it a DNS rewrite instead.</li>
+<li><strong>The published name is the DHCP hostname</strong>, appended to the local domain: <code>&lt;hostname&gt;.&lt;local_domain_name&gt;</code> (<code>lan</code> by default, configurable in <code>AdGuardHome.yaml</code>), answered only from inside the LAN.</li>
+<li>⚠️ AdGuard does not tell clients which suffix to use (it sends no DHCP option 15), so only the full <code>&lt;name&gt;.&lt;local-domain&gt;</code> resolves — a bare <code>&lt;name&gt;</code> works only where a search domain is set on the client.</li>
+<li><strong>IPv6 has no reservations yet</strong>: the Freebox still assigns IPv6 addresses (RA / SLAAC), so there is nothing to freeze in the DHCP table. Keep the DNS server the router advertises over IPv6 pointed at AdGuard, and let the sync script keep adding each MAC's IPv6 addresses to its AdGuard client — identifying a client by MAC only works while AdGuard is the DHCP server.</li>
+<li><strong>A rename reaches DNS only.</strong> Renaming a device in the router or in AdGuard does not rename it in Home Assistant (device and entity names come from the integration — rename in Settings → Devices) nor in the Matter/Alexa exposure (re-sync the controller afterwards).</li>
+<li>
+<p>While AdGuard owns DHCP + DNS, the Freebox's own local-domain setting stays unused; it counts again only if the Freebox takes that role back, in which case the reservations move to Paramètres (mode avancé) → DHCP → baux permanents.</p>
+</li>
+<li>
+<p>You must have ONLY ONE DHCP server on the network: AdGuard Home is the one (DHCPv4 + DNS), the Freebox DHCP is off.</p>
+</li>
+<li>Order matters: in Freebox Settings -&gt; DHCP, put the AdGuard DNS server first and save, then deactivate the DHCP server and save again.</li>
 <li>Check the address here</li>
 <li>Don't touch the IPV6 settings.</li>
-<li>Set static IPs in adguard Home. If  you previously had devices using a bridge network, and you did reset that bridge, check again their mac addresses and set static IPs in adguard home and restart the network / devices .</li>
+<li>⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.</li>
 <li>Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)</li>
-<li>The following will show you how to get the names of the devices in AdGuard home using your router (this example is for Freebox API).</li>
+</ul>
+<h3 id="sync-the-names-from-the-freebox-script-cron">Sync the names from the Freebox (script + cron)<a class="headerlink" href="#sync-the-names-from-the-freebox-script-cron" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The following will show you how to get the names of the devices in AdGuard Home using your router (this example uses the Freebox API).</li>
 <li>You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).</li>
 <li>We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.</li>
 <li>Steps:</li>
@@ -4448,66 +4557,67 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 </li>
 <li>I am using Freebox pop as a router, so I use the script <a href="../adguard_freebox/freebox_auth.py">freebox_auth.py</a> to get the token <code>uv run freebox_auth.py</code></li>
-<li>then I use this script in the server to automatically update Adguard home: <a href="../adguard_freebox/sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a> to automatically resolve IPV6 addresses and clients names. <code>uv run sync_adguard_home_ip_mac.py</code></li>
+<li>then I use this script in the server to automatically update Adguard home: <a href="../adguard_freebox/sync_adguard_home_ip_mac.py">sync_adguard_home_ip_mac.py</a> to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. <code>uv run sync_adguard_home_ip_mac.py</code></li>
 <li>
 <p>Make a cronjob for it by adding this line at the end of <code>crontab -e</code> (change the path of uv and the script)
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># For example</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># For example</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
 </span></code></pre></div></p>
 </li>
 <li>
 <p>Check Settings -&gt; Client settings -&gt; <strong>Persistent clients settings</strong> .</p>
 </li>
 <li>This script will run every minute. If it discovers a new device, it will update the log file <code>sync_agh.log</code> with the latest sync information.</li>
+<li>⚠️ The name it takes from the Freebox (<code>primary_name</code>, i.e. the name you set on the device's page) is used <strong>only when it creates a client</strong>. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).</li>
 </ul>
 <h3 id="network-topology-dns-flows">Network topology &amp; DNS flows<a class="headerlink" href="#network-topology-dns-flows" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>graph TB
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (DHCP + DNS root for the whole network)"]
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>        Freebox["Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway / DHCP server"]
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>        LANDevice["LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x"]
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    end
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>        br0["br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)"]
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        virbr0["virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached"]
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        docker0["docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running"]
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    end
-</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
-</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
-</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        natVM["KVM VM in NAT mode&lt;br/&gt;192.168.122.x"]
-</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>    end
-</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
-</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged via Freebox DHCP)"]
-</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        AdGuard["AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI"]
-</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>
-</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        subgraph Hassio1["hassio network — 172.30.32.0/23"]
-</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>            hassioGw["gateway&lt;br/&gt;172.30.32.1"]
-</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            hassioDns["hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy"]
-</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>            haAddons["other addons&lt;br/&gt;172.30.32.4+"]
-</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>        end
-</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>
-</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
-</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            hermes["Hermes Agent addon&lt;br/&gt;172.30.33.10"]
-</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        end
-</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>    end
-</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
-</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>    %% DNS flows
-</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>    LANDevice --&gt;|"direct DNS query"| AdGuard
-</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>    haAddons --&gt;|"internal query"| hassioDns
-</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    hermes --&gt;|"internal query"| hassioDns
-</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    hassioDns --&gt;|"forwarded DNS query"| AdGuard
-</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    natVM --&gt;|"query"| virbr0
-</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    virbr0 --&gt;|"forwarded DNS query"| AdGuard
-</span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>
-</span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>    %% topology / carrier links (not DNS)
-</span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>    Freebox -.-&gt;|LAN| br0
-</span><span id="__span-17-41"><a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>    br0 -.-&gt;|bridged NIC vnet2| AdGuard
-</span><span id="__span-17-42"><a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>
-</span><span id="__span-17-43"><a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>    classDef visible stroke:#2e7d32,stroke-width:2px;
-</span><span id="__span-17-44"><a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
-</span><span id="__span-17-45"><a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>
-</span><span id="__span-17-46"><a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a>    class Freebox,LANDevice,br0,AdGuard visible;
-</span><span id="__span-17-47"><a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a>    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>graph TB
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (IPv4 leases by AdGuard Home · Freebox = gateway + IPv6)"]
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>        Freebox["Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway (DHCPv4 off)"]
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>        LANDevice["LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x"]
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    end
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>        br0["br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)"]
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>        virbr0["virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached"]
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>        docker0["docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running"]
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    end
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>        natVM["KVM VM in NAT mode&lt;br/&gt;192.168.122.x"]
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>    end
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged; IPv4 fixed in HAOS)"]
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>        AdGuard["AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI"]
+</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>
+</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>        subgraph Hassio1["hassio network — 172.30.32.0/23"]
+</span><span id="__span-18-21"><a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>            hassioGw["gateway&lt;br/&gt;172.30.32.1"]
+</span><span id="__span-18-22"><a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a>            hassioDns["hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy"]
+</span><span id="__span-18-23"><a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>            haAddons["other addons&lt;br/&gt;172.30.32.4+"]
+</span><span id="__span-18-24"><a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a>        end
+</span><span id="__span-18-25"><a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a>
+</span><span id="__span-18-26"><a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a>        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
+</span><span id="__span-18-27"><a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a>            hermes["Hermes Agent addon&lt;br/&gt;172.30.33.10"]
+</span><span id="__span-18-28"><a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a>        end
+</span><span id="__span-18-29"><a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a>    end
+</span><span id="__span-18-30"><a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a>
+</span><span id="__span-18-31"><a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a>    %% DNS flows
+</span><span id="__span-18-32"><a id="__codelineno-18-32" name="__codelineno-18-32" href="#__codelineno-18-32"></a>    LANDevice --&gt;|"direct DNS query"| AdGuard
+</span><span id="__span-18-33"><a id="__codelineno-18-33" name="__codelineno-18-33" href="#__codelineno-18-33"></a>    haAddons --&gt;|"internal query"| hassioDns
+</span><span id="__span-18-34"><a id="__codelineno-18-34" name="__codelineno-18-34" href="#__codelineno-18-34"></a>    hermes --&gt;|"internal query"| hassioDns
+</span><span id="__span-18-35"><a id="__codelineno-18-35" name="__codelineno-18-35" href="#__codelineno-18-35"></a>    hassioDns --&gt;|"forwarded DNS query"| AdGuard
+</span><span id="__span-18-36"><a id="__codelineno-18-36" name="__codelineno-18-36" href="#__codelineno-18-36"></a>    natVM --&gt;|"query"| virbr0
+</span><span id="__span-18-37"><a id="__codelineno-18-37" name="__codelineno-18-37" href="#__codelineno-18-37"></a>    virbr0 --&gt;|"forwarded DNS query"| AdGuard
+</span><span id="__span-18-38"><a id="__codelineno-18-38" name="__codelineno-18-38" href="#__codelineno-18-38"></a>
+</span><span id="__span-18-39"><a id="__codelineno-18-39" name="__codelineno-18-39" href="#__codelineno-18-39"></a>    %% topology / carrier links (not DNS)
+</span><span id="__span-18-40"><a id="__codelineno-18-40" name="__codelineno-18-40" href="#__codelineno-18-40"></a>    Freebox -.-&gt;|LAN| br0
+</span><span id="__span-18-41"><a id="__codelineno-18-41" name="__codelineno-18-41" href="#__codelineno-18-41"></a>    br0 -.-&gt;|bridged NIC vnet2| AdGuard
+</span><span id="__span-18-42"><a id="__codelineno-18-42" name="__codelineno-18-42" href="#__codelineno-18-42"></a>
+</span><span id="__span-18-43"><a id="__codelineno-18-43" name="__codelineno-18-43" href="#__codelineno-18-43"></a>    classDef visible stroke:#2e7d32,stroke-width:2px;
+</span><span id="__span-18-44"><a id="__codelineno-18-44" name="__codelineno-18-44" href="#__codelineno-18-44"></a>    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
+</span><span id="__span-18-45"><a id="__codelineno-18-45" name="__codelineno-18-45" href="#__codelineno-18-45"></a>
+</span><span id="__span-18-46"><a id="__codelineno-18-46" name="__codelineno-18-46" href="#__codelineno-18-46"></a>    class Freebox,LANDevice,br0,AdGuard visible;
+</span><span id="__span-18-47"><a id="__codelineno-18-47" name="__codelineno-18-47" href="#__codelineno-18-47"></a>    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
 </span></code></pre></div>
 <p><strong>Legend</strong></p>
 <ul>
