@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 from personal_os_setup.tasks.system.chezmoi import (
     chezmoi_add,
     chezmoi_apply,
+    chezmoi_clean_backups,
     chezmoi_diff,
     chezmoi_forget,
     chezmoi_managed_paths,
@@ -236,3 +237,54 @@ class TestChezmoiForget:
         ):
             result = chezmoi_forget([Path("/home/user/.zshrc")])
         assert result.ok is False
+
+
+class TestChezmoiCleanBackups:
+    """Tests for chezmoi_clean_backups()."""
+
+    _MANAGED = "personal_os_setup.tasks.system.chezmoi.chezmoi_managed_paths"
+
+    def test_removes_only_backups_of_managed_files(self, tmp_path):
+        zshrc = tmp_path / ".zshrc"
+        skill = tmp_path / "skills" / "SKILL.md"
+        skill.parent.mkdir()
+        for f in (zshrc, skill):
+            f.write_text("live")
+        gone = [
+            tmp_path / ".zshrc_20261019_013924_backup",
+            skill.with_name("SKILL_20261019_013924_backup.md"),
+            skill.with_name("SKILL_20261019_013954_backup.md"),
+        ]
+        keep = [
+            tmp_path / "notes_20261019_013924_backup.txt",  # not a managed file's backup
+            tmp_path / ".zshrc_backup",  # no timestamp
+        ]
+        for f in (*gone, *keep):
+            f.write_text("x")
+
+        with patch(self._MANAGED, return_value=[zshrc, skill]):
+            result = chezmoi_clean_backups()
+
+        assert result.ok is True
+        assert "removed 3" in result.summary
+        assert not any(f.exists() for f in gone)
+        assert all(f.exists() for f in keep)
+        assert zshrc.read_text() == "live" and skill.read_text() == "live"
+
+    def test_fails_when_nothing_is_managed(self):
+        with patch(self._MANAGED, return_value=[]):
+            result = chezmoi_clean_backups()
+        assert result.ok is False
+
+    def test_reports_files_it_could_not_delete(self, tmp_path):
+        managed = tmp_path / "a.toml"
+        managed.write_text("live")
+        backup = tmp_path / "a_20261019_013924_backup.toml"
+        backup.write_text("x")
+        with (
+            patch(self._MANAGED, return_value=[managed]),
+            patch.object(Path, "unlink", side_effect=PermissionError("denied")),
+        ):
+            result = chezmoi_clean_backups()
+        assert result.ok is False
+        assert "1 failed" in result.summary

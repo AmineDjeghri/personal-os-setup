@@ -23,12 +23,16 @@ Open the **Sync dotfiles** tab, expand `.claude`, and select the **whole `.claud
 | diff selected | Shows what would change in `~/.claude` |
 | apply selected | Copies the authored skills to `~/.claude/skills` and runs the third-party replay script |
 | re-add selected | Pulls a skill you edited live back into the repo's source tree |
+| chezmoi: clean backups | (action button above the list) Deletes the `<name>_<timestamp>_backup` copies that earlier applies left next to managed files, including those in `~/.claude/skills` |
 
 Things to know:
 
 - **Select the folder.** The replay script (`run_after_replay-third-party-skills.sh`) only runs when its own
   entry is selected. Selecting a single file applies that file and silently skips the script.
 - **It never deletes.** A skill removed from the repo stays in `~/.claude/skills` until you delete it by hand.
+- **Each apply leaves backups.** Before overwriting, it copies every selected file to
+  `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-diff` then reports `DIFFERS`. Use
+  **chezmoi: clean backups** to remove them.
 - **It does not check for drift.** Apply overwrites a live skill that was edited and not yet pulled back with
   re-add. Run `make skills-diff` first if an agent may have edited a live skill.
 - **Re-add only handles files already tracked.** For a brand-new live-only skill, use `make skills-keep`.
