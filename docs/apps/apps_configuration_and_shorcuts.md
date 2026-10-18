@@ -179,7 +179,7 @@ session menu) are documented in [CachyOS.md](../linux/CachyOS.md#desktop) — th
 covers the day-to-day shortcuts.
 
 - `Alt+F` — fullscreen
-- `Alt+Tab` — window switcher (via the `hymission` Hyprland plugin)
+- `Alt+Tab` — window switcher (Noctalia's built-in `window-switcher`, hold Alt and tap Tab to cycle)
 - Drag / close / maximize via title bars (via the `hyprbars` Hyprland plugin)
 - Vicinae is the launcher — see [§2.4](#24-launcher-raycast--vicinae)
 

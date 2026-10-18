@@ -202,10 +202,6 @@ installed first.
 ```bash
 hyprpm update
 
-# ALT+TAB window switcher
-hyprpm add https://github.com/gfhdhytghd/hymission
-hyprpm enable hymission
-
 # Title bars: drag, close, maximise
 hyprpm add https://github.com/hyprwm/hyprland-plugins
 hyprpm enable hyprbars
@@ -214,7 +210,8 @@ hyprpm reload
 hyprpm list
 ```
 
-Test `ALT+TAB` for the switcher, and dragging / closing / maximizing windows for hyprbars.
+Test dragging / closing / maximizing windows for hyprbars. The `ALT+TAB` window switcher is Noctalia's own
+(`noctalia msg window-switcher hold`), not a Hyprland plugin.
 
 ### Secret storage (gnome-keyring, not KWallet)
 
