@@ -72,7 +72,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
   **this repo is PUBLIC**.
 - **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;
   `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the
-  lock (`~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-save`;
+  lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-save`;
   `make skills-thirdparty-replay [AGENT=codex]` reinstalls).
 - **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
   own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).

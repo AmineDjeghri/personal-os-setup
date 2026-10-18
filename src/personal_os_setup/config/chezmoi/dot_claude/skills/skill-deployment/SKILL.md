@@ -109,7 +109,7 @@ npx skills add <owner>/<repo> -g -y --copy                             # whole p
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
 - **Lands as a real directory** in `~/.claude/skills/<skill>/` (we pass `--copy` on every install, incl. `make skills-thirdparty-replay`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
-- **The lock is OUTSIDE any repo:** `~/.agents/.skill-lock.json` (v3: `source`, `sourceType`,
+- **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
   the live lock is never the record we ship. Replay/drift: `make skills-thirdparty` in
   `makefiles/skills.mk`.

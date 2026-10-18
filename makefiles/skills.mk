@@ -106,7 +106,8 @@ skills-keep: ## Save a live skill into the repo: make skills-keep NAME=<name> (c
 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
-# (for a global install: $(HOME)/.agents/.skill-lock.json), so the committed COPY below is what
+# (a global install: $(XDG_STATE_HOME)/skills/.skill-lock.json on current CLIs, $(HOME)/.agents/.skill-lock.json
+# on older ones), so the committed COPY below is what
 # makes a new machine rebuildable. The copy deliberately does NOT sit in the chezmoi source: a
 # `chezmoi apply` must never overwrite the tool's live lock with a stale record.
 #
@@ -115,7 +116,9 @@ skills-keep: ## Save a live skill into the repo: make skills-keep NAME=<name> (c
 # skillFolderHash }. VALIDATE ON FIRST REAL INSTALL (`make skills-thirdparty-save`) — written from
 # the documented v3 shape, not yet from a lock produced on this box.
 THIRD_PARTY_LOCK := third-party-skills.lock.json
-LIVE_SKILLS_LOCK := $(HOME)/.agents/.skill-lock.json
+XDG_STATE := $(or $(XDG_STATE_HOME),$(HOME)/.local/state)
+# First existing wins (XDG first); if neither exists, point at the XDG path so the error names where it should be.
+LIVE_SKILLS_LOCK ?= $(firstword $(wildcard $(XDG_STATE)/skills/.skill-lock.json $(HOME)/.agents/.skill-lock.json) $(XDG_STATE)/skills/.skill-lock.json)
 JQ_TP_NAMES := .skills | keys[]
 JQ_TP_HASH  := (.skills[$$n].skillFolderHash // "-")
 JQ_TP_SRC   := (.skills[$$n].source // .skills[$$n].sourceUrl // "?")
@@ -150,7 +153,7 @@ skills-thirdparty: ## Report drift between the committed third-party lock and th
 
 skills-thirdparty-save: ## Copy the live npx lock into the repo (the record we ship)
 	@test -f "$(LIVE_SKILLS_LOCK)" || { printf 'no live lock at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
-	@cp "$(LIVE_SKILLS_LOCK)" "$(THIRD_PARTY_LOCK)"
+	@jq . "$(LIVE_SKILLS_LOCK)" > "$(THIRD_PARTY_LOCK)"  # jq also adds the trailing newline the end-of-file hook requires
 	@printf 'recorded %s -- %s entries\n' "$(THIRD_PARTY_LOCK)" "$$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK) | wc -l | tr -d ' ')"
 
 AGENT ?= claude-code
