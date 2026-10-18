@@ -18,7 +18,7 @@
 - **When the gate ABORTS, attribute the drift and SHOW the delta before acting on it.** `hermes curator ledger` names
   the pass that patched the live copy and when — a curator/background-review patch minutes after your own deploy is
   the signature, and it means that live content is knowledge, not noise. Then render the delta per drifted skill with
-  `scripts/review-drift.py <source-root> <live-root> <skill-dir>…` (writes `drift-<skill>.diff`, classifies the change,
+  `agent-skills-architecture/scripts/review-drift.py <source-root> <live-root> <skill-dir>…` (writes `drift-<skill>.diff`, classifies the change,
   scrubs the added lines), hand the user the diff files plus what the added lines actually SAY, state which side is
   strictly newer, and recommend — do not force-deploy or port on their behalf. This user reads the delta before
   agreeing to keep it, and a forced deploy discards the passed lesson for good.

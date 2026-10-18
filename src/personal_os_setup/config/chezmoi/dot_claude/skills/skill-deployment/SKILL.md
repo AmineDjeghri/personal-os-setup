@@ -37,7 +37,22 @@ Rules: `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nest
 (`src/personal_os_setup/tasks/system/chezmoi.py`) passes that dir directly as `--source`, so a
 nested `.chezmoiroot` would double-redirect and break the app's deploy path.
 
-Refresh after `git pull`. On the container deploy only `.claude` (full apply would dump desktop dotfiles).
+Refresh after `git pull`. On the container deploy only `.claude`: the package source also holds the desktop
+config (`dot_config/hypr`, ghostty, mpv, OpenRGB, coolercontrol, mimeapps…), and `/config/.claude/` also holds
+Claude Code's own credentials/sessions — deploy into the `skills/` subdir only.
+
+**File-level fallback (source dir is not a git repo):** `--source-path` with ABSOLUTE source paths works on any dir.
+
+```bash
+S=/config/workspace/personal-os-setup/src/personal_os_setup/config/chezmoi
+chezmoi --source "$S" apply -v --force --parent-dirs --refresh-externals=never \
+  --source-path "$S/dot_claude/skills/<name>/SKILL.md"
+```
+
+- If it hangs mid-apply with `--parent-dirs`, retry the missing file alone without it (the dirs already exist).
+- `chezmoi managed --source "$S"` lists entries (live scan); `chezmoi cat`/`apply <target>` use target resolution,
+  which is what fails on a non-git source. Idempotent: re-run for the skills a `git pull` changed.
+- The TUI (`tasks/system/chezmoi.py`) runs the same flags with `chezmoi_source_dir()` as `--source`.
 
 Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
@@ -48,7 +63,7 @@ copy-only: it overwrites whatever is live and deletes nothing.
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Drift:** `make skills-diff` (read-only; non-zero on MISSING/DIFFERS), `make skills-status`, `make skills-drift` (the deploy's gate: only a DIFFERS aborts). Override with `make skills-deploy SKILLS_FORCE=1` only after porting the live edit into the repo — see `agent-skills-architecture` → `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-keep NAME=<name>`.
+**Drift:** `make skills-diff` (read-only; non-zero on MISSING/DIFFERS), `make skills-status`, `make skills-drift` (the deploy's gate: only a DIFFERS aborts). Override with `make skills-deploy SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-keep NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 

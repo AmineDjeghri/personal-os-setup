@@ -59,7 +59,7 @@ Types: `feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `chore`, `perf`
 
 Use `!` or a `BREAKING CHANGE:` footer for majors.
 
-Mandatory pre-push checklist: see the `repo-conventions` skill (line endings: see the `git-line-endings` skill).
+Mandatory pre-push checklist: see `coding-workflow` § 5 (line endings: see the `git-line-endings` skill).
 
 ## 3. Pushing and Creating a PR
 

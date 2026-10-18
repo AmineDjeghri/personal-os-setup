@@ -1,14 +1,6 @@
----
-name: hermes-coding-workflow
-description: Use when the Hermes orchestrator plans, delegates or reviews coding work (Hermes-only).
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
+# Hermes orchestrator — delegating coding work to Claude Code
 
-# Coding Workflow — Hermes & Claude Code
-
-Hermes-only: how the orchestrator plans, briefs the Claude Code delegate and verifies.
+Hermes-only (read from `coding-workflow` § 6): how the orchestrator plans, briefs the Claude Code delegate and verifies.
 
 ## 1. Division of labor
 
@@ -36,5 +28,5 @@ Rules that follow from this:
 
 ## 2. Shared rules (not duplicated here)
 
-See `coding-workflow` and `repo-conventions` (and each repo's own `AGENTS.md`).
-Chat-made decisions get encoded into the governing skill (this one, `repo-conventions`, or the repo's own skill) — never left only in memory.
+See `coding-workflow` (and each repo's own `AGENTS.md`).
+Chat-made decisions get encoded into the governing skill (`coding-workflow` or the repo's own skill) — never left only in memory.

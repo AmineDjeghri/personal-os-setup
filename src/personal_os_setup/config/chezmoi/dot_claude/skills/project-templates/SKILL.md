@@ -20,5 +20,6 @@ ship CI/CD, GitHub Pages docs site, pre-commit, and release tooling, so you repl
 Rules:
 1. **Match the type first** (package vs gen-ai/full-stack vs addon) — don't retrofit a template.
 2. **Fork, don't clone** — keep the upstream link so template improvements can be pulled in later.
-3. **After forking, make the repo self-describing**: add `AGENTS.md`/`CLAUDE.md` + `.claude/skills/` (see `repo-conventions`) so any agent works in it correctly from day one.
+3. **After forking, make the repo self-describing**: add `AGENTS.md`/`CLAUDE.md` + `.claude/skills/` (see `coding-workflow` § 5) so any agent works in it correctly from day one.
 4. Rebrand/rename the package per the template's own README before first use.
+5. **Existing repo that should match a template** → not this skill; use `template-adoption`.

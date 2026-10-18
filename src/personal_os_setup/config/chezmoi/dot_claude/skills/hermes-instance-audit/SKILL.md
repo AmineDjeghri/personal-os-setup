@@ -53,7 +53,6 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - git install (cheapest "latest vs mine"): `git fetch origin && git rev-list --count HEAD..origin/main` (`0` = the checkout IS main tip), `git tag --sort=-creatordate | head -5`, `git rev-list --count <tag>..HEAD`. HEAD can be AHEAD of the newest tag (main tip) — report both.
 - Tag ↔ version: tags are calendar `v2026.M.D` while the package version is `0.x.y` (`v2026.8.3` = 0.20.0). Patch tags' notes are rolled into the next minor's body.
 - Manifest vs repo: `.bundled_manifest` should equal `<install>/skills/**/SKILL.md` 1:1.
-- Release bodies: working URLs, the escaped-JSON pitfall and the keywords to grep → `references/release-history.md`.
 
 ## Commands to advise, never run unasked
 - `hermes skills reset <name>` = un-mark user-modified so updates apply again; `hermes skills reset <name> --restore` = ALSO deletes the local copy and re-seeds current stock (the fix for STALE stock — it destroys user content if there was any). Reset is per-skill: there is no global reset.
@@ -117,7 +116,6 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - `references/update-lifecycle.md` — `hermes update` phases, markers, checks
 - `references/addon-boot-log-triage.md` — boot-log attribution and failure signatures
 - `references/skill-loading-resolution.md` — loading chain, root resolution, probes
-- `references/release-history.md` — release-body recipe, working URLs
 - `references/plugins-platforms-channels.md` — plugin/platform/channel taxonomy and rules
 - `references/skills-sync-and-bundling.md` — sync semantics, sweep one-liner, delete vs disable
 - `scripts/check_bundled_manifest.py` — read-only manifest probe

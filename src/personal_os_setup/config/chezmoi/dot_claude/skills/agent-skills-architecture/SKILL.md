@@ -68,19 +68,19 @@ metadata:
 - Authored skills → chezmoi source `dot_claude/skills/<name>/`, deployed to `/config/.claude/skills/`; the saved set is `skills.keep`.
 - Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
 - Plugin packs (`superpowers`, `cloudflare/skills`) → that harness's own channel, one canal per pack per agent.
-- Plugin install commands and the bundle-that-is-both case: `references/install-and-track-procedures.md`.
+- Plugin install commands and the bundle-that-is-both case: `references/installing-and-vetting-skills.md`.
 
 ## Deploying the shared dir (chezmoi / container)
 
 Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-deploy` and its
 `SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
 don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
-`--source`, the file-level `--source-path` fallback) is in `references/chezmoi-dot-claude-deployment.md`.
+`--source`) and the file-level `--source-path` fallback are in `skill-deployment`.
 
 ## Reconciling the two trees — the deploy gate
 
 `MISSING` = the deploy has not landed, never "redundant"; `DIFFERS` → check per FILE which side is newer; re-run
-`make skills-diff` after the deploy. Decision tree and per-file checks: `references/deploy-drift-and-reconciliation.md`.
+`make skills-diff` after the deploy. Decision tree and per-file checks: `skill-deployment` → `references/deploy-drift-and-reconciliation.md`.
 
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` refreshes the git-tracked
@@ -150,7 +150,7 @@ Publishing is a review step: scrub → place in `dot_claude/skills/<name>/` → 
 Audit the DIFF, not the result; the pushed work may not be on `main`. Diff before committing a skill file you edited earlier — `git add <dir>` sweeps in changes you did not author. Sequence and delegation rules: `references/reviewing-a-rewrite.md`.
 
 ## Community discovery — "find me skills I'm missing"
-Never answer from the leaderboard. Vetting, exclusion patterns and the pre-flight rules: `references/community-skills-npx.md`.
+Never answer from the leaderboard. Vetting, exclusion patterns and the pre-flight rules: `references/installing-and-vetting-skills.md`.
 
 ## Verification checklist
 - [ ] exactly one path serves each ported name (`find -L <every root> -path "*<name>/SKILL.md"` == 1 hit)
@@ -198,11 +198,8 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
 
 ## References
 - `references/store-writers-curator-and-pins.md` — own-store writers, curator, pins
-- `references/install-and-track-procedures.md` — plugin and bundle install commands
 - `references/audit-and-origin-inventory.md` — deletion audit, origin inventory
-- `references/deploy-drift-and-reconciliation.md` — two-tree drift decision tree
-- `references/chezmoi-dot-claude-deployment.md` — container deploy invocation, file-level fallback
-- `references/community-skills-npx.md` — community discovery, vetting, install rules
+- `references/installing-and-vetting-skills.md` — npx / plugin / hub installs, community vetting
 - `references/sanitizing-skills-for-public-repos.md` — scrub list, placeholders, review rules
 - `references/repo-hook-gate.md` — running target repo hooks on copies
 - `references/platform-lifecycle-and-gates.md` — Hermes library lifecycle, gates, knobs

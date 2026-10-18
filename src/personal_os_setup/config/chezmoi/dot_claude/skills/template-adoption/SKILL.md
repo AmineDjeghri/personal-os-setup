@@ -8,12 +8,13 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [Template, Repo-Audit, Refactor, CI, Line-Endings, Delegation]
-    related_skills: [repo-conventions, coding-workflow]
+    related_skills: [coding-workflow]
 ---
 
 # Aligning a repo with a house template
 
-The deliverable is a verified gap matrix, the user's decisions, then the committed change.
+The deliverable is a verified gap matrix, the user's decisions, then the committed change. The templates
+themselves are listed in `project-templates` (starting a NEW project is that skill, not this one).
 
 ## 1. Establish the facts before proposing anything
 

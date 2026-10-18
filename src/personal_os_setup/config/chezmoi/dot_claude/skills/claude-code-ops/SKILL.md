@@ -75,7 +75,7 @@ Run `claude remote-control --name <label>` inside **tmux** (interactive TUI; a r
 
 ## Plugins (plugin-based skill installs)
 
-Install commands: `agent-skills-architecture` → `references/install-and-track-procedures.md`. **Cost rule:** an enabled-but-idle plugin adds fixed per-call overhead (its manifest + skill index ride in every system prompt); `claude plugin disable <name>` around big `-p` runs, re-enable after.
+Install commands: `agent-skills-architecture` → `references/installing-and-vetting-skills.md`. **Cost rule:** an enabled-but-idle plugin adds fixed per-call overhead (its manifest + skill index ride in every system prompt); `claude plugin disable <name>` around big `-p` runs, re-enable after.
 
 ## Delegating a repo task in print mode (brief → run → approve → verify)
 
