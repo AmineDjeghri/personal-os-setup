@@ -390,22 +390,53 @@ each. On CachyOS and Ubuntu those packages are also in `packages.yaml`, so you c
 from the app's own Packages tab instead of manually.
 
 ```bash
-make vm-deps            # verify qemu/libvirt/virt-manager/virt-viewer are installed, enable libvirtd
+make vm-deps            # verify qemu/libvirt/virt-manager/virt-viewer/swtpm are installed, enable libvirtd
                          # (install any missing ones from the app's Packages tab first, if available for your distro)
 
 make vm-cachyos          # CachyOS VM -- manual ISO install, GUI console opens automatically
 make vm-ubuntu-server    # Ubuntu Server 26.04 -- unattended autoinstall, no clicking needed
 make vm-ubuntu-server-manual  # same ISO, manual click-through install
 make vm-ubuntu           # Ubuntu Desktop 26.04 -- manual install
+WIN_ISO=/path/to/windows.iso make vm-windows  # Windows 11 (UEFI + Secure Boot + emulated TPM) -- manual install, you supply the ISO
+make vm-macos            # macOS via Quickemu (NOT libvirt) -- downloads Apple's recovery image; MACOS_VERSION=sonoma to pick another
 
-make vm-list             # list this project's VMs and their state
-make vm-clean            # destroy/undefine all this project's VMs, wipe disks (keeps cached ISOs)
+make vm-list             # list this project's libvirt VMs and their state (does NOT show the Quickemu macOS guest)
+make vm-clean            # destroy/undefine all this project's VMs, wipe disks + the Quickemu macOS guest (keeps cached ISOs)
 make vm-clean-isos       # delete cached install ISOs too (re-downloaded on next make vm-*)
 ```
 
 Re-running a `vm-*` target on a VM that already exists just starts it and reopens the GUI
-console instead of recreating it. Everything (ISOs, disk images, cloud-init seeds) is cached
+console instead of recreating it. Everything (ISOs, disk images, cloud-init seeds, the macOS guest) is cached
 under `.vm/` (gitignored) — repo-local, so deleting the repo also cleans it all up.
+
+**`make vm-windows` is the one target that can't download its own ISO** (Microsoft licensing): get a Windows ISO from
+[Microsoft's download page](https://www.microsoft.com/software-download/) and pass it as `WIN_ISO`. It boots from that ISO alone — no
+driver ISO needed (SATA disk + e1000e NIC use Windows' inbox drivers). Optional env vars: `WIN_ISO_SHA256` (verify the ISO),
+`WIN_VERSION=10` (fallback without TPM; default is `11`), `WIN_DISK_GB` (default `80`, Windows 11 needs ≥ 64). The full
+end-to-end walkthrough is in [Testing the Windows flow in a VM](../windows_workflow/README.md#5-testing-the-windows-flow-in-a-vm).
+
+**`make vm-macos` is the other odd one out: it is [Quickemu](https://github.com/quickemu-project/quickemu), not libvirt.**
+macOS guests need the OpenCore bootloader plus Apple's recovery image; `quickget macos <release>` fetches both (multi-GB) into
+`.vm/macos/macos-<release>/` and `quickemu` runs the guest as a plain QEMU process under your user. What follows from that:
+
+- **Quickemu is a manual install, not part of `make vm-deps`** (and not in `packages.yaml`): on Arch/CachyOS `paru -S quickemu`;
+  on other distros follow the install section of its README. The target dies with that hint if `quickemu`/`quickget` are missing.
+- **`make vm-list` does not list it** (it only asks `virsh`) and it doesn't appear in virt-manager. Upstream has no supported
+  import into libvirt ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)), so the two worlds stay split.
+- **`make vm-clean` does wipe it** (`.vm/macos/`), including the recovery image — the next `make vm-macos` downloads it again.
+  If the guest is still running, `vm-clean` leaves it alone and tells you to shut it down first.
+- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; the default is `tahoe` (macOS 26, what
+  `macos-latest` currently runs in CI; override with `MACOS_VERSION`). First boot lands in macOS Recovery: erase the
+  virtual disk in Disk Utility, then *Reinstall macOS*.
+- CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo` first). Some AMD Ryzen mobile CPUs
+  (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
+  `tsc=reliable` workaround there, and `qe_mac_apid` for Apple-ID/App-Store serial randomization — read it rather than
+  guessing.
+- Limits: no GPU acceleration; virtio-net/ballooning only on Big Sur+; native virtio-sound on Monterey+; SPICE
+  copy/paste isn't available on macOS.
+- Apple's EULA restricts macOS guests to Apple hardware — whether that matters for your use is your call.
+
+How to use it to test the macOS flow end to end: [Testing the macOS flow in a VM](../macos_darwin/README.md#6-testing-the-macos-flow-in-a-vm).
 
 **If a VM has no internet access during install**, it's very likely your host's firewall
 blocking NAT'd VM traffic on libvirt's `virbr0` bridge, even though libvirt sets up its own
