@@ -429,6 +429,8 @@ macOS guests need the OpenCore bootloader plus Apple's recovery image; `quickget
   `macos-latest` currently runs in CI; override with `MACOS_VERSION`). First boot lands in macOS Recovery: in Disk Utility
   (*View → Show All Devices*) erase the big **Apple VirtIO Block Media** disk (~137 GB) as APFS, then *Reinstall macOS* onto it.
   The ~400 MB *QEMU HARDDISK* is OpenCore and the ~2.5 GB volume is the Recovery image itself ("37.6 MB free" = wrong target).
+  The install is multi-stage: expect to pick the installer entry 2-3 times (it reboots into the OpenCore menu each time) until the
+  menu shows `Macintosh HD`; that entry boots the installed system, so don't reinstall again.
 - CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo` first). Some AMD Ryzen mobile CPUs
   (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
   `tsc=reliable` workaround there, and `qe_mac_apid` for Apple-ID/App-Store serial randomization — read it rather than
