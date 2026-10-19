@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v2.17.0 (2026-10-19)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic to v2.14.1 (#137)
+  ([#137](https://github.com/AmineDjeghri/personal-os-setup/pull/137),
+  [`7478894`](https://github.com/AmineDjeghri/personal-os-setup/commit/74788940d9715980fc7f454248904c63bef40d1c))
+
+### Features
+
+- **binds**: Add Noctalia window switcher key binding and passwordless sync script
+  ([`93d8563`](https://github.com/AmineDjeghri/personal-os-setup/commit/93d85636bbcfbc1a1f991f77f56d1c86a7a14abe))
+
+
 ## v2.16.2 (2026-10-17)
 
 ### Bug Fixes
