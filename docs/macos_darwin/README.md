@@ -86,8 +86,19 @@ sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sud
 
 You can exercise the macOS flow (the app's darwin tasks drive Homebrew) end to end in a disposable VM from a Linux host,
 with [Quickemu](https://github.com/quickemu-project/quickemu) — **not** libvirt, so this works differently from the other
-`make vm-*` targets. The caveats (CPU requirements, no GPU acceleration, why `make vm-list` doesn't show it, the Apple
-EULA) are listed in [Testing this project in a VM](../linux/CachyOS.md#testing-this-project-in-a-vm).
+`make vm-*` targets (see the shared [Testing this project in a VM](../vm/README.md) page for host setup and cleanup).
+
+| Command         | Guest                                                                                                                             |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `make vm-macos` | macOS via Quickemu; downloads Apple's recovery image on first run. `MACOS_VERSION=sonoma` picks another release (default `tahoe`) |
+
+**Manage the VM**
+
+| Command              | What it does                                                                                                                                     |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| `make vm-list`       | **Does not show** the macOS guest (it isn't a libvirt VM); it lists only libvirt guests                                                          |
+| `make vm-clean`      | Wipes the macOS guest (`.vm/macos/`) including Apple's recovery image, so the next `make vm-macos` downloads it again; skips it if still running |
+| `make vm-clean-isos` | Does not touch the macOS guest (its recovery image lives in `.vm/macos/`); only clears cached ISOs of the other guests                           |
 
 1. Install Quickemu on the Linux host once (it isn't part of `make vm-deps`): `paru -S quickemu` on Arch/CachyOS, or the
    install section of its README elsewhere.
@@ -119,8 +130,25 @@ EULA) are listed in [Testing this project in a VM](../linux/CachyOS.md#testing-t
 5. Run the app with the one-liner from the [README](../../README.md#linux--wsl2--macos) (it clones the repo into
    `~/.personal-os-setup`, runs `make install` and `make run`), then use `personal-os-setup` for later runs. Exercise the
    Packages tab (brew formulae/casks), the Zsh and dotfiles sections, etc.
-6. `make vm-clean` deletes the guest and its disk (`.vm/macos/`) — including Apple's recovery image, which the next
-   `make vm-macos` downloads again.
+6. Re-run `make vm-macos` to start the existing guest again; use `make vm-clean` (table above) to delete it.
+
+**Caveats**
+
+- **Not libvirt:** `quickget macos <release>` fetches OpenCore plus Apple's recovery image (multi-GB) into
+  `.vm/macos/macos-<release>/` and `quickemu` runs a plain QEMU process under your user. `make vm-list` and virt-manager
+  don't show it, and upstream has no libvirt import ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)).
+  `make vm-clean` wipes it (but leaves a still-running guest alone and tells you to shut it down first).
+- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; default `tahoe` (macOS 26, what `macos-latest`
+  runs in CI), override with `MACOS_VERSION`.
+- CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo`). Some AMD Ryzen mobile CPUs
+  (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
+  `tsc=reliable` workaround, and `qe_mac_apid` for Apple-ID/App-Store serial randomization.
+- Limits: no GPU acceleration; virtio-net/ballooning only on Big Sur+; native virtio-sound on Monterey+; no SPICE copy/paste.
+- Apple's EULA restricts macOS guests to Apple hardware; whether that matters for your use is your call.
+- **Sluggish mouse/UI?** Expected without GPU acceleration. In the guest turn on *System Settings → Accessibility →
+  Display → Reduce transparency / Reduce motion* and let Spotlight's first-time indexing finish (Activity Monitor:
+  `mds`/`mdworker`). On the host try `cd .vm/macos && quickemu --vm macos-tahoe.conf --display sdl` (or `spice`), a smaller
+  `--width/--height`, and `powerprofilesctl set performance`.
 
 The automated half of this lives in CI: the `integration-macos` job runs the integration tests on a hosted `macos-latest`
 runner. The VM is for the click-through parts CI doesn't cover.

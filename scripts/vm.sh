@@ -360,7 +360,7 @@ cmd_windows() {
 }
 
 # Quickemu is a QEMU wrapper, not libvirt: the guest lives under .vm/macos/ so `vm-clean` wipes it and `vm-list` never shows it.
-# CPU requirements, limits and the Apple EULA note: docs/linux/CachyOS.md#testing-this-project-in-a-vm.
+# CPU requirements, limits and the Apple EULA note: docs/vm/README.md.
 require_quickemu() {
     local bin
     for bin in quickemu quickget; do

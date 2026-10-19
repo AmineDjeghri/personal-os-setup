@@ -105,7 +105,7 @@ personal-os-setup
 > | Windows 11       | `WIN_ISO=/path/to/windows.iso make vm-windows`                 | you download the ISO yourself, see [the Windows guide](docs/windows_workflow/README.md#5-testing-the-windows-flow-in-a-vm)                                                                             |
 > | macOS            | `make vm-macos`                                                | ISO downloaded for you, runs through [Quickemu](https://github.com/quickemu-project/quickemu) rather than libvirt, see [the macOS guide](docs/macos_darwin/README.md#6-testing-the-macos-flow-in-a-vm) |
 >
-> Run `make vm-deps` once first. Manage them with `make vm-list`, `make vm-clean` (destroys all VMs and disks, keeps cached ISOs) and `make vm-clean-isos` (destroys cached ISOs). `make help` lists every `vm-*` target; details are in [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm).
+> Run `make vm-deps` once first. Manage them with `make vm-list`, `make vm-clean` (destroys all VMs and disks, keeps cached ISOs) and `make vm-clean-isos` (destroys cached ISOs). `make help` lists every `vm-*` target; details are in [docs/linux/CachyOS.md](docs/vm/README.md).
 
 > [!TIP]
 > **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
