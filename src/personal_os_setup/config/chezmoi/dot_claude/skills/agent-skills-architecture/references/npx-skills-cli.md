@@ -42,4 +42,4 @@ would overwrite the live lock.
 
 - A supply-chain panel (Gen / Socket / Snyk) runs before install; record its verdict next to the lock entry.
 - No dependency-automation support: currency = scheduled replay or manual re-add, never a Renovate-style manager.
-- Before installing, check the name against every root (`skill-store-reconciliation` → Sweep).
+- Before installing, check the name against every root (`store-reconciliation.md` → Sweep).

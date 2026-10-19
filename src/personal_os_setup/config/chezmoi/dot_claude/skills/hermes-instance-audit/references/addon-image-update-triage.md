@@ -1,18 +1,11 @@
----
-name: hermes-addon-lifecycle
-description: "Use when a Hermes HA add-on image update needs triage."
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
-
-# Hermes HA add-on lifecycle (read-only triage)
+# Hermes HA add-on image update — read-only triage
 
 Answers "the add-on updated / here is the changelog — do we need to do something or clean stuff?" about the
 **Home Assistant add-on wrapper** around Hermes: image version, option-gated code paths in its entrypoint, the
 source checkout it owns, and what that checkout costs on disk. This is a different lifecycle from `hermes update`
-(which moves the checkout itself) and from a skills/plugins/config audit (`hermes-instance-audit`): the image
-changes the wrapper; the wrapper decides whether the checkout moves at all. Pruning refs/tags: `hermes-addon-maintenance`.
+(which moves the checkout itself — `update-lifecycle.md`) and from a skills/plugins/config audit (the rest of
+`hermes-instance-audit`): the image changes the wrapper; the wrapper decides whether the checkout moves at all.
+Pruning refs/tags: `source-checkout-refs.md`.
 
 ## When to use
 - A pasted add-on changelog with "do we need to do something?" · "which add-on version am I on / is there a newer build?"
@@ -39,7 +32,7 @@ changes the wrapper; the wrapper decides whether the checkout moves at all. Prun
    `version == version_latest` proves the changelog you were handed is the running image and no build is pending.
 2. **Read the real options** (`/data/options.json`) and map each changelog bullet to a branch in the entrypoint:
    `grep -n "AUTO_UPDATE\|GIT_REF\|DESKTOP_BACKEND" /run.sh`. A bullet whose gate is closed here is not a to-do —
-   that is the whole answer. Gate table: `references/wrapper-internals.md` §1.
+   that is the whole answer. Gate table: `wrapper-internals.md` §1.
 3. **Explain the source state from facts**: `git -C $SRC_DIR log -1 --oneline`, `git status --porcelain`, the
    `source-checks` identity file for "how far behind". A checkout that is behind is NOT broken when
    `auto_update: false` — it is exactly what the option says.
@@ -62,7 +55,7 @@ changes the wrapper; the wrapper decides whether the checkout moves at all. Prun
 - The biggest item is usually the checkout's `.git` (a legacy wildcard fetch leaves thousands of remote-tracking
   refs and every tag). Count refs (`git count-objects -vH`, `git tag | wc -l`, `git branch -a | wc -l`) and read
   `git remote -v` first: `[tree:0]` = partial clone, so no plain `git gc` advice. Measured expectations and the
-  pruning sequence (on go-ahead only): `hermes-addon-maintenance`.
+  pruning sequence (on go-ahead only): `source-checkout-refs.md`.
 - Safe re-downloadable: `cache/uv`, rotated `logs/*.log.N`, `state-snapshots`. `installs/<sha16>/environments/**`
   is LIVE (prepared interpreters) — never label it stale.
 - Offer with numbers and wait; do not execute.
@@ -74,6 +67,6 @@ changes the wrapper; the wrapper decides whether the checkout moves at all. Prun
 - A checkout ahead of/behind the newest tag can be normal on a branch channel; report both numbers (ahead of tag,
   behind upstream) rather than declaring drift.
 
-## References
-- `references/wrapper-internals.md` — option → code-path table for `/run.sh`, where the saved update channel is
+## See also
+- `wrapper-internals.md` — option → code-path table for `/run.sh`, where the saved update channel is
   stored, the ingress patch script and its markers, probe commands.

@@ -1,6 +1,6 @@
 ---
 name: agent-skills-architecture
-description: Use when organizing, deploying or installing agent skills — or auditing, porting and retiring one.
+description: Use when placing, organizing, installing or auditing agent skills — store reconciliation, name collisions, promoting, porting, merging or retiring one.
 version: 2.0.0
 author: Hermes Agent
 license: MIT
@@ -12,15 +12,16 @@ metadata:
     related_skills: [hermes-instance-audit, skill-deployment, skill-layout]
 ---
 
-# Agent skills & plugins — architecture, deployment, installation, audit, port, retire
+# Agent skills & plugins — architecture, governance, installation, store audit, port, retire
 
-How this user's agent skills and plugins are organized across Hermes and Claude Code: how to deploy,
-vendor or install them, and how to audit, port live-only skills into git, or retire them. Canonical
+How this user's agent skills and plugins are organized across Hermes and Claude Code: how to place,
+install or vendor them, how to audit/reconcile the stores, and how to port live-only skills into git, merge or retire them. Canonical
 governance text: personal-os-setup `AGENTS.md` § "Skills & plugins — one rule". Verifying
 what a configured dir actually LOADS → `hermes-instance-audit`.
 
 ## When to use
-- "Why doesn't the agent see skill X" — the wiring side (diagnose with `hermes-instance-audit`)
+- "Why doesn't the agent see skill X" — the wiring side (diagnose with `hermes-instance-audit`) · a skill name stops loading (`Ambiguous skill name`)
+- "Rescan the skills" · "list skills per store" · "what can we delete" — the store audit (`references/store-reconciliation.md`)
 - "Too many skills — which can I delete?" · porting a live-only skill into git · reviewing a rewrite the user pushed
 - Repo-local runbooks, AGENTS.md vs CLAUDE.md layout questions
 - Not for: auditing an install's config/plugins/curator behaviour, or a repo's own `skills-link`/`skills-check`
@@ -68,19 +69,31 @@ metadata:
 - Authored skills → chezmoi source `dot_claude/skills/<name>/`, deployed to `/config/.claude/skills/`; the saved set is `skills.keep`.
 - Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
 - Plugin packs (`superpowers`, `cloudflare/skills`) → that harness's own channel, one canal per pack per agent.
-- Plugin install commands and the bundle-that-is-both case: `references/installing-and-vetting-skills.md`.
+- Plugin install commands and the bundle-that-is-both case: `references/installing-and-vetting-skills.md`; npx CLI surface and lock schema: `references/npx-skills-cli.md`; which agent reads which root: `references/multi-agent-reach.md`.
 
-## Deploying the shared dir (chezmoi / container)
+## Deploying and reconciling the two trees
 
-Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-deploy` and its
-`SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
-don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
-`--source`) and the file-level `--source-path` fallback are in `skill-deployment`.
+Deploy mechanics (chezmoi `--source` = repo root, run from HOME, `make skills-deploy` + `SKILLS_FORCE=1`, container
+variant, nested `.chezmoiroot` trap, `--source-path` fallback) live in `skill-deployment` — don't restate them.
+Deploy gate: `MISSING` = the deploy has not landed, never "redundant"; `DIFFERS` → check per FILE which side is newer;
+re-run `make skills-diff` after the deploy (`skill-deployment` → `references/deploy-drift-and-reconciliation.md`).
 
-## Reconciling the two trees — the deploy gate
+## Judgement calls (`references/governance-judgement-calls.md`)
 
-`MISSING` = the deploy has not landed, never "redundant"; `DIFFERS` → check per FILE which side is newer; re-run
-`make skills-diff` after the deploy. Decision tree and per-file checks: `skill-deployment` → `references/deploy-drift-and-reconciliation.md`.
+1. **A name must be reachable by each agent exactly once.** Hermes reads its own store AND `~/.claude/skills`; two copies of a name across roots one agent reads → `Ambiguous skill name … Refusing to guess` while `hermes skills list` still shows one row. Verify with the loader (load the bare name), not the lister; migrate add-then-remove in one `mv` to a backup dir outside every scanned root.
+2. **Re-sourcing a shipped skill, and not rewriting what isn't ours**: probe `hermes skills list-modified` / `diff <name>` before editing a live file in place.
+3. **The npx lock is a name list, not a pin** — a CHANGED line means upstream moved.
+4. **Auditing and promoting**: keep/promote/private/retire buckets decided per skill, never in a batch; merge before promoting; retire the live copy by name after the deploy lands.
+5. **Independent verification** of shared-state changes by a fresh read-only delegate; delegated library-wide passes per `references/delegated-library-audit.md`.
+6. **Provisioning**: ask what already deploys the tree (`chezmoi managed`) before writing a script; `run_` scripts get a temp copy of `$0`, so read `CHEZMOI_SOURCE_DIR`.
+
+## Store reconciliation (`references/store-reconciliation.md`)
+
+The recurring audit of the skill stores. **A name is live if ANY root holds it** — a missing root inflates the
+"orphan" list; sweep every root (own store, shared store, add-on active/optional trees, plugin caches, the repo's
+chezmoi tree, every other repo's `.claude/skills`) before counting. Compare with the repo's own gates from the
+checkout the live root matches (`git worktree list`): the exit code of `make skills-diff|drift|status` is the truth.
+Report as tables per store, intentional vs orphaned live-only. Sweep/classify/prune recipes: `references/store-sweep-and-prune.md`.
 
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` refreshes the git-tracked
@@ -197,6 +210,9 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
   be dropped (force-deploy), while a live-only reference the source never had is the one to port in.
 
 ## References
+- `references/governance-judgement-calls.md` — collisions, re-sourcing, lock semantics, promotion, delegated verification, provisioning
+- `references/store-reconciliation.md` + `references/store-sweep-and-prune.md` — store audit procedure and copy-paste recipes
+- `references/multi-agent-reach.md` · `references/npx-skills-cli.md` · `references/delegated-library-audit.md`
 - `references/store-writers-curator-and-pins.md` — own-store writers, curator, pins
 - `references/audit-and-origin-inventory.md` — deletion audit, origin inventory
 - `references/installing-and-vetting-skills.md` — npx / plugin / hub installs, community vetting

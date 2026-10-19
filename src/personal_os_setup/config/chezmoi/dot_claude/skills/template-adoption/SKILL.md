@@ -1,6 +1,6 @@
 ---
 name: template-adoption
-description: "Use when aligning an existing repo with a house template."
+description: "Use when starting a NEW app/package/project (pick the right forkable house template) or aligning an existing repo with one."
 version: 1.0.0
 author: Hermes Curator
 license: MIT
@@ -11,10 +11,28 @@ metadata:
     related_skills: [coding-workflow]
 ---
 
-# Aligning a repo with a house template
+# House templates — start a new project, or align an existing repo
 
-The deliverable is a verified gap matrix, the user's decisions, then the committed change. The templates
-themselves are listed in `project-templates` (starting a NEW project is that skill, not this one).
+## 0. Starting a NEW project — pick a template
+
+Never start from an empty repo. Fork the template matching the project type — all three already ship CI/CD,
+a GitHub Pages docs site, pre-commit and release tooling, so you replace content, not plumbing.
+
+| Build target | Fork | Stack / notes |
+|---|---|---|
+| Python package / library | [python-package-template](https://github.com/AmineDjeghri/python-package-template) | uv-based package, tests, pre-commit, semantic-release |
+| Generative-AI project, or full-stack (backend + frontend) | [generative-ai-project-template](https://github.com/AmineDjeghri/generative-ai-project-template) | FastAPI + NiceGUI; litellm/ollama (cloud + local LLMs); langfuse observability |
+| Home Assistant addon | [ha-addons](https://github.com/AmineDjeghri/ha-addons) (octo-fiesta pattern: per-addon `config.yaml`/`Dockerfile`/`run.sh`, HA Store release flow) — or fork it as the base for your own addon collection |
+
+1. **Match the type first** (package vs gen-ai/full-stack vs addon) — don't retrofit a template.
+2. **Fork, don't clone** — keep the upstream link so template improvements can be pulled in later.
+3. **After forking, make the repo self-describing**: add `AGENTS.md`/`CLAUDE.md` + `.claude/skills/` (see `coding-workflow` § 5) so any agent works in it correctly from day one.
+4. Rebrand/rename the package per the template's own README before first use.
+5. An **existing** repo that should match a template → the rest of this skill.
+
+## Aligning an existing repo with a template
+
+The deliverable is a verified gap matrix, the user's decisions, then the committed change.
 
 ## 1. Establish the facts before proposing anything
 

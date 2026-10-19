@@ -169,18 +169,9 @@ Mirror the existing YouTube-download pipeline:
 - The chezmoi source carries no scripts directory, so a small unmanaged wrapper under `~/.hermes/scripts/` is
   the normal arrangement, not a smell.
 
-## 4. Advisory delegation (a second opinion from another model)
+## 4. Second opinion from another model
 
-Plain-language question to a coding-agent CLI, no repo mutation:
-
-1. Write the brief to a file — environment facts *verified on this box*, the request in the user's words, the
-   options, numbered questions. Feed it on **stdin** (`claude -p "…" < brief.md`) and pin the model.
-2. **Reads only**: `--allowedTools 'Read,WebSearch,WebFetch'`, no `acceptEdits`; say in the `-p` line to answer as
-   the final message and not write files. Read `.result` (+ `.subtype`, `.num_turns`, `.is_error`) from the JSON,
-   not the shell status.
-3. **Verify its load-bearing claims before repeating them.** It can search the web but cannot probe this box: run
-   the one cheap experiment it recommends (`curl -o /dev/null -w '%{http_code}'`, a `--help` on the real binary)
-   and relay suggestion and verification together, saying what is *unverified* rather than smoothing it into your voice.
+Relay it with what you verified yourself on this box alongside; recipe (stdin brief, read-only tools, verify claims): `claude-code-ops` → "Advisory delegation".
 
 ## 5. Pitfalls
 

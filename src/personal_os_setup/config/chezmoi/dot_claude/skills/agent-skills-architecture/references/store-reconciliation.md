@@ -1,19 +1,11 @@
----
-name: skill-store-reconciliation
-description: Use when auditing or reconciling the skill stores.
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
-
-# Skill store reconciliation
+# Skill store reconciliation — the recurring audit
 
 ## When to Use
 
 The recurring job: enumerate the skill stores, say what lives where, find what is orphaned, duplicated or drifted.
 Triggers: "rescan the skills", "list skills per store", "what can we delete", "why won't this skill load", any
-install / merge / removal of a skill. Where a skill belongs: `agent-skills-architecture` and `AGENTS.md`; this
-skill is the operation.
+install / merge / removal of a skill. Where a skill belongs: `SKILL.md` and `AGENTS.md`; this
+file is the operation.
 
 ## Sweep every root before you count
 
@@ -35,14 +27,14 @@ Confirm other repos are cloned before calling their skills missing.
 ## Procedure
 
 1. **Sweep** the roots above; build `name -> [roots]`.
-2. **Classify** per the table in `references/store-sweep-and-prune.md` §2 (the repo's ONE authored tree is
+2. **Classify** per the table in `store-sweep-and-prune.md` §2 (the repo's ONE authored tree is
    enumerated by `skills.keep`). Saving a live-only skill is a repo operation, not a hand copy.
 3. **Identify which checkout the live root matches, then compare with the repo's own gates** — never by
    eyeballing. A repo can be checked out more than once on different branches (`git worktree list`), and
    the deployed tree may match a non-`main` worktree, so run `make skills-diff` / `make skills-drift` /
    `make skills-status` from the checkout that matches; from the other one they report spurious DIFFERS.
    The exit code is the truth, not the summary text. Collision test = load by bare name
-   (`agent-skill-governance` §1).
+   (`governance-judgement-calls.md` §1).
    **When the live root matches neither checkout** (a reorganization in flight) compare per-skill
    directory hashes against both trees — reference §8; `MISSING` for names that migrated is not a defect.
 4. **Report** (shape below), then **verify before deleting** anything.
@@ -51,7 +43,7 @@ Confirm other repos are cloned before calling their skills missing.
 ## Pitfalls
 
 - **`usage.json` rows are not an inventory** (rows survive deleted skills). Recompute against disk; prune per
-  `references/store-sweep-and-prune.md` §5.
+  `store-sweep-and-prune.md` §5.
 - **Dot-dirs inside a store are scanned.** `hermes skills repair-official <name> --restore` writes its backup
   inside the store — move it out at once (reference §7).
 - **Retire = delete source AND live copy by hand**; drift gates stay quiet about a deleted source (reference §6).
@@ -75,13 +67,13 @@ Confirm other repos are cloned before calling their skills missing.
   the two axes separately ("later mtime, older content").
 - **Read the clock before reasoning about "since last time".** A resumed session's start date can lag the
   filesystem clock by weeks; run `date` and `stat` a few live files first.
-- Before writing a deploy script, check whether chezmoi already deploys the tree (`agent-skill-governance` §6).
+- Before writing a deploy script, check whether chezmoi already deploys the tree (`governance-judgement-calls.md` §6).
 
 ## Reporting shape
 
 The user asks for this as a table, not prose: markdown tables **per store or per category**, with a
 column for what changed/drifted, and a one-line summary above them. Keep narrative out of the reply — one
-line per finding, method and full evidence in this skill or a file, not in chat; say so in one clause when
+line per finding, method and full evidence in this file or another file, not in chat; say so in one clause when
 something is unverifiable.
 
 Split live-only names into **intentional** (in the third-party lock, or private by design) and
@@ -91,7 +83,7 @@ look dirty.
 
 ## Related
 
-- `references/store-sweep-and-prune.md` — copy-paste recipes: the sweep, the classification table, the
+- `store-sweep-and-prune.md` — copy-paste recipes: the sweep, the classification table, the
   gates, the collision test, prune-with-controls, retire, and de-fork.
-- `agent-skill-governance` — the reach/collision rules, the channels, and the provisioning decision.
+- `governance-judgement-calls.md` — the reach/collision rules, the channels, and the provisioning decision.
 - `skill-deployment` — deploy targets, chezmoi mechanics, the third-party lock and its drift target.

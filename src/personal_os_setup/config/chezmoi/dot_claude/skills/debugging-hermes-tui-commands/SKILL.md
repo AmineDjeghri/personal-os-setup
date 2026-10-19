@@ -16,15 +16,7 @@ metadata:
 
 ## Overview
 
-Hermes slash commands span three layers — Python command registry, tui_gateway JSON-RPC bridge, and the Ink/TypeScript frontend. When a command misbehaves (missing from autocomplete, works in CLI but not TUI, config persists but UI doesn't update), the bug is almost always one layer being out of sync with another.
-
-## When to Use
-
-- A slash command exists in one part of the codebase but doesn't work fully
-- A command needs to be added to both backend and frontend
-- Command autocomplete isn't working for specific commands
-- Command behavior is inconsistent between CLI and TUI
-- A command persists config but doesn't apply live in the TUI
+Hermes slash commands span three layers — Python command registry, tui_gateway JSON-RPC bridge, and the Ink/TypeScript frontend. When a command misbehaves (missing from autocomplete, works in CLI but not TUI, config persists but UI doesn't update), one layer is out of sync with another. Use for any slash command that half-works, needs adding to backend + frontend, or behaves differently in CLI vs TUI.
 
 ## Architecture Overview
 

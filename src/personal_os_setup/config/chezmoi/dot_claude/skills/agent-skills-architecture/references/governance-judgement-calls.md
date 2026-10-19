@@ -1,16 +1,8 @@
----
-name: agent-skill-governance
-description: Use when placing, installing or auditing agent skills.
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
-
-# Agent skill governance
+# Agent skill governance — judgement calls
 
 The rules live in `AGENTS.md` § "Skills & plugins"; deploy/npx mechanics in `skill-deployment`; layout and
-wiring in `agent-skills-architecture`. This skill holds the judgement calls that go wrong: collisions,
-re-sourcing, promotion, delegated audits, provisioning scripts.
+wiring in `SKILL.md`. This file holds the judgement calls that go wrong: collisions, re-sourcing, promotion,
+delegated audits, provisioning scripts.
 
 ## When to Use
 
@@ -31,7 +23,7 @@ Ambiguous skill name '<name>': 2 skills match across your local skills dir and e
 The trap: `hermes skills list` still shows one row and the deploy **succeeds** — it fails only at load time.
 **Verify with the loader, not the lister:** after any placement change, load the bare name by hand.
 Which combinations break (`-a claude-code -a hermes-agent`, `-a '*'`, symlinks, backups under a scanned root):
-`references/multi-agent-reach.md`.
+`multi-agent-reach.md`.
 
 - **Migrate a name between roots add-then-remove, in one `mv`:** keeper in place first, then `mv` the old copy to
   a backup dir *outside every scanned root* (not copy-then-`rm`: a stalled approval can't leave it half-applied).
@@ -43,7 +35,7 @@ Which combinations break (`-a claude-code -a hermes-agent`, `-a '*'`, symlinks, 
 - **Re-sourcing a shipped skill** is allowed: delete the agent's copy (the sync records the deletion), install it
   from the shared root like a third-party pack. Cost: no longer version-matched to the build, and the delete is a
   provisioning step on every NEW machine (boot sync re-seeds). Benefit: a name in an external dir is refused by
-  the background-review writer, so it is protected. Procedure: `skill-store-reconciliation` Pitfalls.
+  the background-review writer, so it is protected. Procedure: `store-reconciliation.md` Pitfalls.
 - **Probe before rewriting a live file in place.** `hermes skills list-modified` / `hermes skills diff <name>`
   settle whether it is a tracked bundled copy (editing freezes its sync forever → put the addition in a `*-ops`
   addendum) or the only copy of a skill we author. The listing's `Source` column does not settle it (`official`
@@ -57,11 +49,11 @@ Which combinations break (`-a claude-code -a hermes-agent`, `-a '*'`, symlinks, 
 `skillFolderHash` is the upstream git tree SHA, not a hash of your files; to pin, record `owner/repo#<commit>`.
 **A CHANGED line means upstream moved, not a local fault** — the hash is stable for a given folder, so it is the
 de-facto update notification now that `update` can't be trusted. Re-record the lock; don't hunt for a local cause.
-Lock location, replay and CLI surface: `references/npx-skills-cli.md`, `skill-deployment`.
+Lock location, replay and CLI surface: `npx-skills-cli.md`, `skill-deployment`.
 
 ## 4. Auditing and promoting
 
-Audit a library via `skill-store-reconciliation`. Report a **keep** list with reasons ("nothing to delete, and
+Audit a library via `store-reconciliation.md`. Report a **keep** list with reasons ("nothing to delete, and
 here is why" is a result). Protected skills — pinned, external-dir, shipped, user-authored — are not yours to
 rewrite: recommend adoption.
 
@@ -71,7 +63,7 @@ report three buckets — promote, keep private, retire — with a reason each.
 1. Read the frontmatter before the body: `origin: agent` = created by this agent, ours to promote; no marker =
    predates the convention, needs a content judgement. Quote size and reference count first (a 23 KB skill with
    20+ files is a project, not a note).
-2. Scan for personal detail (the repo is public): recipe in `agent-skills-architecture/references/sanitizing-skills-for-public-repos.md`.
+2. Scan for personal detail (the repo is public): recipe in `sanitizing-skills-for-public-repos.md`.
    Any hit keeps it live-only — no invented `service.<domain>` stand-ins; that is the same defect in a mask.
 3. **Merge before promoting.** Grep the tree for the skill's name and one distinctive heading from its body: zero
    references *plus* overlapping content → fold the unique parts in and retire the copy; no rule gets two homes.
@@ -91,7 +83,7 @@ report three buckets — promote, keep private, retire — with a reason each.
   delegate that reads only its own file can't see a convention.
 - Mark any **derived** value in a brief (path depth, index, count) as derived and tell the delegate to recompute
   it; a wrong derivation otherwise surfaces as a lookup that works from one entry point and fails in the other.
-- Library-wide audit or slimming pass: brief per `references/delegated-library-audit.md`.
+- Library-wide audit or slimming pass: brief per `delegated-library-audit.md`.
 
 ## 6. Provisioning: ask what already deploys the tree before writing a script
 
@@ -112,6 +104,6 @@ installs, which chezmoi can't run. When one script must serve both chezmoi and a
 
 ## References
 
-- `references/npx-skills-cli.md` — CLI surface, lock schema, verified commands
-- `references/multi-agent-reach.md` — which agent reads which root; safe/unsafe targeting
-- `references/delegated-library-audit.md` — briefing, running, applying and verifying a library-wide pass
+- `npx-skills-cli.md` — CLI surface, lock schema, verified commands
+- `multi-agent-reach.md` — which agent reads which root; safe/unsafe targeting
+- `delegated-library-audit.md` — briefing, running, applying and verifying a library-wide pass

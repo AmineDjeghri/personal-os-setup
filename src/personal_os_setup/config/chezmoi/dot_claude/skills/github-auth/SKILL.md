@@ -9,7 +9,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [GitHub, Authentication, Git, gh-cli, SSH, Setup]
-    related_skills: [github-pr-workflow, github-code-review, github-issues, github-repo-management]
+    related_skills: [github-pr-workflow, github-code-review, github-repo-management]
 ---
 
 # GitHub Authentication Setup
@@ -120,10 +120,8 @@ git config --global url."git@github.com:".insteadOf "https://github.com/"   # us
 
 ## Using the GitHub API Without gh
 
-Only needed once `gh` is confirmed uninstallable (see the Detection Flow above) — otherwise install
-`gh` and use `gh api` instead. Genuine fallback: `references/rest-api-fallback.md`.
-
-`source scripts/gh-env.sh` sets `GH_AUTH_METHOD`/`GITHUB_TOKEN`/`GH_OWNER`/`GH_REPO`. `references/rest-api-fallback.md` is the single REST fallback for the whole GitHub family.
+Only once `gh` is confirmed uninstallable — otherwise install `gh` and use `gh api`. `source scripts/gh-env.sh` sets
+`GH_AUTH_METHOD`/`GITHUB_TOKEN`/`GH_OWNER`/`GH_REPO`; `references/rest-api-fallback.md` is the single REST fallback for the whole GitHub family.
 
 ---
 

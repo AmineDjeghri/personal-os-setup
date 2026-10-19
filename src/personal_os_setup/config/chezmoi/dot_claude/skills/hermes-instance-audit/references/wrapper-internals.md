@@ -1,6 +1,6 @@
 # The add-on wrapper: options, source selection, patches
 
-Depth for `hermes-addon-lifecycle`. Everything here is read-only reconnaissance of the running
+Depth for the add-on image triage (`addon-image-update-triage.md`). Everything here is read-only reconnaissance of the running
 add-on image: `/run.sh` (entrypoint), `/usr/local/lib/hermes-source-channel.py` (selector),
 `/usr/local/bin/hermes-dashboard-patches` (ingress patches), `/data/options.json` (options),
 `$HERMES_HOME/source-checks/` (core's own update identity).

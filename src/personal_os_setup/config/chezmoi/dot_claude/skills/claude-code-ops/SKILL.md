@@ -120,6 +120,14 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
    `gh pr checks <n>`, `gh run list --branch <branch>`. Report only what those show.
    - `git status` the worktree and revert edits the brief did not authorise; treat a delegate's verdict as a claim — re-check each named defect against the primary source.
 
+## Advisory delegation — a second opinion, no repo mutation
+
+A plain-language question to Claude Code (build-or-adopt, "is this approach sane"):
+
+1. Write the brief to a file — environment facts *verified on this box*, the request in the user's words, the options, numbered questions. Feed it on **stdin** (`claude -p "…" < brief.md`) and pin the model.
+2. **Reads only**: `--allowedTools 'Read,WebSearch,WebFetch'`, no `acceptEdits`; say in the `-p` line to answer as the final message and not write files. Read `.result` (+ `.subtype`, `.num_turns`, `.is_error`) from the JSON, not the shell status.
+3. **Verify its load-bearing claims before repeating them.** It can search the web but cannot probe this box: run the one cheap experiment it recommends (`curl -o /dev/null -w '%{http_code}'`, a `--help` on the real binary) and relay suggestion and verification together, saying what is *unverified* rather than smoothing it into your voice.
+
 ## Pitfalls
 
 1. Bare `claude` → "command not found" — absolute path always.

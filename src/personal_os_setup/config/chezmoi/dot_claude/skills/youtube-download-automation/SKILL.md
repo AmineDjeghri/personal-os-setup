@@ -1,15 +1,15 @@
 ---
 name: youtube-download-automation
-description: Use when downloading YouTube audio into the music library or driving yt-dlp. Plan first, confirm with the user, then download.
+description: Use when ingesting a music/YouTube link or playlist into the music library — what is new in it, genre sourcing, yt-dlp download. Plan first, confirm with the user, then download.
 metadata:
   hermes:
     origin: repo:personal-os-setup
 ---
 
-# YouTube Download Automation (yt-dlp)
+# Music ingest & YouTube download automation (yt-dlp)
 
 ## Trigger
-Any task that drives **yt-dlp** — the YouTube → `/media/music` → Navidrome/beets pipeline below, playlist or single-link downloads, per-video metadata, chapter splitting, debugging the downloader script — and any change to the downloader script itself.
+Any task that drives **yt-dlp** — the YouTube → `/media/music` → Navidrome/beets pipeline below, playlist or single-link downloads, per-video metadata, chapter splitting, debugging the downloader script — and any change to the downloader script itself. Also: "here's a playlist/video link, what is new in it?" (§3) and "which genre is this track?" (§4).
 
 ## 0. Gate — ask before you touch anything (MANDATORY)
 
@@ -48,15 +48,45 @@ Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
 - **Non-music clips (entrances, chants, interviews, fireworks…) are NEVER classified alone**: list them with a proposed handling and wait for the confirmation before setting `album`/`folder` to `Other`.
 - A video the user labels by genre or occasion is a metadata hint, not permission to change the code that writes it.
 
-## 3. Verify before reporting
+## 3. What is new in this playlist (no download)
+
+1. Capture the read-only plan: `uv run --no-project yt_dl.py --plan <playlist-url> > plan.txt` (from the pipeline folder).
+2. Set-diff the plan's video IDs against `.archive.txt` **and** `overrides.json`. An ID in either is already handled — report its state, don't re-propose it.
+3. Report only the delta and stop; the §0 gate applies before any download.
+
+Run `scripts/playlist_delta.py plan.txt <pipeline_dir>` rather than eyeballing — it implements the pitfalls below and prints declared/listed/duplicate/unavailable/new counts.
+
+- **The plan index is right-aligned and space-padded (`[  1]`)**, so `^\[(\d+)\]` matches nothing and you report "0 new" on a playlist that has new items. Parse with `^\[\s*(\d+|\?)\]` (a single-video plan prints `[  ?]`). Treat a zero-new result as suspect until the regex is re-checked — a silent false negative is the most damaging answer here.
+- A hand-curated playlist can list the **same video twice**: compare unique IDs and report the duplicate count separately, never as new.
+- Unavailable/private videos are not list items — the plan prints them with ID and reason in a trailing error block, and the declared count exceeds the listed count by exactly that number. Never count them as new, never invent a replacement.
+- If `/media/music/...` is not mounted in the container you run in, `.archive.txt` + `overrides.json` still decide the delta; an empty mount does not mean nothing was downloaded.
+- When only some items are new, the canonical ingest is a re-run of the **same playlist URL** (the archive makes it incremental and derives the playlist folder); a bare video URL makes `folder` default to the video's own title.
+
+## 4. Sourcing the genre (and sanity-checking other tags)
+
+Check in order, prefer the earliest that answers:
+1. **Apple/iTunes Search API** — `https://itunes.apple.com/search?term=<artist+title>&entity=song` → `primaryGenreName`. No key; the value Apple Music shows.
+2. **Shazam** song page → "Genres".
+3. **SoundCloud** — the uploader's own free-text tag (e.g. "Electro", "Chanson électronique").
+4. **Deezer** — `https://api.deezer.com/album/<id>` → `genres.data`.
+5. **The artist's own press sheet / bio** for the *style* (e.g. "melodic techno and progressive house").
+
+- **Apple's `primaryGenreName` can be the storefront country** (e.g. "France"), not a genre — it can appear on one track of a release while another returns the real genre. Never write a country name into a genre tag; corroborate with a second source.
+- **Deezer's `genres` array is routinely empty** even for a properly released track — "not labelled here", not "no genre".
+- Aggregator labels are broad (Electronic); the artist's own words are the style. Pick per what the user asked for and match the library's convention — short and lowercase (`rai`, `electronic`); grep `overrides.json` for established values before inventing one.
+- The pipeline writes a genre only when one is explicitly supplied (§2) — confirm before promising one.
+- Present the genre as a short choice (broad label vs precise style vs none) in the §0 proposal; nothing is written or downloaded until the user answers.
+
+## 5. Verify before reporting
 
 - Files are under `/media/music/YouTube/…`, **not** left in `.staging/`; spot-check the embedded tags of one file (`ffprobe -v quiet -show_entries format_tags -of default=nw=1 <file>`), genre included when a genre was requested.
 - The beets add-on log shows the import (`ha_get_logs` source=supervisor slug=`<beets add-on>`); without beets the files still reach Navidrome on its own scan.
 - Report downloads and failures: failed/unavailable videos grouped by reason with counts + video IDs, never silently dropped, never invented.
 - Archive file present after success; a re-run downloads only new videos.
 
-## 4. References
+## 6. References
 
 - `references/yt-dlp-api-facts.md` — verified yt-dlp internals: PP key names, runtime `outtmpl` dict, `ignoreerrors`, chapter splitting, and which info-dict field feeds which tag.
 - `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
 - `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
+- `scripts/playlist_delta.py` — plan-vs-archive delta (§3).

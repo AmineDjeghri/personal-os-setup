@@ -9,7 +9,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [GitHub, Repositories, Git, Releases, Secrets, Configuration, SECURITY, LICENSE, CONTRIBUTING]
-    related_skills: [github-auth, github-pr-workflow, github-issues]
+    related_skills: [github-auth, github-pr-workflow]
 ---
 
 # GitHub Repository Management
@@ -22,53 +22,24 @@ No `gh`? Install it (see `github-auth`) — fallback: `github-auth/references/re
 
 ---
 
-## 1. Cloning Repositories
+## 1. Everyday repo operations
 
 ```bash
-gh repo clone owner/repo-name
-gh repo clone owner/repo-name -- --depth 1
-```
-
-## 2. Creating Repositories
-
-```bash
-# Create a public repo and clone it
-gh repo create my-new-project --public --clone
-
-# From existing local directory
-cd /path/to/existing/project
-gh repo create my-project --source . --public --push
-```
-
-### From a Template
-
-```bash
+gh repo clone owner/repo-name [-- --depth 1]
+gh repo create my-new-project --public --clone                       # new repo
+gh repo create my-project --source . --public --push                 # from an existing local dir
 gh repo create my-new-app --template owner/template-repo --public --clone
-```
-
-## 3. Forking Repositories
-
-```bash
 gh repo fork owner/repo-name --clone
+gh repo sync $GH_USER/repo-name                                      # keep a fork in sync
+gh repo edit --enable-auto-merge                                     # the rest: gh repo view|list|edit --help
+gh release create v1.0.0 --title "v1.0.0" --generate-notes           # others: gh release --help
+gh run view <RUN_ID> --log-failed
+gh workflow run ci.yml --ref main                                    # others: gh run|workflow --help
 ```
 
-### Keeping a Fork in Sync
+Branch protection is REST-only — the `PUT` body is in `github-auth/references/rest-api-fallback.md`.
 
-```bash
-gh repo sync $GH_USER/repo-name
-```
-
-## 4. Repository Information and Settings
-
-```bash
-gh repo edit --enable-auto-merge   # for the rest: gh repo view|list|edit --help
-```
-
-## 5. Branch Protection
-
-REST-only operation — the `PUT` body is in `github-auth/references/rest-api-fallback.md`.
-
-## 6. Secrets Management (GitHub Actions)
+Secrets (GitHub Actions) — `gh secret set` is dramatically simpler than REST; if `gh` is missing, install it for just that:
 
 ```bash
 gh secret set API_KEY --body "your-secret-value"
@@ -77,27 +48,10 @@ gh secret list
 gh secret delete API_KEY
 ```
 
-Note: For secrets, `gh secret set` is dramatically simpler. If setting secrets is needed and `gh` isn't available, recommend installing it for just that operation.
-
-## 7. Releases
-
-```bash
-gh release create v1.0.0 --title "v1.0.0" --generate-notes   # others: gh release --help
-```
-
-## 8. GitHub Actions Workflows
-
-```bash
-gh run view <RUN_ID> --log-failed
-gh workflow run ci.yml --ref main   # others: gh run|workflow --help
-```
-
-## 9. Community health files (SECURITY.md, LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, FUNDING)
+## 2. Community health files (SECURITY.md, LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, FUNDING)
 
 Use when the user asks about "missing files", SECURITY.md, LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, "standard GitHub
-files", or wants the repo to pass GitHub's community-profile check. Detect with GitHub's own API — do NOT guess:
-
-Use GitHub's own community-profile API — do NOT guess:
+files", or wants the repo to pass GitHub's community-profile check. Detect with GitHub's own community-profile API — do NOT guess:
 
 ```bash
 # Missing files (value == null)
