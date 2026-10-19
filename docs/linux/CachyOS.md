@@ -419,8 +419,8 @@ end-to-end walkthrough is in [Testing the Windows flow in a VM](../windows_workf
 macOS guests need the OpenCore bootloader plus Apple's recovery image; `quickget macos <release>` fetches both (multi-GB) into
 `.vm/macos/macos-<release>/` and `quickemu` runs the guest as a plain QEMU process under your user. What follows from that:
 
-- **Quickemu is a manual install, not part of `make vm-deps`** (and not in `packages.yaml`): on Arch/CachyOS `paru -S quickemu`;
-  on other distros follow the install section of its README. The target dies with that hint if `quickemu`/`quickget` are missing.
+- **Quickemu is not part of `make vm-deps`**: on CachyOS install it from the app's Packages tab (`paru` → Dev_tools); on Ubuntu the
+  Packages tab lists its install page; elsewhere follow the install section of its README. The target dies with that hint if `quickemu`/`quickget` are missing.
 - **`make vm-list` does not list it** (it only asks `virsh`) and it doesn't appear in virt-manager. Upstream has no supported
   import into libvirt ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)), so the two worlds stay split.
 - **`make vm-clean` does wipe it** (`.vm/macos/`), including the recovery image — the next `make vm-macos` downloads it again.

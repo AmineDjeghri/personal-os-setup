@@ -37,6 +37,7 @@ packages:
     webinstall:
       Dev_tools:
         - '[Docker](https://doc.ubuntu-fr.org/docker#depot_apt_docker)'
+        - '[Quickemu](https://github.com/quickemu-project/quickemu#installation)' # runs the macOS guest for `make vm-macos` (plain QEMU, not libvirt)
       Media:
         - '[Nuvio](https://github.com/NuvioMedia/NuvioDesktop/releases)'
 
@@ -269,6 +270,7 @@ packages:
         - nordvpn-bin
       Dev_tools:
         - pycharm # Unified edition
+        - quickemu # runs the macOS guest for `make vm-macos` (plain QEMU, not libvirt)
       Media:
         - mpv-uosc-git
         - mpv-thumbfast-git
