@@ -97,7 +97,15 @@ personal-os-setup
 
 
 > [!TIP]
-> **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` / `WIN_ISO=/path/to/windows.iso make vm-windows` / `make vm-macos` spin up disposable KVM/QEMU VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list (the Windows VM needs an ISO you download yourself, see [docs/windows_workflow](docs/windows_workflow/README.md#5-testing-the-windows-flow-in-a-vm); the macOS VM runs through [Quickemu](https://github.com/quickemu-project/quickemu) rather than libvirt, which you install separately, see [docs/macos_darwin](docs/macos_darwin/README.md#6-testing-the-macos-flow-in-a-vm)).
+> **Try it in a VM first** (any Linux host, disposable KVM/QEMU VMs):
+>
+> | Guest            | Command                                                        | Notes                                                                                                                                                                                                  |
+> |------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+> | CachyOS / Ubuntu | `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` | ISO downloaded for you                                                                                                                                                                                 |
+> | Windows 11       | `WIN_ISO=/path/to/windows.iso make vm-windows`                 | you download the ISO yourself, see [the Windows guide](docs/windows_workflow/README.md#5-testing-the-windows-flow-in-a-vm)                                                                             |
+> | macOS            | `make vm-macos`                                                | ISO downloaded for you, runs through [Quickemu](https://github.com/quickemu-project/quickemu) rather than libvirt, see [the macOS guide](docs/macos_darwin/README.md#6-testing-the-macos-flow-in-a-vm) |
+>
+> Run `make vm-deps` once first. Manage them with `make vm-list`, `make vm-clean` (destroys all VMs and disks, keeps cached ISOs) and `make vm-clean-isos` (destroys cached ISOs). `make help` lists every `vm-*` target; details are in [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm).
 
 > [!TIP]
 > **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.

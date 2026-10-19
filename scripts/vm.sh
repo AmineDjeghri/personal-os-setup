@@ -396,7 +396,7 @@ cmd_macos() {
         log "fetching macOS $MACOS_VERSION via quickget (Apple's multi-GB recovery image + OpenCore) into $MACOS_DIR"
         quickget macos "$MACOS_VERSION"
         [ -f "$conf" ] || die "quickget finished but $MACOS_DIR/$conf is missing -- check its output above"
-        log "first boot lands in macOS Recovery: erase the virtual disk in Disk Utility, then choose 'Reinstall macOS'"
+        log "first boot lands in macOS Recovery: in Disk Utility (View > Show All Devices) erase the big 'Apple VirtIO Block Media' disk (~137 GB) as APFS, then 'Reinstall macOS' onto it (the ~400 MB QEMU HARDDISK is OpenCore, the ~2.5 GB volume is the Recovery image)"
         log "Ventura+ hangs on some AMD Ryzen mobile CPUs (unstable TSC) -- see the macOS page of the Quickemu wiki"
     fi
 

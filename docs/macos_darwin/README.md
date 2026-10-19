@@ -96,8 +96,12 @@ EULA) are listed in [Testing this project in a VM](../linux/CachyOS.md#testing-t
    ```bash
    make vm-macos
    ```
-   First boot lands in macOS Recovery: erase the virtual disk in *Disk Utility*, then *Reinstall macOS* and click through
-   Setup Assistant. Re-running `make vm-macos` later just starts the existing guest again.
+   First boot lands in macOS Recovery.
+   Pick the right disk, or the installer reports "37.6 MB free": in *Disk Utility* use **View → Show All Devices** and
+   erase the large **Apple VirtIO Block Media** (~137 GB, the virtual disk) as APFS / GUID Partition Map, named
+   `Macintosh HD`. Ignore the other two: **QEMU HARDDISK Media** (~400 MB) is the OpenCore bootloader, and the ~2.5 GB
+   volume (`disk2s1`) is the Recovery image you booted from. Then choose *Reinstall macOS* and select `Macintosh HD`.
+   Click through Setup Assistant afterwards. Re-running `make vm-macos` later just starts the existing guest again.
 3. Inside the guest, open Terminal and install the **Command Line Tools** (they provide `git` and `make`, which
    `install_unix.sh` needs):
    ```bash
