@@ -3614,18 +3614,15 @@ lockscreen preview get in the way of seeing the live editing.</p>
 installed first.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hyprpm<span class="w"> </span>update
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># ALT+TAB window switcher</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/gfhdhytghd/hymission
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hymission
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Title bars: drag, close, maximise</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/hyprwm/hyprland-plugins
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hyprbars
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Title bars: drag, close, maximise</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>hyprpm<span class="w"> </span>add<span class="w"> </span>https://github.com/hyprwm/hyprland-plugins
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>hyprpm<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hyprbars
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>hyprpm<span class="w"> </span>reload
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>hyprpm<span class="w"> </span>list
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>hyprpm<span class="w"> </span>reload
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>hyprpm<span class="w"> </span>list
 </span></code></pre></div>
-<p>Test <code>ALT+TAB</code> for the switcher, and dragging / closing / maximizing windows for hyprbars.</p>
+<p>Test dragging / closing / maximizing windows for hyprbars. The <code>ALT+TAB</code> window switcher is Noctalia's own
+(<code>noctalia msg window-switcher hold</code>), not a Hyprland plugin.</p>
 <h3 id="secret-storage-gnome-keyring-not-kwallet">Secret storage (gnome-keyring, not KWallet)<a class="headerlink" href="#secret-storage-gnome-keyring-not-kwallet" title="Permanent link">&para;</a></h3>
 <p>Hyprland has no built-in Secret Service — anything that stores secrets (Nautilus/GVfs unlocking a
 LUKS drive, browsers saving passwords, etc.) talks to <code>org.freedesktop.secrets</code> over D-Bus, and
