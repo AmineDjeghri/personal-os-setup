@@ -16,7 +16,11 @@ from personal_os_setup.tasks.managers.ubuntu_snap import UbuntuSnapManager
 from personal_os_setup.tasks.managers.webinstall import WebInstallManager
 from personal_os_setup.tasks.managers.windows_msstore import WindowsMSStoreManager
 from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
-from personal_os_setup.tasks.system.chezmoi import chezmoi_add, chezmoi_refresh_zsh_externals
+from personal_os_setup.tasks.system.chezmoi import (
+    chezmoi_add,
+    chezmoi_clean_backups,
+    chezmoi_refresh_zsh_externals,
+)
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
 from personal_os_setup.tasks.system.help import (
@@ -270,6 +274,15 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                     "(e.g. ~/.config/foo/config.toml)"
                 ),
                 prompt_initial="~/.",
+            ),
+            SystemAction(
+                label="chezmoi: clean backups",
+                run=chezmoi_clean_backups,
+                confirm=True,
+                confirm_message=(
+                    "Delete every '<name>_<timestamp>_backup' copy ? The live files are not touched. "
+                    "Proceed?"
+                ),
             ),
         ],
     )
