@@ -25,15 +25,15 @@ dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "pytest-xdist==3.8.0",
-    "pre-commit==4.6.2",
-    "ruff==0.17.0",
+    "pre-commit==4.7.0",
+    "ruff==0.17.1",
     "python-semantic-release==10.7.0",
 ]
 
 docs = [
     "properdocs==1.6.7",
     "mkdocs-material==9.7.7",
-    "mkdocstrings==1.0.6",
+    "mkdocstrings==1.0.7",
     "mkdocs-mermaid2-plugin==1.2.3",
     "mkdocs-gen-files==0.6.1",
     "mkdocstrings-python==2.0.9",
