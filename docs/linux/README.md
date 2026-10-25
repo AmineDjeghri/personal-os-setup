@@ -14,7 +14,9 @@ Use [README.md](../../README.md#linux--wsl2--macos) as it automatically handles 
 Before installing packages, it's recommended to update your system.
 
 ### 1. Package Selection
+
 The app displays all available packages from [packages.yaml](../../src/personal_os_setup/config/packages.yaml) organized by category:
+
 - **Core tools**: `git`, `curl`, `zsh`
 - **Terminal tools**: `bat`, `btop`, `fzf`, `lsd`, `fastfetch`
 - **Apps**: Code editor, messaging apps, media players, etc.
@@ -23,6 +25,7 @@ You can multi-select packages using the interactive interface.
 
 
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
+
 The app provides buttons to automate the terminal configuration:
 
 - **Install JetBrainsMono Nerd Font**: Required for proper theme rendering
@@ -52,11 +55,13 @@ stale.
 See the [zshrc configuration file](../../src/personal_os_setup/config/unix/.zshrc) for the default configuration used by this project.
 
 If you need to revert changes:
+
 - Uninstall Oh My Zsh and Powerlevel10k files
 - Uninstall Zsh package
 - Reset Bash as default shell
 
 Additional system configuration options (only if you have NVIDIA GPU):
+
 - **Detect NVIDIA**: Check if NVIDIA GPU is available
 - **Setup NVIDIA (WSL)**: Configure NVIDIA drivers for WSL2
 - **Detect CUDA**: Check CUDA installation
@@ -86,6 +91,7 @@ newgrp docker                 # activate the change in the current shell
 > **Pro Tip:** `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
 
 ### Apps shortcuts
+
 For app configuration, tips, and shortcuts (PyCharm, Obsidian, Bitwarden, Nautilus, the terminal
 tools cheatsheet, and a table of what's available on which OS), check
 [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md).

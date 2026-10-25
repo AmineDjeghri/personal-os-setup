@@ -50,6 +50,7 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
   - In storage configuration, select  Entire disk with 'encrypt the LVM group with LUKS'. Since we will install HAOS inside a VM later, create a partition for `/var/lib/libvirt/images`.
   - Install `openssh-server` and manage it remotely using SSH from another machine so you can copy-paste commands from the documentation.
   - enable ssh auto start : `sudo systemctl enable ssh` and  `sudo systemctl start ssh`
+
 ### First checks / updates
 
 - Run updates:
@@ -68,6 +69,7 @@ sudo apt autoremove -y
 - If this machine was your DHCP server. You need to have a static IP, and point to the dns and router gateway (`sudo vim /etc/netplan/01-net.yaml` then set ``dhcp4: no`` and add address, nameserver and dns)
 - Connect remotely in the same network using SSH and the server IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation. You can either use the IPV6 or the IPV4of the server.
   This is because we don't have a DHCP server and since the machine is NOT using DHCP right now (dhcp4:no), the router is NOT giving your server: IP Gateway DNS. And we need to define it manually until we add the DHCP server.
+
 ```bash
 ssh username@192.168.x.x
 ```
@@ -94,6 +96,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo
 ```
 
   Should return a number `> 0`.
+
 - Sometimes it returns `0`. In that case you need to check if Virtualization is enabled in your BIOS to ensure compatibility.
 - If you still have `0`, and you are sure that Virtualization is enabled in your BIOS, ignore the `0`.
 
@@ -123,12 +126,15 @@ sudo usermod -aG kvm $USER
 ```
 
 Restart the terminal and run:
-```
+
+```bash
 id -nG  # user should be added to the group
 ```
+
 If it is the case, you can run virsh without sudo.
 
 #### Create a bridge configuration
+
 A network bridge in KVM allows your virtual machines to appear directly on the same network as your host.
 
 - Without a bridge: VMs often use NAT (Network Address Translation). They can access the internet, but other devices on your LAN cannot access the VMs directly.
@@ -142,9 +148,11 @@ A network bridge in KVM allows your virtual machines to appear directly on the s
 > For adguard, you will need to go to DHCP settings, delete the old client and create a new one in DHCP leases after it detects the new IP address.
 
 How to:
+
 - Identify your network interface with `ip addr`, it should look like `enp0s31f6` or `enx001`  It is where you can see eth0.
 - Create a bridge configuration file in `/etc/netplan/` with the following content:
 - Create a bridge configuration file with  `sudo vim /etc/netplan/01-bridge.yaml`, replace `enx001cc253c478` with your interface name
+
 ```yaml
 network:
   version: 2
@@ -169,12 +177,14 @@ network:
 ```bash
 sudo netplan apply
 ```
+
 If you are connected via SSH, you will probably get disconnected unless the static ip is set.
 Go physically to the server (or check the devices in the router) and get the new IP address:
 
 ```bash
 ip addr
 ```
+
 Your `interface name` will no longer have a direct IP. All traffic goes through `br0`.
 To connect to the server via SSH, you will need to use the ``br0`` address.
 
@@ -203,6 +213,7 @@ sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 ```
 
 >> Important: we will use sudo so with all the commands later like `virsh list --all` should use sudo ``sudo virsh list --all`` otherwise it will show nothing.
+
 - HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt
 -
 
@@ -220,6 +231,7 @@ sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 
 - Create the VM: ( we are adding --network bridge=br0) to use the bridge.
 If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.
+
 ```bash
 sudo virt-install --name haos --description "Home Assistant OS" --os-variant=generic --ram=4096 --vcpus=2 --disk /var/lib/libvirt/images/haos_ova-16.3.qcow2,bus=scsi --controller type=scsi,model=virtio-scsi --import --graphics none --boot uefi --network bridge=br0,model=virtio --console pty,target_type=serial
 ```
@@ -246,6 +258,7 @@ You need to differentiate between:
 - These IPs can change if we restart the router, we will assign static ip to the VM.
 
 If you want to resize the VM disk:
+
 ```bash
 sudo qemu-img resize /var/lib/libvirt/images/haos_ova-16.3.qcow2 +20G
 ```
@@ -263,6 +276,7 @@ sudo qemu-img resize /var/lib/libvirt/images/haos_ova-16.3.qcow2 +20G
 - Set up a static IP for the VM: in HAOS website go to Settings -> System -> Network -> and change IPv4 from auto to static and IPv6 too. You can keep the default ip that is assigned to the VM.
 
 ### 2. Accessing HAOS from outside your local network  — Cloudflare Tunnel Setup
+
 - Create a Domain or your domain is already managed by **Cloudflare**
 - In HAOS, add the addon `file editor`.
 - Follow this video: https://youtu.be/JGAKzzOmvxg
@@ -383,6 +397,7 @@ OR
 This is slightly more secure, less future surprise.
 
 ##### Go back to the previous page to see the policies
+
 Where you put your domain, choose the policies you added.
 
 ##### 7️⃣ Save the Application ✅
@@ -395,6 +410,7 @@ Once saved:
 If you do a restoration, or change something in cloudflare, and you see that you can't view home assistant, delete the cookies and try again.
 
 #### Activate MFA
+
 - In profile -> security, activate MFA
 
 You should now have:
@@ -486,6 +502,7 @@ add-on can reach every other add-on and Home Assistant itself on `8123`), so "LA
 | yes — app login | AIOStreams | **none** — app login (`auth_required`) | `/api/v1/status`, `/builtins/*` |
 
 The actual hostnames are whatever is configured in the Cloudflared add-on (`external_hostname`
+
 + `additional_hosts`) and are deliberately **not** repeated here — this page should not be a
 map of the tunnel.
 
@@ -512,7 +529,7 @@ add-on READMEs: [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main
   * DNS and DHCP (do not forget to add IPv4 and IPv6 DNS servers to your router). Disable safe search.
   * For IP address name resolving, check [this section](#adguard-home-address-naming-resolution-using-the-router-freebox).
   * Docs/repo: https://github.com/hassio-addons/addon-adguard-home
-  * Add Google and Cloudflare DNS servers (both IPV4 and IPV6) as 2nd and 3rd options incase the self-hosted AdGuard Home breaks.
+  * Add Google and Cloudflare DNS servers (both IPV4 and IPV6) as 2nd and 3rd options in case the self-hosted AdGuard Home breaks.
   * Make heavy tests (Restart the server, restart HA, restart the router, cut the power off...) after setting AdGuard Home because if something breaks, you will not be able to access your home assistant.
 
 
@@ -584,6 +601,7 @@ add-on READMEs: [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main
 Update the config of the addon if you want to use the (forms and chat...etc) since they rely on webhooks and the api :
   * In network enable both ports.
   * Update the config of the addon. Since we changed the N8N_EDITOR_BASE_URL, you will not be able to access it from HAOS Ingress. You must use the new address.
+
   ```yaml
   timezone: Europe/Paris
   env_vars_list:
@@ -634,6 +652,7 @@ This next section is about controllers / routers add-ons :
 * **Zigbee2MQTT**
 
 ### Integrations
+
 * **AdGuard Home**
    - Add-on repo (service): https://github.com/hassio-addons/addon-adguard-home
 
@@ -664,7 +683,7 @@ This next section is about controllers / routers add-ons :
 * **Dreame vacuum**
   * Community integration repo: https://github.com/Tasshack/dreame-vacuum
   * Do not use the version 1. Use version > 2 (supports multiple accounts: dreamehome, xiaomi, etc.).
-  * Maps for the vaccum:
+  * Maps for the vacuum:
     - https://github.com/noambergauz/dreame-vacuum-map-card
   * Script for voice assistant cleaning per room : https://github.com/Magnum9O/HA_BluePrints
 
@@ -732,12 +751,14 @@ This next section is about controllers / routers add-ons :
   * Example [addons_offline.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/addons_offline.yaml) & [low_battery.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/low_battery.yaml)
 
 ### Dashboard & Cards
+
 * **Auto entities** : https://github.com/thomasloven/lovelace-auto-entities
 * **Custom sidebar**: https://github.com/elchininet/custom-sidebar
 * **Kiosk Mode**: https://github.com/NemesisRE/kiosk-mode
 * **Mushroom cards** : https://github.com/piitaya/lovelace-mushroom#installation
 * **Universal Remote Card** : https://github.com/Nerwyn/universal-remote-card
   * The whole Android TV remote in a single card — touchpad, power, volume and media keys — built on the `remote` entity for the keys and the `media_player` entity for power/volume. This is the card used on the TV remote dashboard view:
+
     ```yaml
     type: custom:universal-remote-card
     platform: Android TV
@@ -748,10 +769,12 @@ This next section is about controllers / routers add-ons :
       - [touchpad, [volume_buttons]]
       - [rewind, previous, play_pause, next, fast_forward]
     ```
+
   * `power`, the D-pad names and the media keys are built-in key codes, so no `custom_actions` block is needed for a standard Android TV remote; add one only for buttons the TV does not expose by default.
 
 
 ### Automations, Scenes, Script, Helpers and Entities
+
 * **🤖 Automation** = When something happens → do something
     * Always use entities instead of devices. Entities have unique names.
 * **🎬 Scene** = Rarely used. Set things to a predefined state. A scene is just a snapshot of states.
@@ -805,6 +828,7 @@ Who hands out the addresses, and who publishes the names:
   - I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token ``uv run freebox_auth.py``
   - then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. ``uv run sync_adguard_home_ip_mac.py``
   - Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the path of uv and the script)
+
 ````sh
 # For example
 * * * * * /home/amine/.local/bin/uv run sync_adguard_home_ip_mac.py
@@ -875,7 +899,8 @@ graph TB
 - **`docker0`** — Docker's default bridge network (`172.17.0.0/16`) on the server. Confirmed via `docker network ls`/`docker ps -a`: only the default `bridge`/`host`/`none` networks exist and no containers are running, so this interface is currently unused (DOWN).
 - **Direct vs forwarded** — "direct" means the querying host talks straight to AdGuard (`192.168.1.119:53`); "forwarded" means an intermediate resolver (`hassio_dns` or libvirt's `dnsmasq`) receives the query first and relays it to AdGuard.
 
-# todo:
+## todo:
+
 - backup vm
 - Lan architecture : Router Freebox = Honor Router 3  (bridge) - Ubuntu server (HAOS ( Adguard DNS + DHCP + Script for IPV6 update & naming resolution))
 

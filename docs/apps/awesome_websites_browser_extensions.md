@@ -19,18 +19,20 @@ Awesome websites & browser extensions
 
 
 ## 1. Browser Extensions
+
 Browser extensions are small software modules for customizing a web browser. Browsers typically allow a variety of extensions, including user interface modifications, ad blocking, and cookie management. Extensions can greatly enhance your browsing experience by providing additional functionality, improving usability, and managing privacy.
 
 The Following extensions are all available in brave, chrome & edge (Chromium-based browsers)
 
 ### 1.1. productivity Extensions
+
 - `uBlock Origin`: An efficient, wide-spectrum content blocker that's easy on memory.
 - `QR Code Generator` : Create QR code for webgaes and more
 - `Checker Plus for Gmail`: Get desktop notifications, read, listen to or delete emails without opening Gmail (pin the extension and activate the option to receive notifications even when the browser is closed  -> in the extension's settings)
 - `Checker Plus for Calendar`: Get desktop notifications (activate the option to receive notifications even when the browser is closed  -> in the extension's settings. Also change the notification type from pop-up to rich)
 - `Free Download Manager`: A powerful, easy-to-use and absolutely free download accelerator and manager.
 - `Google Translate`: View translations as you browse the web.
-- `Google Dictionnary`: View definitions easily as you browse the web.
+- `Google Dictionary`: View definitions easily as you browse the web.
 - `Mots de passe iCloud`
 - `Reddit Enhancement Suite`: A suite of tools to enhance your Reddit browsing experience.
 - `Pocket`: Save articles, videos and stories from any publication, page or app.
@@ -48,10 +50,12 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 - `Widilo Cashback`
 
 ### 1.2. ChatGPT Extensions
+
 - `Suite ChatGPT`: Enhances the ChatGPT experience.
 - `ChatGPT sidebar`: Provides a sidebar for easy access to ChatGPT.
 
 ### 1.3. Privacy & security Extensions
+
 - `Bitwarden`: Manages your passwords.
 - `NordVPN`: Provides VPN services.
 - `ClearURLs`: An extension that automatically removes tracking elements from URLs to help protect your privacy.
@@ -62,7 +66,9 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 - `Ugly Email (Privacy badge)`: Check your emails for web bugs that track you.
 - `iCloud Passwords`: Save your passwords, 2FAs and log in to sites with a single click.
 - `User agent switcher and manager`: Spoof your browser's user agent string. [Link](https://chromewebstore.google.com/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg)
+
 ### 1.4. Gaming, movies & other Extensions
+
 - `Watch2Gether`: Watch videos together with friends.
 - `Netflix Party is now Teleparty`
 - `alike03's Subscription Info on Steam`
@@ -73,6 +79,7 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 - `Youtube-shorts block`
 
 ### 1.5. Browser shortcuts (chromium):
+
 - `Tree Style Tab`: Use `Alt+Q` to show it.
 - `Video streaming`: works on a lot of websites
   - Pause/Play: `Space`
@@ -91,14 +98,18 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 
 
 ## 2. Useful websites
+
 Contains a list of awesome websites that are not that popular but useful for everyone.
 
 ### 2.1. Mainstream website (DEPRECATED)
+
 * [r/InternetIsBeautiful](https://www.reddit.com/r/InternetIsBeautiful/) - A subreddit where people share interesting websites they found on the internet.
 * [Radio Garden](http://radio.garden/) - Listen to radio stations from around the world by rotating the globe. You can also search or sort by popularity.
 * [pdf tool](pdftool.org) -A privacy-first tool that lets you modify pdfs offline in your browser, no upload to server or cloud, no limits on editing, entirely for free
 * [IP address check torrent  downloads](https://iknowwhatyoudownload.com/en/peer/) - Check what IP address is downloading torrents.
+
 ### 2.2. Development websites
+
 * [Archives.is](https://archive.is/) - Read & Save a webpage for future reference (Used to bypass medium.com paywall for example)
 * [draw.io](https://app.diagrams.net/) - Create diagrams and flowcharts in the browser. Contains many icons & for free.
 * https://simpletex.net/

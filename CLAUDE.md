@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### OS/distro detection → package catalog → UI
 
 `detect_os.py` is the entry point for environment awareness:
+
 - `detect_os()` returns an `OSInfo(family, distro, info)` — family is `windows`/`darwin`/`linux`/`unknown`; on Linux, `distro` comes from `/etc/os-release` `ID` (e.g. `ubuntu`, `cachyos`), and WSL is detected separately (`_is_wsl()`, checks `/proc/sys/fs/binfmt_misc/WSLInterop` or `/proc/version`).
 - `build_packages_for_os()` loads `src/personal_os_setup/config/packages.yaml` (the single source of truth for installable packages, keyed by distro → manager → category → package list) and filters it to the current distro via `PackageCatalog.for_distro()`, producing a flat list of `PackageRef(name, manager, category)`.
 
@@ -31,6 +32,7 @@ This function is the other half of the factory: given `(system, distro, info)` i
 ### Frontend (`frontend/`)
 
 Built on [Textual](https://textual.textualize.io/) (`textual`), not a web/GUI framework:
+
 - `app.py` (`PersonalOsSetupApp`) — the whole UI in one `App` subclass, Textual-idiomatic (controller logic folds into the App rather than a separate controller class): `compose()` renders a `TabbedContent` with a "📦 Packages" tab (`SelectionList[PackageRef]` + install button + `ProgressBar`), one dynamically-generated `TabPane` per `(section_name, [SystemAction])` tuple from `get_system_action_sections()`, and a "📋 Logs" tab (`RichLog`). A single `is_busy: reactive[bool]` drives all busy-state UI (button disabling, the docked `LoadingIndicator`, status label) through one `watch_is_busy()` method — set `self.is_busy = True/False` rather than updating widgets by hand. Background work (package installs, system actions) runs via `@work(thread=True, exclusive=True)` workers that call back into the UI thread with `self.call_from_thread(...)` — there's no manual job queue or poll timer; toggling `is_busy` from a worker thread must go through `self.call_from_thread(setattr, self, "is_busy", False)` since reactive watchers touch widgets and must run on the app's own thread. Confirm/prompt gating (`action.confirm`, `action.run_with_prompt`) pushes `dialogs.py`'s modal screens via `self.push_screen(..., callback)`. Job completion also calls `self.notify(...)` for a toast, in addition to the Logs tab.
 - `app.tcss` — external Textual CSS (via `CSS_PATH`), not an inline `CSS` string, so styling can be iterated on with `textual run --dev` live-reload.
 - `dialogs.py` — `ConfirmScreen` (Yes/No) and `PromptScreen` (label + `Input` + OK/Cancel), both `ModalScreen` subclasses that dismiss with a typed result (`bool` / `str | None`) consumed by the pushing callback.

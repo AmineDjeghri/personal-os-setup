@@ -4,6 +4,7 @@ Pipeline: `make deploy-doc-gh` → `properdocs build && properdocs gh-deploy` (C
 main; `deploy-doc-local` builds + serves). Docs build breaking on main = Release workflow fails.
 
 ## How the site is assembled (`docs_dir: .`)
+
 - mkdocs crawls the REPO ROOT; the `exclude` plugin glob list in `properdocs.yml` keeps non-site
   content out (dot-dirs, `node_modules/**`, `venv/**` + `.venv/**`, and `src/personal_os_setup/config/**`,
   `AGENTS.md`, `CLAUDE.md`).
@@ -12,6 +13,7 @@ main; `deploy-doc-local` builds + serves). Docs build breaking on main = Release
   against `paths: [src, docs]`. `nav:` maps `package/` = API Reference.
 
 ## Pitfall: the auto-stub walker aborts on data-tree .py
+
 mkdocstrings kills the whole build (`Aborted with a BuildError!`, `Could not collect '<ident>'`)
 when a generated stub names a module that is not importable. That happens whenever `.py` code
 ships under a package DATA dir whose parents contain hyphens (`config/chezmoi/dot_claude/skills/
@@ -21,10 +23,12 @@ ships `.py` inside the package tree, you need BOTH: (1) skip that subtree in the
 it from the mkdocs crawl — or the deploy breaks on merge, not locally.
 
 ## Local verification (reproduce CI before pushing)
-```
+
+```bash
 uv sync --all-groups --python 3.14   # creates venv/ (gitignored); rewrites the version string in uv.lock → revert before commit
 ./venv/bin/properdocs build          # invoke the synced env directly
 ```
+
 - `uv run` mis-resolves the interpreter to a cached 3.11 despite `requires-python ==3.14.*` —
   always pass `--python 3.14`, or call `venv/bin/...` binaries directly.
 - A green build ends with `Documentation built in N seconds`; pre-existing anchor INFO warnings
@@ -33,6 +37,7 @@ uv sync --all-groups --python 3.14   # creates venv/ (gitignored); rewrites the 
   `venv/**` in the glob list (`.venv/**` alone is not enough when uv creates `venv/`).
 
 ## URL-coverage check for a page restructure (split/move)
+
 Run this instead of a re-read — it passes the approval gate, where a heredoc or `python -c` for the
 same check does not:
 

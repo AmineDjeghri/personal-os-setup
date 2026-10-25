@@ -220,6 +220,7 @@ LUKS drive, browsers saving passwords, etc.) talks to `org.freedesktop.secrets` 
 nothing provides that name unless something starts a daemon for it. KDE's `kwallet` isn't advised to be used without plasma.
 
 **`gnome-keyring` is used instead** — password-based, no GPG key needed, and the standard choice on non-KDE Wayland compositors:
+
 - **Not auto-unlocked with the login password, by choice.** `pam_gnome_keyring.so` can do this, but it doesn't look at "whichever keyring is currently set as default"
 - Apps using `libsecret` (Nautilus/GVfs, GTK/GNOME apps, Chromium-based browsers) otherwise just work — the manual prompt above is the only friction point.
 - To view/delete stored secrets: `sudo pacman -S seahorse` ("Passwords and Keys" GUI), or `secret-tool` for CLI lookups. <!-- pragma: allowlist secret -->
@@ -348,16 +349,20 @@ https://www.youtube.com/watch?v=njX2bu-_Vw4 — playing it in mpv fullscreen via
 querying mpv's live negotiated state over its JSON IPC socket rather than trusting the OSD:
 
 1. Launch mpv with an IPC socket so its internal state can be queried while playing:
+
    ```bash
    mpv --input-ipc-server=/tmp/mpvsocket --fullscreen "https://www.youtube.com/watch?v=njX2bu-_Vw4"
    ```
+
 2. From another terminal, query the three relevant properties via `socat` (or `echo` piped to
    `nc -U`):
+
    ```bash
    echo '{"command":["get_property","video-params"]}' | socat - /tmp/mpvsocket
    echo '{"command":["get_property","video-out-params"]}' | socat - /tmp/mpvsocket
    echo '{"command":["get_property","video-target-params"]}' | socat - /tmp/mpvsocket
    ```
+
 3. What each answers:
     - **`video-params`** — the *source*'s real color metadata. HDR10 content should report
       `primaries: bt.2020`, `gamma: pq`, plus a mastering `max-luma`/`max-cll`.
@@ -419,6 +424,7 @@ is adding `virbr0`'s zone to the trusted zone or an explicit forwarding rule —
 doesn't cover that yet.
 
 ## Apps shortcuts
+
 For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,
 the terminal tools cheatsheet), plus a table of what's available on CachyOS vs. Windows/macOS
 and their alternatives, check

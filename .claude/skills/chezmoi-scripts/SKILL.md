@@ -17,6 +17,7 @@ The "Sync dotfiles" tab's `apply selected`/`diff selected` buttons never run a b
 - `chezmoi apply <the script's own managed path>` → script runs.
 
 Reproduce it against a scratch source dir before relying on the behaviour:
+
 ```sh
 mkdir -p /tmp/t/{home,src/dot_config/x} && cd /tmp/t
 echo x > src/dot_config/x/file.txt
@@ -53,9 +54,11 @@ Building (`hyprpm add <repo>`) needs hyprpm's internal `sudo`, which works when 
 ## `hyprctl keyword` vs `hyprctl eval` for Lua-configured Hyprland
 
 This repo's `dot_config/hypr/*.lua` files use Hyprland's Lua config parser (the `hl.config({...})`/`hl.plugin.*` API — see `hyprbars.lua`, `hyprland.lua`). On a Lua-parsed config the classic `hyprctl keyword <key> <value>` is rejected outright (`keyword can't work with non-legacy parsers. Use eval.`). Use `hyprctl eval` with the same Lua table shape the `.lua` files use:
+
 ```sh
 hyprctl eval 'hl.config({ plugin = { hyprbars = { enabled = false } } })'
 ```
+
 That's the way to toggle a loaded plugin's live behaviour (e.g. hide/show hyprbars) without touching hyprpm, and the fix for hyprbars staying invisible after a hot-load (the `if hl.plugin.hyprbars then ... end` block not reliably re-applying) — toggling `enabled` false→true via `eval` forces it. The script does this automatically for every plugin in its `plugins=(...)` list that `hyprctl plugin list` shows as loaded; it needs no privilege and is a no-op for plugins whose lua config exposes no `enabled` key.
 
 ## Keep `hyprland.lua`'s top-level requires guarded

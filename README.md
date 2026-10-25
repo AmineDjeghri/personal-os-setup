@@ -47,6 +47,7 @@ An opinionated **terminal UI app + documentation hub** for a fast, consistent se
 > Want to edit the code, or fork and customize this project? See [Developer / editor (clone from source)](#developer--editor-clone-from-source) below.
 
 #### Linux / WSL2 / macOS
+
 Get started with one command in bash/zsh:
 
 ```bash
@@ -62,7 +63,9 @@ personal-os-setup
 ```
 
 #### Windows 11
+
 Get started with one command (run it in PowerShell as administrator):
+
 ```powershell
 $u='https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_windows.ps1'; $p="$env:TEMP\install_windows.ps1"; iwr $u -UseBasicParsing -OutFile $p; powershell -ExecutionPolicy Bypass -File $p
 ```
@@ -79,6 +82,7 @@ personal-os-setup
 > The app **auto-updates on every launch**: it runs a `git pull` on the installed checkout before starting the UI, so you're always on the latest version without doing anything manually.
 
 ## Contributing (For developers)
+
 ### Developer / editor (clone from source)
 
 > [!WARNING]
@@ -86,10 +90,12 @@ personal-os-setup
 >
 > It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
 > Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
+>
 >  ```bash
 >  git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
 >  git fetch upstream
 >  ```
+>
 > `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
 > You can run the full merge and resolve conflicts interactively, as long as you're deliberate about which side wins per file.
 > This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.

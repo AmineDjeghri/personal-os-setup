@@ -1,6 +1,7 @@
 # TV Setup (googletv / android tv)
 
 One of the best TV OS is Google TV. Here are some reasons why you should consider using Google TV:
+
 - Sideloading apps is straightforward on Google TV. You can install apps like Stremio, SmartTube, and others.
 - It's not as responsive as Apple TV, but you can tweak it to make it faster.
 - You can use alternative launchers like 'Projectivy'.
@@ -17,6 +18,7 @@ This page covers the TV side: picture settings, performance, apps and the launch
 <!-- TOC -->
 
 ## All TV types:
+
 - My first advice is to never use the standard mode on your TV. Always use the cinema/ filmaker or movie mode. The
   standard mode is too bright and the colors are not accurate. Use the cinema or movie mode when watching movies or
   series.
@@ -30,6 +32,7 @@ This page covers the TV side: picture settings, performance, apps and the launch
 - If you play video games, use the game mode. It will reduce the input lag and improve the gaming experience.
 
 ## Google TV OS:
+
 - (Important) Enhance the performance of your Google TV by following
   this [tutorial](https://www.slashgear.com/1321192/tricks-make-chromecast-google-tv-run-faster/)
 - Chromecast google TV
@@ -44,6 +47,7 @@ This page covers the TV side: picture settings, performance, apps and the launch
 the Projectivy and add Stremio and Nuvio there. Also make it the default launcher for your tv.
 
 ### Best google TV apps:
+
 - [SmartTube](https://smartyoutubetv.github.io/): A free Android TV app alternative to YouTube with no ads, designed for TV screens, up to 8K video resolution, supports youtube accounts.
 - [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu&hl=en&pli=1):  an alternative app launcher for Android TV devices that provides users with a different home screen and method for navigation and opening apps.
     -  Remember to export your settings: https://www.reddit.com/r/Projectivy_Launcher/comments/1cdt00f/tell_me_about_exporting_these_launcher_settings/

@@ -288,12 +288,14 @@ Collections allow you to organize your content into custom categories (Netflix, 
 You can customize how your collections look by adding cover images and configuring display settings:
 
 **Cover Images (Logos)**:
+
 - Find collection cover images here: [Netflix, Apple, and other logos](https://postimg.cc/gallery/y7V9gYX)
 - Example: [Netflix logo](https://i.postimg.cc/WVXFgmRn/Netflix.png)
 - **Important**: Make sure the URL includes the file extension (e.g., `.png`)
 - Find genre images here: [Genre artwork gallery](https://postimg.cc/gallery/LhYL0YQ/)
 
 **Display Settings**:
+
 - **Tile Shape**: Set to "Landscape" for wider tiles
 - **Show GIF When Configured**: Set to "False" to use static images
 - **Hide Title**: Set to "True" to show only the cover image without text

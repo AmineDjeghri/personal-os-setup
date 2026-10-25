@@ -38,29 +38,35 @@ By participating, you are expected to uphold this code. Please report unacceptab
 
 - Exceptions:
     - Always log the exceptions and errors (use loguru) and then raise them
+
     ```py
         except Exception as e:
           logger.error(e)  # Log the original error  with a personalized message or with e (only the message will be logged)
           raise e # All the stack trace will be logged
     ```
+
     - Sometimes, you don't need to raise the exception (in a loop for example) to not interrupt the execution.
     - Use if else instead of catching and raising the exception when possible (log and raise also)
+
       ```py
           if not os.path.exists(file_path):
               logger.error(f"File not found: {file_path}. The current directory is: {os.getcwd()}")
               raise FileNotFoundError(f"The file {file_path} does not exist.")
       ```
+
 ## 3.1 Security
 
 This project implements a **multi-layer security approach**:
 
 **Local Security (Pre-commit):**
+
 - `actionlint` — validates GitHub Actions workflow syntax
 - `zizmor` — detects CI/CD security vulnerabilities in workflows
 - `detect-secrets` — prevents accidental secret commits
 - `pip-audit` — scans dependencies for known vulnerabilities
 
 **CI Security (GitHub Actions):**
+
 - `Renovate` — manages dependencies with 7-day cooldown to prevent malicious releases
 
 
@@ -175,6 +181,7 @@ Check the readme file.
 | `main` | `docs:`, `chore:`, `ci:`, `style:`, `refactor:`, `build:`, `test:` | ❌ No     | —                             | No release, no docs deploy                                |
 
 **Key points:**
+
 - RC (release candidate) versions allow testing before stable release
 - Each releasable commit on `dev` bumps the rc counter: `1.1.0-rc.1` → `1.1.0-rc.2`, etc.
 - When `dev` is squash-merged into `main`, semantic-release on `main` evaluates the squashed commit and releases the stable version (e.g. `1.1.0`)
@@ -191,7 +198,7 @@ Check the readme file.
 
 #### Step-by-step: shipping a feature to production
 
-```
+```text
 1. Sync local dev with remote dev (always fast-forward, no conflicts):
    git checkout dev
    git pull          ← always do this before branching
@@ -237,12 +244,14 @@ Check the readme file.
 ```
 
 #### GitHub pages automatic deployment :
+
 - You need to give the right permissions to GithubAction: Check that "Read and write permissions" are enabled in your project: Settings -> Actions -> General -> Workflow permissions : Read and write permissions
 - You need to have the branch 'gh-pages' in your repository after following this tutorial. You can create it with ``make deploy-doc-gh``, it will prompt you for your creds, go to https://github.com/settings/tokens and generate a classic key (your password), then push the documentation to the gh-pages branch.
 - In GitHub Pages settings, select 'Deploy from a branch' and select 'gh-pages' branch.
 - From the next time, GitHub Actions will run automatically and deploy it from the main branch.
 
 Issues:
+
 - GitHub Actions will run automatically and deploy it from the main branch. If you face an error saying that your branch
   is not allowed to deploy to github-pages, check this [issue](https://github.com/orgs/community/discussions/39054)"
 - (Optional) If you want to manually deploy the documentation, run ``make deploy-doc-gh`` it will push the documentation to the gh-pages branch
@@ -257,7 +266,8 @@ Tags are created **automatically** by semantic-release on merge to `main` or `de
 Format: `[emoji] <type>[(<scope>)][!]: <description>`
 
 The emoji prefix is **optional** — both forms are valid:
-```
+
+```text
 feat: add token refresh
 ✨ feat: add token refresh
 ```
@@ -285,7 +295,8 @@ feat: add token refresh
 ### Scopes (optional)
 
 Use a scope to narrow the context:
-```
+
+```text
 feat(github): ...
 fix(llm): ...
 perf(cache): ...
@@ -301,12 +312,14 @@ Common scopes: `github`, `llm`, `auth`, `agent`, `cache`, `api`, `ci`, `deps`
 Two ways to declare a breaking change (triggers **major** bump):
 
 **1. `!` after the type:**
-```
+
+```text
 feat!(auth): remove legacy token endpoint
 ```
 
 **2. `BREAKING CHANGE:` footer:**
-```
+
+```text
 feat(auth): redesign token flow
 
 BREAKING CHANGE: /v1/token removed, use /v2/auth instead
@@ -316,7 +329,7 @@ BREAKING CHANGE: /v1/token removed, use /v2/auth instead
 
 ### Examples
 
-```
+```text
 ✨ feat(github): add support for GitHub App token rotation
 🐛 fix(llm): handle empty response from LLM API
 ⚡️ perf(cache): persist .venv between CI runs

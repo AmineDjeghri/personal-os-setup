@@ -48,6 +48,18 @@ repos:
                    '--exclude-lines','"skillFolderHash": "[0-9a-f]{40,}"',
             ]
 
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: ['--ignore-words-list', 'hass,shotcut']
+        types: [markdown]
+
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.8.3
     hooks:
@@ -67,6 +79,13 @@ repos:
         name: skills-check
         entry: make skills-check
         language: system
+        pass_filenames: false
+      # Strict docs build: fails on broken links and anchors
+      - id: mkdocs-build
+        name: properdocs build --strict
+        entry: bash -c 'export PATH="$HOME/.local/bin:$PATH"; uv run properdocs build -f properdocs.yml --strict --quiet --site-dir "$(mktemp -d)"'
+        language: system
+        files: ^(docs/|properdocs\.yml$)
         pass_filenames: false
 
 #  - repo: https://github.com/pypa/pip-audit

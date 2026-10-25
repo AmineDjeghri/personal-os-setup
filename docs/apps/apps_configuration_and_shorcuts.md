@@ -117,12 +117,14 @@ manually as a browser extension or desktop app.
 ## 1. General OS shortcuts
 
 **Windows:**
+
 - Display copy-paste history: `Win + V`
 - Lock screen: `Win + L`
 - More general Windows UI/UX shortcuts and tweaks (taskbar, screen lock timeout, multi-monitor,
   etc.) are in [windows_workflow/README.md](../windows_workflow/README.md#12-windows-configuration).
 
 **macOS:**
+
 - Keys are remapped so the same physical shortcuts work as on Windows/Linux (Globe key acts as
   Ctrl, Option as Alt) — see
   [Windows/Linux behavior mimicking in macOS](../macos_darwin/README.md#windowslinux-behavior-mimicking-in-macos)
@@ -132,6 +134,7 @@ manually as a browser extension or desktop app.
   provide it (see [§2.4](#24-launcher-raycast--vicinae)).
 
 **CachyOS:**
+
 - Lock/idle/suspend behavior is owned by Noctalia, not Hyprland — see
   [Settings owned by Noctalia, not Hyprland](../linux/CachyOS.md#settings-owned-by-noctalia-not-hyprland)
   (also see [§2.3](#23-cachyos-hyprland--noctalia) for the window-manager shortcuts).
@@ -147,6 +150,7 @@ manually as a browser extension or desktop app.
     - Download [my .glaze-wm config folder](../../src/personal_os_setup/config/windows/.glzr) and place it in `C:\Users\%userprofile%\.glaze-wm`
 
 shortcuts: You can read more about the shortcuts :
+
 - [GlazeWM](https://github.com/glzr-io/glazewm?tab=readme-ov-file#config-documentation)
 - [Zebar](https://github.com/glzr-io/zebar)
 
@@ -192,6 +196,7 @@ plugins work with Vicinae.
 config documented yet.
 
 **macOS (Raycast):**
+
 - Use Raycast as a "PowerShell equivalent" launcher.
 - Replace Spotlight:
   - Remove the Spotlight shortcut in macOS keyboard settings.
@@ -199,6 +204,7 @@ config documented yet.
 - Finder is still useful for macOS-specific settings and edge cases.
 
 **CachyOS (Vicinae):**
+
 - **Typing a path**: Vicinae ships a built-in "Search Files" command (indexed
   search with a content preview, reachable from the root search or its own dedicated
   command).
@@ -292,13 +298,13 @@ Use personal-setup-os for installing it.
 - Sync pycharm settings : https://www.jetbrains.com/help/pycharm/sharing-your-ide-settings.html#IDE_settings_sync
 - You can save your current layout (all plugin positions) by going to Window | Layouts | Save Current Layout as New and
   switch to it from new projects by Window | Layouts | <name of your layout> | Apply.
-- Project settings : Everytime you start a project make sure to
+- Project settings : Every time you start a project make sure to
     - Change the source folder for imports (https://stackoverflow.com/a/34304165).
     - Edit the configuration template of python and python tests(autodetect and pytest) to
   select a default working directory for all your scripts. If you changed the source folder, it should match it. This will prevent you from having problems with working directory location when running from the terminal and pycharm.
 - I always use the run button (or shortcut) instead of the terminal to run my files (specifically fastapi or streamlit) so pycharm can highlight the errors and make them easily clickable.
 - Use the debug function when needed.
-- You can Run pytest just by right-clicking on a function bloc, file, or folder!
+- You can Run pytest just by right-clicking on a function block, file, or folder!
 - Git Clone: You can directly clone a repository from your git accounts by going to the Menu bar | VCS | Get from
   Version Control | GitHub | and select the right repository.
 - You can write a ``#TODO`` in the .py files or ``[//]: # (TODO  Add Google TV setup  ) `` in the markdown files to see them
@@ -384,7 +390,7 @@ The macOS shortcuts are inverted in my system so i can use the same commands as 
 | Action                                           | Shortcut                                     | more                                                                                                               |
 |--------------------------------------------------|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
 | call actions                                     | alt+enter                                    | reformat code, correct code & more , used in editor                                                                |
-| insert / create new                              | alt+ insert                                  | can be used in editor (insert tables ect..) or project panel (create new files)                                    |
+| insert / create new                              | alt+ insert                                  | can be used in editor (insert tables etc..) or project panel (create new files)                                    |
 | create new branch                                | ctrl+alt+n                                   |                                                                                                                    |
 | find all                                         | double shift                                 | search everything like files, actions, classes                                                                     |
 | find actions                                     | ctrl+shit+a                                  | search actions like tools (docker, remote server) but also execute shortcuts                                       |
@@ -398,11 +404,11 @@ The macOS shortcuts are inverted in my system so i can use the same commands as 
 | **select**                                       |                                              |
 | **refactor**                                     |                                              |
 | extract method/constant/variable/field/parameter | Ctrl + Alt + M/C/V/F/P                       |                                                                                                                    |
-| select bloc                                      | ctrl + w                                     | select (the more you press w, the more it wraps other parts. you can then press any other thing to wrap it arround |
+| select block                                      | ctrl + w                                     | select (the more you press w, the more it wraps other parts. you can then press any other thing to wrap it around |
 | select  with multiple cursors                    | ctrl + alt shift + mouse                     |                                                                                                                    |
 | Select multiple occurrences of a word            | alt j                                        |                                                                                                                    |
 | all case-sensitively matching words              | Ctrl Alt Shift J                             |                                                                                                                    |
-| move bloc                                        | ctrl + shift + arrow                         |                                                                                                                    |
+| move block                                        | ctrl + shift + arrow                         |                                                                                                                    |
 | refactor (change signature:add/remove parameter) | alt+r + first option                         |                                                                                                                    |                                        |
 | rename                                           | alt+r then select the second option (rename) |                                                                                                                    |
 | delete/cut line                                  | ctrl+x                                       |                                                                                                                    |
@@ -426,7 +432,7 @@ The macOS shortcuts are inverted in my system so i can use the same commands as 
 
 WARNING: project folder needs to be on windows and not WSL to use the remote ssh. Do not host folders outside WSL if you
 are not using a remote interpreter, there
-are  [WSL perforamance issues](https://github.com/microsoft/WSL/issues/4197?notification_referrer_id=MDE4Ok5vdGlmaWNhdGlvblRocmVhZDUyMzA5ODA3MjozMjcxNTkxMw%3D%3D#issuecomment-1727108838))
+are  [WSL performance issues](https://github.com/microsoft/WSL/issues/4197?notification_referrer_id=MDE4Ok5vdGlmaWNhdGlvblRocmVhZDUyMzA5ODA3MjozMjcxNTkxMw%3D%3D#issuecomment-1727108838))
 
 Defining a server as default:
 A deployment server is considered default if its settings apply by default during automatic upload of changed files. To
@@ -489,6 +495,7 @@ on all three OSes.
     * Todoist Sync - Tutorial : https://www.youtube.com/watch?v=2j77GQRN5do
 
 #### Sync Obsidian vaults with iOS:
+
   * Download obsidian on your mobile, and check if the obsidian folder is available in iCloud in the Files app .
   * Download the obsidian git repository in your phone (either with your phone or a computer) and place it in the obsidian folder in iCloud.
   * Open Obsidian app, it should show you the discovered vaults (your GitHub repo ), open it.
@@ -507,6 +514,7 @@ on all three OSes.
 Bitwarden is an open-source password manager available on Windows, macOS, Linux, iOS, Android, and as a browser extension.
 
 **Tips & tricks:**
+
 - You can share passwords with other people by creating an **Organisation** and **Collections**. A password can belong to multiple collections, so you can share it with two different organizations independently.
 - The **browser extension** is the main daily driver — install it on all your browsers.
 - On Windows: activate **Unlock with Windows Hello** in the extension settings for fast, secure unlock.
@@ -515,6 +523,7 @@ Bitwarden is an open-source password manager available on Windows, macOS, Linux,
 - You can **import passwords** from another password manager directly from the web vault: Settings → Import data.
 
 **Vaultwarden (self-hosted open-source Bitwarden backend):**
+
 - Vaultwarden is a lightweight, open-source reimplementation of the Bitwarden server API.
 - All official Bitwarden clients (iOS, Android, Windows, macOS, browser extensions) work with it — just point them at your self-hosted URL.
 - Install it as a **Home Assistant add-on**: https://github.com/hassio-addons/app-vaultwarden
@@ -534,11 +543,13 @@ Bitwarden is an open-source password manager available on Windows, macOS, Linux,
 ### 8.1. HWiNFO (Windows) vs Hardware Monitoring (CachyOS)
 
 **Windows — HWiNFO:**
+
 - export file: regedit -> ``Ordinateur\HKEY_CURRENT_USER\Software\HWiNFO64``
 - import settings: double-click on the downloaded file to restore settings. Check
   mine [here](../../src/personal_os_setup/config/windows/HWINFO_settings.reg)
 
 **CachyOS — CoolerControl, OpenRGB, nvtop, rivalcfg:**
+
 - Installed via the `Hardware Monitoring` category in
   [packages.yaml](../../src/personal_os_setup/config/packages.yaml).
 - CoolerControl needs its daemon enabled after install: `systemctl enable --now coolercontrold`.
@@ -613,6 +624,7 @@ mpv is the default video/audio player on CachyOS (see
 under Hyprland with Wayland color management for HDR passthrough.
 
 #### Shortcuts
+
 Link: https://mpv.io/manual/master/
 Defaults (no custom `input.conf` yet — this repo's `~/.config/mpv` is currently empty, see
 [§Plugins](#plugins)):

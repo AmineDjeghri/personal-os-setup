@@ -32,6 +32,7 @@ There are **three** separate test setups in this repo — know which one you're 
       if not app.is_busy:
           break
   ```
+
 - To find a dynamically-id'd `TabPane` (ids come from a shared `itertools.count()` in `app.py`), walk up from a known child widget by id (e.g. `#dotfiles-selection-list`) rather than hardcoding a tab id.
 - Settings/env-var tests need `monkeypatch.setenv(...)` **plus** `importlib.reload(settings_module)` — `pydantic-settings` reads env at import time, so `setenv` alone doesn't affect an already-imported module.
 - Adding a manager string to `packages.yaml` without registering a backend in `factory.py` fails `test_detect_os.py::TestPackagesYaml` specifically — it's the only guardrail (see [[repo-gotchas]]).

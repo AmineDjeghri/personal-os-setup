@@ -8,7 +8,7 @@ AI-assisted YouTube → music library pipeline. Downloads YouTube playlists (or 
 
 **Every metadata decision is made by the LLM agent, not by parsing rules.** Live YouTube titles are messy — `Artist - Song (Live at X)`, no-artist titles, artists mentioned only in the description, Arabic/French/English mixes. Regex heuristics get maybe 60–80% right; the LLM reads the actual title, uploader and description of every video and decides. The script is pure plumbing:
 
-```
+```text
 you paste a link
       │
       ▼
@@ -35,7 +35,7 @@ you paste a link
 
 ## Folder layout
 
-```
+```text
 youtube_ai_download/
 ├── yt_dl.py                  # the downloader — deps in its PEP 723 header
 ├── README.md                 # this file

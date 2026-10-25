@@ -51,16 +51,18 @@ Install the Personal-OS-Setup TUI [app](../../README.md#windows-11)
   Documents...) Just use OneDrive as a cloud store like Google Drive. If you don't use it, you can uninstall it.
 - 💤 Sleep mode with or without screen
   lock [here](https://consumer.huawei.com/en/support/content/en-us15592807/##:~:text=Click%20the%20Windows%20icon%20and,Screen%20and%20Sleep%20to%20Never)
-- If you have a 3200mhz RAM, and it runs bellow this frequency, activate XMP profile in the BIOS
+- If you have a 3200mhz RAM, and it runs below this frequency, activate XMP profile in the BIOS
 - Turn off usb ports and pc lights when in sleep mode in the BIOS
 
 #### 🎧Audio settings
+
   - If you have Bluetooth and audio devices, you can sort them in audio settings → use as default for both audio and
     communications.
   - You can also deactivate some audio devices if the are unused in the audio settings. Check this [link](https://www.reddit.com/r/Windows10/comments/hcxksq/how_do_you_remove_an_unused_device_from_the_sound/)
   - Deactivate lowering communication sounds in advanced audio settings.
 
 #### 🖥️ Monitor and Display Settings
+
   - **Change display settings** (refresh rate, resolution, scaling, etc.):
     - `Windows + I` → **System** → **Display** .  Or **Right-click Desktop** → **Display settings**
   - **🚀 Critical Step – Refresh Rate** :  Go to **Advanced display**. Select the **highest available refresh rate** from the dropdown
@@ -114,7 +116,7 @@ the HDR-enabled monitor, one on a monitor still in SDR (or disable HDR in that m
     - Show Files extensions: In File Explorer under View, in the Show/hide group, select the File name extensions check
       box.
     - You can change your power management options (when windows will be put to sleep, what happens when you close your
-      laptop. Ect), performance vs normal usage.
+      laptop. Etc), performance vs normal usage.
     - You can convert a website to an application, for example, Google Agenda/ Netflix in Edge/Brave/Chrome, go to At
       the top right: More -> More Tools -> Create shortcut and check window mode, it will run like an app in your
       Windows desktop
@@ -125,7 +127,8 @@ the HDR-enabled monitor, one on a monitor still in SDR (or disable HDR in that m
     - You can use PowerToys to search for files, folders, and more. It's faster than the Windows search bar but does not
       contain deep settings.
     - (Need to update) Disable mouse from waking up computer from sleep and allowing only the keyboard to do that:
-    ```
+
+    ```text
     PS C:\Users\amine> ``powercfg /devicequery wake_armed``
     Périphérique clavier PIH
     Périphérique clavier PIH (001)
@@ -138,6 +141,7 @@ the HDR-enabled monitor, one on a monitor still in SDR (or disable HDR in that m
     PS C:\Users\amine> ``powercfg /devicedisablewake "Souris HID (001)"``
     PS C:\Users\amine> ``powercfg /devicedisablewake "Souris HID (002)"``
     ```
+
     If your mouse has some buttons, they will be registered as a keyboard, so you need also to disable them.
 
 Other apps, websites and tips: (DEPRECATED)
@@ -156,7 +160,7 @@ for what's available on Windows vs. macOS/CachyOS and their alternatives.
 
 For browser extensions, check [browser_extensions.md](../apps/awesome_websites_browser_extensions.md)
 
-- Remember to sync your settings bookmarks...ect.
+- Remember to sync your settings bookmarks...etc.
 - Use two browsers / or two profiles: one for work and the other for personal use.
 - **Agenda & Mail**: Google Calendar, Gmail
     - create an app shortcut with brave & add them to the taskbar it will act like an app in windows, and activate the
@@ -188,12 +192,13 @@ machine.
   best thing is to combine the power of Windows with WSL.
 
 ### 3.1. Install WSL:
+
 - Automatic installation of WSL available with the Personal-OS-Setup TUI [app](../../README.md#linux--wsl2--macos)
 - Run the script in Windows Terminal
-- Or manual installation: Run this command in PowerShell ``` wsl --install ```. You can also select the drive where you want to install it instead of the default 'C' drive and this is what I recommand doing.
+- Or manual installation: Run this command in PowerShell ``` wsl --install ```. You can also select the drive where you want to install it instead of the default 'C' drive and this is what I recommend doing.
 
 - Restart your computer
-- When installing WSL, it comes with Ubuntu (you can always install other distibutions from the microsoft store)
+- When installing WSL, it comes with Ubuntu (you can always install other distributions from the microsoft store)
 - You have different options to run Ubuntu :
     - From windows search bar (and select ubuntu or WSL for the default distro)
     - Running `ubuntu` inside Windows terminal
@@ -209,7 +214,7 @@ machine.
   by default in the directory.
 - Add systemd to wsl.conf if it's not there: run `sudo vim /etc/wsl.conf` inside linux then paste the following code:
 
- ```
+ ```text
 [boot]
 systemd=true
  ```

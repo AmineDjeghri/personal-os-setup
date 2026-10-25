@@ -33,7 +33,7 @@ SSH does **two independent checks**, in opposite directions. It's easy to only t
 
 The first time you `ssh` into a new host, you get a prompt like:
 
-```
+```text
 The authenticity of host 'homeserver (192.168.1.50)' can't be established.
 ED25519 key fingerprint is SHA256:xxxxx.
 Are you sure you want to continue connecting (yes/no)?
@@ -43,7 +43,7 @@ The server has a keypair of its own (usually generated once, at `/etc/ssh/ssh_ho
 
 **The `known_hosts` line format:**
 
-```
+```text
 <host> <key-type> <base64-public-key> [comment]
 ```
 
