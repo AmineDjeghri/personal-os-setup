@@ -5,11 +5,11 @@ First off, thanks for taking the time to contribute! ❤️
 ## 1. Code of Conduct
 
 This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
-By participating, you are expected to uphold this code. Please report unacceptable behavior.
+By participating, you are expected to uphold this code. Please report unacceptable behavior by opening an issue.
 
-## 2. Team members:
+## 2. Team members
 
-- Amine DJEGHRI
+- Contributors of the repo
 
 ## 3. Best practices 💡
 
@@ -68,7 +68,6 @@ This project implements a **multi-layer security approach**:
 **CI Security (GitHub Actions):**
 
 - `Renovate` — manages dependencies with 7-day cooldown to prevent malicious releases
-
 
 ## 4. How to contribute
 
@@ -143,17 +142,17 @@ Check the readme file.
 
 ### 4.5. Renovate: automatic dependency updates
 
-- Renovate configuration can be found [here](.github/renovate.json)
+- Renovate configuration can be found in [.github/renovate.json](.github/renovate.json)
 - **How it works**:
-  - Renovate runs on a schedule
-  - Creates PRs for dependency updates with the `renovate` label
-  - **7-day cooldown for all dependencies** — prevents immediate adoption of potentially malicious releases
-  - **PyPI dependencies are not pinned** — we rely on `uv.lock` for reproducible builds. Renovate updates `pyproject.toml` version constraints, and `uv.lock` is regenerated to lock specific versions
-  - **Security PRs are not grouped** — vulnerability alerts bypass grouping rules and open immediately as standalone PRs to ensure fast remediation
+    - Renovate runs on a schedule
+    - Creates PRs for dependency updates with the `renovate` label
+    - **7-day cooldown for all dependencies** — prevents immediate adoption of potentially malicious releases
+    - **PyPI dependencies are not pinned** — we rely on `uv.lock` for reproducible builds. Renovate updates `pyproject.toml` version constraints, and `uv.lock` is regenerated to lock specific versions
+    - **Security PRs are not grouped** — vulnerability alerts bypass grouping rules and open immediately as standalone PRs to ensure fast remediation
 - **What to do**:
-  - Review all Renovate PRs manually — they require human approval before merging
-  - A dependency dashboard issue is created automatically to track pending updates
-  - Check the PR details, then merge when confident
+    - Review all Renovate PRs manually — they require human approval before merging
+    - A dependency dashboard issue is created automatically to track pending updates
+    - Check the PR details, then merge when confident
 
 ### 4.6. (For repository maintainers) Merging strategies & GitHub Actions guidelines
 
@@ -243,10 +242,10 @@ Check the readme file.
    After this, dev has v1.0.0 as base → next RC will correctly be v1.1.0-rc.1
 ```
 
-#### GitHub pages automatic deployment :
+#### GitHub pages automatic deployment
 
 - You need to give the right permissions to GithubAction: Check that "Read and write permissions" are enabled in your project: Settings -> Actions -> General -> Workflow permissions : Read and write permissions
-- You need to have the branch 'gh-pages' in your repository after following this tutorial. You can create it with ``make deploy-doc-gh``, it will prompt you for your creds, go to https://github.com/settings/tokens and generate a classic key (your password), then push the documentation to the gh-pages branch.
+- You need to have the branch 'gh-pages' in your repository after following this tutorial. You can create it with ``make deploy-doc-gh``, it will prompt you for your creds, go to <https://github.com/settings/tokens> and generate a classic key (your password), then push the documentation to the gh-pages branch.
 - In GitHub Pages settings, select 'Deploy from a branch' and select 'gh-pages' branch.
 - From the next time, GitHub Actions will run automatically and deploy it from the main branch.
 
@@ -255,7 +254,6 @@ Issues:
 - GitHub Actions will run automatically and deploy it from the main branch. If you face an error saying that your branch
   is not allowed to deploy to github-pages, check this [issue](https://github.com/orgs/community/discussions/39054)"
 - (Optional) If you want to manually deploy the documentation, run ``make deploy-doc-gh`` it will push the documentation to the gh-pages branch
-
 
 #### Creating tags for releases
 

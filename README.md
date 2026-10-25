@@ -29,24 +29,23 @@ An opinionated **terminal UI app + documentation hub** for a fast, consistent se
 > | Ubuntu (server)    | 24/26                   | June 2026   |
 > | Windows 11 / WSL 2 | 11                      | May 2026    |
 
-
-**Table of contents**
+Table of contents
 <!-- TOC -->
 * [Personal OS Setup](#personal-os-setup)
     * [Get started](#get-started)
-      * [Linux / WSL2 / macOS](#linux--wsl2--macos)
-      * [Windows 11](#windows-11)
-  * [Contributing (For developers)](#contributing-for-developers)
-    * [Developer / editor (clone from source)](#developer--editor-clone-from-source)
-  * [What is this repo?](#what-is-this-repo)
+        * [Linux / WSL2 / macOS](#linux--wsl2--macos)
+        * [Windows 11](#windows-11)
+    * [Contributing (For developers)](#contributing-for-developers)
+        * [Developer / editor (clone from source)](#developer--editor-clone-from-source)
+    * [What is this repo?](#what-is-this-repo)
 <!-- TOC -->
 
-### Get started
+## Get started
 
 > [!TIP]
 > Want to edit the code, or fork and customize this project? See [Developer / editor (clone from source)](#developer--editor-clone-from-source) below.
 
-#### Linux / WSL2 / macOS
+### Linux / WSL2 / macOS
 
 Get started with one command in bash/zsh:
 
@@ -62,7 +61,7 @@ Once installed, just run:
 personal-os-setup
 ```
 
-#### Windows 11
+### Windows 11
 
 Get started with one command (run it in PowerShell as administrator):
 
@@ -91,9 +90,9 @@ personal-os-setup
 > It is advised that your fork stays ahead of the original repository at all times, never behind, to always have the latest features. Avoid using GitHub's UI to sync or resolve divergence.
 > Add the original repo (AmineDjeghri/personal-os-setup) as `upstream` remote git branch:**
 >
->  ```bash
->  git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
->  git fetch upstream
+> ```bash
+> git remote add upstream https://github.com/AmineDjeghri/personal-os-setup.git
+> git fetch upstream
 >  ```
 >
 > `fetch` only downloads `upstream`'s history — it never touches your working tree or branch.
@@ -101,12 +100,15 @@ personal-os-setup
 > This will conflict on most shared files (as noted above) plus anything fork-specific that `upstream` also touched.
 > review the final diff (`git diff --staged` or the IDE's local changes view) before committing the merge.
 
+<!-- markdownlint-disable MD028 -->
 
 > [!TIP]
 > **Try it in a VM first**: `make vm-cachyos` / `make vm-ubuntu-server` / `make vm-ubuntu` spin up disposable KVM/QEMU/libvirt VMs so you can test this setup before running it on your real machine. Any Linux host; see [docs/linux/CachyOS.md](docs/linux/CachyOS.md#testing-this-project-in-a-vm) for the full command list.
 
 > [!TIP]
 > **Using Claude Code or an agent?** This repo ships skills under `.claude/skills/` to help you add features, write tests, and more with this codebase's conventions already baked in.
+
+<!-- markdownlint-enable MD028 -->
 
 If you want to edit the code or fork and customize this project, clone it instead of using
 the one-liners above:
@@ -124,9 +126,6 @@ instead of creating a separate `~/.personal-os-setup` copy, so the `personal-os-
 command runs your local, editable checkout.
 
 Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
-
-
-
 
 ## What is this repo?
 
@@ -153,6 +152,5 @@ capabilities, positions Windows-WSL as an enticing platform, ensuring a well-rou
 regardless of their workplace constraints.
 
 Based on your needs, you can choose your OS.
-
 
 [![Star History Chart](https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup)](https://star-history.dera.page/#AmineDjeghri/personal-os-setup)

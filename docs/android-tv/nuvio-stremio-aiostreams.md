@@ -5,32 +5,32 @@ This page takes you from nothing to a working streaming setup on **Nuvio** (ever
 - **Part 1 — Quick start**: follow the steps, you are watching in about thirty minutes.
 - **Part 2 — Advanced**: how it all works, and the options you only need later.
 
-**Table of contents**
+Table of contents
 <!-- TOC -->
-* [Nuvio / Stremio + AIOStreams](#nuvio--stremio--aiostreams)
-  * [How the pieces fit together](#how-the-pieces-fit-together)
-  * [Part 1 — Quick start](#part-1--quick-start)
-    * [Step 1 — What you need](#step-1--what-you-need)
-    * [Step 2 — Create your Nuvio account](#step-2--create-your-nuvio-account)
-    * [Step 3 — Subscribe to a debrid service](#step-3--subscribe-to-a-debrid-service)
-    * [Step 4 — Load a ready-made configuration](#step-4--load-a-ready-made-configuration)
-    * [Step 5 — Give it your debrid account](#step-5--give-it-your-debrid-account)
-    * [Step 6 — Install the addon in Nuvio](#step-6--install-the-addon-in-nuvio)
-    * [Step 7 — Test it](#step-7--test-it)
-    * [Step 8 — If something doesn't work](#step-8--if-something-doesnt-work)
-    * [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
-  * [Part 2 — Advanced](#part-2--advanced)
-    * [🧩 What is AIOStreams?](#-what-is-aiostreams)
-    * [🔗 Template or parent config?](#-template-or-parent-config)
-    * [🌱 Setting up a child configuration](#-setting-up-a-child-configuration)
-    * [🔀 Turning an addon off for one device (variant)](#-turning-an-addon-off-for-one-device-variant)
-    * [🧾 Reading the stream list](#-reading-the-stream-list)
-    * [(Optional) — Custom addons you can plug in](#optional--custom-addons-you-can-plug-in)
-    * [🔌 Proxy (optional)](#-proxy-optional)
-    * [👤 Profiles in Nuvio](#-profiles-in-nuvio)
-    * [🗂️ Manage Nuvio from nuvio.tv (Website)](#-manage-nuvio-from-nuviotv-website)
-    * [Collections](#collections)
-    * [Useful Stremio/Nuvio Resources](#useful-stremionuvio-resources)
+- [Nuvio / Stremio + AIOStreams](#nuvio--stremio--aiostreams)
+    - [How the pieces fit together](#how-the-pieces-fit-together)
+    - [Part 1 — Quick start](#part-1--quick-start)
+        - [Step 1 — What you need](#step-1--what-you-need)
+        - [Step 2 — Create your Nuvio account](#step-2--create-your-nuvio-account)
+        - [Step 3 — Subscribe to a debrid service](#step-3--subscribe-to-a-debrid-service)
+        - [Step 4 — Load a ready-made configuration](#step-4--load-a-ready-made-configuration)
+        - [Step 5 — Give it your debrid account](#step-5--give-it-your-debrid-account)
+        - [Step 6 — Install the addon in Nuvio](#step-6--install-the-addon-in-nuvio)
+        - [Step 7 — Test it](#step-7--test-it)
+        - [Step 8 — If something doesn't work](#step-8--if-something-doesnt-work)
+        - [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
+    - [Part 2 — Advanced](#part-2--advanced)
+        - [🧩 What is AIOStreams?](#-what-is-aiostreams)
+        - [🔗 Template or parent config?](#-template-or-parent-config)
+        - [🌱 Setting up a child configuration](#-setting-up-a-child-configuration)
+        - [🔀 Turning an addon off for one device (variant)](#-turning-an-addon-off-for-one-device-variant)
+        - [🧾 Reading the stream list](#-reading-the-stream-list)
+        - [(Optional) — Custom addons you can plug in](#optional--custom-addons-you-can-plug-in)
+        - [🔌 Proxy (optional)](#-proxy-optional)
+        - [👤 Profiles in Nuvio](#-profiles-in-nuvio)
+        - [🗂️ Manage Nuvio from nuvio.tv (Website)](#-manage-nuvio-from-nuviotv-website)
+        - [Collections](#collections)
+        - [Useful Stremio/Nuvio Resources](#useful-stremionuvio-resources)
 <!-- TOC -->
 
 ## How the pieces fit together
@@ -137,9 +137,7 @@ The last thing to do is authorise your IP address on the debrid service: since t
 - Ratings & history: I rank my movies (and series) on trakt (they will automatically mark as watched if you activate that setting in Trakt's website : settings -> Mark Watched After Rating: Automatically mark unwatched items with today's date).
 - If you didn't rate some movies & tv shows, you can add them to history in Trakt to avoid being recommended by the 'AI Search' addon.
 - If you want to synchronize Trakt with IMDB you can use [IMDB-Trakt-Syncer](https://github.com/RileyXX/IMDB-Trakt-Syncer). You can rate what you watch on IMDB or trakt and run the python app to sync everything.
-- You can also import Netflix and Amazon Prime Video watch history to Trakt using this free opensource Chrome/Firefox extension : https://github.com/trakt-tools/universal-trakt-scrobbler
-
-
+- You can also import Netflix and Amazon Prime Video watch history to Trakt using this free opensource Chrome/Firefox extension : <https://github.com/trakt-tools/universal-trakt-scrobbler>
 
 ## Part 2 — Advanced
 
@@ -153,7 +151,7 @@ It also saves your configuration online, linked to a **UUID** and a **password**
 
 - **Template** — for sharing your setup with others, or when you do not want to maintain the configuration afterwards. You publish a JSON file; anyone can import it and gets their own configuration with their own credentials. Nothing links back to yours and there is nothing to keep in sync.
 - **Parent config** — for someone who maintains several configurations. One base config holds everything, the others point at its UUID and inherit it, overriding only the sections you choose; change the base once and they all follow. It stays your setup, with your credentials. You will find it in **Miscellaneous → Parent Config** (Advanced mode).
-  - You cannot inherit from a configuration that is itself inheriting another one — a configuration can only inherit from the parent directly.
+    - You cannot inherit from a configuration that is itself inheriting another one — a configuration can only inherit from the parent directly.
 
 Setting up a **child configuration**:
 
@@ -301,7 +299,6 @@ You can customize how your collections look by adding cover images and configuri
 - **Hide Title**: Set to "True" to show only the cover image without text
 
 After configuring these settings, add your collections to your home screen for easy access.
-
 
 ### Useful Stremio/Nuvio Resources
 

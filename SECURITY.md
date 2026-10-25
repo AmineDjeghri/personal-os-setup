@@ -11,9 +11,10 @@ contributions.
 To report a security vulnerability privately, use **GitHub private vulnerability
 reporting** (preferred):
 
-- https://github.com/AmineDjeghri/personal-os-setup/security/advisories/new
+- <https://github.com/AmineDjeghri/personal-os-setup/security/advisories/new>
 
-You can also reach us directly by email: **contact@aminedjeghri.com**
+For any other question, open an issue to reach the contributors of this repository,
+but never include vulnerability details in a public issue.
 
 When reporting, please include as much of the following as possible:
 

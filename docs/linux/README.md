@@ -23,7 +23,6 @@ The app displays all available packages from [packages.yaml](../../src/personal_
 
 You can multi-select packages using the interactive interface.
 
-
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
 
 The app provides buttons to automate the terminal configuration:
@@ -71,7 +70,6 @@ Additional system configuration options (only if you have NVIDIA GPU):
 
 To install CUDA on native Linux, follow the pre-installation actions from the official guide:
 [CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/archive/12.6.0/cuda-installation-guide-linux/index.html#pre-installation-actions)
-
 
 ### CUDA in Docker
 

@@ -69,7 +69,6 @@ It extends your music library by using **TIDAL** when a song is missing for free
 - If the song **does NOT exist locally**, Octo-Fiesta searches TIDAL for example, and show you albums, tracks, artists that contains the name of the song. It streams the track immediately, downloads the track to your library and organizes it with metadata.
 - When you play a song, the client only downloads the requested song. However, the album’s metadata is downloaded in the client (like Narjo) and shows you other songs from the same album without downloading them.
 
-
 ### 5. (optional) Beets
 
 - [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata.
@@ -78,7 +77,6 @@ It extends your music library by using **TIDAL** when a song is missing for free
 
 The following section summarizes the key concepts and behaviors of **Beets** regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.
-
 
 in the [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml) file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :
 
@@ -100,11 +98,10 @@ import:
 
 Whenever you run `beet import /music` with this config, it will:
 
-* Files **stay in place** (no copy, no move)
-* Already imported folders are skipped
-* Duplicate tracks are removed
-* Imports can resume if interrupted
-
+- Files **stay in place** (no copy, no move)
+- Already imported folders are skipped
+- Duplicate tracks are removed
+- Imports can resume if interrupted
 
 **Importing** means scanning music files and adding them to the **Beets library database** (`library.db`).
 
@@ -117,20 +114,20 @@ Important:
 
 Typical metadata fields:
 
-* Artist
-* Album
-* Track title
-* Track number
-* Release year
-* Genre
-* MusicBrainz IDs
+- Artist
+- Album
+- Track title
+- Track number
+- Release year
+- Genre
+- MusicBrainz IDs
 
 Tagging is usually done automatically via **MusicBrainz**.
 
 **Autotagging** means automatically searching metadata databases and matching your music files and adding metadata to them.
 Beets computes a **match distance score** to determine the best candidate using the match section.
 
-#### Workflow:
+#### Workflow
 
 - My [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml)
 What I advise to play with is:
@@ -151,8 +148,7 @@ Add these commands to your crontab with `crontab -e`  to run it:
 
 You can also create a script to trigger them every time your folder is updated.
 
-
-### Finding duplicates:
+### Finding duplicates
 
 Run this command :`beet duplicates -k title -k albumartist --full -p`
 
@@ -164,15 +160,14 @@ Add this to your crontab with `crontab -e`  to run it every 12 hours
 0 */12 * * * date >> ~/beets-duplicates.log && echo "Running duplicates..." >> ~/beets-duplicates.log && ~/.venv/bin/beet duplicates -k title -k albumartist --delete >> ~/beets-duplicates.log 2>&1
 ```
 
-[Chroma ](https://beets.readthedocs.io/en/stable/plugins/chroma.html#chromaprint-acoustid-plugin) :
+[Chroma](https://beets.readthedocs.io/en/stable/plugins/chroma.html#chromaprint-acoustid-plugin) :
 
 **Chromaprint :**
-wget https://github.com/acoustid/chromaprint/releases/download/v1.6.0/chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz
+wget <https://github.com/acoustid/chromaprint/releases/download/v1.6.0/chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz>
 tar xvf chromaprint-*-Linux.tar.gz
 tar xvf chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz
 sudo mv chromaprint-*/fpcalc /usr/local/bin/\nsudo chmod +x /usr/local/bin/fpcalc
 fpcalc -version
-
 
 **gstreamer1.0:**
 sudo apt-get update
@@ -196,7 +191,6 @@ python3-gi-cairo
 **PyGObject, FFmpeg:**
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0
 sudo apt install ffmpeg -y
-
 
 Test it with :
 fpcalc "path_to_file.flac"

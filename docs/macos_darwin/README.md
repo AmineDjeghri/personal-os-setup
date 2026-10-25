@@ -2,7 +2,6 @@
 
 This document describes how to get a productive macOS setup (terminal + apps + UX tweaks) consistent with the rest of this repo.
 
-
 ## Windows/Linux behavior mimicking in macOS
 
 If you're coming from Windows or Linux, macOS has some different behaviors. You can remap keys to make the layout feel closer to Windows. This is useful if you frequently switch between macOS and Windows/Linux, as it reduces muscle memory conflicts and makes your workflow more consistent across platforms.
@@ -32,13 +31,11 @@ After remapping our keys, to copy-paste, it will be the same as in Windows/Linux
 - **Globe** + **C** to copy
 - **Globe** + **V** to paste
 
-
 ## Installation Process
 
 The Personal OS Setup provides a **Terminal UI (TUI) application** that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:
 
 Use [README.md](../../README.md#linux--wsl2--macos) as it automatically handles the OS setup with the interactive TUI application.
-
 
 ### 1. Package Selection
 
@@ -52,7 +49,6 @@ The app displays all available packages from [packages.yaml](../../src/personal_
 
 You can multi-select packages using the interactive interface.
 
-
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
 
 This section is the same as Linux. Follow the terminal ZSH instructions in [Linux](../linux/README.md#2-terminal-setup-zsh--oh-my-zsh--powerlevel10k).
@@ -63,7 +59,6 @@ For per-app configuration and shortcuts shared across platforms (PyCharm, Obsidi
 Bitwarden, Zed, the terminal tools cheatsheet), plus a table of what's available on macOS vs.
 Windows/CachyOS and their alternatives, check
 [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
-
 
 ## 4. UI/UX tweaks
 
@@ -76,12 +71,11 @@ sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sud
 - Night Shift.
 - Auto-hide the dock.
 - Remove unused menu bar icons:
-  - Hold `command` then drag the icon out of the menu bar (not all apps support it).
+    - Hold `command` then drag the icon out of the menu bar (not all apps support it).
 - Finder:
-  - Show tab bar.
-  - Show path bar: View → Show Path Bar (or `Option + Command + P`). The path bar at the bottom of the Finder window shows the full path to the current folder and lets you click any part of it to navigate directly there.
-  - Show hidden files: `command + shift + .`
-
+    - Show tab bar.
+    - Show path bar: View → Show Path Bar (or `Option + Command + P`). The path bar at the bottom of the Finder window shows the full path to the current folder and lets you click any part of it to navigate directly there.
+    - Show hidden files: `command + shift + .`
 
 ## 5. Notes
 
