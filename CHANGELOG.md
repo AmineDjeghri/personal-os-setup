@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v2.18.0 (2026-10-26)
+
+### Documentation
+
+- Correct typos and formatting in various markdown files
+  ([`fa3f268`](https://github.com/AmineDjeghri/personal-os-setup/commit/fa3f268649afb10328dc690bf112198d37638578))
+
+- Update docs
+  ([`4d4642a`](https://github.com/AmineDjeghri/personal-os-setup/commit/4d4642a877480977e6b4deb3741004e3e8a17e32))
+
+### Features
+
+- **vm**: Add a Windows guest target and Windows CI integration tests (#131)
+  ([#131](https://github.com/AmineDjeghri/personal-os-setup/pull/131),
+  [`c732a14`](https://github.com/AmineDjeghri/personal-os-setup/commit/c732a14a980a7e542509c2c803878d8adafa2902))
+
+
 ## v2.17.0 (2026-10-19)
 
 ### Bug Fixes
