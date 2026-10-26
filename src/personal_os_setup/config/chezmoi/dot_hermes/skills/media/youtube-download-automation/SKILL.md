@@ -92,6 +92,7 @@ tokens that are never genres (`Maghreb`, `World Music`, `Eurovision`), and the 4
 - **The pipeline's own folder** (no MusicBrainz release): mutagen `©gen` **plus** the same string in `overrides.json` per video ID, so `.archive.txt` re-runs inherit it.
 - **Never two writers on one file**, and never let a storefront's single label collapse a 2–8 value `lastgenre` set.
 - **Multi-value format**: one string `Pop;Dance` — `;` with no space, and no token containing `/` (Navidrome splits on `;`, `/`, `,`).
+- **M4A `©gen` is a list of atoms, not one string**: an m4a can hold `©gen: ['Pop', 'Dance', 'Trap']`. Reading `tags.get('©gen')[0]` silently sees only the first value and reports the file as already canonical while it carries five. Always iterate every atom and split each on `;` — this bit a 74-file pass that looked clean.
 - **Storefront ≠ recording**: *Love Story* returns `Country` for the 2008 single while the file may be a pop live performance — keep a small manual override map.
 - **Pipeline categories are not genres** (`Music`, `People & Blogs`, `Sports`): replace them; clear non-music `Other/` clips rather than inventing a genre for them.
 - **A second value needs corroboration** — another source agrees, or one genre holds ≥35 % of the artist's catalogue: 208 files gave **11** duals, not 200. Don't pad.
