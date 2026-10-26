@@ -1,6 +1,6 @@
 ---
 name: vm-lab
-description: Use when working with the local KVM/QEMU VM test lab — "spin up a VM", "test this in a CachyOS/Ubuntu/Windows/macOS VM", "make vm-*". CachyOS host only (libvirt/pacman-based); documents the required make vm-deps step, why re-running with new credentials does nothing until you clean, and the manual sync requirement against packages.yaml.
+description: Use for the local KVM/QEMU VM lab — "spin up a VM", "test this in a CachyOS/Ubuntu/Windows/macOS VM", "make vm-*". CachyOS host only; covers make vm-deps, why re-running needs vm-clean, and the packages.yaml sync.
 metadata:
   hermes:
     origin: repo:personal-os-setup

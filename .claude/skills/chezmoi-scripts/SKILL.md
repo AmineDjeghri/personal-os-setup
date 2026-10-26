@@ -1,6 +1,6 @@
 ---
 name: chezmoi-scripts
-description: Use when adding/debugging a chezmoi run_/run_once_/run_onchange_ script under config/chezmoi/, or when a dotfiles sync script "isn't firing" — "why didn't my script run", "add a script that starts X after sync", "the hyprland/noctalia script isn't triggering". Covers how this app's "apply selected" scopes chezmoi apply to specific targets, and why that means scripts often don't run even though their sibling config file did apply.
+description: Use when adding/debugging a chezmoi run_/run_once_/run_onchange_ script under config/chezmoi/ — "why didn't my script run", "the noctalia script isn't triggering". Covers how "apply selected" scopes chezmoi apply, so scripts often skip.
 metadata:
   hermes:
     origin: repo:personal-os-setup

@@ -1,6 +1,6 @@
 ---
 name: add-system-action
-description: Use when adding a new TUI button/action (system action) or a new package-manager backend to personal-os-setup — e.g. "add a button to do X", "support a new package manager", "add a new tab/section". Covers the factory.py section-builder pattern, the managers/_shared.py boilerplate pattern, and the required test additions.
+description: Use when adding a TUI button/system action or a package-manager backend — "add a button to do X", "support a new package manager", "add a new tab/section". Covers the factory.py section builders, the managers/_shared.py pattern and required tests.
 metadata:
   hermes:
     origin: repo:personal-os-setup
