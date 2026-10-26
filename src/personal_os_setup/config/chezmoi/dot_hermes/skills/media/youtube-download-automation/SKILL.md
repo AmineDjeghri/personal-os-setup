@@ -66,29 +66,32 @@ Run `scripts/playlist_delta.py plan.txt <pipeline_dir>` rather than eyeballing �
 
 ## 4. Sourcing the genre (and sanity-checking other tags)
 
-Check in order, prefer the earliest that answers:
-1. **Apple/iTunes Search API** — `https://itunes.apple.com/search?term=<artist+title>&entity=song` → `primaryGenreName`. No key; the value Apple Music shows.
-2. **Shazam** song page → "Genres".
-3. **SoundCloud** — the uploader's own free-text tag (e.g. "Electro", "Chanson électronique").
-4. **Deezer** — `https://api.deezer.com/album/<id>` → `genres.data`.
-5. **The artist's own press sheet / bio** for the *style* (e.g. "melodic techno and progressive house").
+Order matters: **one source supplies many tags, the rest supply one.**
+
+1. **last.fm — primary, and the only multi-value source.** `track.getTopTags` (→ `artist.getTopTags` when the track has none) returns weighted crowd tags; beets ships a working key (`beets.plugins.LASTFM_KEY`), the limit is ~4 req/s — and that shared key is rate-limited in practice (`error 29`), so expect to need a personal key. Filter by `min_weight`, map aliases, then intersect the bundled whitelist (`references/genre-whitelist.txt` = beets' list, `references/genre-whitelist-extra.txt` = the Spotify/EveryNoise + regional supplement): that intersection is what turns `['pop','love songs','1995','adult contemporary']` into `['Pop','Adult Contemporary']`. Keep up to the library's `genre_count`.
+2. **iTunes — fallback for tracks last.fm has never tagged** (new releases, bootlegs, rai/Arabic). One `primaryGenreName` per release; anything above ~1 req/s gets 403.
+3. **Deezer — corroboration only, never an override**: it calls French rap "Electro" and *Enter Sandman* "Pop".
 
 - **Apple's `primaryGenreName` can be the storefront country** (e.g. "France"), not a genre — it can appear on one track of a release while another returns the real genre. Never write a country name into a genre tag; corroborate with a second source.
 - **Deezer's `genres` array is routinely empty** even for a properly released track — "not labelled here", not "no genre".
 - Aggregator labels are broad (Electronic); the artist's own words are the style. Pick per what the user asked for and match the library's convention — short and lowercase (`rai`, `electronic`); grep `overrides.json` for established values before inventing one.
 - The pipeline writes a genre only when one is explicitly supplied (§2) — confirm before promising one.
 - Present the genre as a short choice (broad label vs precise style vs none) in the §0 proposal; nothing is written or downloaded until the user answers.
+- **Cache every fetch** on disk keyed `<kind>.<artist>-<title>` and give each host its own **token bucket** — last.fm 4 req/s, iTunes 1 req/s, Deezer 8 req/s. Parallel workers help last.fm and Deezer; they only make iTunes worse (its limit is per IP).
+- **Matching guard**: accept a hit only when the credited artist equals the file's after normalisation (diacritics, `&`→`and`) **and** title similarity ≥ 0.60 — a prefix test matched *Travis – My Eyes* to Travis Scott and returned "Rock".
+- **The LLM adjudicates, it does not invent**: whitelist survivors can still be wrong (`pop` on a metal track), and the library's own tokens win over storefront wording (`Rap`, not `hip-hop/rap`; Title Case; `;` with no space).
 
-### 4a. Filling genres for a library that has none
+### 4a. Who writes the tag — this is where libraries get corrupted
 
-- **Per track first, artist as fallback.** iTunes `<artist> <cleaned title>`; accept a hit only if the credited artist equals the file's artist after normalisation (diacritics, `&`→`and`) **and** title similarity ≥ 0.60 — a prefix test matched *Travis – My Eyes* to Travis Scott and returned "Rock". No hit → artist majority genre.
-- **Deezer never overrules iTunes**: it calls French rap "Electro" and *Enter Sandman* "Pop". Its advanced syntax `q=artist:"X" track:"Y"` silently returns `{"data":[],"total":0}` — use plain `q=`, filter locally; a 100 % miss rate is a bug.
-- **Storefront ≠ recording**: *Love Story* comes back `Country` for a pop live performance — keep a small manual override map.
-- **YouTube categories are not genres** (`Music`, `People & Blogs`, `Sports`): replace them, keep real genres (even `Electronic; Melodic Techno`), clear non-music `Other/` clips.
-- **A second value needs corroboration** — another storefront agrees, or one genre holds ≥35 % of the artist's catalogue: 208 files gave **11** duals, not 200. Don't pad.
-- **Re-tag, never re-download** (`.archive.txt` makes a run skip everything): mutagen `©gen` **plus** the same string in `overrides.json` per video ID; run it from a `.py` file.
-- **Verify by recount**: `ffprobe` histogram — no category strings, empty set = `Other/` only.
-- **Dead ends**: MusicBrainz (`genres` empty, only single-vote tags), RateYourMusic (no API, Cloudflare, ToS). Discogs `styles` is the token-gated upgrade. iTunes 403s → 1 req/s in a script, not `web_extract`.
+- **beets-managed albums**: beets owns `library.db`. Either let beets write (`beet lastgenre -A`, honouring `genre_mode`/`genre_count`), or write with mutagen and **run `beet update` immediately after** — tags edited behind beets' back make the next import write the stale row back or re-split a multi-value set.
+- **The pipeline's own folder** (no MusicBrainz release): mutagen `©gen` **plus** the same string in `overrides.json` per video ID, so `.archive.txt` re-runs inherit it.
+- **Never two writers on one file**, and never let a storefront's single label collapse a 2–8 value `lastgenre` set.
+- **Multi-value format**: one string `Pop;Dance` — `;` with no space, and no token containing `/` (Navidrome splits on `;`, `/`, `,`).
+- **Storefront ≠ recording**: *Love Story* returns `Country` for the 2008 single while the file may be a pop live performance — keep a small manual override map.
+- **Pipeline categories are not genres** (`Music`, `People & Blogs`, `Sports`): replace them; clear non-music `Other/` clips rather than inventing a genre for them.
+- **A second value needs corroboration** — another source agrees, or one genre holds ≥35 % of the artist's catalogue: 208 files gave **11** duals, not 200. Don't pad.
+- **Verify by recount**: `ffprobe` histogram before/after, reporting gained / changed / would-lose-a-value counts.
+- **Dead ends**: MusicBrainz (`genres` empty, single-vote tags), RateYourMusic (no API, Cloudflare, ToS), Shazam (no public API), SoundCloud (client-id scraping). Discogs `styles` is the token-gated upgrade.
 
 ## 5. Verify before reporting
 
@@ -103,6 +106,8 @@ Check in order, prefer the earliest that answers:
 - `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
 - `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
 - `references/chapter-split-duration-quirk.md` — the one cosmetic defect worth accepting as-is.
+- `references/genre-whitelist.txt` — beets' genre whitelist (1,568 entries, lowercase). The skill owns it; nothing depends on the beets add-on any more.
+- `references/genre-whitelist-extra.txt` — the supplement the add-on used to ship (Spotify/EveryNoise catalogue + regional descriptors like `chaabi`, `rai`), 1,019 entries, no overlap with the base list.
 - `scripts/playlist_delta.py` — plan-vs-archive delta (§3).
 
 ## 7. Where this skill lives

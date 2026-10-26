@@ -1,0 +1,1019 @@
+# Genre whitelist supplement for the Beets addon
+# Merged with beets' bundled genres.txt at startup (whitelist: true)
+# Sources: Spotify/EveryNoise genre catalog + regional descriptors + library-derived
+
+a cappella
+abstract
+abstract beats
+abstract hip hop
+abstract idm
+abstractro
+accordion
+acid techno
+acousmatic
+acoustic blues
+acoustic pop
+adult contemporary
+adult standards
+african percussion
+african pop
+african rock
+afrikaans
+afrobeats
+afropop
+aggrotech
+albanian pop
+album rock
+albuquerque indie
+algerian pop
+alt-pop
+alternative americana
+alternative emo
+alternative hardcore
+alternative metalcore
+alternative new age
+alternative pop
+alternative pop rock
+alternative r&amp;b
+alternative rnb
+alternative roots rock
+amapiano
+ambeat
+ambient dub techno
+ambient fusion
+ambient idm
+ambient pop
+ambient psychill
+ambient trance
+anarcho-punk
+andean
+anime
+anime score
+antiviral pop
+appalachian folk
+arab folk
+arabesk
+arabic music
+arabica
+arena rock
+argentine indie
+argentine reggae
+armenian folk
+art pop
+athens indie
+atmospheric black metal
+atmospheric drum and bass
+atmospheric post rock
+atmospheric post-metal
+aussietronica
+austindie
+australian alternative rock
+australian country
+australian dance
+australian indie
+australian pop
+austrian hip hop
+avantgarde metal
+axe
+azonto
+balada
+balearic
+balkan brass
+baltimore club
+bangla
+barbershop
+barnemusikk
+barnmusik
+baroque ensemble
+basque rock
+bass trip
+bassline
+bay area hip hop
+beatdown
+beats &amp; rhymes
+bedroom pop
+belgian indie
+belgian rock
+belly dance
+belorush
+bemani
+big room
+big room house
+black death
+black sludge
+black thrash
+blackgaze
+blaskapelle
+blues-rock
+blues-rock guitar
+bmore
+bolero
+boogaloo
+bossa nova jazz
+boston rock
+bounce
+bouncy house
+bow pop
+boy band
+boyband
+brass ensemble
+brazilian composition
+brazilian gospel
+brazilian hip hop
+brazilian indie
+brazilian pop music
+brazilian punk
+brega
+breton folk
+british alternative rock
+british brass band
+british dance band
+british folk
+british hip hop
+british indie rock
+broadway
+brooklyn indie
+brostep
+brutal deathcore
+bubble trance
+bubblegum bass
+bulgarian rock
+byzantine
+c-pop
+c64
+c86
+cajun
+canadian country
+canadian hip hop
+canadian indie
+canadian metal
+canadian pop
+candy pop
+cante flamenco
+capoeira
+carnatic
+catstep
+caucasian folk
+ccm
+ceilidh
+cello
+celtic christmas
+central asian folk
+chaabi
+chanson quebecois
+chaotic black metal
+chaotic hardcore
+charred death
+chicago indie
+children's christmas
+chilean rock
+chill groove
+chill house
+chill lounge
+chill-out
+chill-out trance
+chillout r&b
+chillstep
+chinese indie rock
+chinese opera
+chinese traditional
+chip hop
+choral
+christian alternative rock
+christian christmas
+christian dance
+christmas
+christmas product
+cinematic dubstep
+clarinet
+classic afrobeat
+classic belgian pop
+classic chinese pop
+classic colombian pop
+classic czech pop
+classic danish pop
+classic dutch pop
+classic eurovision
+classic finnish pop
+classic finnish rock
+classic french pop
+classic funk rock
+classic garage rock
+classic italian pop
+classic norwegian pop
+classic peruvian pop
+classic polish pop
+classic psychedelic rock
+classic russian pop
+classic russian rock
+classic schlager
+classic soundtrack
+classic swedish pop
+classic turkish pop
+classic venezuelan pop
+classical christmas
+classical flute
+classical guitar
+classical organ
+classical performance
+classical period
+classical piano
+cloud rap
+college a cappella
+college marching band
+colombian rock
+columbus ohio indie
+complextro
+composition d
+concert piano
+consort
+contemporary country
+contemporary folk
+contemporary jazz
+contemporary post-bop
+corsican folk
+country christmas
+country dawn
+country house
+country road
+countrystep
+coupe decale
+coverchill
+covertrance
+cowboy western
+crack rock steady
+croatian pop
+crossover prog
+cryptic black metal
+cubaton
+cumbia funk
+cumbia sonidera
+cyber metal
+czech folk
+czech rock
+dallas indie
+dance
+dance house
+dance pop
+dance rock
+danish hip hop
+danish indie
+danish jazz
+danish pop
+danish pop rock
+danish poprock
+danseband
+dansktop
+dark black metal
+dark electro-industrial
+dark hardcore
+dark jazz
+dark minimal techno
+dark progressive house
+dark psytrance
+death core
+deep acoustic pop
+deep adult standards
+deep alternative r&amp;b
+deep ambient
+deep baroque
+deep brazilian pop
+deep breakcore
+deep canadian indie
+deep ccm
+deep cello
+deep chill
+deep chill-out
+deep christian rock
+deep classic garage rock
+deep classical piano
+deep comedy
+deep contemporary country
+deep dance pop
+deep darkpsy
+deep deep house
+deep deep tech house
+deep delta blues
+deep disco
+deep disco house
+deep discofox
+deep downtempo fusion
+deep dub techno
+deep east coast hip hop
+deep euro house
+deep eurodance
+deep filthstep
+deep flow
+deep folk metal
+deep free jazz
+deep freestyle
+deep full on
+deep funk house
+deep g funk
+deep german indie
+deep german punk
+deep gothic post-punk
+deep happy hardcore
+deep hardcore
+deep hardcore punk
+deep hardstyle
+deep indian pop
+deep indie pop
+deep indie rock
+deep indie singer-songwriter
+deep italo disco
+deep jazz fusion
+deep jazz guitar
+deep jazz piano
+deep latin alternative
+deep liquid
+deep liquid bass
+deep melodic death metal
+deep melodic hard rock
+deep melodic house
+deep melodic metalcore
+deep minimal techno
+deep motown
+deep neo-synthpop
+deep neofolk
+deep new wave
+deep nordic folk
+deep northern soul
+deep opera
+deep orchestral
+deep orgcore
+deep pop emo
+deep pop punk
+deep power-pop punk
+deep progressive house
+deep progressive trance
+deep psychobilly
+deep psytrance
+deep punk rock
+deep ragga
+deep rai
+deep regional mexican
+deep smooth jazz
+deep soft rock
+deep soul house
+deep soundtrack
+deep southern soul
+deep space rock
+deep string quartet
+deep sunset lounge
+deep surf music
+deep symphonic black metal
+deep talent show
+deep tech house
+deep thrash metal
+deep trap
+deep turkish pop
+deep uplifting trance
+deep vocal house
+deep vocal jazz
+dembow
+demoscene
+denver indie
+depressive black metal
+desert blues
+destroy techno
+detroit hip hop
+detroit trap
+didgeridoo
+dirty south rap
+dirty texas rap
+discofox
+dominican pop
+doo-wop
+doujin
+downtempo fusion
+downtempo trip hop
+dreamo
+drill
+drill and bass
+drone
+drone folk
+drone psych
+dubstep product
+dubsteppe
+duranguense
+dutch hip hop
+dutch house
+dutch pop
+dutch rock
+e6fi
+early music ensemble
+ebm
+ectofolk
+ecuadoria
+edm
+electro dub
+electro jazz
+electro latino
+electro pop
+electro swing
+electro trash
+electroacoustic improvisation
+electrofox
+electronicore
+electropowerpop
+electropunk
+emo punk
+entehno
+environmental
+epicore
+estonian pop
+ethereal gothic
+etherpop
+ethiopian pop
+euroska
+eurovision
+experimental
+experimental dubstep
+experimental psych
+fallen angel
+faroese pop
+fast melodic punk
+fidget house
+filter house
+filthstep
+fingerstyle
+finnish hardcore
+finnish hip hop
+finnish indie
+finnish jazz
+finnish metal
+finnish pop
+flick hop
+folk
+folk christmas
+folk-pop
+folk-prog
+folklore argentino
+folkmusik
+forro
+fourth world
+freak folk
+french folk
+french folk pop
+french hip hop
+french indie pop
+french movie tunes
+french punk
+french rap
+french reggae
+french rnb
+french rock
+funk carioca
+funky breaks
+future ambient
+future garage
+futurepop
+g funk
+galego
+gamecore
+gangster rap
+garage pop
+garage punk
+garage punk blues
+gauze pop
+gbvfi
+geek folk
+geek rock
+german ccm
+german hip hop
+german indie
+german metal
+german oi
+german pop
+german pop rock
+german punk
+german show tunes
+german techno
+ghoststep
+glitch beats
+glitch hop
+glitter trance
+gospel
+gospel blues
+gospel reggae
+gothic alternative
+gothic americana
+gothic doom
+gothic post-punk
+gothic symphonic metal
+grave wave
+greek hip hop
+greek house
+greek indie
+grim death metal
+grisly death metal
+grunge pop
+hard alternative
+hard glam
+hard stoner rock
+hardcore
+hardcore breaks
+hardcore rap
+harp
+hatecore
+hauntology
+hawaiian
+healing
+heavy alternative
+heavy christmas
+heavy gothic rock
+hi nrg
+hindustani classical
+hip hop quebecois
+hip hop tuga
+hip pop
+hip-house
+hungarian hip hop
+hungarian pop
+hungarian rock
+hurban
+hyperpop
+icelandic pop
+indian classical
+indian rock
+indie christmas
+indie dream pop
+indie emo
+indie emo rock
+indie fuzzpop
+indie pop rock
+indie post-punk
+indie psych-pop
+indie r&amp;b
+indie shoegaze
+indie singer-songwriter
+indonesian indie
+indorock
+industrial pop
+instrumental
+instrumental post rock
+irish indie
+irish rock
+iskelma
+islamic recitation
+israeli rock
+italian disco
+italian folk
+italian hip hop
+italian indie pop
+italian jazz
+italian pop
+italian pop rock
+italian progressive rock
+italian punk
+j-alt
+j-ambient
+j-core
+j-dance
+j-idol
+j-indie
+j-metal
+j-poppunk
+j-poprock
+j-punk
+j-rap
+j-theme
+jangle rock
+japanese jazztronica
+japanese psychedelic
+japanese r&amp;b
+japanese standards
+japanese traditional
+japanoise
+jazz bass
+jazz brass
+jazz christmas
+jazz funk
+jazz orchestra
+jazz trio
+jerk
+jersey club
+jig and reel
+judaica
+juggalo
+jump up
+k-hop
+k-indie
+k-rock
+kabarett
+karneval
+kc indie
+kindermusik
+klapa
+kraut rock
+kurdish folk
+la indie
+laiko
+latin
+latin alternative
+latin christian
+latin christmas
+latin electronica
+latin hip hop
+latin metal
+latvian pop
+lds
+leeds indie
+liedermacher
+lilith
+liquid drum and bass
+lithumania
+liturgical
+lo star
+louisville indie
+lounge
+lounge house
+luk thung
+maghreb
+maghreb pop
+maghrebi
+magyar
+malagasy folk
+malaysian pop
+mallet
+mande pop
+mandopop
+manele
+marching band
+mashup
+math pop
+medieval
+medieval rock
+melancholia
+melbourne bounce
+mellow gold
+melodic hard rock
+melodic power metal
+melodic progressive metal
+melodic rap
+memphis hip hop
+merengue urbano
+metal guitar
+metropopolis
+mexican indie
+mexican rock-and-roll
+mexican traditional
+michigan indie
+military band
+minimal dub
+minimal dubstep
+minimal melodic techno
+minimal tech house
+minimal wave
+mizrahi
+mod revival
+modern blues
+modern country rock
+modern downshift
+modern free jazz
+modern performance
+modern southern rock
+modern uplift
+monastic
+moombahton
+moroccan pop
+movie tunes
+musica para ninos
+musiikkia lapsille
+musique concrete
+musique pour enfants
+muziek voor kinderen
+native american
+necrogrind
+neo classical metal
+neo honky tonk
+neo mellow
+neo metal
+neo soul-jazz
+neo-industrial rock
+neo-pagan
+neo-progressive
+neo-psychedelic
+neo-rockabilly
+neo-singer-songwriter
+neo-soul
+neo-synthpop
+neo-trad metal
+neo-traditional country
+neoperreo
+nepali
+neue deutsche harte
+neurofunk
+neurostep
+new age
+new age piano
+new americana
+new jack smooth
+new tribe
+new wave pop
+nl folk
+noise punk
+nordic folk
+nordic house
+norteno
+north african
+northern irish indie
+norwegian gospel
+norwegian hip hop
+norwegian jazz
+norwegian metal
+norwegian pop
+norwegian punk
+norwegian rock
+nu age
+nu electro
+nu gaze
+nu-cumbia
+nueva cancion
+nursery
+nwobhm
+nwothm
+nz indie
+oi
+opm
+orgcore
+orquesta tipica
+orquesta tropical
+oshare kei
+ostrock
+outer hip hop
+outsider
+outsider house
+p funk
+pagan black metal
+pakistani pop
+permanent wave
+persian pop
+persian traditional
+perth indie
+peruvian rock
+pipe band
+plugg
+polish hip hop
+polish indie
+polish jazz
+polish pop
+polish punk
+polish reggae
+polynesian pop
+polyphony
+pop christmas
+pop edm
+pop emo
+pop house
+pop in spanish
+pop latino
+pop reggae
+pop soul
+popgaze
+portland indie
+portuguese pop
+portuguese rock
+post rock
+post-disco soul
+post-post-hardcore
+power ballad
+power blues-rock
+power violence
+power-pop punk
+progressive alternative
+progressive electro house
+progressive pop
+progressive psytrance
+progressive trance house
+progressive uplifting trance
+psych gaze
+psychedelic blues-rock
+psychedelic trance
+psychill
+pub rock
+puerto rican rock
+punjabi
+punk
+punk christmas
+punk ska
+quebecois
+r&amp;b
+rap metalcore
+raw black metal
+re:techno
+reggae rock
+regional mexican
+renaissance
+retro electro
+retro metal
+rhythm and boogie
+riddim
+rio de la plata
+rnb contemporary
+rock catala
+rock en espanol
+rock gaucho
+rock noise
+rock steady
+rock-and-roll
+romanian pop
+romanian rock
+romantic
+russian alternative
+russian hip hop
+russian punk
+russian rock
+rva indie
+salsa international
+saxophone
+scorecore
+scottish rock
+screamo punk
+screamocore
+seattle indie
+sertanejo
+sertanejo tradicional
+sertanejo universitario
+sevdah
+sheffield indie
+shimmer pop
+shimmer psych
+shiver pop
+show tunes
+singaporean pop
+sinhala
+ska revival
+skinhead oi
+skinhead reggae
+skweee
+slam death metal
+slash punk
+slc indie
+sleaze rock
+slovak hip hop
+slovak pop
+slovenian rock
+slow core
+smooth urban r&amp;b
+soda pop
+solipsynthm
+sophisti pop
+soul christmas
+soul flow
+soul pop
+soundtrack
+south african jazz
+southern rap
+southern soul blues
+spanish classical
+spanish folk
+spanish hip hop
+spanish indie pop
+spanish indie rock
+spanish invasion
+spanish new wave
+spanish pop
+spanish pop rock
+spanish punk
+spanish rap
+spanish reggae
+spiritual jazz
+spoken word
+spytrack
+steampunk
+steelpan
+stl indie
+stomp and flutter
+stomp and holler
+stomp and whittle
+stomp pop
+street punk
+string band
+string folk
+substep
+sunset lounge
+suomi rock
+surf punk
+swedish alternative rock
+swedish hard rock
+swedish hip hop
+swedish indie pop
+swedish indie rock
+swedish jazz
+swedish metal
+swedish pop
+swedish pop punk
+swedish prog
+swedish punk
+swedish reggae
+swedish soft pop
+swedish synthpop
+swirl psych
+swiss folk
+swiss hip hop
+swiss rock
+synthpop
+technical brutal death metal
+terrorcore
+texas country
+thai indie
+thrash core
+thrash-groove metal
+throat singing
+tibetan
+tico
+timba
+traditional blues
+traditional british folk
+traditional country
+traditional folk
+traditional funk
+traditional irish folk
+traditional reggae
+traditional rock 'n roll
+traditional rockabilly
+traditional scottish folk
+traditional ska
+traditional soul
+traditional swing
+trance hop
+trap
+trap latino
+trap music
+trap pop
+trapstep
+trash rock
+triangle indie
+tropical
+tropical house
+trova
+turbo folk
+turkish alternative
+turkish classical
+turkish folk
+turkish hip hop
+turkish jazz
+turkish rock
+twee indie pop
+twin cities indie
+tzadik
+uk bass
+uk dub
+uk funky
+uk hip hop
+uk post-punk
+ukrainian rock
+ukulele
+underground hip hop
+underground hip-hop
+underground latin hip hop
+underground pop rap
+underground power pop
+underground rap
+urban contemporary
+urban pop
+urbano latino
+vancouver indie
+vapor house
+vaporwave
+vegan straight edge
+vegas indie
+velha guarda
+venezuelan rock
+video game music
+vienna indie
+vietnamese pop
+vintage chanson
+vintage country folk
+vintage gospel
+vintage jazz
+vintage reggae
+vintage rockabilly
+vintage schlager
+vintage swedish pop
+vintage swing
+vintage swoon
+vintage tango
+vintage western
+violin
+viral pop
+vocaloid
+warm drone
+welsh rock
+west african jazz
+west coast rap
+wind ensemble
+wonky
+world
+world chill
+world christmas
+worship
+wrock
+ye ye
+yoik
+yugoslav rock
+zillertal
+zim
+zolo
