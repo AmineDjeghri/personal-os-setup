@@ -12,6 +12,10 @@ of the same genre, and a duplicated token splits every filter and every client f
   parent (`Pop`, `Rock`, `Electronic`, `World`) is dropped only when a more specific token in the
   same file covers it (`Pop` goes when `Dance-Pop` is present, stays when it is not).
 - Specific before generic: `Rai;Algerian Pop;World` is fine, `World;Rai` is not.
+- **A drop must never leave only a marker.** When a region token was the file's only genre
+  (`Maghrebi`), dropping it leaves `Arabic` alone — a language tag pretending to be a genre.
+  Restore the real genre from the artist's own catalogue or a duplicate copy; 33 files needed
+  this after the `Maghreb`/`Maghrebi` drop.
 
 ## Additions (canonical, in use)
 
@@ -26,6 +30,7 @@ of the same genre, and a duplicated token splits every filter and every client f
 | `French Pop` | language marker for French-language pop (Angèle, Kendji, Stromae, Vitaa) |
 | `French Rap` | language marker for French rap/hip hop (PNL, Ninho, Jul, OrelSan) — absorbs `French Hip Hop` |
 | `French R&B` | language marker for French R&B (Vitaa) — spelled with `&`, never `Rnb` |
+| `Quran Recitation` | the only correct value for tilāwa; not a music genre, so no marker or parent applies |
 
 ### Marker rules
 
