@@ -335,7 +335,7 @@ cmd_windows() {
     if [ "$WIN_VERSION" = "11" ]; then
         require_bin swtpm
         require_bin swtpm_setup
-        boot_args=(--boot "uefi,firmware.secure-boot=yes,firmware.enrolled-keys=yes")
+        boot_args=(--boot "firmware=efi,firmware.feature0.name=secure-boot,firmware.feature0.enabled=yes")
         tpm_args=(--tpm "backend.type=emulator,backend.version=2.0,model=tpm-crb")
         osinfo="detect=on,name=win11,require=off"
     else

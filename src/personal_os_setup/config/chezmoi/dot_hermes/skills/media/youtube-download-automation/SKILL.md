@@ -111,7 +111,7 @@ tokens that are never genres (`Maghreb`, `World Music`, `Eurovision`), and the 4
 - `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
 - `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
 - `references/chapter-split-duration-quirk.md` — the one cosmetic defect worth accepting as-is.
-- `references/genre-whitelist.txt` — beets' genre whitelist (1,568 entries, lowercase). The skill owns it; nothing depends on the beets add-on any more.
+- `references/genre-whitelist.txt` — beets' genre whitelist (thousands entries, lowercase). The skill owns it; nothing depends on the beets add-on any more.
 - `references/genre-whitelist-extra.txt` — the supplement the add-on used to ship (Spotify/EveryNoise catalogue + regional descriptors like `chaabi`, `rai`), 1,019 entries, no overlap with the base list.
 - `references/genre-vocabulary.md` — the canonical token set: additions, merge map, never-write list, 4-value cap. Every genre write is mapped onto it.
 - `scripts/playlist_delta.py` — plan-vs-archive delta (§3).
