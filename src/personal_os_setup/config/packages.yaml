@@ -14,6 +14,8 @@ packages:
         - dnsmasq-base # provides dnsmasq for libvirt networking
         - ovmf # provides UEFI firmware for VMs
         - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
+        - swtpm # emulated TPM 2.0 for the Windows 11 VM (`make vm-windows`)
+        - swtpm-tools # provides swtpm_setup, used by libvirt to initialise the TPM
       terminal_tools:
         - git
         - curl
@@ -35,6 +37,7 @@ packages:
     webinstall:
       Dev_tools:
         - '[Docker](https://doc.ubuntu-fr.org/docker#depot_apt_docker)'
+        - '[Quickemu](https://github.com/quickemu-project/quickemu#installation)' # runs the macOS guest for `make vm-macos` (plain QEMU, not libvirt)
       Media:
         - '[Nuvio](https://github.com/NuvioMedia/NuvioDesktop/releases)'
 
@@ -57,6 +60,8 @@ packages:
         - dnsmasq-base # provides dnsmasq for libvirt networking
         - ovmf # provides UEFI firmware for VMs
         - cloud-image-utils # provides cloud-localds for creating cloud-init seed images
+        - swtpm # emulated TPM 2.0 for the Windows 11 VM (`make vm-windows`)
+        - swtpm-tools # provides swtpm_setup, used by libvirt to initialise the TPM
       terminal_tools:
         - git
         - curl
@@ -170,6 +175,7 @@ packages:
         - dnsmasq
         - edk2-ovmf
         - cloud-image-utils
+        - swtpm # emulated TPM 2.0 (+ swtpm_setup) for the Windows 11 VM (`make vm-windows`)
 
       terminal_tools:
         - git
@@ -264,6 +270,7 @@ packages:
         - nordvpn-bin
       Dev_tools:
         - pycharm # Unified edition
+        - quickemu # runs the macOS guest for `make vm-macos` (plain QEMU, not libvirt)
       Media:
         - mpv-uosc-git
         - mpv-thumbfast-git

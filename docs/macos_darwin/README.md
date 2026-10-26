@@ -81,3 +81,80 @@ sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sud
 
 - Some apps do not have import/export settings and require manual configuration (e.g. Ice, AltTab).
 - Some apps might need manual installation (e.g. Badgeify).
+
+## 6. Testing the macOS flow in a VM
+
+You can exercise the macOS flow (the app's darwin tasks drive Homebrew) end to end in a disposable VM from a Linux host,
+with [Quickemu](https://github.com/quickemu-project/quickemu) — **not** libvirt, so this works differently from the other
+`make vm-*` targets (see the shared [Testing this project in a VM](../vm/README.md) page for host setup and cleanup).
+
+| Command         | Guest                                                                                                                             |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `make vm-macos` | macOS via Quickemu; downloads Apple's recovery image on first run. `MACOS_VERSION=sonoma` picks another release (default `tahoe`) |
+
+Manage the VM:
+
+| Command              | What it does                                                                                                                                     |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| `make vm-list`       | **Does not show** the macOS guest (it isn't a libvirt VM); it lists only libvirt guests                                                          |
+| `make vm-clean`      | Wipes the macOS guest (`.vm/macos/`) including Apple's recovery image, so the next `make vm-macos` downloads it again; skips it if still running |
+| `make vm-clean-isos` | Does not touch the macOS guest (its recovery image lives in `.vm/macos/`); only clears cached ISOs of the other guests                           |
+
+1. Install Quickemu on the Linux host once (it isn't part of `make vm-deps`): `paru -S quickemu` on Arch/CachyOS, or the
+   install section of its README elsewhere.
+2. Download and boot the guest (several GB from Apple; a window opens; pick another release with
+   `MACOS_VERSION=sonoma`):
+
+   ```bash
+   make vm-macos
+   ```
+
+   First boot lands in macOS Recovery.
+   Pick the right disk, or the installer reports "37.6 MB free": in *Disk Utility* use **View → Show All Devices** and
+   erase the large **Apple VirtIO Block Media** (~137 GB, the virtual disk) as APFS / GUID Partition Map, named
+   `Macintosh HD`. Ignore the other two: **QEMU HARDDISK Media** (~400 MB) is the OpenCore bootloader, and the ~2.5 GB
+   volume (`disk2s1`) is the Recovery image you booted from. Then choose *Reinstall macOS* and select `Macintosh HD`.
+   The install runs in stages and reboots into the OpenCore menu each time, which defaults to the Recovery/installer entry.
+   Expect to pick the installer entry (or re-run `make vm-macos` and pick it again) **2-3 times** until the menu shows the
+   disk name you chose, `Macintosh HD`: that entry is the installed system. Select it, don't reinstall again.
+   Click through Setup Assistant afterwards. Re-running `make vm-macos` later just starts the existing guest again.
+3. Inside the guest, open Terminal and install the **Command Line Tools** (they provide `git` and `make`, which
+   `install_unix.sh` needs):
+
+   ```bash
+   xcode-select --install
+   ```
+
+4. Install **Homebrew** (the app finds it via `PATH`, and its macOS package tasks report `brew` as missing without it):
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+   The guest is Intel (x86_64), so Homebrew installs under `/usr/local`. Open a new Terminal tab and check
+   `brew --version` before going on.
+5. Run the app with the one-liner from the [README](../../README.md#linux--wsl2--macos) (it clones the repo into
+   `~/.personal-os-setup`, runs `make install` and `make run`), then use `personal-os-setup` for later runs. Exercise the
+   Packages tab (brew formulae/casks), the Zsh and dotfiles sections, etc.
+6. Re-run `make vm-macos` to start the existing guest again; use `make vm-clean` (table above) to delete it.
+
+Caveats:
+
+- **Not libvirt:** `quickget macos <release>` fetches OpenCore plus Apple's recovery image (multi-GB) into
+  `.vm/macos/macos-<release>/` and `quickemu` runs a plain QEMU process under your user. `make vm-list` and virt-manager
+  don't show it, and upstream has no libvirt import ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)).
+  `make vm-clean` wipes it (but leaves a still-running guest alone and tells you to shut it down first).
+- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; default `tahoe` (macOS 26, what `macos-latest`
+  runs in CI), override with `MACOS_VERSION`.
+- CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo`). Some AMD Ryzen mobile CPUs
+  (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
+  `tsc=reliable` workaround, and `qe_mac_apid` for Apple-ID/App-Store serial randomization.
+- Limits: no GPU acceleration; virtio-net/ballooning only on Big Sur+; native virtio-sound on Monterey+; no SPICE copy/paste.
+- Apple's EULA restricts macOS guests to Apple hardware; whether that matters for your use is your call.
+- **Sluggish mouse/UI?** Expected without GPU acceleration. In the guest turn on *System Settings → Accessibility →
+  Display → Reduce transparency / Reduce motion* and let Spotlight's first-time indexing finish (Activity Monitor:
+  `mds`/`mdworker`). On the host try `cd .vm/macos && quickemu --vm macos-tahoe.conf --display sdl` (or `spice`), a smaller
+  `--width/--height`, and `powerprofilesctl set performance`.
+
+The automated half of this lives in CI: the `integration-macos` job runs the integration tests on a hosted `macos-latest`
+runner. The VM is for the click-through parts CI doesn't cover.

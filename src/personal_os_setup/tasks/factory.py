@@ -179,7 +179,7 @@ def _start_section(system: str) -> Section:
         SystemAction(label="open documentation site", run=show_documentation_link),
         SystemAction(label="open apps configuration and shortcuts doc", run=show_apps_config_link),
     ]
-    # `make vm-*` (scripts/vm.sh) is Linux-host-only -- see docs/linux/CachyOS.md.
+    # `make vm-*` (scripts/vm.sh) is Linux-host-only -- see docs/vm/README.md.
     if system == "linux":
         actions.append(
             SystemAction(label="open 'testing this project in a VM' doc", run=show_vm_testing_link)
