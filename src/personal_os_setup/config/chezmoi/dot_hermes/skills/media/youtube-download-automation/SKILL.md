@@ -72,6 +72,11 @@ Order matters: **one source supplies many tags, the rest supply one.**
 2. **iTunes — fallback for tracks last.fm has never tagged** (new releases, bootlegs, rai/Arabic). One `primaryGenreName` per release; anything above ~1 req/s gets 403.
 3. **Deezer — corroboration only, never an override**: it calls French rap "Electro" and *Enter Sandman* "Pop".
 
+Whichever source wins, map the value onto the canonical token set in
+`references/genre-vocabulary.md` before writing: that file holds the additions (`Arabic`,
+`Arabic Pop`, `World`, `Moroccan Pop`), the merge map that kills duplicate spellings, the
+tokens that are never genres (`Maghreb`, `World Music`, `Eurovision`), and the 4-value cap.
+
 - **Apple's `primaryGenreName` can be the storefront country** (e.g. "France"), not a genre — it can appear on one track of a release while another returns the real genre. Never write a country name into a genre tag; corroborate with a second source.
 - **Deezer's `genres` array is routinely empty** even for a properly released track — "not labelled here", not "no genre".
 - Aggregator labels are broad (Electronic); the artist's own words are the style. Pick per what the user asked for and match the library's convention — short and lowercase (`rai`, `electronic`); grep `overrides.json` for established values before inventing one.
@@ -108,6 +113,7 @@ Order matters: **one source supplies many tags, the rest supply one.**
 - `references/chapter-split-duration-quirk.md` — the one cosmetic defect worth accepting as-is.
 - `references/genre-whitelist.txt` — beets' genre whitelist (1,568 entries, lowercase). The skill owns it; nothing depends on the beets add-on any more.
 - `references/genre-whitelist-extra.txt` — the supplement the add-on used to ship (Spotify/EveryNoise catalogue + regional descriptors like `chaabi`, `rai`), 1,019 entries, no overlap with the base list.
+- `references/genre-vocabulary.md` — the canonical token set: additions, merge map, never-write list, 4-value cap. Every genre write is mapped onto it.
 - `scripts/playlist_delta.py` — plan-vs-archive delta (§3).
 
 ## 7. Where this skill lives
