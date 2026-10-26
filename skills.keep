@@ -2,11 +2,8 @@
 # Add one with: make skills-keep NAME=<name>. Audited by: make skills-status
 agent-skills-architecture
 claude-code-ops
-code-review-triage
 coding-workflow
-cross-os-test-coverage
 debugging-hermes-tui-commands
-forum-research
 git-line-endings
 github-actions-trigger-gotchas
 github-auth
