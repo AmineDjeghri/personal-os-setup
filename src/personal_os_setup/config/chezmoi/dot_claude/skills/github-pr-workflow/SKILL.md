@@ -1,96 +1,76 @@
 ---
 name: github-pr-workflow
-description: "GitHub PR lifecycle: branch, commit, open, CI, merge."
-version: 1.1.0
+description: "GitHub issues and PR lifecycle: file/triage issues, carry an issue to a verified PR, branch, commit, open, CI, merge."
+version: 2.0.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
     origin: repo:personal-os-setup
-    tags: [GitHub, Pull-Requests, CI/CD, Git, Automation, Merge]
-    related_skills: [github-auth, github-code-review]
+    tags: [GitHub, Issues, Pull-Requests, CI/CD, Git, Automation, Merge]
+    related_skills: [github-auth, github-code-review, systematic-debugging, test-driven-development, requesting-code-review]
 ---
 
-# GitHub Pull Request Workflow
+# GitHub issues → pull requests (lifecycle)
 
-Complete guide for managing the PR lifecycle with the `gh` CLI. On a machine without `gh`, see `references/rest-api-fallback.md`.
+Issue → branch → commits → PR → CI → merge with the `gh` CLI. No `gh`? Install it (see `github-auth`) —
+fallback: `github-auth/references/rest-api-fallback.md`. Needs `gh` auth inside a git repo with a GitHub remote.
+Reviewing someone else's PR, or answering a code question with no requested change: not this skill
+(`github-code-review`).
 
-## Prerequisites
-
-- Authenticated with GitHub (see `github-auth` skill — ask to install `gh` if it's missing, that's the
-  default path)
-- Inside a git repository with a GitHub remote
-- `gh` genuinely can't be installed: `references/rest-api-fallback.md` (auth detection, token setup,
-  REST calls)
-
-## 1. Branch Creation
-
-This part is pure `git` — identical either way:
+## 1. Issues
 
 ```bash
-# Make sure you're up to date
-git fetch origin
-git checkout main && git pull origin main
+gh issue list --state open --label "bug"            # also: --assignee @me, --search "auth error" --state all
+gh issue list --label "needs-triage" --state open   # untriaged
+gh issue view 42 --comments
+gh issue create --title "Login redirect ignores ?next=" --body "After login users land on /dashboard; expected /settings." --label "bug,backend" --assignee "username"
+gh issue edit 42 --add-label "priority:high,bug"    # --remove-label; --add-assignee @me
+gh issue comment 42 --body "Root cause is in auth middleware."
+gh issue close 42 --reason "not planned"            # reopen: gh issue reopen 42
+gh issue develop 42 --checkout                      # branch from an issue
+gh issue list --label "wontfix" --json number --jq '.[].number' | xargs -I {} gh issue close {} --reason "not planned"   # bulk
+```
 
-# Create and switch to a new branch
+`Closes #42` / `Fixes #42` / `Resolves #42` in the PR body closes the issue on merge.
+
+## 2. Carrying an issue to a verified PR
+
+End-to-end discipline — premise validation, duplicate sweeps, class-level fixes, honest CI reporting. Each step
+ends with a "done when".
+
+1. **Read the live issue — body AND full thread** (`gh issue view <N> --comments`). The body is a filing-time snapshot; the newest comments carry partial fixes already merged, new root causes, maintainer decisions, or questions aimed at you. Also read `AGENTS.md`/contribution docs. Done when requested behavior, non-goals and unanswered thread questions are known.
+2. **Sweep for existing and duplicate work.** `gh pr list --search "#<N>" --state all` plus at least two keyword/synonym variants (`gh pr list --search "<subsystem> <symptom>" --state open`), and `git log --oneline -20 -- <relevant files>` for a recent fix. Done when every open PR/recent commit touching it is known, or none exist.
+3. **Validate the premise against current code — and design intent.** Reproduce on the current default branch with a failing test/fixture and trace the reported path. Then ask whether the "bug" is deliberate: `git log -p -S "<symbol>"` and read the original commit's intent — a missing link or restriction is often the feature. Challenge stale or flawed issue prose instead of implementing it blindly.
+4. **Define acceptance and risk**: criteria, interfaces, migrations/state, compatibility, security/privacy, rollout, rollback; map every criterion to a test or explicit verification. Done when review has a finite contract.
+5. **Implement the smallest complete change — and fix the class.** Isolated branch or worktree; regression tests first (load `systematic-debugging` / `test-driven-development` when the bug class calls for them). Then search sibling call sites for the same bug shape and fix the whole class in this PR — an incomplete fix leaving known siblings broken is worse than none. Every changed line traces to the issue; no drive-by cleanup. Done when targeted tests pass, the original failure no longer reproduces, and siblings are fixed or ruled out.
+6. **Prove the regression test bites (sabotage run).** Temporarily restore the old behavior of the function under test, confirm the new test FAILS, restore the fix, confirm it passes. A test that passes with and without the fix proves nothing.
+7. **Run the repo's gates, then open the PR immediately.** Formatter, lint, typecheck, canonical test entrypoint on affected areas; `requesting-code-review` on the diff. Push and open the PR right away (CI latency is the long pole) — **once the user has approved the push and the PR** (a yes to the task is not a yes to push; never bundle `commit && push`). Body: problem, approach, tests, risk, exclusions, issue link. Read the PR back: head SHA, base, title, files. Done when the PR exists with the intended diff and CI is running.
+8. **Shepherd CI honestly and close the loop.** Inspect live checks and failure logs (§5). Separate failures your diff introduced from baseline/infra failures — reproduce on the default branch when unsure, rerun once only for genuine infra flakes. Never say "green", "merged" or "released" without live evidence of that exact state. When the PR lands, comment on the issue with the PR link and a one-line explanation.
+
+Checklist: full thread read · duplicate sweep (issue number + 2 variants) · premise reproduced + design intent checked ·
+test fails without the fix · siblings fixed or ruled out · every line traces to the issue · CI state from live evidence only.
+
+## 3. Branch and commits
+
+```bash
+git fetch origin && git checkout main && git pull origin main
 git checkout -b feat/add-user-authentication
+git add src/auth.py tests/test_auth.py          # stage specific files
+git commit -m "feat: add JWT-based user authentication"
 ```
 
-Branch naming conventions:
-- `feat/description` — new features
-- `fix/description` — bug fixes
-- `refactor/description` — code restructuring
-- `docs/description` — documentation
-- `ci/description` — CI/CD changes
+Branch prefixes: `feat/` · `fix/` · `refactor/` · `docs/` · `ci/`. Conventional Commits (`type(scope): short
+description`, body wrapped at 72); types `feat fix refactor docs test ci chore perf`; `!` or a `BREAKING CHANGE:`
+footer for majors. Mandatory pre-push checklist: `coding-workflow` § 5 (line endings: `git-line-endings`).
 
-## 2. Making Commits
-
-Use the agent's file tools (`write_file`, `patch`) to make changes, then commit:
-
-```bash
-# Stage specific files
-git add src/auth.py src/models/user.py tests/test_auth.py
-
-# Commit with a conventional commit message
-git commit -m "feat: add JWT-based user authentication
-
-- Add login/register endpoints
-- Add User model with password hashing
-- Add auth middleware for protected routes
-- Add unit tests for auth flow"
-```
-
-Commit message format (Conventional Commits):
-```
-type(scope): short description
-
-Longer explanation if needed. Wrap at 72 characters.
-```
-
-Types: `feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `chore`, `perf`
-
-Mandatory pre-push checklist: see the `repo-conventions` skill (line endings: see the `git-line-endings` skill).
-
-## 3. Pushing and Creating a PR
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
-
-### Push the Branch (same either way)
+## 4. Push and open the PR
 
 ```bash
 git push -u origin HEAD
-```
-
-### Create the PR
-
-**With gh:**
-
-```bash
-gh pr create \
-  --title "feat: add JWT-based user authentication" \
-  --body "## Summary
+gh pr create --title "feat: add JWT-based user authentication" --body "## Summary
 - Adds login and register API endpoints
-- JWT token generation and validation
 
 ## Test Plan
 - [ ] Unit tests pass
@@ -98,87 +78,27 @@ gh pr create \
 Closes #42"
 ```
 
-Options: `--draft`, `--reviewer user1,user2`, `--label "enhancement"`, `--base develop`
+Follow-up commits: confirm where the open PR's branch is checked out first (`gh pr list --state open`, `git worktree list`) — never push leftover commits of a branch whose PR is already merged.
 
-## 4. Monitoring CI Status
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
-
-### Check CI Status
-
-**With gh:**
+## 5. CI status and auto-fixing failures
 
 ```bash
-# One-shot check
-gh pr checks
-
-# Watch until all checks finish (polls every 10s)
-gh pr checks --watch
-```
-
-## 5. Auto-Fixing CI Failures
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
-
-When CI fails, diagnose and fix. This loop works with either auth method.
-
-### Step 1: Get Failure Details
-
-**With gh:**
-
-```bash
-# List recent workflow runs on this branch
-gh run list --branch $(git branch --show-current) --limit 5
-
-# View failed logs
+gh pr checks [--watch]                                          # one-shot / poll until done
+gh run list --branch $(git branch --show-current) --limit 5     # recent runs on this branch
 gh run view <RUN_ID> --log-failed
 ```
 
-### Step 2: Fix and Push
-
-After identifying the issue, use file tools (`patch`, `write_file`) to fix it:
-
-```bash
-git add <fixed_files>
-git commit -m "fix: resolve CI failure in <check_name>"
-git push
-```
-
-### Step 3: Verify
-
-Re-check CI status using the commands from Section 4 above.
-
-### Auto-Fix Loop Pattern
-
-When asked to auto-fix CI, follow this loop:
-
-1. Check CI status → identify failures
-2. Read failure logs → understand the error
-3. Use `read_file` + `patch`/`write_file` → fix the code
-4. `git add . && git commit -m "fix: ..." && git push`
-5. Wait for CI → re-check status
-6. Repeat if still failing (up to 3 attempts, then ask the user)
+Loop: check CI → read failure logs → fix → **ask for approval to commit, and separately to push** (never fold `git add`/`commit`/`push` into one command) → re-check. After 3 failed attempts, stop and ask. Facts worth checking:
+- a missing `permissions:` block, or secrets fork PRs never get (by design) — needs the user;
+- a hung job → add `timeout-minutes:` to the step;
+- `ModuleNotFoundError` in CI = a dependency missing in CI; compare local vs CI Python/Node version;
+- triggers firing wrong or not at all → `github-actions-trigger-gotchas`.
 
 ## 6. Merging
-No `gh`? Install it (see `github-auth`) — genuine fallback: `references/rest-api-fallback.md`.
 
-**With gh:**
+Needs the user's per-action approval.
 
 ```bash
-# Squash merge + delete branch (cleanest for feature branches)
-gh pr merge --squash --delete-branch
-
-# Enable auto-merge (merges when all checks pass)
-gh pr merge --auto --squash --delete-branch
+gh pr merge --squash --delete-branch           # cleanest for feature branches
+gh pr merge --auto --squash --delete-branch    # merges when all checks pass
 ```
-
-## Useful PR Commands Reference
-
-REST equivalents for these commands: `references/rest-api-fallback.md`.
-
-| Action | gh |
-|--------|-----|
-| List my PRs | `gh pr list --author @me` |
-| View PR diff | `gh pr diff` |
-| Add comment | `gh pr comment N --body "..."` |
-| Request review | `gh pr edit N --add-reviewer user` |
-| Close PR | `gh pr close N` |
-| Check out someone's PR | `gh pr checkout N` |

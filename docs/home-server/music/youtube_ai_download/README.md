@@ -8,7 +8,7 @@ AI-assisted YouTube → music library pipeline. Downloads YouTube playlists (or 
 
 **Every metadata decision is made by the LLM agent, not by parsing rules.** Live YouTube titles are messy — `Artist - Song (Live at X)`, no-artist titles, artists mentioned only in the description, Arabic/French/English mixes. Regex heuristics get maybe 60–80% right; the LLM reads the actual title, uploader and description of every video and decides. The script is pure plumbing:
 
-```
+```text
 you paste a link
       │
       ▼
@@ -35,7 +35,7 @@ you paste a link
 
 ## Folder layout
 
-```
+```text
 youtube_ai_download/
 ├── yt_dl.py                  # the downloader — deps in its PEP 723 header
 ├── README.md                 # this file
@@ -104,7 +104,7 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
 | File | `NN - Artist - Title.m4a` (NN = playlist position) |
 | Chapter split | `"split": true` → `NN - Artist - Title - SS - <chapter>.m4a` per YouTube chapter (SS = section number = track number; title = chapter name); the full file is discarded |
 | Artist / Title / Album | **decided by the LLM** in overrides.json |
-| Title | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`| Channel` stripped, leading `Artist - ` dropped, `(Live…)` + venue info kept |
+| Title | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`\| Channel` stripped, leading `Artist -` prefix dropped, `(Live…)` + venue info kept |
 | Album | typically `Live at <Venue> (<City>, <Year>)` from the description |
 | Genre | optional, from `"genre"` in overrides.json; omitted → no genre tag (never the YouTube category) |
 | Format | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless" |

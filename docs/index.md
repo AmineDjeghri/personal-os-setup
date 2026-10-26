@@ -10,6 +10,7 @@ Explore the documentation using the vertical navbar, or jump straight to a secti
 - **Home server / Home Assistant**: [docs/home-server](home-server/readme.md)
 - **Apps setup & shortcuts**: [docs/apps](apps/apps_configuration_and_shorcuts.md)
 - **Websites & browser extensions**: [docs/apps](apps/awesome_websites_browser_extensions.md)
+- **Agent skills** (TUI and `make` workflows): [docs/agent-skills](agent-skills.md)
 
 ## Features & Benefits
 

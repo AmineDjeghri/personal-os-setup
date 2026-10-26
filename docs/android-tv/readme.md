@@ -1,22 +1,24 @@
 # TV Setup (googletv / android tv)
 
 One of the best TV OS is Google TV. Here are some reasons why you should consider using Google TV:
+
 - Sideloading apps is straightforward on Google TV. You can install apps like Stremio, SmartTube, and others.
 - It's not as responsive as Apple TV, but you can tweak it to make it faster.
 - You can use alternative launchers like 'Projectivy'.
 
 This page covers the TV side: picture settings, performance, apps and the launcher. The streaming side — Nuvio/Stremio, AIOStreams, debrid and the addons — lives on its own page: **[Nuvio / Stremio + AIOStreams](nuvio-stremio-aiostreams.md)**.
 
-**Table of contents**
+Table of contents
 <!-- TOC -->
-* [TV Setup (googletv / android tv)](#tv-setup-googletv--android-tv)
-  * [All TV types:](#all-tv-types)
-  * [Google TV OS:](#google-tv-os)
-    * [Best google TV apps:](#best-google-tv-apps)
-      * [What is Stremio / Nuvio ?](#what-is-stremio--nuvio-)
+- [TV Setup (googletv / android tv)](#tv-setup-googletv--android-tv)
+    - [All TV types:](#all-tv-types)
+    - [Google TV OS:](#google-tv-os)
+        - [Best google TV apps:](#best-google-tv-apps)
+            - [What is Stremio / Nuvio ?](#what-is-stremio--nuvio-)
 <!-- TOC -->
 
-## All TV types:
+## All TV types
+
 - My first advice is to never use the standard mode on your TV. Always use the cinema/ filmaker or movie mode. The
   standard mode is too bright and the colors are not accurate. Use the cinema or movie mode when watching movies or
   series.
@@ -29,7 +31,8 @@ This page covers the TV side: picture settings, performance, apps and the launch
   Chromecast and other HDMI inputs.
 - If you play video games, use the game mode. It will reduce the input lag and improve the gaming experience.
 
-## Google TV OS:
+## Google TV OS
+
 - (Important) Enhance the performance of your Google TV by following
   this [tutorial](https://www.slashgear.com/1321192/tricks-make-chromecast-google-tv-run-faster/)
 - Chromecast google TV
@@ -43,11 +46,12 @@ This page covers the TV side: picture settings, performance, apps and the launch
 - recommended TV apps for Google TV: Projectivy launcher, Stremio, Nuvio, Smart Tube, YouTube atv. update the channels in
 the Projectivy and add Stremio and Nuvio there. Also make it the default launcher for your tv.
 
-### Best google TV apps:
+### Best google TV apps
+
 - [SmartTube](https://smartyoutubetv.github.io/): A free Android TV app alternative to YouTube with no ads, designed for TV screens, up to 8K video resolution, supports youtube accounts.
 - [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu&hl=en&pli=1):  an alternative app launcher for Android TV devices that provides users with a different home screen and method for navigation and opening apps.
-    -  Remember to export your settings: https://www.reddit.com/r/Projectivy_Launcher/comments/1cdt00f/tell_me_about_exporting_these_launcher_settings/
-    -  You can create channels in the menu and add stremio, smartube, spotify to the home screen.
+    - Remember to export your settings: <https://www.reddit.com/r/Projectivy_Launcher/comments/1cdt00f/tell_me_about_exporting_these_launcher_settings/>
+    - You can create channels in the menu and add stremio, smartube, spotify to the home screen.
 - [Stremio](https://www.stremio.com/) / [Nuvio](https://nuvioapp.space/)
 
 #### What is Stremio / Nuvio ?

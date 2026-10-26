@@ -2,6 +2,53 @@
 
 <!-- version list -->
 
+## v2.17.0 (2026-10-19)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic to v2.14.1 (#137)
+  ([#137](https://github.com/AmineDjeghri/personal-os-setup/pull/137),
+  [`7478894`](https://github.com/AmineDjeghri/personal-os-setup/commit/74788940d9715980fc7f454248904c63bef40d1c))
+
+### Features
+
+- **binds**: Add Noctalia window switcher key binding and passwordless sync script
+  ([`93d8563`](https://github.com/AmineDjeghri/personal-os-setup/commit/93d85636bbcfbc1a1f991f77f56d1c86a7a14abe))
+
+
+## v2.16.2 (2026-10-17)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic to v2.14.0 (#135)
+  ([#135](https://github.com/AmineDjeghri/personal-os-setup/pull/135),
+  [`7aab913`](https://github.com/AmineDjeghri/personal-os-setup/commit/7aab91335ed498117ea33267f398fa36a203c8e6))
+
+- **deps**: Update python to >=3.14,<3.16 (#134)
+  ([#134](https://github.com/AmineDjeghri/personal-os-setup/pull/134),
+  [`ac181b1`](https://github.com/AmineDjeghri/personal-os-setup/commit/ac181b10951d73420f57083f87d2930756706d9c))
+
+- **renovate**: Add semantic commit type for Python version range widening
+  ([`d4a8d82`](https://github.com/AmineDjeghri/personal-os-setup/commit/d4a8d826b44835943bf7858f9f2e99a376b2c340))
+
+- **renovate**: Widen Python version range in package rules
+  ([`2417f7f`](https://github.com/AmineDjeghri/personal-os-setup/commit/2417f7f816fe988e50e72c8c935d0514cdb143dd))
+
+### Documentation
+
+- **home-server**: Document TV/PC power control and fill the integration gaps (#130)
+  ([#130](https://github.com/AmineDjeghri/personal-os-setup/pull/130),
+  [`0eec928`](https://github.com/AmineDjeghri/personal-os-setup/commit/0eec928fa985e9d22b2d64c6365753aabcc48655))
+
+- **home-server**: Matter Hub voice routines + LAN naming/DHCP ownership (#133)
+  ([#133](https://github.com/AmineDjeghri/personal-os-setup/pull/133),
+  [`30c5d8d`](https://github.com/AmineDjeghri/personal-os-setup/commit/30c5d8d79639aae651ec720ea6012301cea4cc3a))
+
+- **home-server**: Note the Matter Hub voice/room gotchas in the readme (#132)
+  ([#132](https://github.com/AmineDjeghri/personal-os-setup/pull/132),
+  [`01c2fa0`](https://github.com/AmineDjeghri/personal-os-setup/commit/01c2fa08045bf9af05f477f50cc9439fee7e1800))
+
+
 ## v2.16.1 (2026-10-04)
 
 ### Bug Fixes

@@ -5,33 +5,32 @@
 > This document tracks a migration from Windows to a native Linux development
 > workstation. It is updated as the setup is tested and refined.
 
-
 <!-- TOC -->
 * [CachyOS Hyprland Developer Workstation Setup](#cachyos-hyprland-developer-workstation-setup)
-  * [Goal](#goal)
-  * [Installation](#installation)
-    * [Secure Boot](#secure-boot)
-    * [Bootloader and filesystem](#bootloader-and-filesystem)
-    * [Keyboard layout defaults to QWERTY on first login](#keyboard-layout-defaults-to-qwerty-on-first-login)
-    * [After first boot](#after-first-boot)
-  * [Packages](#packages)
-  * [Desktop](#desktop)
-    * [Configuration files](#configuration-files)
-    * [Settings owned by Noctalia, not Hyprland](#settings-owned-by-noctalia-not-hyprland)
-    * [Editing the lockscreen layout](#editing-the-lockscreen-layout)
-    * [Hyprland plugins](#hyprland-plugins)
-    * [Secret storage (gnome-keyring, not KWallet)](#secret-storage-gnome-keyring-not-kwallet)
-  * [Shell](#shell)
-  * [Theming](#theming)
-  * [Gaming](#gaming)
-    * [Base packages](#base-packages)
-    * [GameMode](#gamemode)
-    * [MangoHud](#mangohud)
-    * [Proton](#proton)
-    * [HDR / 10-bit desktop](#hdr--10-bit-desktop)
-      * [Verifying HDR actually works](#verifying-hdr-actually-works)
-  * [Testing the CachyOS flow in a VM](#testing-the-cachyos-flow-in-a-vm)
-  * [Apps shortcuts](#apps-shortcuts)
+    * [Goal](#goal)
+    * [Installation](#installation)
+        * [Secure Boot](#secure-boot)
+        * [Bootloader and filesystem](#bootloader-and-filesystem)
+        * [Keyboard layout defaults to QWERTY on first login](#keyboard-layout-defaults-to-qwerty-on-first-login)
+        * [After first boot](#after-first-boot)
+    * [Packages](#packages)
+    * [Desktop](#desktop)
+        * [Configuration files](#configuration-files)
+        * [Settings owned by Noctalia, not Hyprland](#settings-owned-by-noctalia-not-hyprland)
+        * [Editing the lockscreen layout](#editing-the-lockscreen-layout)
+        * [Hyprland plugins](#hyprland-plugins)
+        * [Secret storage (gnome-keyring, not KWallet)](#secret-storage-gnome-keyring-not-kwallet)
+    * [Shell](#shell)
+    * [Theming](#theming)
+    * [Gaming](#gaming)
+        * [Base packages](#base-packages)
+        * [GameMode](#gamemode)
+        * [MangoHud](#mangohud)
+        * [Proton](#proton)
+        * [HDR / 10-bit desktop](#hdr--10-bit-desktop)
+            * [Verifying HDR actually works](#verifying-hdr-actually-works)
+    * [Testing the CachyOS flow in a VM](#testing-the-cachyos-flow-in-a-vm)
+    * [Apps shortcuts](#apps-shortcuts)
 <!-- TOC -->
 
 ## Goal
@@ -61,10 +60,9 @@ Disabled — the CachyOS installer was blocked by Secure Boot.
 
 ### Bootloader and filesystem
 
-- Bootloader: **Limine**
-- Filesystem: **Btrfs**
-- Encryption: **LUKS**
-
+* Bootloader: **Limine**
+* Filesystem: **Btrfs**
+* Encryption: **LUKS**
 
 ### Keyboard layout defaults to QWERTY on first login
 
@@ -133,7 +131,6 @@ so there is normally nothing to install.
 You can also click the temperature readout in the Noctalia top bar to see CPU
 temperature, GPU name and general system information without opening settings.
 
-
 ## Packages
 
 Most of the packages below are managed by this project — run the app and install
@@ -151,8 +148,8 @@ other derivatives are not supported.
 
 Two package managers are used:
 
-- **pacman** — official repositories
-- **paru** — AUR. CachyOS ships paru by default;
+* **pacman** — official repositories
+* **paru** — AUR. CachyOS ships paru by default;
 
 Vicinae has its own installer:
 
@@ -177,14 +174,14 @@ Some desktop behavior that most Hyprland setups configure in `hyprland.conf` (or
 standalone daemons like `hypridle`/`hyprlock`/`hyprpaper`) is instead configured in
 Noctalia's own `~/.config/noctalia/config.toml`.
 
-- **Idle timeout / screen lock / suspend** — `[idle.behavior.*]`. No `hypridle`/`hyprlock` installed or needed.
-- **Wallpaper** — `[theme] source = "wallpaper"` plus the `nzlov/daily-wallpaper`
+* **Idle timeout / screen lock / suspend** — `[idle.behavior.*]`. No `hypridle`/`hyprlock` installed or needed.
+* **Wallpaper** — `[theme] source = "wallpaper"` plus the `nzlov/daily-wallpaper`
   plugin under `[plugins]`. No `swww`/`hyprpaper`.
-- **Night light / blue light filter** — `[nightlight]`. Note `wlsunset` is still in
+* **Night light / blue light filter** — `[nightlight]`. Note `wlsunset` is still in
   `packages.yaml` too — check which one is actually active before assuming both run.
-- **Screenshot pipeline** — `[shell.screenshot]` routes through Noctalia's own
+* **Screenshot pipeline** — `[shell.screenshot]` routes through Noctalia's own
   screenshot action (piped to `satty`).
-- **Session menu** (lock / logout / reboot / shutdown / suspend) — `[[shell.session.actions]]`,
+* **Session menu** (lock / logout / reboot / shutdown / suspend) — `[[shell.session.actions]]`,
   each with its own shortcut inside the session menu.
 
 ### Editing the lockscreen layout
@@ -202,10 +199,6 @@ installed first.
 ```bash
 hyprpm update
 
-# ALT+TAB window switcher
-hyprpm add https://github.com/gfhdhytghd/hymission
-hyprpm enable hymission
-
 # Title bars: drag, close, maximise
 hyprpm add https://github.com/hyprwm/hyprland-plugins
 hyprpm enable hyprbars
@@ -214,7 +207,8 @@ hyprpm reload
 hyprpm list
 ```
 
-Test `ALT+TAB` for the switcher, and dragging / closing / maximizing windows for hyprbars.
+Test dragging / closing / maximizing windows for hyprbars. The `ALT+TAB` window switcher is Noctalia's own
+(`noctalia msg window-switcher hold`), not a Hyprland plugin.
 
 ### Secret storage (gnome-keyring, not KWallet)
 
@@ -223,10 +217,11 @@ LUKS drive, browsers saving passwords, etc.) talks to `org.freedesktop.secrets` 
 nothing provides that name unless something starts a daemon for it. KDE's `kwallet` isn't advised to be used without plasma.
 
 **`gnome-keyring` is used instead** — password-based, no GPG key needed, and the standard choice on non-KDE Wayland compositors:
-- **Not auto-unlocked with the login password, by choice.** `pam_gnome_keyring.so` can do this, but it doesn't look at "whichever keyring is currently set as default"
-- Apps using `libsecret` (Nautilus/GVfs, GTK/GNOME apps, Chromium-based browsers) otherwise just work — the manual prompt above is the only friction point.
-- To view/delete stored secrets: `sudo pacman -S seahorse` ("Passwords and Keys" GUI), or `secret-tool` for CLI lookups. <!-- pragma: allowlist secret -->
-- Bitwarden (website/app logins, secure notes, cards) is unrelated and doesn't cover this — it doesn't integrate with the system Secret Service, so it can't store or auto-unlock OS-level secrets like this LUKS passphrase, SSH SFTP, or NetworkManager WiFi keys.
+
+* **Not auto-unlocked with the login password, by choice.** `pam_gnome_keyring.so` can do this, but it doesn't look at "whichever keyring is currently set as default"
+* Apps using `libsecret` (Nautilus/GVfs, GTK/GNOME apps, Chromium-based browsers) otherwise just work — the manual prompt above is the only friction point.
+* To view/delete stored secrets: `sudo pacman -S seahorse` ("Passwords and Keys" GUI), or `secret-tool` for CLI lookups. <!-- pragma: allowlist secret -->
+* Bitwarden (website/app logins, secure notes, cards) is unrelated and doesn't cover this — it doesn't integrate with the system Secret Service, so it can't store or auto-unlock OS-level secrets like this LUKS passphrase, SSH SFTP, or NetworkManager WiFi keys.
 
 **Troubleshooting: `Error storing passphrase in keyring (the sessions wrapping the secret does not exist)`** when unlocking a drive in Nautilus, and/or drives disappearing from the sidebar — Kill and restart Nautilus after installing `gnome-keyring`
 
@@ -253,7 +248,8 @@ Check everything and run the corresponding action to reproduce the old whole-tre
 **chezmoi: track a new file** and enter its path — this copies it into the repo (never
 edit a live dotfile directly and expect it to be under version control). chezmoi has
 no auto-backup, so always run **diff selected** before **apply selected**.
-`set zsh as default shell` remains a separate `zsh` action.
+`set zsh as default shell` remains a separate `zsh` action
+
 ---
 
 ## Theming
@@ -271,10 +267,10 @@ below are not yet in the catalog and need to be added/installed later in the nex
 
 ### Base packages
 
-- `cachyos-gaming-meta` — CachyOS's own meta-package, pulls in `gamemode`, `mangohud`,
+* `cachyos-gaming-meta` — CachyOS's own meta-package, pulls in `gamemode`, `mangohud`,
   `lib32-mesa`/`lib32-vulkan-*` and other 32-bit Proton/Wine runtime deps in one shot.
   Installing this covers most of the packages below without listing them individually.
-- CachyOS already ships a gaming-optimized kernel (`linux-cachyos`, BORE/EEVDF scheduler)
+* CachyOS already ships a gaming-optimized kernel (`linux-cachyos`, BORE/EEVDF scheduler)
   and repo-level `-O3`/`x86-64-v3` optimized packages by default — nothing to configure here,
   it's the baseline the whole distro is built on.
 
@@ -304,7 +300,7 @@ it instead). Set the version per-game in Steam: right-click → Properties → C
 ### HDR / 10-bit desktop
 
 **Quick visual check (two monitors, one HDR + one non-HDR):** Play the same HDR YouTube video
-(e.g. https://youtu.be/MV5hhbqDNLs?t=145) at 2Min25 in a browser window on each display — one on
+(e.g. <https://youtu.be/MV5hhbqDNLs?t=145>) at 2Min25 in a browser window on each display — one on
 the HDR-enabled monitor, one on a monitor still in SDR (or disable HDR in that monitor).
 Then drag the SDR video window over onto the HDR display, right next to the other one, and compare them side by side.
 If HDR is actually working, the window that started on the HDR display should look visibly brighter/punchier in
@@ -312,7 +308,6 @@ highlights and more saturated than the dragged-over one, even though both are no
 the same HDR-capable panel — because the dragged-in window was already tone-mapped down to SDR
 before the move, while the other was rendered with the real PQ curve and wide gamut from the
 start.  For a rigorous, numeric confirmation (not just "does it look different"), use the mpv IPC method [below](#Verifying-HDR-actually-works).
-
 
 Desktop HDR is a Hyprland output setting, independent of Steam/Proton — do this first if you
 want HDR games to actually look right, not just run:
@@ -345,29 +340,32 @@ surfaces that actually signal HDR metadata (e.g. a real HDR video) get their own
 
 #### Verifying HDR actually works
 
-
 End-to-end HDR (source → mpv → Hyprland → panel) was verified using this HDR10 test video:
-https://www.youtube.com/watch?v=njX2bu-_Vw4 — playing it in mpv fullscreen via yt-dlp, then
+<https://www.youtube.com/watch?v=njX2bu-_Vw4> — playing it in mpv fullscreen via yt-dlp, then
 querying mpv's live negotiated state over its JSON IPC socket rather than trusting the OSD:
 
 1. Launch mpv with an IPC socket so its internal state can be queried while playing:
+
    ```bash
    mpv --input-ipc-server=/tmp/mpvsocket --fullscreen "https://www.youtube.com/watch?v=njX2bu-_Vw4"
    ```
+
 2. From another terminal, query the three relevant properties via `socat` (or `echo` piped to
    `nc -U`):
+
    ```bash
    echo '{"command":["get_property","video-params"]}' | socat - /tmp/mpvsocket
    echo '{"command":["get_property","video-out-params"]}' | socat - /tmp/mpvsocket
    echo '{"command":["get_property","video-target-params"]}' | socat - /tmp/mpvsocket
    ```
+
 3. What each answers:
-    - **`video-params`** — the *source*'s real color metadata. HDR10 content should report
+    * **`video-params`** — the *source*'s real color metadata. HDR10 content should report
       `primaries: bt.2020`, `gamma: pq`, plus a mastering `max-luma`/`max-cll`.
-    - **`video-out-params`** — what mpv actually sends to the display. If this matches
+    * **`video-out-params`** — what mpv actually sends to the display. If this matches
       `video-params` (same primaries/gamma/max-luma), mpv is passing the real HDR signal through
       rather than tone-mapping it down to SDR before output.
-    - **`video-target-params`** — what mpv detected the *display itself* can do, negotiated live
+    * **`video-target-params`** — what mpv detected the *display itself* can do, negotiated live
       through Hyprland's Wayland color-management protocol (mpv needs
       `--target-colorspace-hint` for this). A genuine `bt.2020`/`pq` result with a `max-luma`
       close to the panel's real peak-nit spec (not clamped to ~225 or ~500 nits) confirms
@@ -381,7 +379,6 @@ querying mpv's live negotiated state over its JSON IPC socket rather than trusti
    which also lists the negotiated colorspace/gamma/luma fields (less detail than the IPC query,
    but fast to eyeball, and stays in view when using windowed test videos).
 
-
 ## Testing the CachyOS flow in a VM
 
 Try the setup in a disposable KVM/QEMU VM on any Linux host first (host setup, cleanup and the firewall fix:
@@ -392,7 +389,7 @@ Try the setup in a disposable KVM/QEMU VM on any Linux host first (host setup, c
 | `make vm-deps`    | Run once first (then log out/in for the `libvirt`/`kvm` groups)        |
 | `make vm-cachyos` | CachyOS, manual ISO install; downloads the ISO and opens a GUI console |
 
-**Manage the VM**
+Manage the VM:
 
 | Command              | What it does                                                                         |
 |----------------------|--------------------------------------------------------------------------------------|
@@ -406,6 +403,7 @@ the ISO yourself from [cachyos.org](https://cachyos.org/download/). Inside the g
 existing VM again.
 
 ## Apps shortcuts
+
 For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,
 the terminal tools cheatsheet), plus a table of what's available on CachyOS vs. Windows/macOS
 and their alternatives, check
