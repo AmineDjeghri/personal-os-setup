@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # KVM/QEMU/libvirt VM helper for `make vm-*` targets. Linux host only.
 #
-# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|list|clean}
+# Usage: scripts/vm.sh {cachyos|ubuntu-server-auto|ubuntu-server-manual|ubuntu-desktop|windows|macos|list|clean}
 set -euo pipefail
 
 # A venv on PATH breaks virt-install's python3 shebang (no system PyGObject).
@@ -30,6 +30,16 @@ NAME_PREFIX="pos-"
 # (password falls back to the resolved user value when left unset)
 AUTOINSTALL_USER="${AUTOINSTALL_USER:-pos-dev}"
 AUTOINSTALL_PASSWORD="${AUTOINSTALL_PASSWORD:-$AUTOINSTALL_USER}"
+
+# `make vm-windows` knobs: WIN_ISO (required), WIN_ISO_SHA256 (verified when set), WIN_VERSION 11|10, WIN_DISK_GB.
+WIN_ISO="${WIN_ISO:-}"
+WIN_ISO_SHA256="${WIN_ISO_SHA256:-}"
+WIN_VERSION="${WIN_VERSION:-11}"
+WIN_DISK_GB="${WIN_DISK_GB:-80}"
+
+# `make vm-macos`: the default release tracks what `macos-latest` currently runs in CI (macOS 26 = tahoe).
+MACOS_VERSION="${MACOS_VERSION:-tahoe}"
+MACOS_DIR="$VM_DIR/macos"
 
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -285,6 +295,115 @@ EOF
         --boot uefi
 }
 
+# Win 11 needs UEFI + Secure Boot + TPM 2.0 (OVMF + swtpm); SATA disk + e1000e NIC use inbox drivers (no virtio-win ISO).
+# 80 GB because setup rejects disks < 64 GB; no --noreboot because setup reboots several times.
+cmd_windows() {
+    local name="${NAME_PREFIX}windows"
+    start_if_exists "$name" && return 0
+    ensure_dirs
+    ensure_hypervisor_access
+    require_bin virt-install
+
+    case "$WIN_VERSION" in
+    11 | 10) ;;
+    *) die "WIN_VERSION must be 11 or 10 (got '$WIN_VERSION')" ;;
+    esac
+    [ -n "$WIN_ISO" ] || die "WIN_ISO is not set. Windows ISOs can't be downloaded automatically (Microsoft licensing) -- download one from https://www.microsoft.com/software-download/ and re-run with: WIN_ISO=/path/to/windows.iso make vm-windows"
+    [ -f "$WIN_ISO" ] || die "WIN_ISO='$WIN_ISO' is not a file -- download a Windows ISO from https://www.microsoft.com/software-download/ and point WIN_ISO at it"
+
+    if [ -n "$WIN_ISO_SHA256" ]; then
+        local actual
+        actual="$(sha256sum "$WIN_ISO" | awk '{print $1}')"
+        [ "${actual,,}" = "${WIN_ISO_SHA256,,}" ] || die "checksum mismatch for $WIN_ISO (expected $WIN_ISO_SHA256, got $actual)"
+        ok "checksum ok: $(basename "$WIN_ISO")"
+    else
+        log "WIN_ISO_SHA256 not set -- the ISO is not verified. Microsoft lists the SHA-256 on its download page."
+    fi
+
+    local iso_path
+    iso_path="$ISO_DIR/$(basename "$WIN_ISO")"
+    if [ -s "$iso_path" ] && [ "$(stat -c %s "$iso_path")" = "$(stat -c %s "$WIN_ISO")" ]; then
+        ok "cached: $iso_path"
+    else
+        log "copying $WIN_ISO into $ISO_DIR (so libvirt can read it)"
+        cp --reflink=auto "$WIN_ISO" "$iso_path.part"
+        mv "$iso_path.part" "$iso_path"
+    fi
+
+    # Arrays are never empty, so they stay safe under `set -u` on older bash.
+    local boot_args tpm_args osinfo
+    if [ "$WIN_VERSION" = "11" ]; then
+        require_bin swtpm
+        require_bin swtpm_setup
+        boot_args=(--boot "firmware=efi,firmware.feature0.name=secure-boot,firmware.feature0.enabled=yes")
+        tpm_args=(--tpm "backend.type=emulator,backend.version=2.0,model=tpm-crb")
+        osinfo="detect=on,name=win11,require=off"
+    else
+        boot_args=(--boot uefi)
+        tpm_args=(--tpm none)
+        osinfo="detect=on,name=win10,require=off"
+    fi
+
+    log "creating $name (Windows $WIN_VERSION, manual install -- a GUI console window will open)"
+    log "click into the console and press a key at 'Press any key to boot from CD or DVD' (it times out after a few seconds)"
+    virt-install \
+        --name "$name" \
+        --memory "$RAM_MB" --vcpus "$VCPUS" \
+        --disk "path=$DISK_DIR/$name.qcow2,size=$WIN_DISK_GB,format=qcow2,bus=sata" \
+        --cdrom "$iso_path" \
+        --osinfo "$osinfo" \
+        --network network=default,model=e1000e \
+        --graphics spice --video vga \
+        --clock offset=localtime \
+        "${boot_args[@]}" \
+        "${tpm_args[@]}"
+}
+
+# Quickemu is a QEMU wrapper, not libvirt: the guest lives under .vm/macos/ so `vm-clean` wipes it and `vm-list` never shows it.
+# CPU requirements, limits and the Apple EULA note: docs/vm/README.md.
+require_quickemu() {
+    local bin
+    for bin in quickemu quickget; do
+        command -v "$bin" >/dev/null 2>&1 && continue
+        if command -v pacman >/dev/null 2>&1; then
+            die "$bin not found -- Quickemu isn't part of 'make vm-deps'; install it from the AUR with: paru -S quickemu"
+        fi
+        die "$bin not found -- Quickemu isn't part of 'make vm-deps'; install it for your distro by following the install section of https://github.com/quickemu-project/quickemu"
+    done
+}
+
+cmd_macos() {
+    case "$MACOS_VERSION" in
+    mojave | catalina | big-sur | monterey | ventura | sonoma | sequoia | tahoe) ;;
+    *) die "MACOS_VERSION must be one of: mojave catalina big-sur monterey ventura sonoma sequoia tahoe (got '$MACOS_VERSION')" ;;
+    esac
+    require_quickemu
+
+    grep -qw sse4_1 /proc/cpuinfo 2>/dev/null || die "this CPU doesn't report SSE4.1, which macOS guests need"
+    case "$MACOS_VERSION" in
+    ventura | sonoma | sequoia | tahoe)
+        grep -qw avx2 /proc/cpuinfo 2>/dev/null || die "macOS $MACOS_VERSION guests need AVX2 and this CPU doesn't report it -- try MACOS_VERSION=monterey (or older)"
+        ;;
+    esac
+
+    local conf="macos-$MACOS_VERSION.conf"
+    mkdir -p "$MACOS_DIR"
+    cd "$MACOS_DIR"
+
+    if [ -f "$conf" ]; then
+        ok "cached: $MACOS_DIR/$conf"
+    else
+        log "fetching macOS $MACOS_VERSION via quickget (Apple's multi-GB recovery image + OpenCore) into $MACOS_DIR"
+        quickget macos "$MACOS_VERSION"
+        [ -f "$conf" ] || die "quickget finished but $MACOS_DIR/$conf is missing -- check its output above"
+        log "first boot lands in macOS Recovery: in Disk Utility (View > Show All Devices) erase the big 'Apple VirtIO Block Media' disk (~137 GB) as APFS, then 'Reinstall macOS' onto it (the ~400 MB QEMU HARDDISK is OpenCore, the ~2.5 GB volume is the Recovery image); the install reboots 2-3 times -- keep picking the installer entry in the OpenCore menu until it shows 'Macintosh HD', then pick that"
+        log "Ventura+ hangs on some AMD Ryzen mobile CPUs (unstable TSC) -- see the macOS page of the Quickemu wiki"
+    fi
+
+    log "starting macOS $MACOS_VERSION with quickemu (a window opens; this is not listed by 'make vm-list')"
+    quickemu --vm "$conf"
+}
+
 cmd_list() {
     virsh list --all --name 2>/dev/null | grep "^${NAME_PREFIX}" || echo "(no ${NAME_PREFIX}* VMs)"
 }
@@ -294,10 +413,16 @@ cmd_clean() {
     for name in $(virsh list --all --name 2>/dev/null | grep "^${NAME_PREFIX}" || true); do
         log "destroying $name"
         virsh destroy "$name" >/dev/null 2>&1 || true
-        virsh undefine "$name" --nvram >/dev/null 2>&1 || virsh undefine "$name" >/dev/null 2>&1 || true
+        virsh undefine "$name" --nvram --tpm >/dev/null 2>&1 || virsh undefine "$name" --nvram >/dev/null 2>&1 || virsh undefine "$name" >/dev/null 2>&1 || true
     done
     rm -rf "$DISK_DIR" "$SEED_DIR"
-    ok "VM disks and cloud-init seeds wiped. Cached ISOs kept in $ISO_DIR."
+    # The Quickemu macOS guest is plain QEMU, not libvirt, so the loop above never saw it.
+    if pgrep -f -- "$MACOS_DIR" >/dev/null 2>&1; then
+        log "macOS guest (Quickemu) is still running -- shut it down, then re-run to wipe $MACOS_DIR"
+    else
+        rm -rf "$MACOS_DIR"
+    fi
+    ok "VM disks, cloud-init seeds and the Quickemu macOS guest wiped. Cached ISOs kept in $ISO_DIR."
 }
 
 cmd_clean_isos() {
@@ -368,10 +493,12 @@ cachyos) cmd_cachyos ;;
 ubuntu-desktop) cmd_ubuntu_desktop ;;
 ubuntu-server-manual) cmd_ubuntu_server_manual ;;
 ubuntu-server-auto) cmd_ubuntu_server_auto ;;
+windows) cmd_windows ;;
+macos) cmd_macos ;;
 list) cmd_list ;;
 clean) cmd_clean ;;
 clean-isos) cmd_clean_isos ;;
 ufw-allow) cmd_ufw_allow ;;
 ufw-revert) cmd_ufw_revert ;;
-*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
+*) die "usage: $0 {cachyos|ubuntu-desktop|ubuntu-server-manual|ubuntu-server-auto|windows|macos|list|clean|clean-isos|ufw-allow|ufw-revert}" ;;
 esac
