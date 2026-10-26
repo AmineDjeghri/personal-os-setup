@@ -106,4 +106,4 @@ Local or PR, check systematically:
 ## 4. PR Review Workflow
 
 §2 to gather/check out, run tests/lint, apply the §3 checklist, then post inline comments + a verdict (format and
-verdict rule: `references/review-output-template.md`). Receiving a review finding on your own code: `code-review-triage`.
+verdict rule: `references/review-output-template.md`).
