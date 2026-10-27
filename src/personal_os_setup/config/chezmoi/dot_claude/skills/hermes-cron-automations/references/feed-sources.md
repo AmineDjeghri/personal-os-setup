@@ -44,15 +44,20 @@ A descriptive User-Agent matters on community sites; an empty/default one is wha
 ## Verified per-site notes
 
 - **trendshift.io** (GitHub-trending lists): no RSS, no free API, no MCP server. There *is* a paid
-  "Signal" API (about $9/month), and `robots.txt` disallows `/api/` and `/apikeys/` — do not build on
-  that prefix. Every public listing page embeds `application/ld+json` → `ItemList` with 25 entries:
-  `name` (owner/repo), `description`, `codeRepository`, `programmingLanguage`, `dateCreated`,
-  `dateModified`, `keywords`. Verified on `/`, `/weekly`, `/monthly`, `/yearly` and `/live-mentions`.
-  `/daily` is a 404 — the daily view *is* the homepage; `/github-trending-repositories` carries no
-  JSON-LD (HTML parse only, skip it). `/live-mentions` is the valuable one for social signal: each
-  item carries `discussionUrl` pointing at the real X/Reddit/Hacker News post plus a freshness
-  timestamp — a sanctioned proxy for the X/Reddit signal that needs no cookies. Cadence: weekly for
-  `/weekly`, dedupe on the repo slug so only repos newly entering the list get reported.
+  "Signal" API (`/signal` answers 200; `/pricing` redirects; `/docs` is 404), and `robots.txt` disallows
+  `/api/` and `/apikeys/` — do not build on that prefix. Every public listing page embeds
+  `application/ld+json` → `ItemList` with 25 entries: `position`, `name` (owner/repo), `description`,
+  `codeRepository`, `programmingLanguage`, `dateCreated`, `dateModified` (no `keywords` in practice).
+  Verified on `/`, `/weekly`, `/monthly`, `/yearly` and `/live-mentions`. `/daily` is a 404 — the daily view
+  *is* the homepage; `/github-trending-repositories` carries no JSON-LD (re-verified 2026-10: it returns
+  200 with zero ld+json blocks, which the collector reports as a hard failure). `/live-mentions` is the
+  valuable one for social signal: each item carries `discussionUrl` pointing at the real X/Reddit/Hacker
+  News post plus a freshness timestamp — a sanctioned proxy for the X/Reddit signal that needs no cookies.
+  Cadence: weekly for `/weekly`, dedupe on the repo slug so only repos newly entering the list get reported.
+  **Stars are not in the payload**: fetch `/repos/{slug}` from the GitHub REST API (token from
+  `GITHUB_TOKEN`/`GH_TOKEN` or `gh auth token`; unauth is 60/h and dies after a couple of test runs) and
+  derive weekly momentum as the delta against the previous run's stored count, rather than scraping the
+  "Gained this week" card markup (only ~21 of 25 cards carry the `k`-suffixed number in text).
 
 ## Expected failure modes and the guardrail for each
 
