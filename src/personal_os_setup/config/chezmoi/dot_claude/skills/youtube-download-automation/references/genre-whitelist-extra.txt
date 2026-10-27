@@ -1,7 +1,7 @@
-# Genre whitelist supplement for the Beets addon
-# Merged with beets' bundled genres.txt at startup (whitelist: true)
+# Genre whitelist supplement (owned by the youtube-download-automation skill)
+# Complements genre-whitelist.txt (beets' list); entries here do not overlap with it
 # Sources: Spotify/EveryNoise genre catalog + regional descriptors + library-derived
-
+# Library tokens (language markers etc.) live here too: arabic, french r&b, quran recitation
 a cappella
 abstract
 abstract beats
@@ -1017,3 +1017,6 @@ yugoslav rock
 zillertal
 zim
 zolo
+arabic
+french r&b
+quran recitation

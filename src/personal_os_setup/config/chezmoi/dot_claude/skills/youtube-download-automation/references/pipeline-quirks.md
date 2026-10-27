@@ -31,8 +31,8 @@ The warning also fires when a previous run already produced the file and moved i
 
 ## Plan parsing & overrides coverage
 
-- YouTube video IDs match `[A-Za-z0-9_-]{11}` — hyphens AND underscores. A `\w{11}` regex silently misses IDs like `-ZvsGmYKhcU` or `_eTBcHE-xPQ`, producing false "extra override" alarms *and* false "missing" results. `scripts/validate_overrides.py` does the check properly.
-- **Plan index gaps = unavailable videos.** With `ignoreerrors`, failed entries are OMITTED from the listing (indices skip, e.g. [9], [34], [79]) rather than printed inline. Count unique IDs from the plan itself (deduped) — don't subtract from the playlist total.
+- YouTube video IDs match `[A-Za-z0-9_-]{11}` — hyphens AND underscores. A `\w{11}` regex silently misses IDs like `-ZvsGmYKhcU` or `_eTBcHE-xPQ`, producing false "extra override" alarms *and* false "missing" results. `scripts/plan_tools.py` does the check properly.
+- **Plan index gaps = unavailable videos.** With `ignoreerrors`, failed entries are OMITTED from the listing (indices skip, e.g. [9], [34], [79]); their IDs and reasons come from `ERROR:` lines, not list items. Count unique IDs from the plan itself (deduped) — don't subtract from the playlist total. `scripts/plan_tools.py` handles both.
 
 ## Searching for a video ID
 
