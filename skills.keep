@@ -1,5 +1,5 @@
-# Authored skills deliberately saved in the repo (one name per line; # comments ok).
 # Add one with: make skills-keep NAME=<name>. Audited by: make skills-status
+# Authored skills deliberately saved in the repo (one name per line; # comments ok).
 agent-skills-architecture
 claude-code-ops
 coding-workflow
@@ -13,6 +13,7 @@ github-repo-management
 hermes-cron-automations
 hermes-instance-audit
 hermes-session-recall
+report-pdf
 skill-deployment
 template-adoption
 youtube-download-automation
