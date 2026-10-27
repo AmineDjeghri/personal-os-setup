@@ -8,7 +8,7 @@ of the same genre, and a duplicated token splits every filter and every client f
 
 - Title Case, `;` as separator with **no space** (`Pop;Dance-Pop`).
 - Never emit a token containing `/` — Navidrome splits on `/`, so `R&B/Soul` becomes two wrong genres.
-- **Max 4 values per file.** The first value — the primary genre — always survives. A generic
+- **Max 4 values per file** (the single cap — sourcing and re-tag docs defer to it). The first value — the primary genre — always survives. A generic
   parent (`Pop`, `Rock`, `Electronic`, `World`) is dropped only when a more specific token in the
   same file covers it (`Pop` goes when `Dance-Pop` is present, stays when it is not).
 - Specific before generic: `Rai;Algerian Pop;World` is fine, `World;Rai` is not.
@@ -49,7 +49,7 @@ Do **not** add whitelist tokens the catalogue does not use (`chaabi`, `taarab`, 
 |---|---|
 | `Industrial`, `Industrial Rock` | `Industrial Metal` |
 | `Heavy Metal` | `Metal` |
-| `French Rnb`, `Contemporary R&B`, `Chillout R&B` | `R&B` |
+| `Contemporary R&B`, `Chillout R&B` | `R&B` |
 | `Euro Disco`, `Hi Nrg` | `Disco` |
 | `Diva House`, `Uk Funky` | `House` |
 | `Electro Pop` | `Electropop` |
