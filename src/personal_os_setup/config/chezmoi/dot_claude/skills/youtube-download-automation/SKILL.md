@@ -77,7 +77,8 @@ Rate limit is ~1 s/request, so a 50-video playlist takes minutes — run it in t
 
 Propose a genre in the §0.2 table as a short choice (broad / precise / none). Source it with
 `references/genre-sourcing.md`; format and allowed tokens are in `references/genre-vocabulary.md`.
-Fixing genres on files *already in the library* is a different, bulk task: `references/genre-retag.md`.
+Adding or fixing genres on files *already in the library* is a different, bulk task:
+`scripts/genre_tag.py` (dry run by default; merges last.fm genres, cap 4) — see `references/genre-retag.md`.
 
 ## 4. What is new in this playlist (no download)
 
@@ -109,7 +110,9 @@ Report only the delta and stop (§0 still applies). Treat an ID in `.archive.txt
 | `references/pipeline-quirks.md` | archive/resume/re-download, filename collisions, plan-index quirks, ffmpeg passes |
 | `references/yt-dlp-api-facts.md` | yt-dlp internals the script relies on: PP keys, runtime `outtmpl`, chapter splitting, info-dict → tag map |
 | `references/genre-sourcing.md` | choosing a genre at ingest: sources, limits, matching guard |
-| `references/genre-retag.md` | bulk genre fixes on existing files: writer ownership, `©gen` atoms, recount |
-| `references/genre-vocabulary.md` | canonical token set, merge map, never-write list, 4-value cap |
+| `references/genre-retag.md` | bulk genre merge on existing files: usage, merge policy, writer ownership, recount |
+| `references/genre-vocabulary.md` | format rules, marker rules, 4-value cap |
+| `references/genre-aliases.txt` | merge map + never-write tokens (machine-readable, used by `genre_tag.py`) |
 | `references/genre-whitelist.txt`, `genre-whitelist-extra.txt` | lowercase whitelists (beets' list; regional/Spotify supplement). The skill owns them |
+| `scripts/genre_tag.py` | bulk genre merge from last.fm/iTunes: dry run, `--apply`, `--restore`, resumable |
 | `scripts/plan_tools.py` | `delta` (what is new) and `coverage` (overrides vs plan); shared parser, exits 2 on empty parse |

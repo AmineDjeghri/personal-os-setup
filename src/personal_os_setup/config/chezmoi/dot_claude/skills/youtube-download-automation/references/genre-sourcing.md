@@ -34,6 +34,9 @@ Accept a lookup hit only when the credited artist equals the file's after normal
 (diacritics, `&` → `and`) **and** title similarity ≥ 0.60. A prefix test once matched
 *Travis – My Eyes* to Travis Scott and returned "Rock".
 
+For a whole library use `scripts/genre_tag.py` (`references/genre-retag.md`); this page is for
+choosing a genre by hand for a new video.
+
 ## Fetch hygiene
 
 - Cache every response on disk, keyed `<kind>.<artist>-<title>`.
@@ -42,8 +45,9 @@ Accept a lookup hit only when the credited artist equals the file's after normal
 ## The LLM adjudicates, it does not invent
 
 Whitelist survivors can still be wrong (`pop` on a metal track). The library's own tokens win
-over storefront wording (`Rap`, not `hip-hop/rap`). A **second value needs corroboration** —
-another source agrees, or one genre covers ≥ 35 % of the artist's catalogue. Don't pad.
+over storefront wording (`Rap`, not `hip-hop/rap`). With last.fm as the source, its weights are
+the corroboration: keep tags at or above the weight cutoff, up to the 4-value cap. Single-label
+sources (iTunes, Deezer) supply one value and need a second source before adding a second.
 
 ## Dead ends (don't retry)
 
