@@ -3072,31 +3072,31 @@ overridden by a <code>.env</code> file.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/personal_os_setup/settings.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">class</span><span class="w"> </span><span class="nc">ApplicationSettings</span><span class="p">(</span><span class="n">BaseEnvironmentSettings</span><span class="p">):</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="sd">"""Configuration for personal-os-setup.</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Values are read from environment variables and optionally</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    overridden by a ``.env`` file.</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    """</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="c1"># --- Runtime ---</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>        <span class="n">default</span><span class="o">=</span><span class="s2">"CRITICAL"</span><span class="p">,</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s2">"LOGGING_LEVEL"</span><span class="p">,</span> <span class="s2">"logging_level"</span><span class="p">),</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="n">description</span><span class="o">=</span><span class="s2">"Log level (TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL)"</span><span class="p">,</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="p">)</span>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-18"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-18" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-18"></a><span class="k">class</span><span class="w"> </span><span class="nc">ApplicationSettings</span><span class="p">(</span><span class="n">BaseEnvironmentSettings</span><span class="p">):</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-19"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-19" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-19"></a><span class="w">    </span><span class="sd">"""Configuration for personal-os-setup.</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-20"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-20" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-20"></a>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-21"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-21" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-21"></a><span class="sd">    Values are read from environment variables and optionally</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-22"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-22" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-22"></a><span class="sd">    overridden by a ``.env`` file.</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-23"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-23" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-23"></a><span class="sd">    """</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-24"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-24" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-24"></a>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-25"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-25" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-25"></a>    <span class="c1"># --- Runtime ---</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-26"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-26" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-26"></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-27"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-27" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-27"></a>        <span class="n">default</span><span class="o">=</span><span class="s2">"CRITICAL"</span><span class="p">,</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-28"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-28" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-28"></a>        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s2">"LOGGING_LEVEL"</span><span class="p">,</span> <span class="s2">"logging_level"</span><span class="p">),</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-29"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-29" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-29"></a>        <span class="n">description</span><span class="o">=</span><span class="s2">"Log level (TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL)"</span><span class="p">,</span>
+</span><span id="personal_os_setup.settings.ApplicationSettings--source--__span-0-30"><a id="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-30" name="personal_os_setup.settings.ApplicationSettings--source--__codelineno-0-30"></a>    <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
@@ -3149,13 +3149,13 @@ overridden by a <code>.env</code> file.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/personal_os_setup/settings.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseEnvironmentSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""Base settings for environment configuration."""</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span><span class="n">env_file</span><span class="o">=</span><span class="s2">".env"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="personal_os_setup.settings.BaseEnvironmentSettings--source--__span-0-12"><a id="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-12" name="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-12"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseEnvironmentSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+</span><span id="personal_os_setup.settings.BaseEnvironmentSettings--source--__span-0-13"><a id="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-13" name="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""Base settings for environment configuration."""</span>
+</span><span id="personal_os_setup.settings.BaseEnvironmentSettings--source--__span-0-14"><a id="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-14" name="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-14"></a>
+</span><span id="personal_os_setup.settings.BaseEnvironmentSettings--source--__span-0-15"><a id="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-15" name="personal_os_setup.settings.BaseEnvironmentSettings--source--__codelineno-0-15"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span><span class="n">env_file</span><span class="o">=</span><span class="s2">".env"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
