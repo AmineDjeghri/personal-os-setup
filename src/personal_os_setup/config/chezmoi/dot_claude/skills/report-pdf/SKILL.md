@@ -8,33 +8,35 @@ metadata:
 
 # PDF reports for heavy review tasks
 
-A pass that touches hundreds of files (genre, album, tags, playlists, naming) cannot be signed off
-from chat: the message carries the counts and the decision, the PDF carries the evidence and every
-path. Same artefact before a write (`nothing written yet — proposal`) and after it
-(`applied, N/N re-read`). Headless chromium, no LaTeX, no extra dependency.
+A pass that touches hundreds of items (files, records, config entries, dependencies, findings,
+renames) cannot be signed off from chat: the message carries the counts and the decision, the PDF
+carries the evidence and every item. Same artefact before a write (`nothing written yet — proposal`)
+and after it (`applied, N/N re-read`). Headless chromium, no LaTeX, no extra dependency. Domain-neutral:
+the spec's columns, labels and grouping key are whatever the task needs.
 
 ## When to Use
 
-- more than ~30 rows to review: per-item `old → new`, file lists, vocabulary or tag audits
+- more than ~30 rows to review: per-item `old → new`, file lists, bulk renames or migrations,
+  dependency or config audits, scan/review findings, metadata or tag audits
 - the user must approve before you write, or verify what you wrote afterwards
 - an audit whose whole value is the full enumeration
 - **Don't use for:** a handful of rows (answer in chat), or a list nobody will re-open
 
 ## Report shape
 
-Build these sections in this order — opening with methodology earns "how many files did you change?".
+Build these sections in this order — opening with methodology earns "how many items did you change?".
 
 1. **Subtitle** — state the state of the world in one line: `Nothing written yet — this is the proposal`
    or `Applied 27 Oct 2026, 03:35 · 214/214 re-read`.
-2. **Stat cards** — files changed, files scanned, result count, defects left (0 mixed, 0 lost).
+2. **Stat cards** — items changed, items scanned, result count, defects left (0 mixed, 0 lost).
 3. **What was wrong** — the defect in two or three sentences, with the evidence that proves it, and
    explicitly what it was *not* caused by when that was checked.
 4. **What was written** — one bullet per field: its source, its rule, and what was left untouched.
-5. **Change list** — one row per item: relative path, old value (red), new value (green), grouped by
-   the *resulting* value, never by source directory.
+5. **Change list** — one row per item: identifier (path, name, key), old value (red), new value
+   (green), grouped by the *resulting* value, never by where the item came from.
 6. **Still to do on your side** — the exact commands left to the user (resync, rescan), verbatim.
 
-Counts come from re-reading the files after the write, not from the earlier proposal.
+Counts come from re-reading the targets after the write, not from the earlier proposal.
 
 ## How to Run
 
@@ -54,18 +56,18 @@ uv run --no-project scripts/report_pdf.py spec.json --out /config/<task>-<date>.
 
 ```json
 {
-  "title": "Album restore — YouTube folders",
+  "title": "Dependency pin cleanup — services/*",
   "subtitle": "Applied 27 Oct 2026, 03:35 · 214/214 re-read",
-  "stats": [{"n": "214", "l": "files changed"}, {"n": "0", "l": "mixed-artist albums"}],
+  "stats": [{"n": "214", "l": "entries changed"}, {"n": "0", "l": "conflicts left"}],
   "sections": [
     {"type": "para", "title": "What was wrong", "text": "…"},
     {"type": "bullets", "title": "What was written", "items": ["…", "…"]},
     {"type": "table", "title": "Change list", "group_by": "after",
-     "columns": [{"key": "path", "label": "File", "cls": "p"},
-                 {"key": "before", "label": "Old album", "cls": "o"},
-                 {"key": "after", "label": "Album", "cls": "n"},
-                 {"key": "aa", "label": "Album artist"}],
-     "rows": [{"path": "Live/001 - x.m4a", "before": "…", "after": "…", "aa": "…"}]},
+     "columns": [{"key": "path", "label": "Item", "cls": "p"},
+                 {"key": "before", "label": "Old value", "cls": "o"},
+                 {"key": "after", "label": "New value", "cls": "n"},
+                 {"key": "note", "label": "Note"}],
+     "rows": [{"path": "services/api/pyproject.toml", "before": "httpx==0.24", "after": "httpx==0.27", "note": "…"}]},
     {"type": "table", "title": "Unchanged", "columns": [], "rows": []}
   ]
 }
