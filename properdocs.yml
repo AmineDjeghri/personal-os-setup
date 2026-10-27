@@ -91,7 +91,11 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - tables
@@ -99,6 +103,7 @@ markdown_extensions:
 nav:
   - Home: README.md
   - Documentation: docs/
+  - Developer guide: docs/developer/
   - Examples: docs/examples/
   - API Reference: package/
   - Changelog: CHANGELOG.md

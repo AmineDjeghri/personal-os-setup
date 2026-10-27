@@ -1,16 +1,12 @@
 # =============================================================================
 # Main Release
 # =============================================================================
-# Triggered on: push to main, PR merged to main, or manual trigger
+# Triggered on: push to main (a merged PR is a push) or manual trigger
 # =============================================================================
 name: "🚀 Release — Main"
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    types: [closed]
     branches:
       - main
   workflow_dispatch:
@@ -44,6 +40,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.ref }}  # the branch tip: release-version checks it is in sync with origin
 
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,55 +53,27 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Semantic Release — Bump Version & Tag
+      - name: make release-version (stable version, tag, GitHub release)
         id: semantic_release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_COMMIT_AUTHOR: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
         shell: bash
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          export PYTHONPATH="${PYTHONPATH}:."
-          # Disable git pre-commit hooks
-          git config core.hooksPath /dev/null
-          echo "::group::Semantic Release output"
-          NEW_VERSION=$(uv run semantic-release -v version --print | tr -d '[:space:]')
-          if [ -n "$NEW_VERSION" ] && ! git rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
-            uv run semantic-release -v version
-            {
-              echo "released=true"
-              echo "version=$NEW_VERSION"
-            } >> "$GITHUB_OUTPUT"
-          else
-            echo "released=false" >> "$GITHUB_OUTPUT"
-            echo "No releasable commits found — skipping release."
-          fi
-          echo "::endgroup::"
+        # Same target as a manual release (docs/developer/5.release.md): guards, semantic-release with
+        # git hooks disabled for its own commit, outputs released/version.
+        run: make release-version
 
-      - name: Unset Git Hooks Path
-        if: always()
-        shell: bash
-        run: |
-          # Re-enable git pre-commit hooks
-          git config --unset-all core.hooksPath || true
-
-      - name: Build Package
+      - name: make build-package
         if: steps.semantic_release.outputs.released == 'true'
         shell: bash
-        run: |
-          echo "::group::Build output"
-          make build-package
-          echo "::endgroup::"
+        run: make build-package
 
-      - name: Publish to GitHub Release
+      - name: make release-assets
         if: steps.semantic_release.outputs.released == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_ENTERPRISE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: |
-          VERSION="${{ steps.semantic_release.outputs.version }}"
-          export GH_HOST=$(echo "$GITHUB_SERVER_URL" | sed 's|https://||')
-          gh release upload "v${VERSION}" dist/*.whl dist/*.tar.gz --clobber
+        run: make release-assets
 
       - name: Cleanup Artifacts
         if: always()

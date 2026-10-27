@@ -13,6 +13,7 @@ include makefiles/test.mk
 include makefiles/clean.mk
 include makefiles/ci.mk
 include makefiles/build.mk
+include makefiles/release.mk
 include makefiles/vm.mk
 include makefiles/skills.mk
 
@@ -45,6 +46,9 @@ help: ## Show this help message
 	@echo ""
 	@echo "Build & Deploy:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/build.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Release:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/release.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Virtual Machines:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/vm.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

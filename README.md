@@ -125,7 +125,9 @@ Running the installation script from inside an existing clone updates that check
 instead of creating a separate `~/.personal-os-setup` copy, so the `personal-os-setup`
 command runs your local, editable checkout.
 
-Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+Developer guide: [setup](docs/developer/1.setup.md), [project structure](docs/developer/2.project-structure.md),
+[conventions](docs/developer/3.conventions.md), [testing](docs/developer/4.testing.md),
+[release](docs/developer/5.release.md). Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## What is this repo?
 

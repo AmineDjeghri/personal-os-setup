@@ -173,3 +173,6 @@ bin
 
 # VM images/ISOs for `make vm-*` targets (scripts/vm.sh)
 .vm/
+
+# macOS Finder metadata
+.DS_Store
