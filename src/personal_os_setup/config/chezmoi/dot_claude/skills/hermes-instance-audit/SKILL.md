@@ -1,6 +1,6 @@
 ---
 name: hermes-instance-audit
-description: "Audit a live Hermes install (skills, plugins, config), triage an HA add-on image update/changelog, or prune its source checkout."
+description: "Audit a live Hermes install: skills, plugins, config."
 version: 2.0.0
 author: Hermes Agent
 license: MIT
@@ -22,7 +22,6 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - "Why does the dashboard say X" · "why is context at X% / do these tools eat too much"
 - A pasted add-on/gateway BOOT LOG — "why is /dashboard/ dead" → boot-log triage below, depth in `references/addon-boot-log-triage.md` · "analyse the storage of this add-on" → `references/storage-and-cache-map.md`
 - "hermes update" · "is an update already running" · "the update looks stuck / the version didn't change" → depth in `references/update-lifecycle.md`
-- A pasted add-on changelog with "do we need to do something?" · "which add-on version am I on / is there a newer build?" · "why is the Hermes checkout dirty after a restart?" · "how do I clean space in the add-on / `.git` is huge" → "Add-on image update & checkout" below.
 - Not for installing, vendoring, merging or wiring skills → `agent-skills-architecture`.
 
 ## Hard rules
@@ -30,18 +29,6 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - **Approval gate**: with `approvals.mode: manual`, `terminal`/`execute_code` calls can sit at the consent gate and time out (BLOCKED). An audit is doable on file tools + read-only plain-shell one-liners: single `mkdir`/`cp`/`tar`/`find`/`diff`/`md5sum`/`grep` lines pass, while `execute_code`, `python -c`, heredocs and multi-line loops/scripts time out even when read-only. Keep shell work to one-liners; do the rest with file tools. **Never retry a blocked call** — report it and let the user say "prompt me again"; when the user does, re-issue the SAME call, which then runs (the gate was the problem, not the call). Never reach the same outcome through a substitute tool in the meantime.
 - `.env` is access-denied to `read_file` (credential store) — audit keys from memory/session context instead.
 - web_extract caches of big GitHub API JSON are ONE giant line: `read_file` cannot page them (no `next_offset`). Use `search_files` with context, or fetch a single release/tag endpoint (~60KB, fits one read).
-
-## Add-on image update & checkout (HA add-on wrapper)
-
-The image changes the wrapper; the wrapper's options decide whether the source checkout moves at all (distinct
-from `hermes update`). Procedure, cleanup answers and pitfalls: `references/addon-image-update-triage.md`;
-option → code-path table: `references/wrapper-internals.md`; ref/tag/stash pruning: `references/source-checkout-refs.md`.
-
-- **Lead with the verdict.** "No action" is the normal answer for a robustness-only changelog line — say it first plus the one or two facts that make it true. Don't walk the bullets, don't close with an upgrade menu.
-- **Read-only.** Never enable `auto_update`, edit `/data/options.json`, prune the checkout or touch the patch script. Cleanup is quoted as numbers and waits for a go-ahead (deleting refs/tags/stashes is its own approved action; never re-clone over a live install; never delete ALL tags).
-- **Check `hostname` before reading any option**: two Hermes add-ons can share one `/config`, each with its own `/data/options.json` and slug (`<sha16>-hermes-agent` = the agent container).
-- Pin the running version from the Supervisor API (`curl -s -H "Authorization: Bearer $SUPERVISOR_TOKEN" -o /tmp/self.json http://supervisor/addons/self/info`; `version == version_latest` = no build pending), never from `hermes --version`.
-- **A dirty checkout is expected:** the image rewrites `web/src/lib/api.ts` and `web/vite.config.ts` at every start (`HA-ADDON-*` markers). `git status` there means "is the patch applied?", not "did the user customise it?" — grep the marker before judging a file; stale `hermes-update-autostash` stashes are update bookkeeping.
 
 ## Inventory — key paths (`~/.hermes` = `$HERMES_HOME`)
 | Path | Meaning |
@@ -131,7 +118,4 @@ option → code-path table: `references/wrapper-internals.md`; ref/tag/stash pru
 - `references/skill-loading-resolution.md` — loading chain, root resolution, probes
 - `references/plugins-platforms-channels.md` — plugin/platform/channel taxonomy and rules
 - `references/skills-sync-and-bundling.md` — sync semantics, sweep one-liner, delete vs disable
-- `references/addon-image-update-triage.md` — add-on image/changelog triage, expected-dirty tree, cleanup answers
-- `references/wrapper-internals.md` — option → `/run.sh` code-path table, saved update channel, ingress patch markers
-- `references/source-checkout-refs.md` — pruning refs/tags/stashes: rules, sequence, restore
 - `scripts/check_bundled_manifest.py` — read-only manifest probe

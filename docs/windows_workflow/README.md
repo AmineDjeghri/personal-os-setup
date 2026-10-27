@@ -23,6 +23,7 @@ Table of Contents
         * [3.4. backup and restore WSL](#34-backup-and-restore-wsl)
         * [3.5. Uninstall WSL:](#35-uninstall-wsl)
     * [4. More (deprecated)](#4-more-deprecated)
+    * [5. Testing the Windows flow in a VM](#5-testing-the-windows-flow-in-a-vm)
 <!-- TOC -->
 
 Install the Personal-OS-Setup TUI [app](../../README.md#windows-11)
@@ -319,3 +320,51 @@ for Linux. Restart your computer.
     * If it's not your Wi-Fi (hotel/work Wi-Fi) and you have an ethernet port, you can always plug a router (example,
       HONOR ROUTER 3 WI-FI 6) and have your own private network. You can split the Wi-Fi into 2 access points like I
       mentioned it in the section above.
+
+## 5. Testing the Windows flow in a VM
+
+You can rehearse the whole Windows flow (installer script → TUI) in a disposable VM on any Linux host, the same way the
+Linux guests are tested. Windows ISOs can't be downloaded automatically (Microsoft licensing), so you bring your own.
+
+| Command                                      | Guest                                                                                               |
+|----------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `make vm-deps`                               | Run once first (installs `swtpm`, the emulated TPM; then log out/in for the `libvirt`/`kvm` groups) |
+| `WIN_ISO=/path/to/win11.iso make vm-windows` | Windows 11, UEFI + Secure Boot + TPM 2.0, manual install from your ISO                              |
+
+Manage the VM:
+
+| Command              | What it does                                                                                       |
+|----------------------|----------------------------------------------------------------------------------------------------|
+| `make vm-list`       | List this project's libvirt VMs and their state                                                    |
+| `make vm-clean`      | Destroy and undefine all this project's VMs and wipe their disks and TPM state (keeps cached ISOs) |
+| `make vm-clean-isos` | Delete the cached copy of your ISO under `.vm/isos/` (your original file is untouched)             |
+
+1. Download a Windows 11 ISO from [Microsoft's download page](https://www.microsoft.com/software-download/) (the checksum
+   shown there can be passed as `WIN_ISO_SHA256` to have it verified).
+2. On the Linux host, install the VM tooling once (includes `swtpm`, the emulated TPM Windows 11 requires), then log out
+   and back in for the libvirt/kvm groups:
+
+   ```bash
+   make vm-deps
+   ```
+
+3. Boot the VM from your ISO (a GUI console opens; click into it and press a key at *Press any key to boot from CD or
+   DVD*, then click through Windows setup):
+
+   ```bash
+   WIN_ISO=/path/to/win11.iso make vm-windows
+   ```
+
+   It uses UEFI + Secure Boot + an emulated TPM 2.0 (so no setup bypass is needed), a SATA disk and an e1000e NIC
+   (Windows' inbox drivers — no driver ISO). `WIN_VERSION=10` is a no-TPM fallback; `WIN_ISO_SHA256` verifies the ISO and `WIN_DISK_GB` sets the disk size (default 80, Windows 11 needs ≥ 64). If the VM has no internet, see
+   `make vm-ufw-allow` in [the VM section](../vm/README.md).
+4. Inside Windows, open PowerShell **as administrator** and run the one-liner from the
+   [Windows 11 install section](../../README.md#windows-11) (it runs `install_windows.ps1`: installs git/make/chezmoi
+   via winget, clones the repo, runs `make install` and `make run`).
+5. The TUI then starts — exercise the Packages tab, the WSL tab, etc. (WSL2 inside the VM additionally needs nested
+   virtualization enabled on the host, plus a reboot; the VM is a throwaway so that is fine.)
+6. Re-run `make vm-windows` to reopen/restart the VM; use the table above to list or clean it up.
+
+The automated half of this lives in CI: the `🪟 Integration Tests (Windows latest)` job runs
+`tests/integration/test_windows_tasks.py` (read-only checks of the winget/MS Store managers and WSL helpers) on a hosted
+Windows runner.

@@ -783,6 +783,9 @@ This next section is about controllers / routers add-ons :
     * Show offline devices and addons : Add a filter card that shows 'not_home' and 'unavailable' entities and addons. You need to go to an addon in devices, and enable the 'running' entity to be able to use it in the card.
     * When you rename a device, you can auto recreate the IDs. Changing the entity id doesn't propagate in scripts and automation so before changing the id of an entity, click on related, open in new tabs all the related stuff , change the id then change the id in the related stuff
     * Use labels to group entities. For example, an 'entity status' label and 'addon status' label to detect offline devices and addons without the need to add each device in the condition. You need the
+    * After changing which entities carry a label, reload the Label State helper's entry (**Settings -> Devices & services -> Label State -> ⋮ -> Reload**) — removing a label is not picked up live, so the helper keeps its old value until then.
+    * Every so often, review the entities you disabled earlier (or that an integration ships disabled): **Settings -> Devices & services -> Entities -> filter "Disabled"**. Some are genuinely useful (diagnostics, extra sensors, buttons) and would otherwise never appear.
+    * Devices with the Home Assistant **companion app** also get a `device_tracker` entity, which can end up with the same name as the one from the **Freebox** integration. I disable the companion-app tracker for my phones and rely on the Freebox one, so each person/device has a single name.
 
 ## AdGuard Home address naming resolution using the router (Freebox)
 
@@ -801,6 +804,7 @@ Who hands out the addresses, and who publishes the names:
 * Check the address here
 * Don't touch the IPV6 settings.
 * ⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.
+* Forget stale LAN devices in the **Free mobile app** (Freebox OS -> devices -> forget), e.g. after a bridge/MAC change, a new VM or a replaced phone, so the router re-detects them with their current MAC/IP instead of keeping the old entry.
 * Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)
 
 ### Sync the names from the Freebox (script + cron)

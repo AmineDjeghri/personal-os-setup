@@ -6,87 +6,113 @@ metadata:
     origin: repo:personal-os-setup
 ---
 
-# Music ingest & YouTube download automation (yt-dlp)
+# Music ingest & YouTube download (yt-dlp)
 
-## Trigger
-Any task that drives **yt-dlp** — the YouTube → `/media/music` → Navidrome/beets pipeline below, playlist or single-link downloads, per-video metadata, chapter splitting, debugging the downloader script — and any change to the downloader script itself. Also: "here's a playlist/video link, what is new in it?" (§3) and "which genre is this track?" (§4).
+Drives the YouTube → music library → Navidrome/beets pipeline: playlist or single-link
+downloads, per-video metadata, chapter splitting, and changes to the downloader script.
+Also answers "what is new in this playlist?" (§4) and "which genre is this track?" (§2).
 
 ## 0. Gate — ask before you touch anything (MANDATORY)
 
-This pipeline writes into the user's music library, and its script is a file in a repo. **Nothing downloads and nothing gets edited until the user has seen the proposal and answered.**
+This pipeline writes into the user's music library and its script is a repo file.
+**Nothing downloads and nothing is edited until the user has seen the proposal and answered.**
 
-- **Check for an existing import BEFORE you plan.** Grep the video ID in `.archive.txt` and `overrides.json`, then look for the file under `/media/music/YouTube/`. Already imported → the reply is its verified state (library path + `ffprobe` tags), **not** a metadata proposal; only propose when something is genuinely missing or wrong. The plan's status column is not an archive check.
-- **Say what governed the run, in one line.** Name this skill and what you did not do (no download / no edit / no git).
-- **Before a download — a single link included.** `--plan` first, then show the proposed metadata (`artist | title | album | year | genre | folder`) and ask for the go-ahead. There is no "small enough to skip the gate" case: a one-video link is exactly where a wrong `folder` or a guessed artist is cheapest to prevent and most annoying to undo.
-- **Before editing `yt_dl.py`, the README or the overrides format.** Say what changes, why, and what it affects, then wait. A link that exposes a gap in the pipeline ("genre: rai" when nothing can write a genre) is a **proposal**, not a mandate to patch the pipeline.
-- **Before deleting state.** `.archive.txt` and the library folder are what decide whether a re-run downloads or no-ops — warn explicitly, then confirm.
-- **Before git.** commit / push / PR need explicit per-action approval (repo `AGENTS.md`); a download run never commits.
-- **A timed-out approval prompt is not consent.** Stop; the user re-triggers it.
+1. **Check for an existing import first.** Grep the video ID in `.archive.txt` and `overrides.json`, then look for the file under the library. Already imported → reply with its verified state (path + `ffprobe` tags), not a metadata proposal. Propose only what is genuinely missing or wrong.
+2. **Before any download — a single link included** — run `--plan`, show `artist | title | album | year | genre | folder`, and wait for the go-ahead. No "small enough to skip" case: a one-video link is where a wrong `folder` or guessed artist is cheapest to prevent.
+3. **Before editing `yt_dl.py`, its README or the overrides format**, say what changes, why and what it affects, then wait. A link that exposes a pipeline gap is a proposal, not a mandate to patch it.
+4. **Before deleting state** (`.archive.txt`, a library folder), warn that it decides whether a re-run downloads or no-ops, then confirm.
+5. **Git:** commit/push/PR need explicit per-action approval (repo `AGENTS.md`). A download run never commits.
+6. A timed-out prompt is not consent. Stop; the user re-triggers.
 
-## 1. The pipeline (concrete instance)
+Close every reply with one line naming what governed the run and what you did *not* do (no download / no edit / no git).
 
-Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`.
+## 1. The pipeline
 
-- `yt_dl.py` carries a PEP 723 header → run it as **`uv run --no-project yt_dl.py …`** from that folder. `--no-project` is load-bearing: the folder sits inside a uv project, and bare `uv run` would bind to that project's env instead of the script's own deps.
-- State lives next to the script: `.archive.txt` (downloaded video IDs), `.staging/` (download target, OUTSIDE the watched root), `overrides.json` (the metadata decisions), `downloads.log`. That folder's `README.md` is the **published** doc for the format and naming rules — no live/private specifics in it (no real add-on slugs, host paths, hostnames).
-- Flow: ⓪ duplicate check — ID in `.archive.txt` / `overrides.json` / a file already under `/media/music/YouTube/` (a hit ends the task: report state, or propose only the specific defect) → ① `yt_dl.py --plan <url>` → ② the agent reads the plan and writes `overrides.json` (full map on first run, delta for new videos — the script parses nothing, the LLM is 100 % of the metadata decisions) → ③ **confirm with the user (§0)** → ④ `yt_dl.py <url> --overrides overrides.json [--max N] [--log downloads.log]` → ⑤ verify.
-- Downloads land in `/media/music/YouTube/<folder>/NN - Artist - Title.m4a` with tags embedded by the script; the finished staging folder is moved into the library with one rename so the beets watcher imports it whole.
-- Rate limits: ~1 s/request — a 50-video playlist takes minutes. Launch those with `background=true` + `notify_on_complete=true`, then report.
+Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`. Its `README.md` is the **published** format doc — no private specifics in it (host paths, hostnames, add-on slugs).
 
-## 2. The metadata decisions (all of them are the agent's)
+**Run it with `uv run --no-project yt_dl.py …` from that folder.** `--no-project` is load-bearing: the folder sits inside a uv project, and bare `uv run` would bind to that project's env instead of the script's PEP 723 deps.
+
+| Path | Role |
+|---|---|
+| `.archive.txt` | downloaded video IDs; decides whether a re-run downloads or no-ops |
+| `overrides.json` | the metadata decisions, keyed by video ID |
+| `.staging/` | download target, gitignored, outside the watched library |
+| `downloads.log` | optional `--log` output |
+| `LIBRARY_ROOT` | **hard-coded `/media/music` in `yt_dl.py`** (no flag, no env var). Finished files land in `<LIBRARY_ROOT>/YouTube/<folder>/NN - Artist - Title.m4a`, tags embedded by the script, moved in with one rename so beets imports the folder whole |
+
+**Where it runs matters.** `/media/music` exists on the media server / add-on container, not on a
+dev workstation. Before any download run `ls -ld /media/music`. If it is missing the script still
+downloads into `.staging/`, then fails at the final move (`PermissionError`) and leaves the files
+staged — surface this at the gate and let the user choose (create the path, or a `--library-root`
+change to `yt_dl.py`, itself a §0.3 proposal). Never `sudo mkdir` on your own.
+
+**Flow:**
+
+1. Duplicate check (§0.1).
+2. `yt_dl.py --plan <url>` (read-only).
+3. Write `overrides.json` (full map on first run, delta afterwards). The script parses nothing; the agent makes 100 % of the metadata decisions (§2).
+4. `scripts/plan_tools.py coverage plan.txt overrides.json` must report no MISSING.
+5. **Confirm with the user (§0.2).**
+6. `yt_dl.py <url> --overrides overrides.json [--max N] [--log downloads.log]`. Smoke-test with `--max 1` first.
+7. Verify (§5).
+
+Rate limit is ~1 s/request, so a 50-video playlist takes minutes — run it in the background and report on completion.
+
+## 2. Metadata decisions
 
 | Field | Rule |
 |---|---|
-| `artist` | The performer, not the channel — live-title channels are uploaders, not artists. |
-| `title` | The original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite, never translate; keep `(Live …)` and venue info. |
-| `album` | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist collects `Album contains "Live"` — an album without "Live" silently drops out of it. |
+| `artist` | The performer, not the channel. Live-title channels are uploaders, not artists. |
+| `title` | Original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite or translate; keep `(Live …)` and venue info. |
+| `album` | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist matches `Album contains "Live"` — an album without "Live" silently drops out of it. |
 | `year` | Concert year when it differs from the upload year. |
-| `genre` | From the `"genre"` field in `overrides.json` (e.g. `"rai"`). With **no** genre override, **no genre tag is written at all** — the script neutralises the metadata PP's fallback chain, so YouTube's *category* ("People & Blogs", "Sports") can never land in the tag again. Never hand-tag a file the pipeline owns. |
-| `folder` | **Set it explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the documented `Singles` default rarely fires and you get a folder named after the video. Playlists: folder = playlist title. Non-music clips: `Other`. |
+| `genre` | Optional. Title Case, `;` separator with no space (`Rock;Pop`), mapped onto `references/genre-vocabulary.md`. **No override → no genre tag at all** (the script neutralises yt-dlp's category fallback). Never hand-tag a file the pipeline owns. Sourcing: `references/genre-sourcing.md`. |
+| `folder` | Set it **explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the `Singles` default rarely fires. Playlists: folder = playlist title. Non-music clips: `Other`. |
 | `split` | `true` only for videos with YouTube chapters that should become tracks. |
 
-- **Non-music clips (entrances, chants, interviews, fireworks…) are NEVER classified alone**: list them with a proposed handling and wait for the confirmation before setting `album`/`folder` to `Other`.
+- **Non-music clips** (entrances, chants, interviews, fireworks…) are never classified alone: list them with a proposed handling and wait for confirmation before using `Other`.
 - A video the user labels by genre or occasion is a metadata hint, not permission to change the code that writes it.
 
-## 3. What is new in this playlist (no download)
+## 3. Genre
 
-1. Capture the read-only plan: `uv run --no-project yt_dl.py --plan <playlist-url> > plan.txt` (from the pipeline folder).
-2. Set-diff the plan's video IDs against `.archive.txt` **and** `overrides.json`. An ID in either is already handled — report its state, don't re-propose it.
-3. Report only the delta and stop; the §0 gate applies before any download.
+Propose a genre in the §0.2 table as a short choice (broad / precise / none). Source it with
+`references/genre-sourcing.md`; format and allowed tokens are in `references/genre-vocabulary.md`.
+Adding or fixing genres on files *already in the library* is a different, bulk task:
+`scripts/genre_tag.py` (dry run by default; merges last.fm genres, cap 4) — see `references/genre-retag.md`.
 
-Run `scripts/playlist_delta.py plan.txt <pipeline_dir>` rather than eyeballing — it implements the pitfalls below and prints declared/listed/duplicate/unavailable/new counts.
+## 4. What is new in this playlist (no download)
 
-- **The plan index is right-aligned and space-padded (`[  1]`)**, so `^\[(\d+)\]` matches nothing and you report "0 new" on a playlist that has new items. Parse with `^\[\s*(\d+|\?)\]` (a single-video plan prints `[  ?]`). Treat a zero-new result as suspect until the regex is re-checked — a silent false negative is the most damaging answer here.
-- A hand-curated playlist can list the **same video twice**: compare unique IDs and report the duplicate count separately, never as new.
-- Unavailable/private videos are not list items — the plan prints them with ID and reason in a trailing error block, and the declared count exceeds the listed count by exactly that number. Never count them as new, never invent a replacement.
-- If `/media/music/...` is not mounted in the container you run in, `.archive.txt` + `overrides.json` still decide the delta; an empty mount does not mean nothing was downloaded.
-- When only some items are new, the canonical ingest is a re-run of the **same playlist URL** (the archive makes it incremental and derives the playlist folder); a bare video URL makes `folder` default to the video's own title.
+```bash
+# from the pipeline folder
+uv run --no-project yt_dl.py --plan <playlist-url> > plan.txt
+python3 <skill>/scripts/plan_tools.py delta plan.txt .
+```
 
-## 4. Sourcing the genre (and sanity-checking other tags)
+Report only the delta and stop (§0 still applies). Treat an ID in `.archive.txt` **or** `overrides.json` as already handled — report its state, don't re-propose it. The script handles the traps below; treat a "0 new" on a non-trivial playlist as suspect.
 
-Check in order, prefer the earliest that answers:
-1. **Apple/iTunes Search API** — `https://itunes.apple.com/search?term=<artist+title>&entity=song` → `primaryGenreName`. No key; the value Apple Music shows.
-2. **Shazam** song page → "Genres".
-3. **SoundCloud** — the uploader's own free-text tag (e.g. "Electro", "Chanson électronique").
-4. **Deezer** — `https://api.deezer.com/album/<id>` → `genres.data`.
-5. **The artist's own press sheet / bio** for the *style* (e.g. "melodic techno and progressive house").
-
-- **Apple's `primaryGenreName` can be the storefront country** (e.g. "France"), not a genre — it can appear on one track of a release while another returns the real genre. Never write a country name into a genre tag; corroborate with a second source.
-- **Deezer's `genres` array is routinely empty** even for a properly released track — "not labelled here", not "no genre".
-- Aggregator labels are broad (Electronic); the artist's own words are the style. Pick per what the user asked for and match the library's convention — short and lowercase (`rai`, `electronic`); grep `overrides.json` for established values before inventing one.
-- The pipeline writes a genre only when one is explicitly supplied (§2) — confirm before promising one.
-- Present the genre as a short choice (broad label vs precise style vs none) in the §0 proposal; nothing is written or downloaded until the user answers.
+- The plan index is right-aligned and space-padded (`[  1]`, `[  ?]` for a single video), so `^\[(\d+)\]` matches nothing and falsely reports "0 new".
+- A hand-curated playlist can list one video twice: report duplicates apart, never as new.
+- Unavailable/private videos are not items; the declared count exceeds the listed count by that number. Never count them as new or invent a replacement.
+- If the library mount is absent, `.archive.txt` + `overrides.json` still decide the delta.
+- When only some items are new, ingest by re-running the **same playlist URL** (the archive makes it incremental and keeps the playlist folder); a bare video URL makes `folder` default to the video's title.
 
 ## 5. Verify before reporting
 
-- Files are under `/media/music/YouTube/…`, **not** left in `.staging/`; spot-check the embedded tags of one file (`ffprobe -v quiet -show_entries format_tags -of default=nw=1 <file>`), genre included when a genre was requested.
-- The beets add-on log shows the import (`ha_get_logs` source=supervisor slug=`<beets add-on>`); without beets the files still reach Navidrome on its own scan.
-- Report downloads and failures: failed/unavailable videos grouped by reason with counts + video IDs, never silently dropped, never invented.
-- Archive file present after success; a re-run downloads only new videos.
+- Files are under `<LIBRARY_ROOT>/YouTube/…`, **not** left in `.staging/`. Spot-check one file: `ffprobe -v quiet -show_entries format_tags -of default=nw=1 <file>` (genre included when one was requested).
+- `.archive.txt` is updated; a re-run downloads only new videos.
+- With beets installed, its log shows the import; without it, Navidrome picks the files up on its own scan.
+- Report failed/unavailable videos grouped by reason, with counts and IDs — never silently dropped, never invented.
 
 ## 6. References
 
-- `references/yt-dlp-api-facts.md` — verified yt-dlp internals: PP key names, runtime `outtmpl` dict, `ignoreerrors`, chapter splitting, and which info-dict field feeds which tag.
-- `references/pipeline-quirks.md` — archive/resume/re-download, filename collisions, plan-index quirks, override coverage checks.
-- `scripts/validate_overrides.py` — overrides-vs-plan coverage check (usage in the script docstring).
-- `scripts/playlist_delta.py` — plan-vs-archive delta (§3).
+| File | Content |
+|---|---|
+| `references/pipeline-quirks.md` | archive/resume/re-download, filename collisions, plan-index quirks, ffmpeg passes |
+| `references/yt-dlp-api-facts.md` | yt-dlp internals the script relies on: PP keys, runtime `outtmpl`, chapter splitting, info-dict → tag map |
+| `references/genre-sourcing.md` | choosing a genre at ingest: sources, limits, matching guard |
+| `references/genre-retag.md` | bulk genre merge on existing files: usage, merge policy, writer ownership, recount |
+| `references/genre-vocabulary.md` | format rules, marker rules, 4-value cap |
+| `references/genre-aliases.txt` | merge map + never-write tokens (machine-readable, used by `genre_tag.py`) |
+| `references/genre-whitelist.txt`, `genre-whitelist-extra.txt` | lowercase whitelists (beets' list; regional/Spotify supplement). The skill owns them |
+| `scripts/genre_tag.py` | bulk genre merge from last.fm/iTunes: dry run, `--apply`, `--restore`, resumable |
+| `scripts/plan_tools.py` | `delta` (what is new) and `coverage` (overrides vs plan); shared parser, exits 2 on empty parse |

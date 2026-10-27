@@ -1,6 +1,6 @@
 [project]
 name = "personal-os-setup"
-version = "2.17.0"
+version = "2.19.0"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
 requires-python = ">=3.14,<3.16"
@@ -8,7 +8,7 @@ dependencies = [
     # Engineering
     "textual==8.2.8",
     "pydantic==2.14.1",
-    "pydantic-settings==2.15.0",
+    "pydantic-settings==2.16.0",
     "loguru==0.7.3",
     "PyYAML==6.0.3",
     "build==1.6.1", # For building some aur packages like rivalcfg-gui
@@ -25,18 +25,18 @@ dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "pytest-xdist==3.8.0",
-    "pre-commit==4.6.2",
-    "ruff==0.17.0",
+    "pre-commit==4.7.0",
+    "ruff==0.17.1",
     "python-semantic-release==10.7.0",
 ]
 
 docs = [
     "properdocs==1.6.7",
     "mkdocs-material==9.7.7",
-    "mkdocstrings==1.0.6",
+    "mkdocstrings==1.0.8",
     "mkdocs-mermaid2-plugin==1.2.3",
     "mkdocs-gen-files==0.6.1",
-    "mkdocstrings-python==2.0.9",
+    "mkdocstrings-python==2.0.10",
     "mkdocs-same-dir==0.1.5",
     "mkdocs-exclude==1.0.2",
     "mkdocs-literate-nav==0.6.3",

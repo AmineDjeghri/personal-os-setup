@@ -5,9 +5,19 @@ runs:
   using: 'composite'
   steps:
 
-
     - name: Install Python Dependencies
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         make install-uv
         make install-dev
+
+    # windows-latest has no GNU make/uv: pin setup-uv (no floating major tag), then run what `make install-dev` runs.
+    - name: Install uv (Windows)
+      if: runner.os == 'Windows'
+      uses: astral-sh/setup-uv@v10.3.0
+
+    - name: Install Python Dependencies (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: uv sync --all-groups

@@ -8,7 +8,7 @@
       "skillPath": "skills/autonomous-ai-agents/claude-code/SKILL.md",
       "skillFolderHash": "cc2e05d23617439d9584568a76cb3b933e21bb24",
       "installedAt": "2026-10-18T23:18:05.114Z",
-      "updatedAt": "2026-10-18T23:18:05.114Z"
+      "updatedAt": "2026-10-26T23:22:12.783Z"
     },
     "differential-review": {
       "source": "trailofbits/skills",
@@ -17,7 +17,7 @@
       "skillPath": "plugins/differential-review/skills/differential-review/SKILL.md",
       "skillFolderHash": "09ff02c96f84ad4b98184bcd5efae5b218caa910",
       "installedAt": "2026-10-18T23:18:08.357Z",
-      "updatedAt": "2026-10-18T23:18:08.357Z"
+      "updatedAt": "2026-10-26T23:22:14.946Z"
     },
     "find-skills": {
       "source": "vercel-labs/skills",
@@ -26,25 +26,130 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-10-18T23:18:09.096Z",
-      "updatedAt": "2026-10-18T23:18:09.096Z"
+      "updatedAt": "2026-10-26T23:22:15.812Z"
     },
     "hermes-agent": {
       "source": "NousResearch/hermes-agent",
       "sourceType": "github",
       "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
       "skillPath": "skills/autonomous-ai-agents/hermes-agent/SKILL.md",
-      "skillFolderHash": "d123016525748ee307c832fd747994896db8d882",
+      "skillFolderHash": "3aa4215715ecfdc3b2f4eb8faa9d91f84892f1fe",
       "installedAt": "2026-10-18T23:18:18.837Z",
-      "updatedAt": "2026-10-18T23:18:18.837Z"
+      "updatedAt": "2026-10-26T23:22:24.118Z"
     },
     "hermes-agent-skill-authoring": {
       "source": "NousResearch/hermes-agent",
       "sourceType": "github",
       "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
       "skillPath": "skills/software-development/hermes-agent-skill-authoring/SKILL.md",
-      "skillFolderHash": "796e6ba601e650c93d8c8b83591078453e3dd602",
+      "skillFolderHash": "d2f486cb4f9445f7ec3c2de55b321ecf83fc52fb",
       "installedAt": "2026-10-18T23:18:28.125Z",
-      "updatedAt": "2026-10-18T23:18:28.125Z"
+      "updatedAt": "2026-10-26T23:22:32.814Z"
+    },
+    "diagnosing-bugs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "skillFolderHash": "5fdd6cc53385395441910b026c72d71768e993d4",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.621Z",
+      "updatedAt": "2026-10-26T23:25:34.621Z"
+    },
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
+      "skillFolderHash": "eedaf2562c83155115e9c649fa3ecaac2e10e81d",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.621Z",
+      "updatedAt": "2026-10-26T23:25:34.621Z"
+    },
+    "tdd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/tdd/SKILL.md",
+      "skillFolderHash": "667dbdd00c09d0e2189e082986e6a4d61a67c2a6",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.622Z",
+      "updatedAt": "2026-10-26T23:25:34.622Z"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "3df14e2d3a89459bf300614be9247e3ce74798f8",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.622Z",
+      "updatedAt": "2026-10-26T23:25:34.622Z"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grilling/SKILL.md",
+      "skillFolderHash": "28aceb4c9567b985cb47f7db88cf23c9f33af8b8",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.622Z",
+      "updatedAt": "2026-10-26T23:25:34.622Z"
+    },
+    "handoff": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/handoff/SKILL.md",
+      "skillFolderHash": "ce24892bd2d4b9e7fd5ac9b95c03175e18bef388",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-26T23:25:34.622Z",
+      "updatedAt": "2026-10-26T23:25:34.622Z"
+    },
+    "home-assistant-best-practices": {
+      "source": "homeassistant-ai/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/homeassistant-ai/skills.git",
+      "skillPath": "skills/home-assistant-best-practices/SKILL.md",
+      "skillFolderHash": "bf3311c7b07dcb61c419498068b971a2cfc78350",
+      "installedAt": "2026-10-26T23:40:02.103Z",
+      "updatedAt": "2026-10-26T23:40:02.103Z"
+    },
+    "modern-python": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/trailofbits/skills.git",
+      "skillPath": "plugins/modern-python/skills/modern-python/SKILL.md",
+      "skillFolderHash": "e84fa2b3a076b4333e4cc6187510f2b180eed427",
+      "installedAt": "2026-10-26T23:40:04.114Z",
+      "updatedAt": "2026-10-26T23:40:04.114Z"
+    },
+    "bash-script-validator": {
+      "source": "akin-ozer/cc-devops-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/akin-ozer/cc-devops-skills.git",
+      "skillPath": "devops-skills-plugin/skills/bash-script-validator/SKILL.md",
+      "skillFolderHash": "2db3868057e1952e1c7155c06198db512536b0cc",
+      "installedAt": "2026-10-26T23:40:06.292Z",
+      "updatedAt": "2026-10-26T23:40:06.292Z"
+    },
+    "github-actions-validator": {
+      "source": "akin-ozer/cc-devops-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/akin-ozer/cc-devops-skills.git",
+      "skillPath": "devops-skills-plugin/skills/github-actions-validator/SKILL.md",
+      "skillFolderHash": "323fd8190df28d1848530880fdf6df7db756e38c",
+      "installedAt": "2026-10-26T23:40:06.293Z",
+      "updatedAt": "2026-10-26T23:40:06.293Z"
+    },
+    "makefile-validator": {
+      "source": "akin-ozer/cc-devops-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/akin-ozer/cc-devops-skills.git",
+      "skillPath": "devops-skills-plugin/skills/makefile-validator/SKILL.md",
+      "skillFolderHash": "5546ac45b6cbacd5a2496d714aaa429edb5e3eb3",
+      "installedAt": "2026-10-26T23:40:06.293Z",
+      "updatedAt": "2026-10-26T23:40:06.293Z"
     }
   },
   "dismissed": {}
