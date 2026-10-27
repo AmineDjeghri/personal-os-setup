@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v2.19.0 (2026-10-27)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic-settings to v2.16.0 (#138)
+  ([#138](https://github.com/AmineDjeghri/personal-os-setup/pull/138),
+  [`0bdefe9`](https://github.com/AmineDjeghri/personal-os-setup/commit/0bdefe9a5402776fcd8c1acb4431b671c44b3bfd))
+
+### Documentation
+
+- **skills**: One writer for genre tags, and no bare markers after a drop (#141)
+  ([#141](https://github.com/AmineDjeghri/personal-os-setup/pull/141),
+  [`7d949d9`](https://github.com/AmineDjeghri/personal-os-setup/commit/7d949d90442fbe0c8df876c001e2d60619605a5a))
+
+### Features
+
+- Shutters dusk automation (#140)
+  ([#140](https://github.com/AmineDjeghri/personal-os-setup/pull/140),
+  [`ea0c2eb`](https://github.com/AmineDjeghri/personal-os-setup/commit/ea0c2ebfe78b8e4e99d2e00d8d930fd7371c37ac))
+
+- Skills governance 2 (#139) ([#139](https://github.com/AmineDjeghri/personal-os-setup/pull/139),
+  [`bc0e403`](https://github.com/AmineDjeghri/personal-os-setup/commit/bc0e403b366db3baeee23cd41f36b844cd79cfc4))
+
+
 ## v2.18.0 (2026-10-26)
 
 ### Documentation
