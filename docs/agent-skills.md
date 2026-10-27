@@ -13,16 +13,17 @@ what skills this repo provides, how they get onto a machine, and how to add or c
 
 | Layer           | What it is                                           | Source of truth                                                                     | Lands in           | Reaches                 |
 |-----------------|------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------|-------------------------|
-| **Authored**    | Skills you write and keep                            | `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (listed in `skills.keep`) | `~/.claude/skills` | Claude Code and Hermes  |
-| **Third-party** | Skills from other repos, installed with `npx skills` | `third-party-skills.lock.json` (repo root)                                          | `~/.claude/skills` | Claude Code and Hermes  |
+| **Authored**    | Skills you write and keep                            | `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (listed in `skills.keep`) | `~/.claude/skills` + `~/.agents/skills` | Claude Code, Codex and Hermes |
+| **Third-party** | Skills from other repos, installed with `npx skills` | `third-party-skills.lock.json` (repo root)                                          | `~/.claude/skills` + `~/.agents/skills` | Claude Code, Codex and Hermes |
 | **Repo-local**  | Runbooks for working on this repo only               | `.claude/skills/` (+ `.agents/skills/` symlinks)                                    | read in place      | whoever opens this repo |
 
-Hermes reads `~/.claude/skills` too, so one deploy serves both agents. Never put the same skill name in
+Authored skills deploy once into `~/.claude/skills`; per-skill links in `~/.agents/skills` expose
+them to Codex. Hermes reads `~/.claude/skills` too, so no extra Hermes copy is needed. Never put the same skill name in
 `~/.hermes/skills` as well: the name becomes ambiguous and Hermes refuses to load it (`make skills-status` flags it).
 
 ## Skill catalog
 
-### Authored skills (16)
+### Authored skills (17)
 
 General workflow:
 
@@ -58,9 +59,10 @@ Media:
 
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `report-pdf` | Creating PDF reports with the shared report workflow |
 | `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
-### Third-party skills (11)
+### Third-party skills (16)
 
 Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 
@@ -77,6 +79,11 @@ Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 | `claude-code`                  | `NousResearch/hermes-agent` | Delegating coding work to the Claude Code CLI                                    |
 | `hermes-agent`                 | `NousResearch/hermes-agent` | Using, configuring and extending Hermes Agent                                    |
 | `hermes-agent-skill-authoring` | `NousResearch/hermes-agent` | Writing in-repo `SKILL.md` files                                                 |
+| `home-assistant-best-practices` | `homeassistant-ai/skills` | Home Assistant configuration practices |
+| `modern-python` | `trailofbits/skills` | Modern Python project tooling |
+| `bash-script-validator` | `akin-ozer/cc-devops-skills` | Validating Bash scripts |
+| `github-actions-validator` | `akin-ozer/cc-devops-skills` | Validating GitHub Actions workflows |
+| `makefile-validator` | `akin-ozer/cc-devops-skills` | Validating Makefiles |
 
 ### Repo-local skills (9)
 
@@ -103,14 +110,16 @@ Open the **Sync dotfiles** tab, expand `.claude`, and select the **whole `.claud
 | Button                 | What it does                                                                                                                                                         |
 |------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | diff selected          | Shows what would change in `~/.claude`                                                                                                                               |
-| apply selected         | Copies the authored skills to `~/.claude/skills` and runs the third-party replay script                                                                              |
+| apply selected         | Copies authored skills, links them for Codex, and replays third-party skills for Claude Code and Codex                                                                              |
 | re-add selected        | Pulls a skill you edited live back into the repo's source tree                                                                                                       |
 | chezmoi: clean backups | (action button above the list) Deletes the `<name>_<timestamp>_backup` copies that earlier applies left next to managed files, including those in `~/.claude/skills` |
 
 Things to know:
 
-- **Select the folder.** The replay script (`run_after_replay-third-party-skills.sh`) only runs when its own
-  entry is selected. Selecting a single file applies that file and silently skips the script.
+- **Select the folder.** The authored link script (`run_after_zz-link-authored-skills.sh`) and replay script
+  (`run_after_replay-third-party-skills.sh`) only run when their own entries are selected. Selecting a
+  single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node
+  (`npx`) and `jq`. Optional replay logs `SKIPPED` if tooling is missing and records no successful install.
 - **It never deletes.** A skill removed from the repo stays in `~/.claude/skills` until you delete it by hand.
 - **Each apply leaves backups.** Before overwriting, it copies every selected file to
   `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-diff` then reports `DIFFERS`. Use
@@ -137,17 +146,19 @@ To keep a skill that already exists live (for example one an agent created), run
 ### From another repo (third-party)
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy
 make skills-thirdparty-save     # copy the live lock into third-party-skills.lock.json
 ```
 
-Then commit the updated lock. Rules:
+Then run `make skills-thirdparty-replay` to verify both agents and record local content receipts.
+Commit the updated lock after review. Rules:
 
-- **Use `-a claude-code` only.** Hermes already reads that directory, so adding `-a hermes-agent` makes names
-  ambiguous. Never use `-a '*'`.
+- **Use `-a claude-code -a codex`.** Hermes already reads the Claude directory, so adding
+  `-a hermes-agent` makes names ambiguous. Never use `-a '*'`.
 - **Use npx, not a Claude plugin, for plain skills.** One install channel per pack per agent; a plugin and npx copy
   of the same pack would show every skill twice. Plugins reach Claude only and are not tracked in this repo, while
-  npx reaches both agents and is restored from the lock on a new machine.
+  npx targets Claude Code and Codex, with Hermes reading the Claude copy. Replay restores these
+  installations from the lock on a new machine.
 - **Keep names unique.** A third-party name must not match an authored, repo-local or built-in skill. npx cannot
   rename a skill on install.
 - **Install only what you use.** Every installed skill adds its description to every session.
@@ -168,30 +179,51 @@ not.
 |------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | `make skills-diff`                       | Compare each authored skill with its live copy (`OK` / `DIFFERS` / `MISSING`); read-only                                    |
 | `make skills-drift`                      | Like `skills-diff` but only `DIFFERS` fails; this is the deploy gate                                                        |
-| `make skills-deploy`                     | Copy the authored skills to `~/.claude/skills` without chezmoi; refuses if a live copy differs (`SKILLS_FORCE=1` overrides) |
+| `make skills-deploy`                     | Copy authored skills to `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides) |
 | `make skills-status`                     | Flag names present in both `~/.claude/skills` and `~/.hermes/skills`, and repo skills missing from `skills.keep`            |
 | `make skills-keep NAME=<name>`           | Save a live skill into the repo and add it to `skills.keep`                                                                 |
-| `make skills-thirdparty`                 | Report drift between the committed lock and the live `npx skills` lock; read-only                                           |
+| `make skills-thirdparty`                 | Verify lock identities, manifests and installed content for selected agents; read-only                                           |
 | `make skills-thirdparty-save`            | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                             |
-| `make skills-thirdparty-replay`          | Reinstall every third-party skill listed in the committed lock (`AGENT=codex` for another agent)                            |
+| `make skills-thirdparty-replay`          | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                            |
+| `make skills-codex-check` | Verify per-skill authored links in Codex’s global directory |
 | `make skills-link` / `make skills-check` | Create / verify the `.agents/skills` symlinks for repo-local skills                                                         |
 
 ### What `skills-thirdparty-replay` does
 
-The committed lock records which skills were installed and from which repo. The replay runs
-`npx skills add <source> -s <skill> -a <agent> -g -y --copy` once per entry, so every listed skill is
-(re)installed from its upstream repo, as a real directory under `~/.claude/skills`. It needs Node (`npx`) and
-`jq`, fetches the **latest** upstream version rather than a pinned one, and ends with `make skills-thirdparty` to
-show any drift against the lock. Press Ctrl-C only after it finishes: it installs the entries one at a time.
+The replay installs each locked skill for `claude-code` and `codex` using `npx skills add … --copy`.
+Use `AGENT=codex` or `AGENTS="claude-code codex"` to select the agents explicitly. Hermes is never a
+separate target. Python 3, Node (`npx`) and `jq` are required; explicit Make replay fails when a tool
+is missing. A packaged chezmoi source without the repository lock still links authored skills,
+and optional third-party replay reports `SKIPPED`; set `LOCK` to a reviewed lock to enable replay.
+Windows Git Bash follows the same path and reports failures instead of silently succeeding.
 
-A plain `chezmoi apply` runs the same script but skips it when the lock hasn't changed since the last fully
-successful run. The make target always replays.
+Verification checks both the live lock identities and each agent's actual `SKILL.md` and supporting files.
+A successful replay writes SHA-256 content receipts into
+`$XDG_STATE_HOME/personal-os-setup/skills-installed.json` (`~/.local/state` by default). These local
+receipts are separate from the upstream Git tree IDs in the npx lock. Missing receipts, missing files,
+local edits, broken links and lock drift fail verification. Existing installations need one explicit
+replay to establish receipts; the checker never creates a baseline from unverified existing files.
+
+A plain chezmoi apply checks the lock, selected agents and installed content before skipping an
+unchanged replay. A deleted or edited skill is replayed. A stamp is written only after installation
+and verification succeed. Optional replay reports `SKIPPED` when tooling is unavailable; this is not
+installation success. The Make target always replays and treats missing tooling as an error.
+
+Replay fetches current upstream versions. If an upstream folder ID changed, verification fails:
+review the update, run `make skills-thirdparty-save`, then replay again to establish matching receipts.
+The committed lock remains an inventory and drift reference, not an immutable source pin.
 
 ### Where the `npx skills` lock lives
 
 The CLI keeps its own live lock outside the repo: `$XDG_STATE_HOME/skills/.skill-lock.json` on current versions
 (`~/.local/state/skills/` by default), `~/.agents/.skill-lock.json` on older ones. The Makefile checks both. The
 repo never shares that file with chezmoi, so a sync can't overwrite the CLI's live lock with a stale one.
+
+### Deployment regression tests
+
+`make test` includes `tests/skills/`: isolated Make and chezmoi applies with a fixture `npx`,
+plus the unit checks for links, manifests, conflicts and content receipts. These never install
+real skills or packages. The chezmoi case skips if chezmoi is unavailable.
 
 ### Governance
 

@@ -3,16 +3,21 @@
 # non-Claude agents (Hermes, Codex, OpenCode, skills CLI) see the same files.
 # Global skills: ONE authored tree (SKILLS_SRC) deployed to ~/.claude/skills. Hermes reads that
 # dir via skills.external_dirs, so a name must never also exist under ~/.hermes/skills
-# (`make skills-status` flags it). The list of deliberately saved skills is skills.keep.
+# (`make skills-status` flags it). Codex gets per-skill links in ~/.agents/skills.
+# The list of deliberately saved skills is skills.keep.
 
-.PHONY: skills-link skills-check skills-deploy skills-diff skills-drift skills-status skills-keep skills-thirdparty skills-thirdparty-save skills-thirdparty-replay
+.PHONY: skills-codex-check skills-link skills-check skills-deploy skills-diff skills-drift skills-status skills-keep skills-thirdparty skills-thirdparty-save skills-thirdparty-replay
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
 
 # Global deploy: the chezmoi source doubles as the container/CLI deploy source.
 SKILLS_SRC := src/personal_os_setup/config/chezmoi/dot_claude/skills
-SKILLS_DST := $(HOME)/.claude/skills
+SKILLS_DST := $(or $(CLAUDE_CONFIG_DIR),$(HOME)/.claude)/skills
+SKILLS_CODEX_DST ?= $(HOME)/.agents/skills
+SKILLS_PYTHON ?= python3
+SKILLS_SUPPORT := src/personal_os_setup/config/chezmoi/dot_claude/skills_support.py
+SKILLS_LINK = $(SKILLS_PYTHON) $(SKILLS_SUPPORT) link --source "$(SKILLS_SRC)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)"
 
 # Never deploy here: Hermes already reads SKILLS_DST; skills-status flags duplicates.
 HERMES_SKILLS_LIVE := $(HOME)/.hermes/skills
@@ -46,15 +51,20 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		echo "STALE $$l  (run: make skills-link)"; rc=1; \
 	done; exit $$rc
 
-skills-deploy: ## Copy the authored skills to ~/.claude/skills (refuses if a live copy DIFFERS from git; SKILLS_FORCE=1 overrides)
+skills-deploy: ## Deploy authored skills for Claude/Hermes and link each one for Codex
 ifeq ($(SKILLS_FORCE),1)
 	@echo "skills-deploy: drift check SKIPPED (SKILLS_FORCE=1)"
 else
 	@$(MAKE) --no-print-directory skills-drift || { echo; echo "skills-deploy: ABORTED -- the live copies above differ from git."; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
 endif
-	@mkdir -p $(SKILLS_DST)
-	@cp -R $(SKILLS_SRC)/. $(SKILLS_DST)/
+	@$(SKILLS_LINK) --preflight
+	@mkdir -p "$(SKILLS_DST)"
+	@cp -R "$(SKILLS_SRC)/." "$(SKILLS_DST)/"
+	@$(SKILLS_LINK)
 	@echo "deployed skills to $(SKILLS_DST)"
+
+skills-codex-check: ## Verify every authored skill is linked into Codex
+	@$(SKILLS_LINK) --check
 
 # skills-diff mode "all": MISSING or DIFFERS -> exit 1 (full OK/DIFFERS/MISSING report)
 # skills-drift mode "drift": DIFFERS only -> exit 1; MISSING is fine (i.e. never deployed yet)
@@ -78,6 +88,7 @@ skills-diff skills-drift:
 		else echo "skills-drift: no drift (live copies match git, or are not yet deployed)"; fi; \
 	fi; \
 	exit $$rc
+	@if [ "$$SKILLS_SCAN_MODE" = all ]; then $(SKILLS_LINK) --check; else $(SKILLS_LINK) --preflight; fi
 
 skills-status: ## Guardrail: list git-managed skills; flag names in BOTH ~/.claude/skills and ~/.hermes/skills, and repo skills missing from skills.keep
 	@echo "== git-managed (source: $(SKILLS_SRC))"; \
@@ -111,56 +122,29 @@ skills-keep: ## Save a live skill into the repo: make skills-keep NAME=<name> (c
 # makes a new machine rebuildable. The copy deliberately does NOT sit in the chezmoi source: a
 # `chezmoi apply` must never overwrite the tool's live lock with a stale record.
 #
-# The jq paths below are the ONLY place the lock schema is expressed, so a schema bump is a
-# one-line fix. v3 lock shape: .skills.<name> = { source, sourceType, sourceUrl, skillPath,
-# skillFolderHash }. VALIDATE ON FIRST REAL INSTALL (`make skills-thirdparty-save`) — written from
-# the documented v3 shape, not yet from a lock produced on this box.
+# Lock identities and installed content are checked by src/personal_os_setup/config/chezmoi/dot_claude/skills_support.py.
+# Local content receipts are separate from the CLI lock and never committed.
 THIRD_PARTY_LOCK := third-party-skills.lock.json
 XDG_STATE := $(or $(XDG_STATE_HOME),$(HOME)/.local/state)
 # First existing wins (XDG first); if neither exists, point at the XDG path so the error names where it should be.
 LIVE_SKILLS_LOCK ?= $(firstword $(wildcard $(XDG_STATE)/skills/.skill-lock.json $(HOME)/.agents/.skill-lock.json) $(XDG_STATE)/skills/.skill-lock.json)
 JQ_TP_NAMES := .skills | keys[]
-JQ_TP_HASH  := (.skills[$$n].skillFolderHash // "-")
-JQ_TP_SRC   := (.skills[$$n].source // .skills[$$n].sourceUrl // "?")
 
-skills-thirdparty: ## Report drift between the committed third-party lock and the live one (read-only)
-	@if [ ! -f "$(LIVE_SKILLS_LOCK)" ]; then \
-		printf 'no live lock at %s -- no third-party pack installed on this machine\n' "$(LIVE_SKILLS_LOCK)"; exit 0; \
-	fi; \
-	if [ ! -f "$(THIRD_PARTY_LOCK)" ]; then \
-		printf 'no committed lock (%s) -- record the live one with: make skills-thirdparty-save\n' "$(THIRD_PARTY_LOCK)"; exit 1; \
-	fi; \
-	rc=0; \
-	for n in $$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK)); do \
-		want=$$(jq -r --arg n "$$n" '$(JQ_TP_HASH)' $(THIRD_PARTY_LOCK)); \
-		src=$$(jq -r --arg n "$$n" '$(JQ_TP_SRC)' $(THIRD_PARTY_LOCK)); \
-		have=$$(jq -r --arg n "$$n" '$(JQ_TP_HASH)' $(LIVE_SKILLS_LOCK) 2>/dev/null); \
-		if [ -z "$$have" ] || [ "$$have" = "-" ]; then \
-			printf '  MISSING  %s (%s) -- replay: make skills-thirdparty-replay\n' "$$n" "$$src"; rc=1; \
-		elif [ "$$have" != "$$want" ]; then \
-			printf '  CHANGED  %s (%s)\n           committed %s\n           live      %s\n' "$$n" "$$src" "$$want" "$$have"; rc=1; \
-		else \
-			printf '  OK       %s\n' "$$n"; \
-		fi; \
-	done; \
-	for n in $$(jq -r '$(JQ_TP_NAMES)' $(LIVE_SKILLS_LOCK)); do \
-		if ! jq -e --arg n "$$n" '.skills[$$n]' $(THIRD_PARTY_LOCK) >/dev/null 2>&1; then \
-			printf '  EXTRA    %s -- installed here but absent from the committed lock; record it: make skills-thirdparty-save\n' "$$n"; rc=1; \
-		fi; \
-	done; \
-	if [ $$rc -ne 0 ]; then echo "skills-thirdparty: DRIFT (see above)"; else echo "skills-thirdparty: no drift"; fi; \
-	exit $$rc
+AGENTS ?= claude-code codex
+# AGENT remains a compatible single-agent override.
+TARGET_AGENTS = $(if $(strip $(AGENT)),$(AGENT),$(AGENTS))
+SKILLS_RECEIPTS ?= $(XDG_STATE)/personal-os-setup/skills-installed.json
+
+skills-thirdparty: ## Verify locks and installed content for each selected agent (read-only)
+	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)"
 
 skills-thirdparty-save: ## Copy the live npx lock into the repo (the record we ship)
 	@test -f "$(LIVE_SKILLS_LOCK)" || { printf 'no live lock at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
 	@jq . "$(LIVE_SKILLS_LOCK)" > "$(THIRD_PARTY_LOCK)"  # jq also adds the trailing newline the end-of-file hook requires
 	@printf 'recorded %s -- %s entries\n' "$(THIRD_PARTY_LOCK)" "$$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK) | wc -l | tr -d ' ')"
 
-AGENT ?= claude-code
-
 # The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
 THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
-skills-thirdparty-replay: ## Re-install every pack in the committed lock for AGENT (default claude-code), then re-check
-	@AGENT="$(AGENT)" LOCK="$(CURDIR)/$(THIRD_PARTY_LOCK)" FORCE=1 bash $(THIRD_PARTY_REPLAY)
-	@$(MAKE) --no-print-directory skills-thirdparty
+skills-thirdparty-replay: ## Install and verify third-party skills for AGENTS (default Claude + Codex)
+	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=1 STRICT=1 bash $(THIRD_PARTY_REPLAY)

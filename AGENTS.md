@@ -27,7 +27,7 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
 
 | Command | Purpose |
 |---|---|
-| `make test` | unit tests (`uv run pytest tests/unit`; exit 5 = success) |
+| `make test` | unit + isolated skill deployment tests (`tests/unit`, `tests/skills`; exit 5 = success) |
 | `make pre-commit` | ruff, detect-secrets, commitizen, yaml/json/toml, uv-lock — CI runs this exact command |
 | `make install-dev` | full dev env (use this, not `uv pip install -e .`) |
 | `make lint` / `make format` | ruff directly |
@@ -64,6 +64,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
 - **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-deploy`).
+  Codex gets per-skill links in `~/.agents/skills`; `make skills-codex-check` verifies them.
   Hermes reads `~/.claude/skills` too (`skills.external_dirs`), so nothing is duplicated into
   `~/.hermes/skills` — a name in both roots is unloadable (`Ambiguous skill name … Refusing to guess`);
   `make skills-status` flags it. The saved set is listed in `skills.keep`; save a live skill into the
@@ -73,7 +74,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 - **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;
   `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the
   lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-save`;
-  `make skills-thirdparty-replay [AGENT=codex]` reinstalls).
+  `make skills-thirdparty-replay` reinstalls for Claude Code and Codex). Use `AGENT=codex` for Codex only.
 - **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
   own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).
   Agent-created (Curator) skills are live only until triaged: promote, pin-private, or delete.

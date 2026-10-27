@@ -30,8 +30,8 @@ what a configured dir actually LOADS → `hermes-instance-audit`.
 | Zone | Path | Read by |
 |---|---|---|
 | Hermes own store | `/config/.hermes/skills/` | Hermes only |
-| Authored — SOURCE, the ONE tree (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | both agents, via deployment |
-| Authored — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global) + Hermes `external_dirs` |
+| Authored — SOURCE, the ONE tree (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | Claude Code, Codex and Hermes, via deployment |
+| Authored — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global), Codex per-skill links in `~/.agents/skills`, Hermes `external_dirs` |
 | Repo-specific | `<repo>/.claude/skills/` + `.agents/skills/` git symlinks | Claude Code in that repo; Hermes only from a session rooted there or via `external_dirs` |
 | Plugins / MCP (not skill files) | `~/.claude/plugins/`, `$HERMES_HOME/mcp-tokens/` | Claude plugins; Hermes MCP servers |
 
