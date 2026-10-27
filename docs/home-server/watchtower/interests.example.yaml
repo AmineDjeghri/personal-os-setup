@@ -1,0 +1,49 @@
+# watchtower interest profile — ONE file for every source class.
+#
+# The live copy lives OUTSIDE the repo (default: ~/.hermes/watchtower/interests.yaml)
+# because it is personal data. This example is the schema with throwaway rules.
+#
+# How it works (all deterministic, no LLM):
+#   * each `like` rule that matches adds its `weight` to the item's score, once per rule;
+#   * each `dislike` rule that matches subtracts its weight;
+#   * an item is promoted to "⭐ might interest you" when it matched >= 1 `like` rule
+#     AND its score >= thresholds.highlight;
+#   * `weight` IS the priority: 5 = core interest, 2 = mild curiosity, negative = demote.
+#   * a demoted item is never hidden — it moves to the "rest" list.
+#
+# Matching text = repo slug + description + language + GitHub topics
+# (later: headline + snippet for blogs, product names for catalogs).
+# A token of <=5 chars must match as a whole word ("mcp" != "mcpx"), longer tokens
+# match as substrings ("home assistant" also hits "home-assistant").
+
+thresholds:
+  highlight: 4                  # score needed to be promoted
+  per_source:                   # optional per-source override
+    trendshift-weekly:
+      highlight: 4
+      max_highlight: 8          # never show more than N promoted items from this source
+
+language:
+  block: []                     # e.g. [zh, ja] would demote repos whose language tag matches
+
+like:
+  - id: agents-mcp
+    weight: 5
+    keywords: [mcp, model context protocol, agent framework, tool calling, autonomous agent]
+  - id: local-ai
+    weight: 5
+    keywords: [local llm, ollama, llama.cpp, gguf, on-device, quantization, whisper.cpp, vllm]
+  - id: self-hosted
+    weight: 4
+    keywords: [self-hosted, selfhosted, homelab, docker compose, traefik, reverse proxy]
+  - id: cli-tools
+    weight: 2
+    keywords: [cli, tui, terminal]
+
+dislike:
+  - id: crypto
+    weight: -5
+    keywords: [crypto, blockchain, web3, nft, trading bot, token launch]
+  - id: list-repo
+    weight: -3
+    keywords: [awesome list, awesome-list, curated list, cheat sheet, roadmap, interview questions]

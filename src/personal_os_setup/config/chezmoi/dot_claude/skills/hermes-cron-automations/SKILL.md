@@ -97,7 +97,11 @@ hermes cron create "every 1d at 07:00" \
 **Ledger and health rules.**
 
 - Update state (seen IDs / content hashes) **only after delivery succeeds**, so a failed send
-  repeats instead of silently dropping a day's items.
+  repeats instead of silently dropping a day's items. In a `--no-agent` job stdout *is* the delivery
+  channel and its success is not observable: build the whole text first, print it, then persist state —
+  a crash then re-sends next time instead of losing the items.
+- Verify from the CLI, not from the script's own exit code alone: `hermes cron list` (schedule, next run),
+  `hermes cron status` (gateway/ticker actually alive), `hermes cron runs <id>` (per-run attempts).
 - End every digest with a **health footer**: each source that failed, by name, with the reason, and
   a "dead since <date>" marker once it has failed repeatedly. A collector that can only ever say
   "nothing new" is indistinguishable from a broken one.
@@ -169,6 +173,28 @@ Mirror the existing YouTube-download pipeline:
 - The chezmoi source carries no scripts directory, so a small unmanaged wrapper under `~/.hermes/scripts/` is
   the normal arrangement, not a smell.
 
+## 3b. Built instance: `watchtower` (weekly trending repos)
+
+One collector for every future source of this class (trending repos now; RSS, catalogs later):
+`<repo>/docs/home-server/watchtower/watchtower.py` + `sources.example.yaml` + `interests.example.yaml`, live
+config/state in `~/.hermes/watchtower/`, wrapper `~/.hermes/scripts/watchtower_weekly.sh`, cron job
+`watchtower-weekly` (`0 8 * * 1`, `--no-agent`). Extend that file rather than writing a second collector.
+
+- **Two lists are one scoring pass**: `like` rules add `weight` (= priority) once each, `dislike` subtracts,
+  promote when matched ≥1 like rule and score ≥ `thresholds.highlight` (per-source override + `max_highlight`
+  cap). Matched rule ids print on every promoted line, so tuning needs no code read. One `interests.yaml`,
+  no per-source profiles.
+- **Momentum without an API**: store `stars` per repo in state; next run's delta *is* "gained this week".
+  Resolve a GitHub token at startup from `GITHUB_TOKEN`/`GH_TOKEN` then `gh auth token` — the unauthenticated
+  60/h limit is exhausted by two or three test runs and silently degrades to `★?`.
+- **`--force` is the manual-verification flag**: the collector is silent when the source content is
+  unchanged, so `--force` prints the digest for review and a second plain run proves dedupe.
+- **The cron wrapper must pin the state/config dir absolutely** (`export WATCHTOWER_HOME=/config/...`): cron
+  can run with `HOME=/root` (webui container) where no config or state exists. Verify by running the wrapper
+  once with a foreign `HOME`.
+- **Forcing a first real delivery** (to prove the cron→chat plumbing) = nudge only the state's
+  `content_hash`, then `hermes cron run <id>`; never delete the state file.
+
 ## 4. Second opinion from another model
 
 Relay it with what you verified yourself on this box alongside; recipe (stdin brief, read-only tools, verify claims): `claude-code-ops` → "Advisory delegation".
@@ -189,6 +215,9 @@ Relay it with what you verified yourself on this box alongside; recipe (stdin br
    never spawn its own follow-ups.
 6. **A weekly source (promo flyers, catalogs) needs its own cadence** — and a text-hash diff, not a "last
    modified" header: pages that republish unchanged content re-trigger a digest with nothing new to say.
+7. **A YAML keyword list containing `*arr` fails to parse** (`found undefined alias 'arr'`) — quote any
+   glob-looking keyword. Validate the live profile with one real run, not just `--doctor` (doctor only
+   probes sources, so a broken `interests.yaml` surfaces only in the digest run).
 
 ## 6. Reference
 
