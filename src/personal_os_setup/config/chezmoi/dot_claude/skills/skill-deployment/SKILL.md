@@ -9,7 +9,8 @@ metadata:
 # Skill Deployment via chezmoi
 
 Authored skills (ONE tree): repo `src/personal_os_setup/config/chezmoi/dot_claude/skills/` → `~/.claude/skills`
-(Claude Code + Hermes external_dirs). Desktops: TUI dotfiles tab. Container/CLI:
+(Claude Code + Hermes external_dirs), with per-skill Codex links in `~/.agents/skills`.
+Desktops: select the whole `.claude` folder in the TUI so both after-scripts run. Container/CLI:
 
 ```bash
 REPO=/config/workspace/personal-os-setup
@@ -27,8 +28,10 @@ always-on, otherwise they're read on demand.
 
 Loading internals: `agent-skills-architecture` → "What actually loads".
 
-**No chezmoi (HA container/CLI):** `cd <repo> && make skills-deploy` — copies the same source
-to `~/.claude/skills`. The make target lives in `makefiles/skills.mk` (same file as
+**No chezmoi (HA container/CLI):** `cd <repo> && make skills-repo-to-live` — copies the same source
+to `~/.claude/skills` and links each authored name into `~/.agents/skills`. Existing Codex
+destinations that point elsewhere are conflicts; reconcile them manually. `make skills-status`
+verifies the links. Python 3 is required for the shared helper. The make target lives in `makefiles/skills.mk` (same file as
 `skills-link`/`skills-check`).
 
 Rules: `--source` = repo **ROOT** (git-backed, `.chezmoiroot` points at the nested dir — never the nested dir); run from **HOME** (targets resolve against CWD).
@@ -56,62 +59,64 @@ chezmoi --source "$S" apply -v --force --parent-dirs --refresh-externals=never \
 
 Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
-**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-deploy` is
+**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-repo-to-live` is
 copy-only: it overwrites whatever is live and deletes nothing.
 
 - Never deploy a skill that already lives elsewhere in the repo and is symlinked into the store
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Drift:** `make skills-diff` (read-only; non-zero on MISSING/DIFFERS), `make skills-status`, `make skills-drift` (the deploy's gate: only a DIFFERS aborts). Override with `make skills-deploy SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-keep NAME=<name>`.
+**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-repo-to-live SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-live-to-repo NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
 **Who deploys what (one split, no overlap):**
 
 - **Authored tree** → chezmoi. `dot_claude/skills/` is ordinary managed files, so `chezmoi apply` writes
-  them; there is deliberately **no `run_` script for the copy** (`make skills-deploy` is the no-chezmoi twin).
+  them; there is deliberately **no `run_` script for the copy** (`make skills-repo-to-live` is the no-chezmoi twin).
+  `run_after_zz-link-authored-skills.sh` only creates Codex links using the same helper as Make.
 - **npx replay** → the one thing chezmoi cannot do. Script:
   `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`
   (plain shell, no template vars). It replays every entry of `third-party-skills.lock.json` with
-  `npx -y skills add <source> -s <name> -a "$AGENT" -g -y --copy`.
-- **make** → `make skills-thirdparty-replay [AGENT=codex]` calls that same script (with `FORCE=1`, so it
-  always replays). Env: `AGENT` (default `claude-code`), `LOCK`, `FORCE`, `STAMP`.
+  `npx -y skills add <source> -s <name> -a <agent> -g -y --copy` for Claude Code and Codex by default.
+- **make** → `make skills-thirdparty-repo-to-live` installs for both agents. `AGENT=codex` selects only
+  Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `FORCE=1 STRICT=1` and fails
+  if Python 3, npx or jq is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
+- **Verification** → `make skills-status` checks lock identities, each agent's manifest, and local
+  content receipts (SHA-256 over installed paths, executable flags and bytes). The receipts live at
+  `$XDG_STATE_HOME/personal-os-setup/skills-installed.json`, defaulting to `~/.local/state`.
+  They are not the npx lock and must never be committed. Existing installs need one explicit replay.
+- **Stamp** → plain apply skips only when the lock, selected agents and installed content still verify.
+  Deleted/edited files trigger replay. Failed installs, missing metadata and lock drift never stamp.
+- **Updates** → replay fetches current upstream. If a folder ID changed, review it, save the new live
+  lock with `make skills-thirdparty-live-to-repo`, and replay again. The lock is a drift reference, not a pin.
+- **Packaged source** → the shared helper ships with `dot_claude`, so authored links work without
+  a checkout. Optional third-party replay reports `SKIPPED` if no lock is reachable; set `LOCK`
+  explicitly to enable it. A strict replay fails instead.
+- **Windows Git Bash** → the replay attempts the same installation and surfaces errors; no silent no-op.
 
-Script behaviour to know:
-
-- **`run_after_`, not `run_onchange_`:** onchange keys on the script's own content, which a template-free
-  file never changes, so a lock edit would never re-fire it. chezmoi runs it every apply; the script
-  hashes the lock (+ `AGENT`) against `~/.cache/personal-os-setup/skills-replay.stamp` and does nothing
-  when unchanged. The stamp is written only after a fully clean run (no `FAIL`, no `SKIP`), so
-  failures are retried — all entries again, not just the failed ones. A failing run makes `chezmoi apply` exit non-zero.
-- **Hand-deleted skills are not restored by a plain apply** (the stamp says "done"); use
-  `make skills-thirdparty-replay` (or delete the stamp).
-- **The lock is found by walking up from `$CHEZMOI_SOURCE_DIR`**, so the chezmoi source must sit inside
-  the repo checkout; a source cloned elsewhere needs `LOCK=<path>` or the script exits 1.
-- **No `npx` (webui container) or Windows → warning on stderr, exit 0.** An unwritable stamp dir only warns.
-- **Lock carve-out:** the lock also holds `claude-code`, `hermes-agent` and `hermes-agent-skill-authoring`
-  (from `NousResearch/hermes-agent`), names Hermes also ships. That is intentional here — they are installed
-  into `~/.claude/skills` only. On a box where Hermes's bundled sync puts them in `~/.hermes/skills`, the
-  name becomes `Ambiguous skill name … Refusing to guess`: run `make skills-status` and remove one copy.
+**Lock carve-out:** `claude-code`, `hermes-agent` and `hermes-agent-skill-authoring` come from
+`NousResearch/hermes-agent` and also ship with Hermes. Installing them in Claude/Codex is intentional;
+if Hermes also has a bundled copy under `~/.hermes/skills`, run `make skills-status` and reconcile the
+duplicate. Never add Hermes as a separate npx target.
 
 For a third-party repo that ships **only** a `skills/` tree (no plugin manifest per harness). Packs
 that ship their own per-harness plugins (hooks, slash commands) are a different case — see the end
 of this section.
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy   # one skill
-npx skills add <owner>/<repo> -g -y --copy                             # whole pack
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy   # one skill
+npx skills add <owner>/<repo> -a claude-code -a codex -g -y --copy                             # whole pack
 ```
 
-- **Target `-a claude-code` only — it already reaches Hermes.** Hermes reads `~/.claude/skills` via
-  `skills.external_dirs`, so the Claude symlink serves both. Adding `-a hermes-agent` puts the same
+- **Target `-a claude-code -a codex` — the Claude copy already reaches Hermes.** Hermes reads `~/.claude/skills` via
+  `skills.external_dirs`, so the Claude installation serves Hermes too. Adding `-a hermes-agent` puts the same
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Lands as a real directory** in `~/.claude/skills/<skill>/` (we pass `--copy` on every install, incl. `make skills-thirdparty-replay`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
+- **Lands as a real directory** in each selected agent’s skill directory (we pass `--copy` on every install, incl. `make skills-thirdparty-repo-to-live`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
 - **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
-  the live lock is never the record we ship. Replay/drift: `make skills-thirdparty` in
+  the live lock is never the record we ship. Replay/drift: `make skills-thirdparty-repo-to-live` / `make skills-status` in
   `makefiles/skills.mk`.
 - **Updating:** `npx skills update` is broken (vercel-labs/skills#484 — reports "up to date" while
   upstream moved). Re-add is the update path: `-s <name> -y` refetches and bumps the hash; diff the
@@ -136,7 +141,7 @@ Worked example, `obra/superpowers` (ships `.claude-plugin/`, `.codex-plugin/`, `
 - Claude Code: `/plugin install superpowers@claude-plugins-official`
 - Hermes: `hermes plugins install obra/superpowers` — registers every skill namespaced as
   `superpowers:<name>` (so no collision with shipped names) and injects the first-turn bootstrap
-- Codex (if ever used): its own plugin marketplace, `/plugins`
+- Codex: its own plugin marketplace, `/plugins`
 - `npx skills add obra/superpowers` on a harness that has the plugin = the same 15 skills twice, and
   it silently drops the bootstrap hook. Don't.
 

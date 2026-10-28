@@ -89,10 +89,10 @@ The git home for promoted skills is a repo that may be **public**, so publishing
 6. **Delete the live copy in the SAME pass** — that is what closes the ambiguity window.
 7. **Content that fails the scrub stays live-only** and gets `hermes curator pin <name>` — never publish it as-is
    to make the promotion set look complete. Sanitize the REPO copy and leave the live store copy untouched (it is
-   private and keeps the real values); real values there are only temporary since the next `make skills-deploy`
+   private and keeps the real values); real values there are only temporary since the next `make skills-repo-to-live`
    replaces that copy with the sanitized one, so drive the canonical text from the source tree.
 8. **Watch for skill dirs that are symlinks** into a repo path — that content already lives (and may already be
    published) elsewhere; resolve the single source of truth instead of creating a second copy. Keep the symlink and
-   drop the duplicate from the deploy source: `make skills-deploy` copies with `cp -R`, which FOLLOWS a symlinked
+   drop the duplicate from the deploy source: `make skills-repo-to-live` copies with `cp -R`, which FOLLOWS a symlinked
    destination directory and writes through it into the tracked source file.
 9. **Report per skill** what was copied, deleted and refused, with the reason — the refusals are the interesting part.

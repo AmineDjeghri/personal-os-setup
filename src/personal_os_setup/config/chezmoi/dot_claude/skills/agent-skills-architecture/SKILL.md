@@ -30,8 +30,8 @@ what a configured dir actually LOADS → `hermes-instance-audit`.
 | Zone | Path | Read by |
 |---|---|---|
 | Hermes own store | `/config/.hermes/skills/` | Hermes only |
-| Authored — SOURCE, the ONE tree (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | both agents, via deployment |
-| Authored — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global) + Hermes `external_dirs` |
+| Authored — SOURCE, the ONE tree (repo = truth) | `personal-os-setup/src/personal_os_setup/config/chezmoi/dot_claude/skills/` | Claude Code, Codex and Hermes, via deployment |
+| Authored — DEPLOYED | `/config/.claude/skills/` (chezmoi target; HOME=/config) | Claude Code (global), Codex per-skill links in `~/.agents/skills`, Hermes `external_dirs` |
 | Repo-specific | `<repo>/.claude/skills/` + `.agents/skills/` git symlinks | Claude Code in that repo; Hermes only from a session rooted there or via `external_dirs` |
 | Plugins / MCP (not skill files) | `~/.claude/plugins/`, `$HERMES_HOME/mcp-tokens/` | Claude plugins; Hermes MCP servers |
 
@@ -72,7 +72,7 @@ metadata:
 
 ## Deploying the shared dir (chezmoi / container)
 
-Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-deploy` and its
+Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-repo-to-live` and its
 `SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
 don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
 `--source`) and the file-level `--source-path` fallback are in `skill-deployment`.
@@ -80,7 +80,7 @@ don't restate them here. The container-specific debugging trail (a nested `.chez
 ## Reconciling the two trees — the deploy gate
 
 `MISSING` = the deploy has not landed, never "redundant"; `DIFFERS` → check per FILE which side is newer; re-run
-`make skills-diff` after the deploy. Decision tree and per-file checks: `skill-deployment` → `references/deploy-drift-and-reconciliation.md`.
+`make skills-status` after the deploy. Decision tree and per-file checks: `skill-deployment` → `references/deploy-drift-and-reconciliation.md`.
 
 ## Repo-local skills + AGENTS.md ↔ CLAUDE.md
 - Canonical file `<repo>/.claude/skills/<name>/SKILL.md`; `make skills-link` refreshes the git-tracked
@@ -178,12 +178,12 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
   skill reached through a `.agents/skills` symlink, so an empty result is not "the skill vanished").
 - **Copied scripts and templates must pass the target repo's hooks before the commit** — a verbatim copy routinely
   fails lint/format/YAML hooks (`references/repo-hook-gate.md`), and the staged copy is a SNAPSHOT, and live moves while you port: an edit after staging is not in the port,
-  so re-copy if the live file moved on and re-run `make skills-diff` immediately before committing.
+  so re-copy if the live file moved on and re-run `make skills-status` immediately before committing.
 - **Check BOTH path bases before calling a supporting-file reference broken.** `references/…`/`scripts/…` written
   with a slash are skill-relative; a bare `scripts/<name>.py` in prose is usually the REPO root's own directory —
   test `<skill-dir>/<rel>` and `<repo-root>/<rel>` before calling one broken.
 - The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT container
-  does). Deploy authored skills via chezmoi/`make skills-deploy` or install plugin packs with `claude plugin`; do not install Node for this.
+  does). Deploy authored skills via chezmoi/`make skills-repo-to-live` or install plugin packs with `claude plugin`; do not install Node for this.
 - Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager` (PyPI, 2
   stars, beta) and `xingkongliang/skills-manager` (Tauri app with its own library + SQLite + git sync). Both add a
   second source of truth parallel to the repo → `.claude/skills` flow; that duplication is rejected here.

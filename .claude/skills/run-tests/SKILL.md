@@ -8,13 +8,13 @@ metadata:
 
 # Testing in personal-os-setup
 
-There are **three** separate test setups in this repo — know which one you're in before running anything.
+There are **four** separate test setups in this repo — know which one you're in before running anything.
 
 ⚠️ `make test-integration` and `tests/archlinux/` run **real, host-mutating commands** (package installs/upgrades). Never run either without confirming with the user first, even if they already asked you to "run the tests" generically — that request defaults to `make test` (unit only). Canon: `AGENTS.md` § "Safety: confirm before system-mutating actions (MANDATORY)".
 
 ## 1. `tests/unit/` — `make test` (safe, run this freely)
 
-`uv run pytest tests/unit --numprocesses=$(N)` — parallel via pytest-xdist, `N` defaulting to 4 (`make test N=1` for single-worker debugging). No `conftest.py` exists — fixtures are ad hoc per-file (`tmp_path`, `monkeypatch`) or hand-rolled fakes, not shared. Exit code 5 ("no tests collected") is treated as success by `test.mk`.
+`uv run pytest tests/unit tests/skills --numprocesses=$(N)` — parallel via pytest-xdist, `N` defaulting to 4 (`make test N=1` for single-worker debugging). No `conftest.py` exists — fixtures are ad hoc per-file (`tmp_path`, `monkeypatch`) or hand-rolled fakes, not shared. Exit code 5 ("no tests collected") is treated as success by `test.mk`.
 
 **Mocking conventions — copy these exactly, don't improvise:**
 
@@ -46,6 +46,14 @@ Each module is OS-gated: `pytestmark = pytest.mark.skipif(detect_os().distro != 
 ## 3. `tests/archlinux/` — manual Docker smoke test, not wired to `make`/CI
 
 `Dockerfile` + `run.sh`, a third harness for Arch/CachyOS smoke-testing. Not part of any target or workflow; run it manually via its own `README.md`.
+
+## 4. `tests/skills/` — isolated deployment tests, included in `make test`
+
+These execute Make, Bash and (when installed) chezmoi against temporary destinations. `npx` is a
+fixture executable that only creates test files; it never downloads skills or changes the host.
+They cover both agents, repeated deploys, missing-file repair, strict missing-tool errors, optional
+skips, failed installs without success stamps, and fresh chezmoi application order. POSIX Bash and
+jq are required; the chezmoi case skips if chezmoi is absent. Native Windows skips this POSIX harness.
 
 ## Before trusting a "tests pass" claim
 

@@ -29,7 +29,7 @@ so a collision silently overwrites — and keep the promoted names distinct enou
 **The Curator edits this store in place** (`curator:` in `config.yaml` — interval, `stale_after_days`,
 `archive_after_days`, `prune_builtins`, backups in `.curator_backups/`). Anything you deploy into the store from git
 is therefore in a two-writer situation: the Curator — and the autonomous background-review pass — rewrites or
-archives it, and the next `make skills-deploy` overwrites it. **The deploy is one-way and copy-only**: it replaces
+archives it, and the next `make skills-repo-to-live` overwrites it. **The deploy is one-way and copy-only**: it replaces
 files and DELETES NOTHING, so an in-place edit to a live skill is silently reverted by the next deploy (copy it back
 into the source tree first) and a skill dropped in the repo keeps living in the store (rm the deployed dir by hand —
 the audit is not finished while an orphan is still indexed).
