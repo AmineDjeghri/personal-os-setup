@@ -1,0 +1,1671 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Documentation" name="description"/>
+<meta content="Amine DJEGHRI" name="author"/>
+<link href="../4.testing/" rel="prev"/>
+<link href="../../examples/" rel="next"/>
+<link href="../../images/logo.png" rel="icon"/>
+<meta content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7" name="generator"/>
+<title>5. Release - Personal OS Setup</title>
+<link href="../../../assets/stylesheets/main.ec1eaa64.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#5-release">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Personal OS Setup" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Personal OS Setup">
+<img alt="logo" src="../../images/logo.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Personal OS Setup
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              5. Release
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<a aria-label="Share" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="Share">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../1.setup/">
+          
+  
+  
+    
+  
+  Developer guide
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../examples/">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../package/personal_os_setup/detect_os/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../CHANGELOG/">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../CONTRIBUTING/">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Personal OS Setup" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Personal OS Setup">
+<img alt="logo" src="../../images/logo.png"/>
+</a>
+    Personal OS Setup
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../">
+<span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../agent-skills/">
+<span class="md-ellipsis">
+    
+  
+    Agent skills
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../docker/">
+<span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Android tv
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Android tv
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../android-tv/nuvio-stremio-aiostreams/">
+<span class="md-ellipsis">
+    
+  
+    Nuvio / Stremio + AIOStreams
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../android-tv/readme/">
+<span class="md-ellipsis">
+    
+  
+    TV Setup (googletv / android tv)
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Apps
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Apps
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../apps/apps_configuration_and_shorcuts/">
+<span class="md-ellipsis">
+    
+  
+    Apps configuration and shortcuts
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../apps/awesome_websites_browser_extensions/">
+<span class="md-ellipsis">
+    
+  
+    Awesome websites &amp; browser extensions
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Home server
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_6">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Home server
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../home-server/readme/">
+<span class="md-ellipsis">
+    
+  
+    Home server (Ubuntu Server, KVM, Home Assistant OS)
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../home-server/ssh-and-tls-fundamentals/">
+<span class="md-ellipsis">
+    
+  
+    SSH &amp; TLS/SSL fundamentals
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_6_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6_3" id="__nav_2_6_3_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Music
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_6_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_2_6_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Music
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../home-server/music/music_server/">
+<span class="md-ellipsis">
+    
+  
+    Music server
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_6_3_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../home-server/music/youtube_ai_download/">
+<span class="md-ellipsis">
+    
+  
+    Youtube ai download
+  
+
+    
+  </span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_6_3_2_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_2_6_3_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Youtube ai download
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_7" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../linux/">
+<span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_7_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_7">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../linux/CachyOS/">
+<span class="md-ellipsis">
+    
+  
+    CachyOS Hyprland Developer Workstation Setup
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_8" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../macos_darwin/">
+<span class="md-ellipsis">
+    
+  
+    Macos darwin
+  
+
+    
+  </span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_8_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_8">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Macos darwin
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_9" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../vm/">
+<span class="md-ellipsis">
+    
+  
+    Vm
+  
+
+    
+  </span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_9_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_9">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Vm
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_10" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../windows_workflow/">
+<span class="md-ellipsis">
+    
+  
+    Windows workflow
+  
+
+    
+  </span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_10_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_10">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows workflow
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Developer guide
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer guide
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../1.setup/">
+<span class="md-ellipsis">
+    
+  
+    1. Setup
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../2.project-structure/">
+<span class="md-ellipsis">
+    
+  
+    2. Project structure
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../3.conventions/">
+<span class="md-ellipsis">
+    
+  
+    3. Conventions
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../4.testing/">
+<span class="md-ellipsis">
+    
+  
+    4. Testing
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    5. Release
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    5. Release
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-a-release-publishes">
+<span class="md-ellipsis">
+      
+        What a release publishes
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#by-hand">
+<span class="md-ellipsis">
+      
+        By hand
+      
+    </span>
+</a>
+<nav aria-label="By hand" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#guards">
+<span class="md-ellipsis">
+      
+        Guards
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#credentials">
+<span class="md-ellipsis">
+      
+        Credentials
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#by-github-actions">
+<span class="md-ellipsis">
+      
+        By GitHub Actions
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#repository-settings-once">
+<span class="md-ellipsis">
+      
+        Repository settings (once)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../examples/">
+<span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/example/">
+<span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    personal_os_setup
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    personal_os_setup
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/detect_os/">
+<span class="md-ellipsis">
+    
+  
+    detect_os
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_2" id="__nav_5_1_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    frontend
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_1_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    frontend
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/app/">
+<span class="md-ellipsis">
+    
+  
+    app
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/dialogs/">
+<span class="md-ellipsis">
+    
+  
+    dialogs
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/dotfiles_tree/">
+<span class="md-ellipsis">
+    
+  
+    dotfiles_tree
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/main/">
+<span class="md-ellipsis">
+    
+  
+    main
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/settings/">
+<span class="md-ellipsis">
+    
+  
+    settings
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4" id="__nav_5_1_4_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    tasks
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_1_4">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    tasks
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/commands/">
+<span class="md-ellipsis">
+    
+  
+    commands
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/factory/">
+<span class="md-ellipsis">
+    
+  
+    factory
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4_3" id="__nav_5_1_4_3_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    managers
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_3_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_5_1_4_3">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    managers
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/_shared/">
+<span class="md-ellipsis">
+    
+  
+    _shared
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/arch_pacman/">
+<span class="md-ellipsis">
+    
+  
+    arch_pacman
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/arch_paru/">
+<span class="md-ellipsis">
+    
+  
+    arch_paru
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/base/">
+<span class="md-ellipsis">
+    
+  
+    base
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/darwin_brew/">
+<span class="md-ellipsis">
+    
+  
+    darwin_brew
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/ubuntu_apt/">
+<span class="md-ellipsis">
+    
+  
+    ubuntu_apt
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/ubuntu_snap/">
+<span class="md-ellipsis">
+    
+  
+    ubuntu_snap
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/webinstall/">
+<span class="md-ellipsis">
+    
+  
+    webinstall
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/windows_msstore/">
+<span class="md-ellipsis">
+    
+  
+    windows_msstore
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/windows_winget/">
+<span class="md-ellipsis">
+    
+  
+    windows_winget
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/self_update/">
+<span class="md-ellipsis">
+    
+  
+    self_update
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/sudo/">
+<span class="md-ellipsis">
+    
+  
+    sudo
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4_6" id="__nav_5_1_4_6_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    system
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_6_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_5_1_4_6">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    system
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/chezmoi/">
+<span class="md-ellipsis">
+    
+  
+    chezmoi
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/docker_tasks/">
+<span class="md-ellipsis">
+    
+  
+    docker_tasks
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/font/">
+<span class="md-ellipsis">
+    
+  
+    font
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/help/">
+<span class="md-ellipsis">
+    
+  
+    help
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/nvidia_tasks/">
+<span class="md-ellipsis">
+    
+  
+    nvidia_tasks
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/windows_tasks/">
+<span class="md-ellipsis">
+    
+  
+    windows_tasks
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/windows_wsl_tasks/">
+<span class="md-ellipsis">
+    
+  
+    windows_wsl_tasks
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/zsh/">
+<span class="md-ellipsis">
+    
+  
+    zsh
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/task/">
+<span class="md-ellipsis">
+    
+  
+    task
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../CHANGELOG/">
+<span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../CONTRIBUTING/">
+<span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-a-release-publishes">
+<span class="md-ellipsis">
+      
+        What a release publishes
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#by-hand">
+<span class="md-ellipsis">
+      
+        By hand
+      
+    </span>
+</a>
+<nav aria-label="By hand" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#guards">
+<span class="md-ellipsis">
+      
+        Guards
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#credentials">
+<span class="md-ellipsis">
+      
+        Credentials
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#by-github-actions">
+<span class="md-ellipsis">
+      
+        By GitHub Actions
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#repository-settings-once">
+<span class="md-ellipsis">
+      
+        Repository settings (once)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<nav aria-label="Navigation" class="md-path">
+<ol class="md-path__list">
+<li class="md-path__item">
+<a class="md-path__link" href="../../..">
+<span class="md-ellipsis">
+    Home
+  </span>
+</a>
+</li>
+<li class="md-path__item">
+<a class="md-path__link" href="../1.setup/">
+<span class="md-ellipsis">
+    Developer guide
+  </span>
+</a>
+</li>
+</ol>
+</nav>
+<article class="md-content__inner md-typeset">
+<h1 id="5-release">5. Release<a class="headerlink" href="#5-release" title="Permanent link">¶</a></h1>
+<p>Publish a version: by hand from a laptop, or by GitHub Actions after a merge. Both run the same
+<code>make</code> targets (<code>makefiles/release.mk</code>, logic in <code>scripts/release.sh</code>).</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<pre class="mermaid"><code>flowchart TB
+    hand["<b>By hand</b><br/>make release, on a laptop"]
+    ci["<b>By GitHub Actions</b><br/>pull request merged into main"]
+    checks["Checks: pre-commit, tests, integration tests"]
+    ver["release-version: new version, CHANGELOG.md, commit, tag v&lt;version&gt;,<br/>push, GitHub release<br/>(on main, clean tree, in sync with origin)<br/>stops here if no feat, fix or perf"]
+    build["build-package"]
+    assets["release-assets"]
+    docs["docs to GitHub Pages<br/>(Actions: after a release; by hand: make deploy-doc-gh)"]
+    gh[("GitHub release<br/>wheel, sdist")]
+    pages[("GitHub Pages<br/>personal-os-setup.aminedjeghri.com")]
+
+    ci --&gt; checks --&gt; ver
+    hand --&gt; ver
+    ver --&gt; build --&gt; assets --&gt; docs
+    assets -.-&gt; gh
+    docs -.-&gt; pages
+</code></pre>
+<h2 id="what-a-release-publishes">What a release publishes<a class="headerlink" href="#what-a-release-publishes" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+<th>By hand</th>
+<th>By GitHub Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>version, <code>CHANGELOG.md</code>, tag <code>v&lt;version&gt;</code>, GitHub release</td>
+<td>this repository</td>
+<td><code>make release-version</code></td>
+<td>after a merge to <code>main</code></td>
+</tr>
+<tr>
+<td>wheel + sdist on the GitHub release</td>
+<td>GitHub Releases</td>
+<td><code>make build-package release-assets</code></td>
+<td>after a release</td>
+</tr>
+<tr>
+<td>documentation site</td>
+<td>GitHub Pages (<code>gh-pages</code> branch, <code>CNAME</code>)</td>
+<td><code>make deploy-doc-gh</code></td>
+<td>after a release</td>
+</tr>
+</tbody>
+</table>
+<p>The version comes from the commit messages since the last tag
+(<a href="../3.conventions/#commit-convention">3. Conventions</a>): no <code>feat</code>/<code>fix</code>/<code>perf</code>, no release. A
+<code>v&lt;x.y.z&gt;-rc.&lt;n&gt;</code> release candidate is only made from a <code>dev</code> branch (retired, see
+<code>dev-release.yml</code>).</p>
+<h2 id="by-hand">By hand<a class="headerlink" href="#by-hand" title="Permanent link">¶</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>make<span class="w"> </span>release<span class="w">          </span><span class="c1"># release-version, then build-package and release-assets</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>make<span class="w"> </span>deploy-doc-gh<span class="w">    </span><span class="c1"># then the documentation site (force-pushes gh-pages): not part of make release</span>
+</span></code></pre></div>
+<p>Once a release is out, leave the next ones to GitHub Actions so each one comes from a merged pull
+request.</p>
+<h3 id="guards">Guards<a class="headerlink" href="#guards" title="Permanent link">¶</a></h3>
+<p><code>make release-version</code> refuses to start, and changes nothing, when:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the branch is not <code>main</code> (or <code>dev</code>)</td>
+<td><code>release from main or dev only</code></td>
+</tr>
+<tr>
+<td>the tree has uncommitted changes</td>
+<td><code>uncommitted changes: commit or stash them first</code></td>
+</tr>
+<tr>
+<td><code>HEAD</code> differs from <code>origin/&lt;branch&gt;</code> after a fetch</td>
+<td><code>&lt;branch&gt; is not in sync with origin/&lt;branch&gt;</code></td>
+</tr>
+<tr>
+<td>no GitHub token can be found</td>
+<td><code>no GitHub token: set GH_TOKEN or run: gh auth login</code></td>
+</tr>
+<tr>
+<td>no <code>feat</code>/<code>fix</code>/<code>perf</code> since the last tag, or the tag exists</td>
+<td>nothing to release (not an error)</td>
+</tr>
+</tbody>
+</table>
+<p><code>make release</code> only builds and uploads when <code>HEAD</code> carries the new tag. The release commit runs
+without the git hooks (only for that commit), so pre-commit cannot block or rewrite it. It is
+authored by you (<code>git config user.name/email</code>); in CI, by the bot.</p>
+<h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Permanent link">¶</a></h3>
+<p>The GitHub token is looked for in this order:</p>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Method</th>
+<th>Setup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>GH_TOKEN</code> variable</td>
+<td>your shell or <code>.env</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>the <code>gh</code> login</td>
+<td>once: <code>gh auth login</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>hidden prompt</td>
+<td>nothing; terminal only</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart TB
+    g1{"1. GH_TOKEN set?"}
+    g2{"2. gh auth login done?"}
+    g3{"3. running in a terminal?"}
+    g4["use it"]
+    g5["prompt: token (hidden)"]
+    g6["stop with an error"]
+    g1 -- yes --&gt; g4
+    g1 -- no --&gt; g2
+    g2 -- yes --&gt; g4
+    g2 -- no --&gt; g3
+    g3 -- yes --&gt; g5
+    g3 -- no --&gt; g6
+</code></pre>
+<p>The token is never printed; it only travels through the environment. GitHub Actions passes the
+automatic <code>GITHUB_TOKEN</code>, so step 1 always succeeds there.</p>
+<h2 id="by-github-actions">By GitHub Actions<a class="headerlink" href="#by-github-actions" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Trigger</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>🔍 PR — Quality Checks</code> (<code>ci.yml</code>)</td>
+<td>pull request</td>
+<td>PR title, pre-commit, tests</td>
+</tr>
+<tr>
+<td><code>🚀 Release — Main</code> (<code>main-release.yml</code>)</td>
+<td>push to <code>main</code> (a merged pull request is a push)</td>
+<td>checks, <code>make release-version</code>, <code>make build-package</code>, <code>make release-assets</code>, docs</td>
+</tr>
+<tr>
+<td><code>🔶 Release — Dev</code> (<code>dev-release.yml</code>)</td>
+<td>push to <code>dev</code></td>
+<td>the same, as a release candidate (prerelease)</td>
+</tr>
+<tr>
+<td>Renovate</td>
+<td>schedule</td>
+<td>dependency pull requests (<a href="../3.conventions/#dependencies-renovate">3. Conventions</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>The release commit message ends with <code>[skip ci]</code>, so it does not start another release.</p>
+<h2 id="repository-settings-once">Repository settings (once)<a class="headerlink" href="#repository-settings-once" title="Permanent link">¶</a></h2>
+<ul>
+<li>Settings → Actions → General → Workflow permissions: "Read and write permissions".</li>
+<li>Pages: "Deploy from a branch: <code>gh-pages</code>". The branch is created by the first
+  <code>make deploy-doc-gh</code>. If GitHub refuses to deploy from the branch, see
+  <a href="https://github.com/orgs/community/discussions/39054">this discussion</a>.</li>
+<li>Never create a tag by hand: semantic-release computes the next version from the last tag.</li>
+</ul>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<div class="md-progress" data-md-component="progress" role="progressbar"></div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["search.suggest", "search.highlight", "search.share", "navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.indexes", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+window.mermaidConfig = {default: {
+    startOnLoad: false
+}};</script></body>
+</html>

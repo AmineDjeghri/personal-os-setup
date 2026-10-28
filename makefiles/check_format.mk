@@ -5,7 +5,7 @@
 
 pre-commit-install: install-dev
 	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
-	$(UV) run pre-commit install
+	$(UV) run pre-commit install --hook-type pre-commit --hook-type commit-msg
 
 pre-commit: pre-commit-install ## Run pre-commit
 	@echo "${YELLOW}=========> Running pre-commit...${NC}"

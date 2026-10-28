@@ -1,221 +1,111 @@
 
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-        <meta name="description" content="Documentation">
-      
-      
-        <meta name="author" content="Amine DJEGHRI">
-      
-      
-      
-        <link rel="prev" href="../../apps/awesome_websites_browser_extensions/">
-      
-      
-        <link rel="next" href="../ssh-and-tls-fundamentals/">
-      
-      
-        
-      
-      
-      <link rel="icon" href="../../images/logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
-    
-    
-      
-        <title>Home server (Ubuntu Server, KVM, Home Assistant OS) - Personal OS Setup</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
-      
-        
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
-      
-      
+<!DOCTYPE html>
 
-
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
-    
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-  </head>
-  
-  
-    
-    
-      
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#home-server-ubuntu-server-kvm-home-assistant-os" class="md-skip">
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Documentation" name="description"/>
+<meta content="Amine DJEGHRI" name="author"/>
+<link href="../../apps/awesome_websites_browser_extensions/" rel="prev"/>
+<link href="../ssh-and-tls-fundamentals/" rel="next"/>
+<link href="../../images/logo.png" rel="icon"/>
+<meta content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7" name="generator"/>
+<title>Home server (Ubuntu Server, KVM, Home Assistant OS) - Personal OS Setup</title>
+<link href="../../../assets/stylesheets/main.ec1eaa64.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#home-server-ubuntu-server-kvm-home-assistant-os">
           Skip to content
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
+</div>
+<div data-md-component="announce">
+</div>
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Personal OS Setup" class="md-header__button md-logo" aria-label="Personal OS Setup" data-md-component="logo">
-      
-  <img src="../../images/logo.png" alt="logo">
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Personal OS Setup" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Personal OS Setup">
+<img alt="logo" src="../../images/logo.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
             Personal OS Setup
           </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
             
               Home server (Ubuntu Server, KVM, Home Assistant OS)
             
           </span>
-        </div>
-      </div>
-    </div>
-    
-      
-        <form class="md-header__option" data-md-component="palette">
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
-    
-      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
-      </label>
-    
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
-    
-      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
-      </label>
-    
-  
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="indigo" data-md-color-media="" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
 </form>
-      
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
-            
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
-          </a>
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </nav>
-      
-        <div class="md-search__suggest" data-md-component="search-suggest"></div>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<a aria-label="Share" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="Share">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+<ol class="md-search-result__list" role="presentation"></ol>
 </div>
-      
-    
-    
-  </nav>
-  
-    
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+</div>
+</div>
+</div>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
         
   
   
@@ -224,21 +114,9 @@
   Home
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-  
-  
-    
-    
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../" class="md-tabs__link">
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../">
           
   
   
@@ -247,20 +125,20 @@
   Documentation
 
         </a>
-      </li>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../developer/1.setup/">
+          
+  
+  
     
   
+  Developer guide
 
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../examples/" class="md-tabs__link">
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../examples/">
           
   
   
@@ -269,27 +147,9 @@
   Examples
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../../package/personal_os_setup/detect_os/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../package/personal_os_setup/detect_os/">
           
   
   
@@ -298,21 +158,9 @@
   API Reference
 
         </a>
-      </li>
-    
-  
-
-    
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../../CHANGELOG/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../CHANGELOG/">
         
   
   
@@ -321,17 +169,9 @@
   Changelog
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../../CONTRIBUTING/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../CONTRIBUTING/">
         
   
   
@@ -340,60 +180,28 @@
   Contributing
 
       </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
+</li>
+</ul>
+</div>
 </nav>
-    
-  
 </header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-  
-
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Personal OS Setup" class="md-nav__button md-logo" aria-label="Personal OS Setup" data-md-component="logo">
-      
-  <img src="../../images/logo.png" alt="logo">
-
-    </a>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Personal OS Setup" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Personal OS Setup">
+<img alt="logo" src="../../images/logo.png"/>
+</a>
     Personal OS Setup
   </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
     
   
     Home
@@ -401,70 +209,13 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../">
+<span class="md-ellipsis">
     
   
     Documentation
@@ -472,43 +223,24 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     Documentation
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../agent-skills/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../agent-skills/">
+<span class="md-ellipsis">
     
   
     Agent skills
@@ -516,27 +248,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../docker/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../docker/">
+<span class="md-ellipsis">
     
   
     Docker
@@ -544,47 +260,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     Android tv
@@ -592,35 +273,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     Android tv
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../android-tv/nuvio-stremio-aiostreams/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../android-tv/nuvio-stremio-aiostreams/">
+<span class="md-ellipsis">
     
   
     Nuvio / Stremio + AIOStreams
@@ -628,27 +295,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../android-tv/readme/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../android-tv/readme/">
+<span class="md-ellipsis">
     
   
     TV Setup (googletv / android tv)
@@ -656,55 +307,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     Apps
@@ -712,35 +323,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_5">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
             
   
     Apps
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../apps/apps_configuration_and_shorcuts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../apps/apps_configuration_and_shorcuts/">
+<span class="md-ellipsis">
     
   
     Apps configuration and shortcuts
@@ -748,27 +345,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../apps/awesome_websites_browser_extensions/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../apps/awesome_websites_browser_extensions/">
+<span class="md-ellipsis">
     
   
     Awesome websites &amp; browser extensions
@@ -776,59 +357,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     Home server
@@ -836,44 +373,22 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_6">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_2_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_6">
+<span class="md-nav__icon md-icon"></span>
             
   
     Home server
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
     
   
     Home server (Ubuntu Server, KVM, Home Assistant OS)
@@ -881,17 +396,10 @@
 
     
   </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
     
   
     Home server (Ubuntu Server, KVM, Home Assistant OS)
@@ -899,464 +407,352 @@
 
     
   </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-ubuntu-server-2604" class="md-nav__link">
-    <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-ubuntu-server-2604">
+<span class="md-ellipsis">
       
         1. Ubuntu Server 26.04
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Ubuntu Server 26.04">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="1. Ubuntu Server 26.04" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#setup">
+<span class="md-ellipsis">
       
         Setup
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#first-checks-updates" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#first-checks-updates">
+<span class="md-ellipsis">
       
         First checks / updates
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#lid-closed-laptop" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lid-closed-laptop">
+<span class="md-ellipsis">
       
         Lid closed (Laptop)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#2-home-assistant" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-home-assistant">
+<span class="md-ellipsis">
       
         2. Home Assistant
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Home Assistant">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#virtualization" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="2. Home Assistant" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#virtualization">
+<span class="md-ellipsis">
       
         Virtualization
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#install-kvm-kernel-based-virtual-machine-and-libvirt" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#install-kvm-kernel-based-virtual-machine-and-libvirt">
+<span class="md-ellipsis">
       
         Install KVM (Kernel-based Virtual Machine) and libvirt
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Install KVM (Kernel-based Virtual Machine) and libvirt">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-a-bridge-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Install KVM (Kernel-based Virtual Machine) and libvirt" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#create-a-bridge-configuration">
+<span class="md-ellipsis">
       
         Create a bridge configuration
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#home-assistant-os-in-a-vm" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#home-assistant-os-in-a-vm">
+<span class="md-ellipsis">
       
         Home Assistant OS in a VM
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Home Assistant OS in a VM">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#inside-ha-in-your-browser-or-mobile-app" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Home Assistant OS in a VM" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#inside-ha-in-your-browser-or-mobile-app">
+<span class="md-ellipsis">
       
         inside HA in your browser or mobile app
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup">
+<span class="md-ellipsis">
       
         2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#add-cloudflare-access-zero-trust" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#add-cloudflare-access-zero-trust">
+<span class="md-ellipsis">
       
         Add Cloudflare Access (Zero Trust) ⭐⭐⭐
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Add Cloudflare Access (Zero Trust) ⭐⭐⭐">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-basic-information-top-section" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Add Cloudflare Access (Zero Trust) ⭐⭐⭐" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-basic-information-top-section">
+<span class="md-ellipsis">
       
         1️⃣ Basic Information (Top Section)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-add-public-hostname-important" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-add-public-hostname-important">
+<span class="md-ellipsis">
       
         2️⃣ Add Public Hostname (IMPORTANT)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3-browser-rendering-settings" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-browser-rendering-settings">
+<span class="md-ellipsis">
       
         3️⃣ Browser Rendering Settings
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#4-policies-most-important-part" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-policies-most-important-part">
+<span class="md-ellipsis">
       
         4️⃣ Policies (MOST IMPORTANT PART)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#5-optional-add-a-second-policy-emergency-lockdown" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#5-optional-add-a-second-policy-emergency-lockdown">
+<span class="md-ellipsis">
       
         5️⃣ (Optional) Add a Second Policy – Emergency Lockdown
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#6-login-methods" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#6-login-methods">
+<span class="md-ellipsis">
       
         6️⃣ Login Methods
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#go-back-to-the-previous-page-to-see-the-policies" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#go-back-to-the-previous-page-to-see-the-policies">
+<span class="md-ellipsis">
       
         Go back to the previous page to see the policies
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#7-save-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#7-save-the-application">
+<span class="md-ellipsis">
       
         7️⃣ Save the Application ✅
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#activate-mfa" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#activate-mfa">
+<span class="md-ellipsis">
       
         Activate MFA
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#home-assistant-devices-add-ons-and-integrations" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#home-assistant-devices-add-ons-and-integrations">
+<span class="md-ellipsis">
       
         Home Assistant devices, add-ons, and integrations
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Home Assistant devices, add-ons, and integrations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#matter-over-wi-fi" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Home Assistant devices, add-ons, and integrations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#matter-over-wi-fi">
+<span class="md-ellipsis">
       
         Matter over Wi-Fi
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#matter-over-thread-and-zigbee-devices" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#matter-over-thread-and-zigbee-devices">
+<span class="md-ellipsis">
       
         Matter over Thread and Zigbee devices
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#apps-add-ons" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#apps-add-ons">
+<span class="md-ellipsis">
       
         Apps / Add-ons
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Apps / Add-ons">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#exposure-model-what-is-reachable-from-outside-the-lan" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Apps / Add-ons" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposure-model-what-is-reachable-from-outside-the-lan">
+<span class="md-ellipsis">
       
         Exposure model — what is reachable from outside the LAN
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#integrations" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrations">
+<span class="md-ellipsis">
       
         Integrations
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#dashboard-cards" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dashboard-cards">
+<span class="md-ellipsis">
       
         Dashboard &amp; Cards
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#automations-scenes-script-helpers-and-entities" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#automations-scenes-script-helpers-and-entities">
+<span class="md-ellipsis">
       
         Automations, Scenes, Script, Helpers and Entities
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#adguard-home-address-naming-resolution-using-the-router-freebox" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#adguard-home-address-naming-resolution-using-the-router-freebox">
+<span class="md-ellipsis">
       
         AdGuard Home address naming resolution using the router (Freebox)
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="AdGuard Home address naming resolution using the router (Freebox)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sync-the-names-from-the-freebox-script-cron" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="AdGuard Home address naming resolution using the router (Freebox)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sync-the-names-from-the-freebox-script-cron">
+<span class="md-ellipsis">
       
         Sync the names from the Freebox (script + cron)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#network-topology-dns-flows" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#network-topology-dns-flows">
+<span class="md-ellipsis">
       
         Network topology &amp; DNS flows
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#todo" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#todo">
+<span class="md-ellipsis">
       
         todo
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ssh-and-tls-fundamentals/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ssh-and-tls-fundamentals/">
+<span class="md-ellipsis">
     
   
     SSH &amp; TLS/SSL fundamentals
@@ -1364,47 +760,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_6_3" id="__nav_2_6_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_6_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_6_3" id="__nav_2_6_3_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     Music
@@ -1412,35 +773,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_3">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_6_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_2_6_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     Music
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../music/music_server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../music/music_server/">
+<span class="md-ellipsis">
     
   
     Music server
@@ -1448,48 +795,13 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_3_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../music/youtube_ai_download/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_6_3_2" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../music/youtube_ai_download/">
+<span class="md-ellipsis">
     
   
     Youtube ai download
@@ -1497,85 +809,32 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_6_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_3_2">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_6_3_2_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_2_6_3_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     Youtube ai download
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../linux/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_7" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../linux/">
+<span class="md-ellipsis">
     
   
     Linux
@@ -1583,43 +842,24 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_7_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_7">
+<span class="md-nav__icon md-icon"></span>
             
   
     Linux
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../linux/CachyOS/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../linux/CachyOS/">
+<span class="md-ellipsis">
     
   
     CachyOS Hyprland Developer Workstation Setup
@@ -1627,56 +867,16 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../macos_darwin/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_8" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../macos_darwin/">
+<span class="md-ellipsis">
     
   
     Macos darwin
@@ -1684,67 +884,26 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_8">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_8_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_8">
+<span class="md-nav__icon md-icon"></span>
             
   
     Macos darwin
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_9" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../vm/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_9" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../vm/">
+<span class="md-ellipsis">
     
   
     Vm
@@ -1752,67 +911,26 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_9">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_9_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_9">
+<span class="md-nav__icon md-icon"></span>
             
   
     Vm
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../windows_workflow/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_10" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../windows_workflow/">
+<span class="md-ellipsis">
     
   
     Windows workflow
@@ -1820,76 +938,115 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_10">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_10_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_10">
+<span class="md-nav__icon md-icon"></span>
             
   
     Windows workflow
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
+<ul class="md-nav__list" data-md-scrollfix="">
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Developer guide
   
 
-              
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
             
-          </ul>
-        </nav>
-      
-    </li>
+  
+    Developer guide
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../developer/1.setup/">
+<span class="md-ellipsis">
+    
+  
+    1. Setup
   
 
     
-      
-      
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../developer/2.project-structure/">
+<span class="md-ellipsis">
+    
   
+    2. Project structure
   
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../developer/3.conventions/">
+<span class="md-ellipsis">
+    
   
+    3. Conventions
   
+
     
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../developer/4.testing/">
+<span class="md-ellipsis">
     
-      
-        
-          
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../examples/" class="md-nav__link ">
-              
   
+    4. Testing
   
-  <span class="md-ellipsis">
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../developer/5.release/">
+<span class="md-ellipsis">
+    
+  
+    5. Release
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../examples/">
+<span class="md-ellipsis">
     
   
     Examples
@@ -1897,43 +1054,24 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     Examples
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/example/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/example/">
+<span class="md-ellipsis">
     
   
     Example
@@ -1941,52 +1079,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     API Reference
@@ -1994,59 +1095,22 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
             
   
     API Reference
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     personal_os_setup
@@ -2054,35 +1118,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_5_1">
+<span class="md-nav__icon md-icon"></span>
             
   
     personal_os_setup
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/detect_os/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/detect_os/">
+<span class="md-ellipsis">
     
   
     detect_os
@@ -2090,51 +1140,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_2" id="__nav_5_1_2_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     frontend
@@ -2142,35 +1153,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_2">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_1_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     frontend
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/frontend/app/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/app/">
+<span class="md-ellipsis">
     
   
     app
@@ -2178,27 +1175,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/frontend/dialogs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/dialogs/">
+<span class="md-ellipsis">
     
   
     dialogs
@@ -2206,27 +1187,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/frontend/dotfiles_tree/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/dotfiles_tree/">
+<span class="md-ellipsis">
     
   
     dotfiles_tree
@@ -2234,27 +1199,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/frontend/main/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/frontend/main/">
+<span class="md-ellipsis">
     
   
     main
@@ -2262,35 +1211,14 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/settings/">
+<span class="md-ellipsis">
     
   
     settings
@@ -2298,57 +1226,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_4" id="__nav_4_1_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4" id="__nav_5_1_4_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     tasks
@@ -2356,35 +1239,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_5_1_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     tasks
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/commands/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/commands/">
+<span class="md-ellipsis">
     
   
     commands
@@ -2392,27 +1261,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/factory/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/factory/">
+<span class="md-ellipsis">
     
   
     factory
@@ -2420,63 +1273,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_4_3" id="__nav_4_1_4_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4_3" id="__nav_5_1_4_3_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     managers
@@ -2484,35 +1286,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_4_3">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_3_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_5_1_4_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     managers
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/_shared/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/_shared/">
+<span class="md-ellipsis">
     
   
     _shared
@@ -2520,27 +1308,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/arch_pacman/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/arch_pacman/">
+<span class="md-ellipsis">
     
   
     arch_pacman
@@ -2548,27 +1320,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/arch_paru/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/arch_paru/">
+<span class="md-ellipsis">
     
   
     arch_paru
@@ -2576,27 +1332,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/base/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/base/">
+<span class="md-ellipsis">
     
   
     base
@@ -2604,27 +1344,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/darwin_brew/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/darwin_brew/">
+<span class="md-ellipsis">
     
   
     darwin_brew
@@ -2632,27 +1356,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/ubuntu_apt/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/ubuntu_apt/">
+<span class="md-ellipsis">
     
   
     ubuntu_apt
@@ -2660,27 +1368,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/ubuntu_snap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/ubuntu_snap/">
+<span class="md-ellipsis">
     
   
     ubuntu_snap
@@ -2688,27 +1380,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/webinstall/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/webinstall/">
+<span class="md-ellipsis">
     
   
     webinstall
@@ -2716,27 +1392,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/windows_msstore/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/windows_msstore/">
+<span class="md-ellipsis">
     
   
     windows_msstore
@@ -2744,27 +1404,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/managers/windows_winget/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/managers/windows_winget/">
+<span class="md-ellipsis">
     
   
     windows_winget
@@ -2772,35 +1416,14 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/self_update/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/self_update/">
+<span class="md-ellipsis">
     
   
     self_update
@@ -2808,27 +1431,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/sudo/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/sudo/">
+<span class="md-ellipsis">
     
   
     sudo
@@ -2836,59 +1443,12 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_4_6" id="__nav_4_1_4_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_5_1_4_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5_1_4_6" id="__nav_5_1_4_6_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     system
@@ -2896,35 +1456,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_4_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_4_6">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_1_4_6_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_5_1_4_6">
+<span class="md-nav__icon md-icon"></span>
             
   
     system
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/chezmoi/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/chezmoi/">
+<span class="md-ellipsis">
     
   
     chezmoi
@@ -2932,27 +1478,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/docker_tasks/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/docker_tasks/">
+<span class="md-ellipsis">
     
   
     docker_tasks
@@ -2960,27 +1490,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/font/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/font/">
+<span class="md-ellipsis">
     
   
     font
@@ -2988,27 +1502,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/help/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/help/">
+<span class="md-ellipsis">
     
   
     help
@@ -3016,27 +1514,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/nvidia_tasks/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/nvidia_tasks/">
+<span class="md-ellipsis">
     
   
     nvidia_tasks
@@ -3044,27 +1526,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/windows_tasks/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/windows_tasks/">
+<span class="md-ellipsis">
     
   
     windows_tasks
@@ -3072,27 +1538,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/windows_wsl_tasks/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/windows_wsl_tasks/">
+<span class="md-ellipsis">
     
   
     windows_wsl_tasks
@@ -3100,27 +1550,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/system/zsh/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/system/zsh/">
+<span class="md-ellipsis">
     
   
     zsh
@@ -3128,35 +1562,14 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../package/personal_os_setup/tasks/task/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../package/personal_os_setup/tasks/task/">
+<span class="md-ellipsis">
     
   
     task
@@ -3164,50 +1577,20 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../CHANGELOG/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../CHANGELOG/">
+<span class="md-ellipsis">
     
   
     Changelog
@@ -3215,26 +1598,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../CONTRIBUTING/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../CONTRIBUTING/">
+<span class="md-ellipsis">
     
   
     Contributing
@@ -3242,541 +1610,388 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-  </ul>
+</a>
+</li>
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-ubuntu-server-2604" class="md-nav__link">
-    <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-ubuntu-server-2604">
+<span class="md-ellipsis">
       
         1. Ubuntu Server 26.04
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Ubuntu Server 26.04">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="1. Ubuntu Server 26.04" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#setup">
+<span class="md-ellipsis">
       
         Setup
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#first-checks-updates" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#first-checks-updates">
+<span class="md-ellipsis">
       
         First checks / updates
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#lid-closed-laptop" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lid-closed-laptop">
+<span class="md-ellipsis">
       
         Lid closed (Laptop)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#2-home-assistant" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-home-assistant">
+<span class="md-ellipsis">
       
         2. Home Assistant
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Home Assistant">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#virtualization" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="2. Home Assistant" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#virtualization">
+<span class="md-ellipsis">
       
         Virtualization
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#install-kvm-kernel-based-virtual-machine-and-libvirt" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#install-kvm-kernel-based-virtual-machine-and-libvirt">
+<span class="md-ellipsis">
       
         Install KVM (Kernel-based Virtual Machine) and libvirt
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Install KVM (Kernel-based Virtual Machine) and libvirt">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-a-bridge-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Install KVM (Kernel-based Virtual Machine) and libvirt" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#create-a-bridge-configuration">
+<span class="md-ellipsis">
       
         Create a bridge configuration
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#home-assistant-os-in-a-vm" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#home-assistant-os-in-a-vm">
+<span class="md-ellipsis">
       
         Home Assistant OS in a VM
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Home Assistant OS in a VM">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#inside-ha-in-your-browser-or-mobile-app" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Home Assistant OS in a VM" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#inside-ha-in-your-browser-or-mobile-app">
+<span class="md-ellipsis">
       
         inside HA in your browser or mobile app
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup">
+<span class="md-ellipsis">
       
         2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#add-cloudflare-access-zero-trust" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="2. Accessing HAOS from outside your local network — Cloudflare Tunnel Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#add-cloudflare-access-zero-trust">
+<span class="md-ellipsis">
       
         Add Cloudflare Access (Zero Trust) ⭐⭐⭐
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Add Cloudflare Access (Zero Trust) ⭐⭐⭐">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-basic-information-top-section" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Add Cloudflare Access (Zero Trust) ⭐⭐⭐" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-basic-information-top-section">
+<span class="md-ellipsis">
       
         1️⃣ Basic Information (Top Section)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-add-public-hostname-important" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-add-public-hostname-important">
+<span class="md-ellipsis">
       
         2️⃣ Add Public Hostname (IMPORTANT)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3-browser-rendering-settings" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-browser-rendering-settings">
+<span class="md-ellipsis">
       
         3️⃣ Browser Rendering Settings
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#4-policies-most-important-part" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#4-policies-most-important-part">
+<span class="md-ellipsis">
       
         4️⃣ Policies (MOST IMPORTANT PART)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#5-optional-add-a-second-policy-emergency-lockdown" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#5-optional-add-a-second-policy-emergency-lockdown">
+<span class="md-ellipsis">
       
         5️⃣ (Optional) Add a Second Policy – Emergency Lockdown
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#6-login-methods" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#6-login-methods">
+<span class="md-ellipsis">
       
         6️⃣ Login Methods
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#go-back-to-the-previous-page-to-see-the-policies" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#go-back-to-the-previous-page-to-see-the-policies">
+<span class="md-ellipsis">
       
         Go back to the previous page to see the policies
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#7-save-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#7-save-the-application">
+<span class="md-ellipsis">
       
         7️⃣ Save the Application ✅
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#activate-mfa" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#activate-mfa">
+<span class="md-ellipsis">
       
         Activate MFA
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#home-assistant-devices-add-ons-and-integrations" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#home-assistant-devices-add-ons-and-integrations">
+<span class="md-ellipsis">
       
         Home Assistant devices, add-ons, and integrations
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Home Assistant devices, add-ons, and integrations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#matter-over-wi-fi" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Home Assistant devices, add-ons, and integrations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#matter-over-wi-fi">
+<span class="md-ellipsis">
       
         Matter over Wi-Fi
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#matter-over-thread-and-zigbee-devices" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#matter-over-thread-and-zigbee-devices">
+<span class="md-ellipsis">
       
         Matter over Thread and Zigbee devices
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#apps-add-ons" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#apps-add-ons">
+<span class="md-ellipsis">
       
         Apps / Add-ons
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Apps / Add-ons">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#exposure-model-what-is-reachable-from-outside-the-lan" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="Apps / Add-ons" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposure-model-what-is-reachable-from-outside-the-lan">
+<span class="md-ellipsis">
       
         Exposure model — what is reachable from outside the LAN
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#integrations" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrations">
+<span class="md-ellipsis">
       
         Integrations
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#dashboard-cards" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dashboard-cards">
+<span class="md-ellipsis">
       
         Dashboard &amp; Cards
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#automations-scenes-script-helpers-and-entities" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#automations-scenes-script-helpers-and-entities">
+<span class="md-ellipsis">
       
         Automations, Scenes, Script, Helpers and Entities
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#adguard-home-address-naming-resolution-using-the-router-freebox" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#adguard-home-address-naming-resolution-using-the-router-freebox">
+<span class="md-ellipsis">
       
         AdGuard Home address naming resolution using the router (Freebox)
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="AdGuard Home address naming resolution using the router (Freebox)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sync-the-names-from-the-freebox-script-cron" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="AdGuard Home address naming resolution using the router (Freebox)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sync-the-names-from-the-freebox-script-cron">
+<span class="md-ellipsis">
       
         Sync the names from the Freebox (script + cron)
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#network-topology-dns-flows" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#network-topology-dns-flows">
+<span class="md-ellipsis">
       
         Network topology &amp; DNS flows
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#todo" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#todo">
+<span class="md-ellipsis">
       
         todo
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-                
-
-
-
-  
-
-
-  <nav class="md-path" aria-label="Navigation" >
-    <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href="../../.." class="md-path__link">
-        
-  <span class="md-ellipsis">
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<nav aria-label="Navigation" class="md-path">
+<ol class="md-path__list">
+<li class="md-path__item">
+<a class="md-path__link" href="../../..">
+<span class="md-ellipsis">
     Home
   </span>
-
-      </a>
-    </li>
-  
-
-      
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="../../" class="md-path__link">
-          
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-path__item">
+<a class="md-path__link" href="../../">
+<span class="md-ellipsis">
     Documentation
   </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="./" class="md-path__link">
-          
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-path__item">
+<a class="md-path__link" href="./">
+<span class="md-ellipsis">
     Home server
   </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ol>
-  </nav>
-
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
-
-<h1 id="home-server-ubuntu-server-kvm-home-assistant-os">Home server (Ubuntu Server, KVM, Home Assistant OS)<a class="headerlink" href="#home-server-ubuntu-server-kvm-home-assistant-os" title="Permanent link">&para;</a></h1>
+</a>
+</li>
+</ol>
+</nav>
+<article class="md-content__inner md-typeset">
+<h1 id="home-server-ubuntu-server-kvm-home-assistant-os">Home server (Ubuntu Server, KVM, Home Assistant OS)<a class="headerlink" href="#home-server-ubuntu-server-kvm-home-assistant-os" title="Permanent link">¶</a></h1>
 <!-- TOC -->
 <ul>
 <li><a href="#home-server-ubuntu-server-kvm-home-assistant-os">Home server (Ubuntu Server, KVM, Home Assistant OS)</a><ul>
@@ -3829,11 +2044,10 @@
 <li><a href="#todo">todo:</a></li>
 </ul>
 <!-- TOC -->
-
-<h2 id="1-ubuntu-server-2604">1. Ubuntu Server 26.04<a class="headerlink" href="#1-ubuntu-server-2604" title="Permanent link">&para;</a></h2>
+<h2 id="1-ubuntu-server-2604">1. Ubuntu Server 26.04<a class="headerlink" href="#1-ubuntu-server-2604" title="Permanent link">¶</a></h2>
 <p>Before everything.
 If this server was your DHCP Server, activate temporarily the DHCP of your router so the machine can get an IP address.</p>
-<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">¶</a></h3>
 <ul>
 <li>Set up an Ubuntu Server on a laptop.<ul>
 <li>You  better have Ethernet connection. If you only have Wi-Fi, buy a usb  Ethernet adapter. It's worth it, and you will be able to use the bridge mode which is not available with wifi.</li>
@@ -3845,16 +2059,16 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
 </ul>
 </li>
 </ul>
-<h3 id="first-checks-updates">First checks / updates<a class="headerlink" href="#first-checks-updates" title="Permanent link">&para;</a></h3>
+<h3 id="first-checks-updates">First checks / updates<a class="headerlink" href="#first-checks-updates" title="Permanent link">¶</a></h3>
 <ul>
 <li>Run updates:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># if you face an error with CDROM</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sudo<span class="w"> </span>rm<span class="w"> </span>/etc/apt/sources.list.d/cdrom.sources
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>apt<span class="w"> </span>autoremove<span class="w"> </span>-y
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="c1"># if you face an error with CDROM</span>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>sudo<span class="w"> </span>rm<span class="w"> </span>/etc/apt/sources.list.d/cdrom.sources
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>sudo<span class="w"> </span>apt<span class="w"> </span>autoremove<span class="w"> </span>-y
 </span></code></pre></div>
 <ul>
 <li>Run <code>ip addr</code> to check the IP address. This is your HOST-IP. It looks like <code>192.168.x.x</code> ( you will have a IPV4 and IPV6 address)</li>
@@ -3863,7 +2077,7 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
 <li>Connect remotely in the same network using SSH and the server IP from another machine that has a GUI and a browser so you can copy-paste commands from the documentation. You can either use the IPV6 or the IPV4of the server.
   This is because we don't have a DHCP server and since the machine is NOT using DHCP right now (dhcp4:no), the router is NOT giving your server: IP Gateway DNS. And we need to define it manually until we add the DHCP server.</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh<span class="w"> </span>username@192.168.x.x
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>ssh<span class="w"> </span>username@192.168.x.x
 </span></code></pre></div>
 <ul>
 <li>
@@ -3873,53 +2087,53 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
 <p>I customized the shell environment by installing Zsh and tools from the <a href="../../../">Personal OS Setup</a> to improve usability and productivity.</p>
 </li>
 </ul>
-<h3 id="lid-closed-laptop">Lid closed (Laptop)<a class="headerlink" href="#lid-closed-laptop" title="Permanent link">&para;</a></h3>
+<h3 id="lid-closed-laptop">Lid closed (Laptop)<a class="headerlink" href="#lid-closed-laptop" title="Permanent link">¶</a></h3>
 <ul>
 <li>File: <code>sudo vim /etc/systemd/logind.conf</code></li>
 <li>Change this line: <code>HandleLidSwitch=ignore</code> (uncomment it too)</li>
 <li>Restart with <code>sudo systemctl restart systemd-logind</code></li>
 </ul>
-<h2 id="2-home-assistant">2. Home Assistant<a class="headerlink" href="#2-home-assistant" title="Permanent link">&para;</a></h2>
-<h3 id="virtualization">Virtualization<a class="headerlink" href="#virtualization" title="Permanent link">&para;</a></h3>
+<h2 id="2-home-assistant">2. Home Assistant<a class="headerlink" href="#2-home-assistant" title="Permanent link">¶</a></h2>
+<h3 id="virtualization">Virtualization<a class="headerlink" href="#virtualization" title="Permanent link">¶</a></h3>
 <ul>
 <li>I verified that virtualization was supported on the system, checked Secure Boot status:<ul>
 <li>Run:</li>
 </ul>
 </li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>egrep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'(vmx|svm)'</span><span class="w"> </span>/proc/cpuinfo
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>egrep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'(vmx|svm)'</span><span class="w"> </span>/proc/cpuinfo
 </span></code></pre></div>
 <p>Should return a number <code>&gt; 0</code>.</p>
 <ul>
 <li>Sometimes it returns <code>0</code>. In that case you need to check if Virtualization is enabled in your BIOS to ensure compatibility.</li>
 <li>If you still have <code>0</code>, and you are sure that Virtualization is enabled in your BIOS, ignore the <code>0</code>.</li>
 </ul>
-<h3 id="install-kvm-kernel-based-virtual-machine-and-libvirt">Install KVM (Kernel-based Virtual Machine) and libvirt<a class="headerlink" href="#install-kvm-kernel-based-virtual-machine-and-libvirt" title="Permanent link">&para;</a></h3>
+<h3 id="install-kvm-kernel-based-virtual-machine-and-libvirt">Install KVM (Kernel-based Virtual Machine) and libvirt<a class="headerlink" href="#install-kvm-kernel-based-virtual-machine-and-libvirt" title="Permanent link">¶</a></h3>
 <ul>
 <li>Install:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>qemu-system-x86<span class="w"> </span>libvirt-daemon-system<span class="w"> </span>virtinst<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ovmf<span class="w"> </span>swtpm<span class="w"> </span>qemu-utils<span class="w"> </span>guestfs-tools<span class="w"> </span>libosinfo-bin<span class="w"> </span>-y
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>qemu-system-x86<span class="w"> </span>libvirt-daemon-system<span class="w"> </span>virtinst<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>ovmf<span class="w"> </span>swtpm<span class="w"> </span>qemu-utils<span class="w"> </span>guestfs-tools<span class="w"> </span>libosinfo-bin<span class="w"> </span>-y
 </span></code></pre></div>
 <ul>
 <li>Verify:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kvm
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>kvm-ok
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>lscpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Virtualization
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kvm
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>sudo<span class="w"> </span>kvm-ok
+</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a>lscpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Virtualization
 </span></code></pre></div>
 <ul>
 <li>Check libvirt:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>libvirtd
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>libvirt<span class="w"> </span><span class="nv">$USER</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>kvm<span class="w"> </span><span class="nv">$USER</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>libvirtd
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>libvirt<span class="w"> </span><span class="nv">$USER</span>
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>kvm<span class="w"> </span><span class="nv">$USER</span>
 </span></code></pre></div>
 <p>Restart the terminal and run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>id<span class="w"> </span>-nG<span class="w">  </span><span class="c1"># user should be added to the group</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>id<span class="w"> </span>-nG<span class="w">  </span><span class="c1"># user should be added to the group</span>
 </span></code></pre></div>
 <p>If it is the case, you can run virsh without sudo.</p>
-<h4 id="create-a-bridge-configuration">Create a bridge configuration<a class="headerlink" href="#create-a-bridge-configuration" title="Permanent link">&para;</a></h4>
+<h4 id="create-a-bridge-configuration">Create a bridge configuration<a class="headerlink" href="#create-a-bridge-configuration" title="Permanent link">¶</a></h4>
 <p>A network bridge in KVM allows your virtual machines to appear directly on the same network as your host.</p>
 <ul>
 <li>
@@ -3945,19 +2159,19 @@ For adguard, you will need to go to DHCP settings, delete the old client and cre
 <li>Create a bridge configuration file in <code>/etc/netplan/</code> with the following content:</li>
 <li>Create a bridge configuration file with  <code>sudo vim /etc/netplan/01-bridge.yaml</code>, replace <code>enx001cc253c478</code> with your interface name</li>
 </ul>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">network</span><span class="p">:</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">enx001cc253c478</span><span class="p">:</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">bridges</span><span class="p">:</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="nt">br0</span><span class="p">:</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">      </span><span class="nt">interfaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">enx001cc253c478</span><span class="p p-Indicator">]</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="nt">stp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="nt">forward-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nt">network</span><span class="p">:</span>
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-7-3"><a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkd</span>
+</span><span id="__span-7-4"><a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
+</span><span id="__span-7-5"><a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="nt">enx001cc253c478</span><span class="p">:</span>
+</span><span id="__span-7-6"><a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
+</span><span id="__span-7-7"><a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">  </span><span class="nt">bridges</span><span class="p">:</span>
+</span><span id="__span-7-8"><a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="nt">br0</span><span class="p">:</span>
+</span><span id="__span-7-9"><a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">      </span><span class="nt">interfaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">enx001cc253c478</span><span class="p p-Indicator">]</span>
+</span><span id="__span-7-10"><a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+</span><span id="__span-7-11"><a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">      </span><span class="nt">parameters</span><span class="p">:</span>
+</span><span id="__span-7-12"><a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">        </span><span class="nt">stp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-7-13"><a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="w">        </span><span class="nt">forward-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 </span></code></pre></div>
 <ul>
 <li><code>sudo chmod 600 /etc/netplan/*.yaml</code></li>
@@ -3965,16 +2179,16 @@ For adguard, you will need to go to DHCP settings, delete the old client and cre
 <li>Your host’s IP will move from enx001cc253c478 to br0</li>
 <li>Apply the configuration:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>sudo<span class="w"> </span>netplan<span class="w"> </span>apply
 </span></code></pre></div>
 <p>If you are connected via SSH, you will probably get disconnected unless the static ip is set.
 Go physically to the server (or check the devices in the router) and get the new IP address:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ip<span class="w"> </span>addr
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a>ip<span class="w"> </span>addr
 </span></code></pre></div>
 <p>Your <code>interface name</code> will no longer have a direct IP. All traffic goes through <code>br0</code>.
 To connect to the server via SSH, you will need to use the <code>br0</code> address.</p>
 <p>Try <code>ping 8.8.8.8</code></p>
-<h3 id="home-assistant-os-in-a-vm">Home Assistant OS in a VM<a class="headerlink" href="#home-assistant-os-in-a-vm" title="Permanent link">&para;</a></h3>
+<h3 id="home-assistant-os-in-a-vm">Home Assistant OS in a VM<a class="headerlink" href="#home-assistant-os-in-a-vm" title="Permanent link">¶</a></h3>
 <ul>
 <li>
 <p>Doc: <a href="https://www.home-assistant.io/installation/alternative#virtual-machines">https://www.home-assistant.io/installation/alternative#virtual-machines</a></p>
@@ -3983,17 +2197,17 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <p>Download the Home Assistant OS image:</p>
 </li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>wget<span class="w"> </span>https://github.com/home-assistant/operating-system/releases/download/16.3/haos_ova-16.3.qcow2.xz
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>wget<span class="w"> </span>https://github.com/home-assistant/operating-system/releases/download/16.3/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
 <ul>
 <li>Move the image to the libvirt directory:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>mv<span class="w"> </span>haos_ova-16.3.qcow2.xz<span class="w"> </span>/var/lib/libvirt/images/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a>sudo<span class="w"> </span>mv<span class="w"> </span>haos_ova-16.3.qcow2.xz<span class="w"> </span>/var/lib/libvirt/images/
 </span></code></pre></div>
 <ul>
 <li>Uncompress the image:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
 <blockquote>
 <blockquote>
@@ -4062,7 +2276,7 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 <li>Create the VM: ( we are adding --network bridge=br0) to use the bridge.
 If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">"Home Assistant OS"</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a>sudo<span class="w"> </span>virt-install<span class="w"> </span>--name<span class="w"> </span>haos<span class="w"> </span>--description<span class="w"> </span><span class="s2">"Home Assistant OS"</span><span class="w"> </span>--os-variant<span class="o">=</span>generic<span class="w"> </span>--ram<span class="o">=</span><span class="m">4096</span><span class="w"> </span>--vcpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>--disk<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2,bus<span class="o">=</span>scsi<span class="w"> </span>--controller<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scsi,model<span class="o">=</span>virtio-scsi<span class="w"> </span>--import<span class="w"> </span>--graphics<span class="w"> </span>none<span class="w"> </span>--boot<span class="w"> </span>uefi<span class="w"> </span>--network<span class="w"> </span><span class="nv">bridge</span><span class="o">=</span>br0,model<span class="o">=</span>virtio<span class="w"> </span>--console<span class="w"> </span>pty,target_type<span class="o">=</span>serial
 </span></code></pre></div>
 <ul>
 <li>
@@ -4093,9 +2307,9 @@ If the DHCP server is down, the VM will not get an IP address and will have a lo
 <li>These IPs can change if we restart the router, we will assign static ip to the VM.</li>
 </ul>
 <p>If you want to resize the VM disk:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>qemu-img<span class="w"> </span>resize<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2<span class="w"> </span>+20G
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a>sudo<span class="w"> </span>qemu-img<span class="w"> </span>resize<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2<span class="w"> </span>+20G
 </span></code></pre></div>
-<h4 id="inside-ha-in-your-browser-or-mobile-app">inside HA in your browser or mobile app<a class="headerlink" href="#inside-ha-in-your-browser-or-mobile-app" title="Permanent link">&para;</a></h4>
+<h4 id="inside-ha-in-your-browser-or-mobile-app">inside HA in your browser or mobile app<a class="headerlink" href="#inside-ha-in-your-browser-or-mobile-app" title="Permanent link">¶</a></h4>
 <ul>
 <li>In your browser, go to  <code>http://&lt;HOST-IP&gt;:8123</code>, for example <code>http://homeassistant.local:8123</code> or <code>http://192.168.1.86:8123</code>.</li>
 <li>Create an account.</li>
@@ -4106,7 +2320,7 @@ If the DHCP server is down, the VM will not get an IP address and will have a lo
 <li>In the addon store, click on the three dots on the top right and add this repository: <a href="https://github.com/homeassistant-apps/repository">https://github.com/homeassistant-apps/repository</a></li>
 <li>Set up a static IP for the VM: in HAOS website go to Settings -&gt; System -&gt; Network -&gt; and change IPv4 from auto to static and IPv6 too. You can keep the default ip that is assigned to the VM.</li>
 </ul>
-<h3 id="2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup">2. Accessing HAOS from outside your local network  — Cloudflare Tunnel Setup<a class="headerlink" href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup" title="Permanent link">&para;</a></h3>
+<h3 id="2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup">2. Accessing HAOS from outside your local network  — Cloudflare Tunnel Setup<a class="headerlink" href="#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup" title="Permanent link">¶</a></h3>
 <ul>
 <li>Create a Domain or your domain is already managed by <strong>Cloudflare</strong></li>
 <li>In HAOS, add the addon <code>file editor</code>.</li>
@@ -4116,14 +2330,14 @@ If the DHCP server is down, the VM will not get an IP address and will have a lo
 <li>On you phone, when you add home assistant, add both local and external URL, so you can connect when you are outside</li>
 <li>Adding both local and external URL is important because the external URL is the one that will be used when you are outside your local network.</li>
 </ul>
-<h4 id="add-cloudflare-access-zero-trust">Add Cloudflare Access (Zero Trust) ⭐⭐⭐<a class="headerlink" href="#add-cloudflare-access-zero-trust" title="Permanent link">&para;</a></h4>
+<h4 id="add-cloudflare-access-zero-trust">Add Cloudflare Access (Zero Trust) ⭐⭐⭐<a class="headerlink" href="#add-cloudflare-access-zero-trust" title="Permanent link">¶</a></h4>
 <p>This is the single biggest security upgrade. Before showing your Home Assistant app in your browser or mobile, it will force the user to first login via an email or something.
 If the User can't log in, he won't be able to see the app.</p>
 <ul>
 <li>You are protecting for example <code>ha.yourdomain.com</code>
 Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self-hosted:</li>
 </ul>
-<h5 id="1-basic-information-top-section">1️⃣ Basic Information (Top Section)<a class="headerlink" href="#1-basic-information-top-section" title="Permanent link">&para;</a></h5>
+<h5 id="1-basic-information-top-section">1️⃣ Basic Information (Top Section)<a class="headerlink" href="#1-basic-information-top-section" title="Permanent link">¶</a></h5>
 <p>Application name</p>
 <p>Use something clear:</p>
 <ul>
@@ -4135,7 +2349,7 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <ul>
 <li>24 hours or You can put more</li>
 </ul>
-<h5 id="2-add-public-hostname-important">2️⃣ Add Public Hostname (IMPORTANT)<a class="headerlink" href="#2-add-public-hostname-important" title="Permanent link">&para;</a></h5>
+<h5 id="2-add-public-hostname-important">2️⃣ Add Public Hostname (IMPORTANT)<a class="headerlink" href="#2-add-public-hostname-important" title="Permanent link">¶</a></h5>
 <p>Click Add public hostname.</p>
 <p>Fill in:</p>
 <ul>
@@ -4145,10 +2359,10 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 </ul>
 <p>👉 This is what actually puts the Access login page in front of Home Assistant.</p>
 <p>Do NOT add private IP unless you know you need it.</p>
-<h5 id="3-browser-rendering-settings">3️⃣ Browser Rendering Settings<a class="headerlink" href="#3-browser-rendering-settings" title="Permanent link">&para;</a></h5>
+<h5 id="3-browser-rendering-settings">3️⃣ Browser Rendering Settings<a class="headerlink" href="#3-browser-rendering-settings" title="Permanent link">¶</a></h5>
 <p>Leave this OFF / untouched.</p>
 <p>(Home Assistant does NOT need SSH/RDP/VNC rendering)</p>
-<h5 id="4-policies-most-important-part">4️⃣ Policies (MOST IMPORTANT PART)<a class="headerlink" href="#4-policies-most-important-part" title="Permanent link">&para;</a></h5>
+<h5 id="4-policies-most-important-part">4️⃣ Policies (MOST IMPORTANT PART)<a class="headerlink" href="#4-policies-most-important-part" title="Permanent link">¶</a></h5>
 <p>Click Add a policy. It will open a new page, and need to go back to this page and refresh it to show the policies.</p>
 <p>Policy 1 — Allow yourself (and family)</p>
 <ul>
@@ -4179,7 +2393,7 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <ul>
 <li>Add Require MFA if available in your plan.</li>
 </ul>
-<h5 id="5-optional-add-a-second-policy-emergency-lockdown">5️⃣ (Optional) Add a Second Policy – Emergency Lockdown<a class="headerlink" href="#5-optional-add-a-second-policy-emergency-lockdown" title="Permanent link">&para;</a></h5>
+<h5 id="5-optional-add-a-second-policy-emergency-lockdown">5️⃣ (Optional) Add a Second Policy – Emergency Lockdown<a class="headerlink" href="#5-optional-add-a-second-policy-emergency-lockdown" title="Permanent link">¶</a></h5>
 <p>Advanced but useful:</p>
 <ul>
 <li>Policy name: Block High Risk Countries</li>
@@ -4190,7 +2404,7 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 </li>
 </ul>
 <p>Cloudflare evaluates Block after Allow, so this is safe.</p>
-<h5 id="6-login-methods">6️⃣ Login Methods<a class="headerlink" href="#6-login-methods" title="Permanent link">&para;</a></h5>
+<h5 id="6-login-methods">6️⃣ Login Methods<a class="headerlink" href="#6-login-methods" title="Permanent link">¶</a></h5>
 <p>You’ll see:</p>
 <ul>
 <li>Accept all available identity providers -&gt; ON</li>
@@ -4208,16 +2422,16 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>Email OTP</li>
 </ul>
 <p>This is slightly more secure, less future surprise.</p>
-<h5 id="go-back-to-the-previous-page-to-see-the-policies">Go back to the previous page to see the policies<a class="headerlink" href="#go-back-to-the-previous-page-to-see-the-policies" title="Permanent link">&para;</a></h5>
+<h5 id="go-back-to-the-previous-page-to-see-the-policies">Go back to the previous page to see the policies<a class="headerlink" href="#go-back-to-the-previous-page-to-see-the-policies" title="Permanent link">¶</a></h5>
 <p>Where you put your domain, choose the policies you added.</p>
-<h5 id="7-save-the-application">7️⃣ Save the Application ✅<a class="headerlink" href="#7-save-the-application" title="Permanent link">&para;</a></h5>
+<h5 id="7-save-the-application">7️⃣ Save the Application ✅<a class="headerlink" href="#7-save-the-application" title="Permanent link">¶</a></h5>
 <p>Once saved:</p>
 <ul>
 <li>Visiting <code>ha.yourdomain.com</code> should show Cloudflare Access login. If it doesn't force refresh the page or clear cookies.</li>
 <li>Only after login -&gt; Home Assistant loads</li>
 </ul>
 <p>If you do a restoration, or change something in cloudflare, and you see that you can't view home assistant, delete the cookies and try again.</p>
-<h4 id="activate-mfa">Activate MFA<a class="headerlink" href="#activate-mfa" title="Permanent link">&para;</a></h4>
+<h4 id="activate-mfa">Activate MFA<a class="headerlink" href="#activate-mfa" title="Permanent link">¶</a></h4>
 <ul>
 <li>In profile -&gt; security, activate MFA</li>
 </ul>
@@ -4229,8 +2443,8 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>✅ MFA</li>
 <li>✅ 1 month session</li>
 </ul>
-<hr />
-<h3 id="home-assistant-devices-add-ons-and-integrations">Home Assistant devices, add-ons, and integrations<a class="headerlink" href="#home-assistant-devices-add-ons-and-integrations" title="Permanent link">&para;</a></h3>
+<hr/>
+<h3 id="home-assistant-devices-add-ons-and-integrations">Home Assistant devices, add-ons, and integrations<a class="headerlink" href="#home-assistant-devices-add-ons-and-integrations" title="Permanent link">¶</a></h3>
 <ul>
 <li><strong>Integrations</strong>: built into Home Assistant (Settings -&gt; Devices &amp; services).</li>
 <li><strong>Add-ons (Apps)</strong>: services that run alongside Home Assistant OS (AdguardHome,Cloudflared...etc).</li>
@@ -4241,11 +2455,11 @@ Go to  Cloudflare Zero Trust -&gt; Access Controls -&gt; Applications -&gt; Self
 <li>Always search for an open-source integration before using a proprietary app. For example: TP-link, Dreame, LG ThinQ, Bosch Home Connect have open-source integrations and are far better than the proprietary apps.</li>
 <li>Some devices still need their vendor app for initial setup or extra features (example: LG, Bosch). It’s fine to keep the app installed even if you control the device later in Home Assistant.</li>
 </ul>
-<h4 id="matter-over-wi-fi">Matter over Wi-Fi<a class="headerlink" href="#matter-over-wi-fi" title="Permanent link">&para;</a></h4>
+<h4 id="matter-over-wi-fi">Matter over Wi-Fi<a class="headerlink" href="#matter-over-wi-fi" title="Permanent link">¶</a></h4>
 <ul>
 <li>TBD</li>
 </ul>
-<h4 id="matter-over-thread-and-zigbee-devices">Matter over Thread and Zigbee devices<a class="headerlink" href="#matter-over-thread-and-zigbee-devices" title="Permanent link">&para;</a></h4>
+<h4 id="matter-over-thread-and-zigbee-devices">Matter over Thread and Zigbee devices<a class="headerlink" href="#matter-over-thread-and-zigbee-devices" title="Permanent link">¶</a></h4>
 <ul>
 <li>If the device does Matter over Thread, you will need a Thread Border Router (TBR) on your network. Personally, I recommend <a href="https://www.amazon.fr/SONOFF-Dongle-PMG24-Dongle-Plus-MG24/dp/B0FMJD288B">Sonoff MG24</a> . It even supports both Thread and Zigbee and the same time.</li>
 <li>Do not use Aqara M100 because it is proprietary and not well-supported in Home Assistant.</li>
@@ -4267,11 +2481,11 @@ EOF</code></p>
 <p>Or using the bus and device:</p>
 <p>```sh
 sudo virsh attach-device haos /dev/stdin --persistent &lt;&lt;EOF
-<hostdev mode='subsystem' type='usb' managed='yes'>
- <source>
-   <address bus='1' device='12'/></p>
-<p></source>
-</hostdev>
+<hostdev managed="yes" mode="subsystem" type="usb">
+<source/>
+<address bus="1" device="12"></address></hostdev></p>
+<p>
+
 EOF
  ```</p>
 <ul>
@@ -4287,8 +2501,8 @@ EOF
 <li>Deactivate ZHA, and add devices: <a href="https://youtu.be/KA4XvVhyCtE?t=112">https://youtu.be/KA4XvVhyCtE?t=112</a></li>
 <li>If you are facing an issue with onboarding not loading after submitting, check: <a href="https://community.home-assistant.io/t/smlight-slzb-06-new-installation-can-not-pass-the-zigbee2mqtt-onboarding-page/908462/2">https://community.home-assistant.io/t/smlight-slzb-06-new-installation-can-not-pass-the-zigbee2mqtt-onboarding-page/908462/2</a></li>
 </ul>
-<h3 id="apps-add-ons">Apps / Add-ons<a class="headerlink" href="#apps-add-ons" title="Permanent link">&para;</a></h3>
-<h4 id="exposure-model-what-is-reachable-from-outside-the-lan">Exposure model — what is reachable from outside the LAN<a class="headerlink" href="#exposure-model-what-is-reachable-from-outside-the-lan" title="Permanent link">&para;</a></h4>
+<h3 id="apps-add-ons">Apps / Add-ons<a class="headerlink" href="#apps-add-ons" title="Permanent link">¶</a></h3>
+<h4 id="exposure-model-what-is-reachable-from-outside-the-lan">Exposure model — what is reachable from outside the LAN<a class="headerlink" href="#exposure-model-what-is-reachable-from-outside-the-lan" title="Permanent link">¶</a></h4>
 <p>Only the <strong>Cloudflared tunnel</strong> publishes services, and <strong>nothing is port-forwarded</strong>. Every
 other add-on port is LAN-only — note that the LAN is <em>not</em> a trust boundary (a compromised
 add-on can reach every other add-on and Home Assistant itself on <code>8123</code>), so "LAN-only" means
@@ -4476,12 +2690,12 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 </li>
 </ul>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nt">timezone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Paris</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nt">env_vars_list</span><span class="p">:</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"WEBHOOK_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:8081/"</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_PATH:</span><span class="nv"> </span><span class="s">/"</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_EDITOR_BASE_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:5678/"</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nt">cmd_line_args</span><span class="p">:</span><span class="w"> </span><span class="s">""</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-15-1"><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="nt">timezone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Paris</span>
+</span><span id="__span-15-2"><a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="nt">env_vars_list</span><span class="p">:</span>
+</span><span id="__span-15-3"><a href="#__codelineno-15-3" id="__codelineno-15-3" name="__codelineno-15-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"WEBHOOK_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:8081/"</span>
+</span><span id="__span-15-4"><a href="#__codelineno-15-4" id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_PATH:</span><span class="nv"> </span><span class="s">/"</span>
+</span><span id="__span-15-5"><a href="#__codelineno-15-5" id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"N8N_EDITOR_BASE_URL:</span><span class="nv"> </span><span class="s">http://homeassistant.local:5678/"</span>
+</span><span id="__span-15-6"><a href="#__codelineno-15-6" id="__codelineno-15-6" name="__codelineno-15-6"></a><span class="nt">cmd_line_args</span><span class="p">:</span><span class="w"> </span><span class="s">""</span>
 </span></code></pre></div>
 <p>It is better to use an external WEBHOOK_URL for the api so external applications can use it.</p>
 <ul>
@@ -4539,7 +2753,7 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <p><strong>Zigbee2MQTT</strong></p>
 </li>
 </ul>
-<h3 id="integrations">Integrations<a class="headerlink" href="#integrations" title="Permanent link">&para;</a></h3>
+<h3 id="integrations">Integrations<a class="headerlink" href="#integrations" title="Permanent link">¶</a></h3>
 <ul>
 <li>
 <p><strong>AdGuard Home</strong></p>
@@ -4694,7 +2908,7 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 </li>
 </ul>
-<h3 id="dashboard-cards">Dashboard &amp; Cards<a class="headerlink" href="#dashboard-cards" title="Permanent link">&para;</a></h3>
+<h3 id="dashboard-cards">Dashboard &amp; Cards<a class="headerlink" href="#dashboard-cards" title="Permanent link">¶</a></h3>
 <ul>
 <li><strong>Auto entities</strong> : <a href="https://github.com/thomasloven/lovelace-auto-entities">https://github.com/thomasloven/lovelace-auto-entities</a></li>
 <li><strong>Custom sidebar</strong>: <a href="https://github.com/elchininet/custom-sidebar">https://github.com/elchininet/custom-sidebar</a></li>
@@ -4705,21 +2919,21 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <ul>
 <li>The whole Android TV remote in a single card — touchpad, power, volume and media keys — built on the <code>remote</code> entity for the keys and the <code>media_player</code> entity for power/volume. This is the card used on the TV remote dashboard view:</li>
 </ul>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom:universal-remote-card</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Android TV</span>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nt">remote_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote.chromecast_amine</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nt">media_player_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">media_player.chromecast_amine_2</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nt">rows</span><span class="p">:</span>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">back</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">power</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">home</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">menu</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">keyboard</span><span class="p p-Indicator">]</span>
-</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">touchpad</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">volume_buttons</span><span class="p p-Indicator">]]</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">rewind</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">previous</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">play_pause</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">next</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">fast_forward</span><span class="p p-Indicator">]</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-16-1"><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom:universal-remote-card</span>
+</span><span id="__span-16-2"><a href="#__codelineno-16-2" id="__codelineno-16-2" name="__codelineno-16-2"></a><span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Android TV</span>
+</span><span id="__span-16-3"><a href="#__codelineno-16-3" id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="nt">remote_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote.chromecast_amine</span>
+</span><span id="__span-16-4"><a href="#__codelineno-16-4" id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="nt">media_player_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">media_player.chromecast_amine_2</span>
+</span><span id="__span-16-5"><a href="#__codelineno-16-5" id="__codelineno-16-5" name="__codelineno-16-5"></a><span class="nt">rows</span><span class="p">:</span>
+</span><span id="__span-16-6"><a href="#__codelineno-16-6" id="__codelineno-16-6" name="__codelineno-16-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">back</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">power</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">home</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">menu</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">keyboard</span><span class="p p-Indicator">]</span>
+</span><span id="__span-16-7"><a href="#__codelineno-16-7" id="__codelineno-16-7" name="__codelineno-16-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">touchpad</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">volume_buttons</span><span class="p p-Indicator">]]</span>
+</span><span id="__span-16-8"><a href="#__codelineno-16-8" id="__codelineno-16-8" name="__codelineno-16-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">rewind</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">previous</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">play_pause</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">next</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">fast_forward</span><span class="p p-Indicator">]</span>
 </span></code></pre></div>
 <ul>
 <li><code>power</code>, the D-pad names and the media keys are built-in key codes, so no <code>custom_actions</code> block is needed for a standard Android TV remote; add one only for buttons the TV does not expose by default.</li>
 </ul>
 </li>
 </ul>
-<h3 id="automations-scenes-script-helpers-and-entities">Automations, Scenes, Script, Helpers and Entities<a class="headerlink" href="#automations-scenes-script-helpers-and-entities" title="Permanent link">&para;</a></h3>
+<h3 id="automations-scenes-script-helpers-and-entities">Automations, Scenes, Script, Helpers and Entities<a class="headerlink" href="#automations-scenes-script-helpers-and-entities" title="Permanent link">¶</a></h3>
 <ul>
 <li><strong>🤖 Automation</strong> = When something happens → do something<ul>
 <li>Always use entities instead of devices. Entities have unique names.</li>
@@ -4758,7 +2972,7 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 </li>
 </ul>
-<h2 id="adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)<a class="headerlink" href="#adguard-home-address-naming-resolution-using-the-router-freebox" title="Permanent link">&para;</a></h2>
+<h2 id="adguard-home-address-naming-resolution-using-the-router-freebox">AdGuard Home address naming resolution using the router (Freebox)<a class="headerlink" href="#adguard-home-address-naming-resolution-using-the-router-freebox" title="Permanent link">¶</a></h2>
 <p>Who hands out the addresses, and who publishes the names:</p>
 <ul>
 <li><strong>One DHCP server, one reservation table.</strong> AdGuard Home serves DHCPv4 here, so every fixed IPv4 address belongs in AdGuard Home → DHCP settings → <em>Add static lease</em> (IP + MAC + hostname). The one exception is the machine that runs DNS/DHCP itself: it keeps a fixed address configured on its own OS (that is why the Home Assistant VM's IPv4 is set in HAOS) so it can boot without a lease.</li>
@@ -4780,7 +2994,7 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li>Forget stale LAN devices in the <strong>Free mobile app</strong> (Freebox OS -&gt; devices -&gt; forget), e.g. after a bridge/MAC change, a new VM or a replaced phone, so the router re-detects them with their current MAC/IP instead of keeping the old entry.</li>
 <li>Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)</li>
 </ul>
-<h3 id="sync-the-names-from-the-freebox-script-cron">Sync the names from the Freebox (script + cron)<a class="headerlink" href="#sync-the-names-from-the-freebox-script-cron" title="Permanent link">&para;</a></h3>
+<h3 id="sync-the-names-from-the-freebox-script-cron">Sync the names from the Freebox (script + cron)<a class="headerlink" href="#sync-the-names-from-the-freebox-script-cron" title="Permanent link">¶</a></h3>
 <ul>
 <li>The following will show you how to get the names of the devices in AdGuard Home using your router (this example uses the Freebox API).</li>
 <li>You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).</li>
@@ -4798,63 +3012,63 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 </ul>
 </li>
 </ul>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># For example</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-17-1"><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="c1"># For example</span>
+</span><span id="__span-17-2"><a href="#__codelineno-17-2" id="__codelineno-17-2" name="__codelineno-17-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/home/amine/.local/bin/uv<span class="w"> </span>run<span class="w"> </span>sync_adguard_home_ip_mac.py
 </span></code></pre></div>
 <ul>
 <li>Check Settings -&gt; Client settings -&gt; <strong>Persistent clients settings</strong> .</li>
 <li>This script will run every minute. If it discovers a new device, it will update the log file <code>sync_agh.log</code> with the latest sync information.</li>
 <li>⚠️ The name it takes from the Freebox (<code>primary_name</code>, i.e. the name you set on the device's page) is used <strong>only when it creates a client</strong>. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).</li>
 </ul>
-<h3 id="network-topology-dns-flows">Network topology &amp; DNS flows<a class="headerlink" href="#network-topology-dns-flows" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>graph TB
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (IPv4 leases by AdGuard Home · Freebox = gateway + IPv6)"]
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>        Freebox["Freebox router&lt;br/&gt;192.168.1.254&lt;br/&gt;gateway (DHCPv4 off)"]
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>        LANDevice["LAN device (phone, laptop...)&lt;br/&gt;192.168.1.x"]
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    end
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>        br0["br0 (Linux bridge)&lt;br/&gt;192.168.1.123/24&lt;br/&gt;carries LAN + HA VM (vnet2)"]
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>        virbr0["virbr0 (libvirt NAT gw)&lt;br/&gt;192.168.122.1/24&lt;br/&gt;DOWN when no VM attached"]
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>        docker0["docker0 (default bridge network)&lt;br/&gt;172.17.0.1/16&lt;br/&gt;unused, DOWN — no containers running"]
-</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    end
-</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
-</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
-</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>        natVM["KVM VM in NAT mode&lt;br/&gt;192.168.122.x"]
-</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>    end
-</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>
-</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged; IPv4 fixed in HAOS)"]
-</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>        AdGuard["AdGuard Home (addon, host network)&lt;br/&gt;192.168.1.119:53 DNS · :8082 web UI"]
-</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>
-</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>        subgraph Hassio1["hassio network — 172.30.32.0/23"]
-</span><span id="__span-18-21"><a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>            hassioGw["gateway&lt;br/&gt;172.30.32.1"]
-</span><span id="__span-18-22"><a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a>            hassioDns["hassio_dns&lt;br/&gt;172.30.32.3&lt;br/&gt;HAOS internal DNS proxy"]
-</span><span id="__span-18-23"><a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>            haAddons["other addons&lt;br/&gt;172.30.32.4+"]
-</span><span id="__span-18-24"><a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a>        end
-</span><span id="__span-18-25"><a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a>
-</span><span id="__span-18-26"><a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a>        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
-</span><span id="__span-18-27"><a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a>            hermes["Hermes Agent addon&lt;br/&gt;172.30.33.10"]
-</span><span id="__span-18-28"><a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a>        end
-</span><span id="__span-18-29"><a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a>    end
-</span><span id="__span-18-30"><a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a>
-</span><span id="__span-18-31"><a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a>    %% DNS flows
-</span><span id="__span-18-32"><a id="__codelineno-18-32" name="__codelineno-18-32" href="#__codelineno-18-32"></a>    LANDevice --&gt;|"direct DNS query"| AdGuard
-</span><span id="__span-18-33"><a id="__codelineno-18-33" name="__codelineno-18-33" href="#__codelineno-18-33"></a>    haAddons --&gt;|"internal query"| hassioDns
-</span><span id="__span-18-34"><a id="__codelineno-18-34" name="__codelineno-18-34" href="#__codelineno-18-34"></a>    hermes --&gt;|"internal query"| hassioDns
-</span><span id="__span-18-35"><a id="__codelineno-18-35" name="__codelineno-18-35" href="#__codelineno-18-35"></a>    hassioDns --&gt;|"forwarded DNS query"| AdGuard
-</span><span id="__span-18-36"><a id="__codelineno-18-36" name="__codelineno-18-36" href="#__codelineno-18-36"></a>    natVM --&gt;|"query"| virbr0
-</span><span id="__span-18-37"><a id="__codelineno-18-37" name="__codelineno-18-37" href="#__codelineno-18-37"></a>    virbr0 --&gt;|"forwarded DNS query"| AdGuard
-</span><span id="__span-18-38"><a id="__codelineno-18-38" name="__codelineno-18-38" href="#__codelineno-18-38"></a>
-</span><span id="__span-18-39"><a id="__codelineno-18-39" name="__codelineno-18-39" href="#__codelineno-18-39"></a>    %% topology / carrier links (not DNS)
-</span><span id="__span-18-40"><a id="__codelineno-18-40" name="__codelineno-18-40" href="#__codelineno-18-40"></a>    Freebox -.-&gt;|LAN| br0
-</span><span id="__span-18-41"><a id="__codelineno-18-41" name="__codelineno-18-41" href="#__codelineno-18-41"></a>    br0 -.-&gt;|bridged NIC vnet2| AdGuard
-</span><span id="__span-18-42"><a id="__codelineno-18-42" name="__codelineno-18-42" href="#__codelineno-18-42"></a>
-</span><span id="__span-18-43"><a id="__codelineno-18-43" name="__codelineno-18-43" href="#__codelineno-18-43"></a>    classDef visible stroke:#2e7d32,stroke-width:2px;
-</span><span id="__span-18-44"><a id="__codelineno-18-44" name="__codelineno-18-44" href="#__codelineno-18-44"></a>    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
-</span><span id="__span-18-45"><a id="__codelineno-18-45" name="__codelineno-18-45" href="#__codelineno-18-45"></a>
-</span><span id="__span-18-46"><a id="__codelineno-18-46" name="__codelineno-18-46" href="#__codelineno-18-46"></a>    class Freebox,LANDevice,br0,AdGuard visible;
-</span><span id="__span-18-47"><a id="__codelineno-18-47" name="__codelineno-18-47" href="#__codelineno-18-47"></a>    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
-</span></code></pre></div>
+<h3 id="network-topology-dns-flows">Network topology &amp; DNS flows<a class="headerlink" href="#network-topology-dns-flows" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph TB
+    subgraph FreeboxLAN["🌐 Freebox LAN — 192.168.1.0/24 (IPv4 leases by AdGuard Home · Freebox = gateway + IPv6)"]
+        Freebox["Freebox router<br/>192.168.1.254<br/>gateway (DHCPv4 off)"]
+        LANDevice["LAN device (phone, laptop...)<br/>192.168.1.x"]
+    end
+
+    subgraph KVMServer["🖥️ KVM Server (Ubuntu host) — 192.168.1.123"]
+        br0["br0 (Linux bridge)<br/>192.168.1.123/24<br/>carries LAN + HA VM (vnet2)"]
+        virbr0["virbr0 (libvirt NAT gw)<br/>192.168.122.1/24<br/>DOWN when no VM attached"]
+        docker0["docker0 (default bridge network)<br/>172.17.0.1/16<br/>unused, DOWN — no containers running"]
+    end
+
+    subgraph NATVMs["libvirt NAT — 192.168.122.0/24"]
+        natVM["KVM VM in NAT mode<br/>192.168.122.x"]
+    end
+
+    subgraph HAVM["🏠 Home Assistant OS VM — 192.168.1.119 (bridged; IPv4 fixed in HAOS)"]
+        AdGuard["AdGuard Home (addon, host network)<br/>192.168.1.119:53 DNS · :8082 web UI"]
+
+        subgraph Hassio1["hassio network — 172.30.32.0/23"]
+            hassioGw["gateway<br/>172.30.32.1"]
+            hassioDns["hassio_dns<br/>172.30.32.3<br/>HAOS internal DNS proxy"]
+            haAddons["other addons<br/>172.30.32.4+"]
+        end
+
+        subgraph Hassio2["2nd HAOS network — 172.30.33.0/23"]
+            hermes["Hermes Agent addon<br/>172.30.33.10"]
+        end
+    end
+
+    %% DNS flows
+    LANDevice --&gt;|"direct DNS query"| AdGuard
+    haAddons --&gt;|"internal query"| hassioDns
+    hermes --&gt;|"internal query"| hassioDns
+    hassioDns --&gt;|"forwarded DNS query"| AdGuard
+    natVM --&gt;|"query"| virbr0
+    virbr0 --&gt;|"forwarded DNS query"| AdGuard
+
+    %% topology / carrier links (not DNS)
+    Freebox -.-&gt;|LAN| br0
+    br0 -.-&gt;|bridged NIC vnet2| AdGuard
+
+    classDef visible stroke:#2e7d32,stroke-width:2px;
+    classDef invisible stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class Freebox,LANDevice,br0,AdGuard visible;
+    class virbr0,docker0,natVM,hassioGw,hassioDns,haAddons,hermes invisible;
+</code></pre>
 <p>Legend:</p>
 <ul>
 <li><strong>Solid border</strong> = IP visible to the Freebox API (DHCP leases / ARP table), i.e. any <code>192.168.1.x</code> address on the physical LAN.</li>
@@ -4864,7 +3078,7 @@ Update the config of the addon if you want to use the (forms and chat...etc) sin
 <li><strong><code>docker0</code></strong> — Docker's default bridge network (<code>172.17.0.0/16</code>) on the server. Confirmed via <code>docker network ls</code>/<code>docker ps -a</code>: only the default <code>bridge</code>/<code>host</code>/<code>none</code> networks exist and no containers are running, so this interface is currently unused (DOWN).</li>
 <li><strong>Direct vs forwarded</strong> — "direct" means the querying host talks straight to AdGuard (<code>192.168.1.119:53</code>); "forwarded" means an intermediate resolver (<code>hassio_dns</code> or libvirt's <code>dnsmasq</code>) receives the query first and relays it to AdGuard.</li>
 </ul>
-<h2 id="todo">todo<a class="headerlink" href="#todo" title="Permanent link">&para;</a></h2>
+<h2 id="todo">todo<a class="headerlink" href="#todo" title="Permanent link">¶</a></h2>
 <ul>
 <li>backup vm</li>
 <li>
@@ -4880,68 +3094,38 @@ custom sidebar
 room card</p>
 </li>
 </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
+</article>
+</div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
   Back to top
 </button>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
   
   
     Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
       Material for MkDocs
     </a>
-  
 </div>
-      
-    </div>
-  </div>
+</div>
+</div>
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
-    
-    
-    
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["search.suggest", "search.highlight", "search.share", "navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.indexes", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
-    
-    
-      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
-      
-    
-  </body>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<div class="md-progress" data-md-component="progress" role="progressbar"></div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["search.suggest", "search.highlight", "search.share", "navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.indexes", "navigation.top", "toc.follow", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+window.mermaidConfig = {default: {
+    startOnLoad: false
+}};</script></body>
 </html>
