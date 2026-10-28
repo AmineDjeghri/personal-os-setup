@@ -5,9 +5,11 @@
 
 N ?= 4
 
-test-installation: ## Test installation
+test-installation: build-package ## Install the built wheel in a throwaway env and check the personal-os-setup command loads (does not start it)
 	@echo "${YELLOW}=========> Testing installation...${NC}"
-	@$(UV) run --directory . awesome-os
+	@wheel=$$(ls -t dist/*.whl | head -1); \
+	$(UV) run --isolated --no-project --with "$$wheel" python -c \
+		"from importlib.metadata import entry_points; ep = entry_points(group='console_scripts')['personal-os-setup']; ep.load(); print('OK', ep.name, '->', ep.value)"
 
 test: ## Run unit tests with pytest (parallel via pytest-xdist). Usage: make test [N=<num_workers>] (default: 4)
 	@echo "${YELLOW}Running tests with $(N) worker(s)...${NC}"

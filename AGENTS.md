@@ -45,12 +45,19 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 - **PRs:** target `main`, squash-merge, title must be conventional (= the release commit message).
 - **Secrets:** inline `# pragma: allowlist secret`, never whole-file excludes.
 - **Renovate:** 7-day cooldown on dependency PRs; `uv.lock` regenerated, not pinned.
+- **Releases:** `make release-version` / `release-assets` / `release` (`scripts/release.sh`) are what
+  the release workflows run too. Guards: `main` (or `dev`), clean tree, in sync with origin; the
+  token is `GH_TOKEN`, else the `gh auth login` session, else a hidden prompt. Never run them, nor
+  `make deploy-doc-gh`, without per-action approval: they push, tag and publish.
+- **Docs:** developer pages live in `docs/developer/` (numbered, one purpose line, short tables);
+  update the page a change affects in the same change.
 
 ## Index
 
 | Topic | Where |
 |---|---|
 | Deep architecture (frontend, tasks, managers) | `CLAUDE.md` |
+| Developer guide (setup, conventions, testing, release) | `docs/developer/` |
 | PR flow / ship process | `.claude/skills/ship-feature` |
 | Documented-vs-reality drift | `.claude/skills/repo-gotchas` |
 | Tests & coverage | `.claude/skills/run-tests` |

@@ -15,6 +15,7 @@ repos:
         args: ['--maxkb=3000']
       - id: check-toml
       - id: check-yaml
+        args: ['--unsafe']  # properdocs.yml uses !!python/name tags (mermaid fence); syntax is still checked
       - id: check-json
         exclude: ^src/personal_os_setup/config/chezmoi/dot_config/zed/settings\.json$
       - id: end-of-file-fixer

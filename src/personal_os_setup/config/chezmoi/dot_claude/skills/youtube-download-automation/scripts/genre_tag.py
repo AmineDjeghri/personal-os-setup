@@ -3,13 +3,19 @@
 # requires-python = ">=3.11"
 # dependencies = ["mutagen>=1.47"]
 # ///
-"""Merge last.fm genres into the genre tag of every audio file under a folder.
+r"""Merge last.fm genres into the genre tag of every audio file under a folder.
 
 Usage:
     export LASTFM_API_KEY=...            # a personal key; beets' shared one is rate-limited
     uv run --no-project genre_tag.py <music_dir>                 # dry run: report only
     uv run --no-project genre_tag.py <music_dir> --apply         # write tags (+ backup)
     uv run --no-project genre_tag.py --restore <backup.jsonl>    # undo an --apply
+
+Additions-only run (never drops a value the file already has, never adds brigade tags or
+alias spellings, skips a folder such as the non-music ``Other/`` clips):
+
+    uv run --no-project genre_tag.py <music_dir> --keep-existing --cap 5 \\
+        --block "black metal,screamo,nsbm" --exclude-dir Other
 
 Behaviour (the "merge" policy, see references/genre-retag.md):
   * Every track is looked up on its own: last.fm track tags, then the artist's tags when the
@@ -126,12 +132,17 @@ def _drop_covered(values):
     return [v for v in values if not (v.lower() in GENERIC and _covered(v.lower(), values))]
 
 
-def decide(existing_atoms, candidates, vocab, cap):
+def decide(existing_atoms, candidates, vocab, cap, keep_existing=False, block=()):
     """Merge ``candidates`` (rendered, best first) into the existing genre atoms.
+
+    ``keep_existing`` disables the generic-parent removal: no value already in the file
+    is ever dropped (only additions happen). ``block`` is a set of lowercase tokens that
+    must never be added — brigade/troll tags and duplicate spellings.
 
     Returns ``(final_values, status)``; status is one of unchanged / gained / extended /
     normalized / review / nodata.
     """
+    blocked = {b.lower() for b in block}
     raw = split_values(existing_atoms)
     review = False
     existing = []
@@ -148,17 +159,17 @@ def decide(existing_atoms, candidates, vocab, cap):
     for v in existing:
         if v.lower() not in {f.lower() for f in final}:
             final.append(v)
-    final = _drop_covered(final)
+    final = final if keep_existing else _drop_covered(final)
 
     taken = {f.lower() for f in final}
-    fresh = [c for c in candidates if c.lower() not in taken]
+    fresh = [c for c in candidates if c.lower() not in taken and c.lower() not in blocked]
     fresh = [c for c in fresh if c.lower() != "world"] + [c for c in fresh if c.lower() == "world"]
     for c in fresh:
         if len(final) >= cap:
             break
         if c.lower() in GENERIC and _covered(c.lower(), final + [c]):
             continue
-        final = _drop_covered(final + [c])
+        final = final + [c] if keep_existing else _drop_covered(final + [c])
 
     markers_only = bool(final) and all(f.lower() in MARKERS for f in final)
     if review or markers_only or (raw and not final):
@@ -409,7 +420,26 @@ def main():
     ap.add_argument("--force", action="store_true", help="ignore the processed-files memory")
     ap.add_argument("--report", metavar="TSV", help="write every decision to a TSV file")
     ap.add_argument("--show", type=int, default=10, help="example lines per status")
+    ap.add_argument(
+        "--keep-existing",
+        action="store_true",
+        help="never remove a value the file already has (additions only)",
+    )
+    ap.add_argument(
+        "--block",
+        default="",
+        help="comma-separated tokens that must never be added (brigade tags, alias spellings)",
+    )
+    ap.add_argument(
+        "--exclude-dir",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="skip files under a directory with this name (repeatable)",
+    )
     args = ap.parse_args()
+    block = {t.strip().lower() for t in args.block.split(",") if t.strip()}
+    excluded = {n.strip().lower() for n in args.exclude_dir if n.strip()}
 
     if args.restore:
         return restore(args.restore)
@@ -427,6 +457,8 @@ def main():
 
     files = []
     for p in scan(args.path, state, args.force):
+        if excluded and {part.lower() for part in Path(p).parts} & excluded:
+            continue
         files.append(p)
         if args.limit and len(files) >= args.limit:
             break
@@ -495,7 +527,9 @@ def main():
             )
             continue
         cands, source = results.get(pair, ([], "none"))
-        final, status = decide(r["atoms"], cands, vocab, args.cap)
+        final, status = decide(
+            r["atoms"], cands, vocab, args.cap, keep_existing=args.keep_existing, block=block
+        )
         rows.append(
             (status, r["path"], ";".join(split_values(r["atoms"])), ";".join(final), source)
         )
