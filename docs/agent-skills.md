@@ -122,16 +122,16 @@ Things to know:
   (`npx`) and `jq`. Optional replay logs `SKIPPED` if tooling is missing and records no successful install.
 - **It never deletes.** A skill removed from the repo stays in `~/.claude/skills` until you delete it by hand.
 - **Each apply leaves backups.** Before overwriting, it copies every selected file to
-  `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-diff` then reports `DIFFERS`. Use
+  `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-status` then reports `DIFFERS`. Use
   **chezmoi: clean backups** to remove them.
 - **It does not check for drift.** Apply overwrites a live skill that was edited and not yet pulled back with
-  re-add. Run `make skills-diff` first if an agent may have edited a live skill.
-- **Re-add only handles files already tracked.** For a brand-new live-only skill, use `make skills-keep`.
+  re-add. Run `make skills-status` first if an agent may have edited a live skill.
+- **Re-add only handles files already tracked.** For a brand-new live-only skill, use `make skills-live-to-repo`.
 
 ### Setting up a new machine
 
 Clone the repo, then apply `.claude` from the TUI. The third-party lock is replayed for you. Without the TUI:
-`make skills-deploy` (authored skills) and `make skills-thirdparty-replay` (third-party skills).
+`make skills-repo-to-live` (authored skills) and `make skills-thirdparty-repo-to-live` (third-party skills).
 
 ## Adding skills
 
@@ -139,18 +139,18 @@ Clone the repo, then apply `.claude` from the TUI. The third-party lock is repla
 
 1. Create `src/personal_os_setup/config/chezmoi/dot_claude/skills/<name>/SKILL.md`.
 2. Add `<name>` to `skills.keep`.
-3. Deploy from the TUI or with `make skills-deploy`, then run `make skills-diff` to confirm every skill reports `OK`.
+3. Deploy from the TUI or with `make skills-repo-to-live`, then run `make skills-status` to confirm every skill reports `OK`.
 
-To keep a skill that already exists live (for example one an agent created), run `make skills-keep NAME=<name>`.
+To keep a skill that already exists live (for example one an agent created), run `make skills-live-to-repo NAME=<name>`.
 
 ### From another repo (third-party)
 
 ```bash
 npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy
-make skills-thirdparty-save     # copy the live lock into third-party-skills.lock.json
+make skills-thirdparty-live-to-repo     # copy the live lock into third-party-skills.lock.json
 ```
 
-Then run `make skills-thirdparty-replay` to verify both agents and record local content receipts.
+Then run `make skills-thirdparty-repo-to-live` to verify both agents and record local content receipts.
 Commit the updated lock after review. Rules:
 
 - **Use `-a claude-code -a codex`.** Hermes already reads the Claude directory, so adding
@@ -162,8 +162,8 @@ Commit the updated lock after review. Rules:
 - **Keep names unique.** A third-party name must not match an authored, repo-local or built-in skill. npx cannot
   rename a skill on install.
 - **Install only what you use.** Every installed skill adds its description to every session.
-- **Updates are manual.** Replays fetch the latest upstream version, not a pinned one. `make skills-thirdparty`
-  reports `CHANGED` when upstream differs from the committed lock.
+- **Updates are manual.** Replays fetch the latest upstream version, not a pinned one. `make skills-status`
+  reports `DRIFT` when the live lock differs from the committed lock.
 
 ### For this repo only (repo-local)
 
@@ -177,18 +177,14 @@ not.
 
 | Command                                  | Purpose                                                                                                                     |
 |------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `make skills-diff`                       | Compare each authored skill with its live copy (`OK` / `DIFFERS` / `MISSING`); read-only                                    |
-| `make skills-drift`                      | Like `skills-diff` but only `DIFFERS` fails; this is the deploy gate                                                        |
-| `make skills-deploy`                     | Copy authored skills to `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides) |
-| `make skills-status`                     | Flag names present in both `~/.claude/skills` and `~/.hermes/skills`, and repo skills missing from `skills.keep`            |
-| `make skills-keep NAME=<name>`           | Save a live skill into the repo and add it to `skills.keep`                                                                 |
-| `make skills-thirdparty`                 | Verify lock identities, manifests and installed content for selected agents; read-only                                           |
-| `make skills-thirdparty-save`            | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                             |
-| `make skills-thirdparty-replay`          | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                            |
-| `make skills-codex-check` | Verify per-skill authored links in Codex’s global directory |
+| `make skills-status`                     | One read-only report: repo vs live copy per skill (`OK` / `DIFFERS` / `MISSING`), Codex links, names present in both `~/.claude/skills` and `~/.hermes/skills`, repo skills missing from `skills.keep`, third-party lock and content |
+| `make skills-repo-to-live`               | Copy authored skills repo → `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides) |
+| `make skills-live-to-repo NAME=<name>`   | Save a live skill into the repo and add it to `skills.keep`                                                                 |
+| `make skills-thirdparty-live-to-repo`            | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                             |
+| `make skills-thirdparty-repo-to-live`          | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                                           |
 | `make skills-link` / `make skills-check` | Create / verify the `.agents/skills` symlinks for repo-local skills                                                         |
 
-### What `skills-thirdparty-replay` does
+### What `skills-thirdparty-repo-to-live` does
 
 The replay installs each locked skill for `claude-code` and `codex` using `npx skills add … --copy`.
 Use `AGENT=codex` or `AGENTS="claude-code codex"` to select the agents explicitly. Hermes is never a
@@ -210,7 +206,7 @@ and verification succeed. Optional replay reports `SKIPPED` when tooling is unav
 installation success. The Make target always replays and treats missing tooling as an error.
 
 Replay fetches current upstream versions. If an upstream folder ID changed, verification fails:
-review the update, run `make skills-thirdparty-save`, then replay again to establish matching receipts.
+review the update, run `make skills-thirdparty-live-to-repo`, then replay again to establish matching receipts.
 The committed lock remains an inventory and drift reference, not an immutable source pin.
 
 ### Where the `npx skills` lock lives

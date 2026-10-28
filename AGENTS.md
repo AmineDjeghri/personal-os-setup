@@ -63,18 +63,18 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
-- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-deploy`).
-  Codex gets per-skill links in `~/.agents/skills`; `make skills-codex-check` verifies them.
+- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-repo-to-live`).
+  Codex gets per-skill links in `~/.agents/skills`; `make skills-status` verifies them.
   Hermes reads `~/.claude/skills` too (`skills.external_dirs`), so nothing is duplicated into
   `~/.hermes/skills` — a name in both roots is unloadable (`Ambiguous skill name … Refusing to guess`);
   `make skills-status` flags it. The saved set is listed in `skills.keep`; save a live skill into the
-  repo with `make skills-keep NAME=<name>`.
+  repo with `make skills-live-to-repo NAME=<name>`.
 - **Private content stays out:** an `exposure: private` skill is live only (`hermes curator pin`) —
   **this repo is PUBLIC**.
 - **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;
   `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the
-  lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-save`;
-  `make skills-thirdparty-replay` reinstalls for Claude Code and Codex). Use `AGENT=codex` for Codex only.
+  lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-live-to-repo`;
+  `make skills-thirdparty-repo-to-live` reinstalls for Claude Code and Codex). Use `AGENT=codex` for Codex only.
 - **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
   own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).
   Agent-created (Curator) skills are live only until triaged: promote, pin-private, or delete.

@@ -47,7 +47,7 @@ at (internals, a script, its own `references/`) — proposing to merge without h
 having done the homework. When it really is the same content in two homes, pick the survivor by which one is
 actually MANAGED (git/chezmoi-deployed and drift-checked beats a hand-symlinked or docs-hosted copy that a fresh
 machine won't have), fold any delta the loser has that the survivor lacks, then delete the loser and verify with a
-fresh `skills-diff`/`skills-check` pass.
+fresh `skills-status`/`skills-check` pass.
 
 **Merge procedure (Hermes live store) — steps a merger must not skip:**
 
@@ -72,6 +72,6 @@ deleting the loser, walk its body and its `references/` item by item:
 - the frontmatter `description`/trigger now covers the loser's trigger words, or the merged half never loads for the
   tasks it was written for.
 
-**File-level and content-level are different proofs, and you need both.** `skills-diff`/`skills-check` after a
+**File-level and content-level are different proofs, and you need both.** `skills-status`/`skills-check` after a
 merge show that the two trees agree — nothing about whether the merge lost anything; the phrase sweep above is the
 only check for that. Never report a merge as lossless on the strength of a clean diff.

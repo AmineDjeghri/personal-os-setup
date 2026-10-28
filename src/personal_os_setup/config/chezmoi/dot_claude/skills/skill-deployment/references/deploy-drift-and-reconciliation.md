@@ -1,15 +1,15 @@
 # Reconciling the two trees (do this BEFORE any cleanup)
 
 `make skills-status` is the authoritative duplicate list (live own-store copies that duplicate a git-managed name);
-`make skills-diff` reports per skill `OK` / `DIFFERS` / `MISSING`; `make skills-drift` is the deploy's gate.
+`make skills-status` reports per skill `OK` / `DIFFERS` / `MISSING`; `skills-repo-to-live` runs the same scan as its gate (only `DIFFERS` aborts).
 
 - **`MISSING` means "the deploy has not landed", never "redundant".** The own-store copy of a shared name can be the
   only copy the index has — the CLI dedupes by name, so deleting it first makes the skill vanish from the index.
-  Order: deploy → confirm `skills-diff` prints no `MISSING`/`DIFFERS` → only then delete the own-store duplicate.
-- **Deleting a deployed name locally is a no-op** — the next `make skills-deploy` restores it. Tracks 1/2 are
+  Order: deploy → confirm `skills-status` prints no `MISSING`/`DIFFERS` → only then delete the own-store duplicate.
+- **Deleting a deployed name locally is a no-op** — the next `make skills-repo-to-live` restores it. Tracks 1/2 are
   deleted by repo PR; say that instead of deleting.
-- `make skills-deploy` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
-  `SKILLS_FORCE=1 make skills-deploy` is the escape hatch and is safe ONLY once the newer live content has been ported
+- `make skills-repo-to-live` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
+  `SKILLS_FORCE=1 make skills-repo-to-live` is the escape hatch and is safe ONLY once the newer live content has been ported
   into the source tree — otherwise it overwrites that content for good.
 - **`DIFFERS` never says which side is newer — check per FILE** with `stat -c '%s %y'` on both copies (the drifted set
   is usually mixed). Live strictly newer → port live→source (sanitized). Source strictly newer → port nothing, the
@@ -32,4 +32,4 @@
   code actually has. A claim can be directionally right and still wrong in scope — a refusal list that omits
   `external_dirs` and an actor gate both send the next session to the wrong place. Report anything you could not
   verify as unverified instead of merging it on tone.
-- Re-run `skills-diff` after the deploy — a clean report is the proof, not the deploy's own output.
+- Re-run `skills-status` after the deploy — a clean report is the proof, not the deploy's own output.

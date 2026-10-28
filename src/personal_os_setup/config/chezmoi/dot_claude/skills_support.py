@@ -54,7 +54,7 @@ def link_authored(source, claude, codex, *, check=False, preflight=False):
         elif link.exists() or link.is_symlink():
             raise ValueError(f"CONFLICT {link}: expected a link to {target}; reconcile manually")
         elif check:
-            raise ValueError(f"MISSING {link}: run make skills-deploy")
+            raise ValueError(f"MISSING {link}: run make skills-repo-to-live")
         if not preflight and not (target / "SKILL.md").is_file():
             raise ValueError(f"MISSING {target}/SKILL.md: deploy authored files first")
     if not check and not preflight:
@@ -127,7 +127,9 @@ def verify_installations(lock, live_lock, receipts, agents, roots, *, record=Fal
         if any(have.get(key) != entry[key] for key in ("source", "skillFolderHash")):
             raise ValueError(f"DRIFT {name}: live lock differs; review upstream and save the lock")
     if set(live) - set(expected):
-        raise ValueError("EXTRA skills in live lock: review and run make skills-thirdparty-save")
+        raise ValueError(
+            "EXTRA skills in live lock: review and run make skills-thirdparty-live-to-repo"
+        )
     snapshot = installed_snapshot(expected, agents, roots)
     if record:
         saved = json.loads(receipts.read_text()) if receipts.exists() else {}
@@ -138,7 +140,7 @@ def verify_installations(lock, live_lock, receipts, agents, roots, *, record=Fal
         temporary.replace(receipts)
     else:
         if not receipts.is_file():
-            raise ValueError("MISSING content receipts: run make skills-thirdparty-replay")
+            raise ValueError("MISSING content receipts: run make skills-thirdparty-repo-to-live")
         saved = json.loads(receipts.read_text())
         for agent in agents:
             for name, entry in snapshot[agent].items():
