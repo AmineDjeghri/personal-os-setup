@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v2.20.0 (2026-10-28)
+
+### Bug Fixes
+
+- Codex skill deployment (#146) ([#146](https://github.com/AmineDjeghri/personal-os-setup/pull/146),
+  [`c54a248`](https://github.com/AmineDjeghri/personal-os-setup/commit/c54a2482498cb14d46ae04ac8d95cc697504e168))
+
+### Features
+
+- **skills**: Add report-pdf skill for reviewable task reports (#142)
+  ([#142](https://github.com/AmineDjeghri/personal-os-setup/pull/142),
+  [`1b1d430`](https://github.com/AmineDjeghri/personal-os-setup/commit/1b1d430c032bf82bba842af05afd6f2675c97b20))
+
+- **skills**: Additions-only genre pass for a curated library (#144)
+  ([#144](https://github.com/AmineDjeghri/personal-os-setup/pull/144),
+  [`ce9e0cc`](https://github.com/AmineDjeghri/personal-os-setup/commit/ce9e0cc9c9c7c194eb8e23c82d29ca2dd492340a))
+
+
 ## v2.19.0 (2026-10-27)
 
 ### Bug Fixes
