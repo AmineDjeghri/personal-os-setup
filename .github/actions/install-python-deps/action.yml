@@ -15,7 +15,7 @@ runs:
     # windows-latest has no GNU make/uv: pin setup-uv (no floating major tag), then run what `make install-dev` runs.
     - name: Install uv (Windows)
       if: runner.os == 'Windows'
-      uses: astral-sh/setup-uv@v10.3.0
+      uses: astral-sh/setup-uv@v10.3.2
 
     - name: Install Python Dependencies (Windows)
       if: runner.os == 'Windows'
