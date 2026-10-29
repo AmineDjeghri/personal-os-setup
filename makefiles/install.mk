@@ -4,7 +4,7 @@
 .PHONY: install-uv install install-dev
 
 install-uv: ## Install uv
-	@echo "${YELLOW}=========> installing uv ${NC}"
+	@printf '%b\n' "${CYAN}=========> installing uv ${NC}" >&2
 ifeq ($(OS),Windows_NT)
 	@powershell -NoProfile -ExecutionPolicy Bypass -Command "\
 		$$ErrorActionPreference = 'Stop'; \
@@ -18,26 +18,31 @@ ifeq ($(OS),Windows_NT)
 		}"
 else
 	@if command -v uv >/dev/null 2>&1; then \
-		echo "${GREEN}uv exists at $$(command -v uv) ${NC}"; \
+		printf '%b\n' "${GREEN}uv exists at $$(command -v uv) ${NC}"; \
 		$(UV) self update; \
 	else \
-		echo "${YELLOW}Installing uv${NC}"; \
+		printf '%b\n' "${YELLOW}Installing uv${NC}"; \
 		curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$$HOME/.local/bin" sh; \
 	fi
 endif
+	@printf '%b\n' "${GREEN}install-uv complete${NC}" >&2
 
 install: install-uv ## Install dependencies using uv
-	@echo "Installing dependencies (required and docs)..."
+	@printf '%b\n' "${CYAN}Installing dependencies (required and docs)...${NC}" >&2
 	@$(UV) sync
-	@echo "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}install complete${NC}" >&2
 
 install-dev: ## Install all dev dependencies
-	@echo "${YELLOW}=========> Installing dependencies...\n  \
+	@printf '%b\n' "${CYAN}=========> install-dev...${NC}" >&2
+	@printf '%b\n' "${YELLOW}=========> Installing dependencies...\n  \
 	 Development dependencies (dev & docs) will be installed by install-dev.${NC}"
 	@$(UV) sync --all-groups
-	@echo "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}install-dev complete${NC}" >&2
 
 install-prod: ## Install prod dependencies
-	@echo "${YELLOW}=========> Installing dependencies (PROD)...${NC}"
+	@printf '%b\n' "${CYAN}=========> Installing dependencies (PROD)...${NC}" >&2
 	@$(UV) sync
-	@echo "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}Dependencies installed.${NC}"
+	@printf '%b\n' "${GREEN}install-prod complete${NC}" >&2

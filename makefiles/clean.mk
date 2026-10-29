@@ -4,16 +4,19 @@
 .PHONY: prune-uv clean-uv-cache clean
 
 prune-uv: ## Removes all unused cache entries
-	@echo "${YELLOW}=========> Prune uv cache...${NC}"
+	@printf '%b\n' "${CYAN}=========> Prune uv cache...${NC}" >&2
 	@$(UV) cache prune
+	@printf '%b\n' "${GREEN}prune-uv complete${NC}" >&2
 
 clean-uv-cache: ## Removes all cache entries from the cache directory,
-	@echo "${YELLOW}=========> Cleaning uv cache...${NC}"
+	@printf '%b\n' "${CYAN}=========> Cleaning uv cache...${NC}" >&2
 	@$(UV) cache clean
+	@printf '%b\n' "${GREEN}clean-uv-cache complete${NC}" >&2
 
 clean: clean-uv-cache ## Clean up cache and temp files
-	@echo "Cleaning up..."
-	rm -rf .pytest_cache
-	rm -rf .ruff_cache
-	rm -rf __pycache__
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	@printf '%b\n' "${CYAN}Cleaning up...${NC}" >&2
+	@rm -rf .pytest_cache
+	@rm -rf .ruff_cache
+	@rm -rf __pycache__
+	@find . -type d -name "__pycache__" -exec rm -rf {} +
+	@printf '%b\n' "${GREEN}clean complete${NC}" >&2

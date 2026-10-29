@@ -25,6 +25,7 @@ SKILLS_KEEP := skills.keep
 
 
 skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
+	@printf '%b\n' "${CYAN}=========> skills-link...${NC}" >&2
 	@mkdir -p $(AGENTS_SKILLS)
 	@# Prune dangling symlinks left behind by deleted skills
 	@for l in $(AGENTS_SKILLS)/*; do \
@@ -35,8 +36,10 @@ skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
 		name=$${d%/}; name=$${name##*/}; \
 		ln -sfn ../../$(CLAUDE_SKILLS)/$$name $(AGENTS_SKILLS)/$$name && printf "$(GREEN)linked$(NC) $$name\n" || exit 1; \
 	done
+	@printf '%b\n' "${GREEN}skills-link complete${NC}" >&2
 
 skills-check: ## Verify every .claude/skills skill has a working .agents/skills symlink
+	@printf '%b\n' "${CYAN}=========> skills-check...${NC}" >&2
 	@rc=0; for d in $(CLAUDE_SKILLS)/*/; do \
 		[ -d "$$d" ] || continue; \
 		name=$${d%/}; name=$${name##*/}; \
@@ -51,8 +54,10 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		[ -e "$$l" ] && continue; \
 		printf "$(RED)STALE$(NC) $$l  (run: make skills-link)\n"; rc=1; \
 	done; exit $$rc
+	@printf '%b\n' "${GREEN}skills-check complete${NC}" >&2
 
 skills-repo-to-live: ## Deploy authored skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
+	@printf '%b\n' "${CYAN}=========> skills-repo-to-live...${NC}" >&2
 ifeq ($(SKILLS_FORCE),1)
 	@printf "$(YELLOW)skills-repo-to-live: drift check SKIPPED (SKILLS_FORCE=1)$(NC)\n"
 else
@@ -63,11 +68,13 @@ endif
 	@cp -R "$(SKILLS_SRC)/." "$(SKILLS_DST)/"
 	@$(SKILLS_LINK)
 	@printf "$(GREEN)deployed$(NC) skills to $(SKILLS_DST)\n"
+	@printf '%b\n' "${GREEN}skills-repo-to-live complete${NC}" >&2
 
 # Internal scan behind skills-status (mode "all": MISSING or DIFFERS -> exit 1, full OK/DIFFERS/MISSING
 # report + Codex link check) and the skills-repo-to-live gate (mode "drift": DIFFERS only -> exit 1;
 # MISSING is fine, i.e. never deployed yet).
 _skills-scan:
+	@printf '%b\n' "${CYAN}=========> _skills-scan...${NC}" >&2
 	@rc=0; \
 	[ "$$SKILLS_SCAN_MODE" = "all" ] && printf "$(CYAN)== $(SKILLS_SRC) -> $(SKILLS_DST)$(NC)\n"; \
 	for d in $(SKILLS_SRC)/*/; do \
@@ -84,8 +91,10 @@ _skills-scan:
 	fi; \
 	exit $$rc
 	@if [ "$$SKILLS_SCAN_MODE" = all ]; then $(SKILLS_LINK) --check; else $(SKILLS_LINK) --preflight; fi
+	@printf '%b\n' "${GREEN}_skills-scan complete${NC}" >&2
 
 skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes name clashes, skills missing from skills.keep, third-party lock/content
+	@printf '%b\n' "${CYAN}=========> skills-status...${NC}" >&2
 	@rc=0; \
 	$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=all || rc=1; \
 	printf "$(CYAN)== names in BOTH $(SKILLS_DST) and $(HERMES_SKILLS_LIVE) (Hermes reads both: unloadable -- remove the ~/.hermes copy)$(NC)\n"; \
@@ -104,8 +113,10 @@ skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes
 		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)" || rc=1; \
 	else echo "  (no live lock at $(LIVE_SKILLS_LOCK) -- nothing installed via npx here)"; fi; \
 	exit $$rc
+	@printf '%b\n' "${GREEN}skills-status complete${NC}" >&2
 
 skills-live-to-repo: ## Save a live skill into the repo: make skills-live-to-repo NAME=<name> (copies ~/.claude/skills/<name>, lists it in skills.keep)
+	@printf '%b\n' "${CYAN}=========> skills-live-to-repo...${NC}" >&2
 	@test -n "$(NAME)" || { printf "$(RED)usage:$(NC) make skills-live-to-repo NAME=<name>\n"; exit 1; }
 	@test -d "$(SKILLS_DST)/$(NAME)" || { printf "$(RED)skills-live-to-repo: no live skill$(NC) at $(SKILLS_DST)/$(NAME)\n"; exit 1; }
 	@mkdir -p "$(SKILLS_SRC)/$(NAME)"
@@ -113,6 +124,7 @@ skills-live-to-repo: ## Save a live skill into the repo: make skills-live-to-rep
 	@touch $(SKILLS_KEEP)
 	@grep -qxF "$(NAME)" $(SKILLS_KEEP) || echo "$(NAME)" >> $(SKILLS_KEEP)
 	@printf "$(GREEN)kept$(NC) $(NAME): $(SKILLS_SRC)/$(NAME) + $(SKILLS_KEEP)\n"
+	@printf '%b\n' "${GREEN}skills-live-to-repo complete${NC}" >&2
 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
@@ -135,12 +147,16 @@ TARGET_AGENTS = $(if $(strip $(AGENT)),$(AGENT),$(AGENTS))
 SKILLS_RECEIPTS ?= $(XDG_STATE)/personal-os-setup/skills-installed.json
 
 skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the record we ship)
+	@printf '%b\n' "${CYAN}=========> skills-thirdparty-live-to-repo...${NC}" >&2
 	@test -f "$(LIVE_SKILLS_LOCK)" || { printf '$(RED)no live lock$(NC) at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
 	@jq . "$(LIVE_SKILLS_LOCK)" > "$(THIRD_PARTY_LOCK)"  # jq also adds the trailing newline the end-of-file hook requires
 	@printf '$(GREEN)recorded$(NC) %s -- %s entries\n' "$(THIRD_PARTY_LOCK)" "$$(jq -r '$(JQ_TP_NAMES)' $(THIRD_PARTY_LOCK) | wc -l | tr -d ' ')"
+	@printf '%b\n' "${GREEN}skills-thirdparty-live-to-repo complete${NC}" >&2
 
 # The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
 THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
 skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex)
+	@printf '%b\n' "${CYAN}=========> skills-thirdparty-repo-to-live...${NC}" >&2
 	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=1 STRICT=1 bash $(THIRD_PARTY_REPLAY)
+	@printf '%b\n' "${GREEN}skills-thirdparty-repo-to-live complete${NC}" >&2

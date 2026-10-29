@@ -4,5 +4,6 @@
 .PHONY: run
 
 run: ## Run the Application
-	@echo "Starting server..."
+	@printf '%b\n' "${CYAN}Starting server...${NC}" >&2
 	@$(UV) run python src/personal_os_setup/frontend/main.py
+	@printf '%b\n' "${GREEN}run complete${NC}" >&2

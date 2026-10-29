@@ -4,16 +4,19 @@
 .PHONY: install-act act clear_ci_cache
 
 install-act: ## Install GitHub Actions act for local testing
-	@echo "${YELLOW}=========> Installing github actions act to test locally${NC}"
-	curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
-	@echo -e "${YELLOW}Github act version is :"
+	@printf '%b\n' "${CYAN}=========> Installing github actions act to test locally${NC}" >&2
+	@curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
+	@printf '%b\n' "${YELLOW}Github act version is :${NC}"
 	@./bin/act --version
+	@printf '%b\n' "${GREEN}install-act complete${NC}" >&2
 
 act: install-act ## Run Github Actions locally
-	@echo "${YELLOW}Running Github Actions locally...${NC}"
+	@printf '%b\n' "${CYAN}Running Github Actions locally...${NC}" >&2
 	@./bin/act --env-file .env
+	@printf '%b\n' "${GREEN}act complete${NC}" >&2
 
 clear_ci_cache: ## Clear GitHub local caches
-	@echo "${YELLOW}Clearing CI cache...${NC}"
-	@echo "${YELLOW}Clearing Github ACT local cache...${NC}"
-	rm -rf ~/.cache/act ~/.cache/actcache
+	@printf '%b\n' "${CYAN}Clearing CI cache...${NC}" >&2
+	@printf '%b\n' "${YELLOW}Clearing Github ACT local cache...${NC}"
+	@rm -rf ~/.cache/act ~/.cache/actcache
+	@printf '%b\n' "${GREEN}clear_ci_cache complete${NC}" >&2
