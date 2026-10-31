@@ -43,7 +43,7 @@ jobs:
     name: "🧪 Tests"
     runs-on: ubuntu-latest
     needs: pre-commit
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Check Out
         uses: actions/checkout@v7
@@ -58,8 +58,19 @@ jobs:
         shell: bash
         run: |
           echo "::group::Tests output"
-          make test
+          make test-all
           echo "::endgroup::"
+
+      - name: Report comprehensive validation status
+        if: always()
+        env:
+          TESTS_RESULT: ${{ steps.tests.outcome }}
+        run: |
+          if [ "$TESTS_RESULT" = success ]; then
+            echo 'All self-contained suites passed (unit, skills, built-wheel smoke).' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Software validation is incomplete: make test-all failed or did not run. A partially green run is insufficient.' >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Cleanup Artifacts
         if: always()

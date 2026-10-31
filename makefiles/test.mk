@@ -1,7 +1,7 @@
 # Testing targets
 # This file contains all testing-related targets
 
-.PHONY: test-installation test test-integration
+.PHONY: test-installation test test-all test-integration
 
 N ?= 4
 
@@ -20,6 +20,9 @@ test: ## Run unit tests with pytest (parallel via pytest-xdist). Usage: make tes
 	else \
 		exit "$${rc:-0}"; \
 	fi
+
+test-all: test test-installation ## Run every self-contained suite (unit, skills, built-wheel smoke)
+	@echo "${YELLOW}=========> All self-contained suites passed.${NC}"
 
 # Not parallelized: these tests drive real system package managers
 # (pacman/apt/brew) which aren't safe to run concurrently.

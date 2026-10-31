@@ -80,6 +80,12 @@ upload_to_vcs_release = false  # semantic-release creates the GitHub release; ma
 commit_author = { env = "GIT_COMMIT_AUTHOR", default = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" }
 commit_message = "chore(release): v{version} [skip ci]"
 
+# (python-semantic-release's uv integration guide).
+build_command = """
+uv lock --upgrade-package "$PACKAGE_NAME"
+git add uv.lock
+"""
+
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
