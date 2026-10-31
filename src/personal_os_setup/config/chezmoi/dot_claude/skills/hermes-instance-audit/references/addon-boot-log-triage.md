@@ -12,10 +12,10 @@ Two Home Assistant add-ons run Hermes against ONE shared `HERMES_HOME`
 containers with different run scripts, ports and banners — a pasted log may not be from the
 container you are running in.
 
-| Marker in the log | Belongs to |
-|---|---|
-| `[run]`-prefixed lines, nginx ingress/HTTP/HTTPS port trio, `Profile <name> (PID n):` banner, `HASS_TOKEN injected`, "TLS certificates: using existing" | Hermes Agent add-on (`<slug>/run.sh`) |
-| `HERMES_WEBUI_*` env, WebUI on its own port, workspace + `HERMES_WEBUI_STATE_DIR` lines | hermes-webui add-on (`addons/hermes-webui/run.sh`) |
+| Marker in the log                                                                                                                                       | Belongs to                                         |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| `[run]`-prefixed lines, nginx ingress/HTTP/HTTPS port trio, `Profile <name> (PID n):` banner, `HASS_TOKEN injected`, "TLS certificates: using existing" | Hermes Agent add-on (`<slug>/run.sh`)              |
+| `HERMES_WEBUI_*` env, WebUI on its own port, workspace + `HERMES_WEBUI_STATE_DIR` lines                                                                 | hermes-webui add-on (`addons/hermes-webui/run.sh`) |
 
 Confirm the installed set and slugs (MCP `ha_get_app`, or `ha_get_app(slug=…)` for one) before
 naming it. The Agent add-on runs ONE shared clone + venv (`$HOME/.hermes/hermes-agent`,
@@ -32,13 +32,13 @@ naming it. The Agent add-on runs ONE shared clone + venv (`$HOME/.hermes/hermes-
 
 ## 3. Failure signatures
 
-| Log line | Meaning | Where it surfaces |
-|---|---|---|
-| `source-update completion failed: … /dev/null/installs/<key>/pm-runtime` | home resolution was patched during import (§4) | sync aborts; a later surface dies on a missing dep |
-| `ModuleNotFoundError` in a dashboard process | that interpreter lacks a base dep (deps never synced for this revision) | nginx `/dashboard/` → `connect() failed (111: Connection refused)` |
-| `could not read dashboard token` | the dashboard never served index.html — read it as "dashboard process is dead" | nginx dashboard routes refused/502 |
-| `Platform '<x>' is explicitly disabled … credentials will NOT start its adapter` | `platforms.<x>.enabled: false` in `config.yaml`; env credentials no longer override it (HA access may still work via MCP) | adapter missing from `gateway_state.json` |
-| `WARNING: prefix.py … pattern changed upstream - nested addon routes (/profile/...) may 404` | the add-on's ingress patch script could not raise upstream's prefix-length ceiling | affects only nested profile routes, not single-profile setups |
+| Log line                                                                                     | Meaning                                                                                                                   | Where it surfaces                                                  |
+|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| `source-update completion failed: … /dev/null/installs/<key>/pm-runtime`                     | home resolution was patched during import (§4)                                                                            | sync aborts; a later surface dies on a missing dep                 |
+| `ModuleNotFoundError` in a dashboard process                                                 | that interpreter lacks a base dep (deps never synced for this revision)                                                   | nginx `/dashboard/` → `connect() failed (111: Connection refused)` |
+| `could not read dashboard token`                                                             | the dashboard never served index.html — read it as "dashboard process is dead"                                            | nginx dashboard routes refused/502                                 |
+| `Platform '<x>' is explicitly disabled … credentials will NOT start its adapter`             | `platforms.<x>.enabled: false` in `config.yaml`; env credentials no longer override it (HA access may still work via MCP) | adapter missing from `gateway_state.json`                          |
+| `WARNING: prefix.py … pattern changed upstream - nested addon routes (/profile/...) may 404` | the add-on's ingress patch script could not raise upstream's prefix-length ceiling                                        | affects only nested profile routes, not single-profile setups      |
 
 ## 4. The `/dev/null` patched-home class
 

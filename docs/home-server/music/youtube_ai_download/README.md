@@ -98,16 +98,16 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
 
 ## Naming rules (agreed)
 
-| What | Rule |
-|---|---|
-| Folder | playlist title → `YouTube/<playlist>/`; single links → `YouTube/Singles/`; non-music → `YouTube/Other/` |
-| File | `NN - Artist - Title.m4a` (NN = playlist position) |
-| Chapter split | `"split": true` → `NN - Artist - Title - SS - <chapter>.m4a` per YouTube chapter (SS = section number = track number; title = chapter name); the full file is discarded |
-| Artist / Title / Album | **decided by the LLM** in overrides.json |
-| Title | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`\| Channel` stripped, leading `Artist -` prefix dropped, `(Live…)` + venue info kept |
-| Album | typically `Live at <Venue> (<City>, <Year>)` from the description |
-| Genre | optional, from `"genre"` in overrides.json; omitted → no genre tag (never the YouTube category) |
-| Format | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless" |
+| What                   | Rule                                                                                                                                                                                        |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Folder                 | playlist title → `YouTube/<playlist>/`; single links → `YouTube/Singles/`; non-music → `YouTube/Other/`                                                                                     |
+| File                   | `NN - Artist - Title.m4a` (NN = playlist position)                                                                                                                                          |
+| Chapter split          | `"split": true` → `NN - Artist - Title - SS - <chapter>.m4a` per YouTube chapter (SS = section number = track number; title = chapter name); the full file is discarded                     |
+| Artist / Title / Album | **decided by the LLM** in overrides.json                                                                                                                                                    |
+| Title                  | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`\| Channel` stripped, leading `Artist -` prefix dropped, `(Live…)` + venue info kept |
+| Album                  | typically `Live at <Venue> (<City>, <Year>)` from the description                                                                                                                           |
+| Genre                  | optional, from `"genre"` in overrides.json; omitted → no genre tag (never the YouTube category)                                                                                             |
+| Format                 | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless"                                                                                                        |
 
 ## Incremental playlist updates
 

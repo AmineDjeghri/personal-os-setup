@@ -52,12 +52,12 @@ After the launcher phase, `update_completion.py` re-installs Python dependencies
 
 ## 5. Logs and receipts
 
-| Artifact | Contents |
-|---|---|
-| `logs/update.log` | launcher level: one header per attempt, guard refusals, stash prompts. First read for "what happened". |
-| `logs/hermes-update.log` | the detailed run: builds, skills sync, config migration, version transition, fleet check. |
-| `logs/update_receipts/` | receipts for updates triggered from a surface (not a TTY). |
-| `telegram_update_receipts_<chat_id>.json` | per-chat map of platform message id → update id/timestamp for `/update` invocations. |
+| Artifact                                  | Contents                                                                                               |
+|-------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `logs/update.log`                         | launcher level: one header per attempt, guard refusals, stash prompts. First read for "what happened". |
+| `logs/hermes-update.log`                  | the detailed run: builds, skills sync, config migration, version transition, fleet check.              |
+| `logs/update_receipts/`                   | receipts for updates triggered from a surface (not a TTY).                                             |
+| `telegram_update_receipts_<chat_id>.json` | per-chat map of platform message id → update id/timestamp for `/update` invocations.                   |
 
 Tail, don't dump: `tail -c 1200 <log>` shows the current phase in one call (progress lines are
 rewritten with `\r`, so line-oriented tail can look empty or repeated). `hermes logs` shows

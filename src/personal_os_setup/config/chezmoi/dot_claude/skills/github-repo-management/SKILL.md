@@ -75,13 +75,13 @@ gh api repos/$OWNER/$REPO/contents/.github --jq '.[] | .name'
 
 ### Files to add for a public repo
 
-| File | Content |
-|---|---|
-| `SECURITY.md` | Private vuln reporting (GitHub security advisories; add a dedicated public email only if the user supplies one), supported versions, no-public-disclosure policy, 48h response SLA. |
-| `LICENSE` | MIT is the common OSS default; Apache-2.0 if preferred. |
-| `CONTRIBUTING.md` | Dev setup, bug/feature reporting, branch/PR workflow, commit conventions, release process. |
-| `CODE_OF_CONDUCT.md` | Contributor Covenant v2.1 (GitHub standard). |
-| `.github/FUNDING.yml` | GitHub Sponsors / Ko-fi placeholder comments for user to fill. |
+| File                  | Content                                                                                                                                                                             |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SECURITY.md`         | Private vuln reporting (GitHub security advisories; add a dedicated public email only if the user supplies one), supported versions, no-public-disclosure policy, 48h response SLA. |
+| `LICENSE`             | MIT is the common OSS default; Apache-2.0 if preferred.                                                                                                                             |
+| `CONTRIBUTING.md`     | Dev setup, bug/feature reporting, branch/PR workflow, commit conventions, release process.                                                                                          |
+| `CODE_OF_CONDUCT.md`  | Contributor Covenant v2.1 (GitHub standard).                                                                                                                                        |
+| `.github/FUNDING.yml` | GitHub Sponsors / Ko-fi placeholder comments for user to fill.                                                                                                                      |
 
 Tailor the repo-specific bits (maintainer email, repo URL, commit conventions,
 release tooling) to the actual project — read README / repository.yaml / CI first.

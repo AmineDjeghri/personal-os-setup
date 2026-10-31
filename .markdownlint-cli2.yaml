@@ -12,6 +12,8 @@ config:
   MD041: false            # README starts with an HTML logo
   MD042: false            # README badges use `#` or empty links
   MD051: false            # MkDocs slugs differ from GitHub slugs; the strict build validates anchors
+  MD060:
+    style: aligned         # tables are padded to the header width so the source reads aligned
 ignores:
   - ".github/**"
   - ".agents/**"
