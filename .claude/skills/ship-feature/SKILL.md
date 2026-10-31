@@ -58,7 +58,7 @@ Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit c
 ## What happens after merge
 
 - Merging to `main` → `🚀 Release — Main / Dev` runs semantic-release: it bumps the version from the conventional commit(s), tags, cuts the GitHub Release *if the merged commits were releasable*, and deploys docs **only if a release actually happened** (an all-`docs:`/`chore:` PR triggers neither — see [[docs-site]]). A non-releasable merge is a normal outcome, not a failure.
-- Merging releasable changes to `dev` publishes an `rc` prerelease without deploying docs. Both release branches bind to the tested CI revision, verify artifacts before publication and resume interrupted uploads.
+- Merging releasable changes to `dev` publishes an `rc` prerelease without deploying docs. GitHub Actions automatically binds both release branches to the tested `GITHUB_SHA`. Locally, run `make release` from clean, synchronized `main` or `dev`; it uses `HEAD`. Both paths verify artifacts before publication and resume interrupted uploads.
 
 Branch/PR flow: `docs/developer/3.conventions.md`, “Branches and pull requests”.
 

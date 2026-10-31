@@ -12,7 +12,7 @@ Read `docs/developer/4.testing.md` for the test suites and current targets.
 
 ## Safe local checks
 
-1. `make test-local` / `make test` runs `tests/unit` and `tests/skills` with xdist (`N=4`, or `N=1`
+1. `make test-local` runs `tests/unit` and `tests/skills` with xdist (`N=4`, or `N=1`
    for debugging). Plain `pytest` has the same safe testpaths. Empty collection fails.
 2. `make test-all` adds real wheel/sdist identity/resource checks and isolated wheel installation.
    The console callable loads without starting the app (startup can self-update and prepare sudo).

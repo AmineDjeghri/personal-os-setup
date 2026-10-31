@@ -31,7 +31,6 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
 | `make test-local`             | safe unit + isolated skills suites; also the default pytest discovery                     |
 | `make test-coverage`          | safe checks with separate Python coverage; no threshold                                   |
 | `make test-all`               | every self-contained suite: unit + skills, then the built-wheel install smoke             |
-| `make test`                   | alias for safe `test-local`; empty collection fails                                       |
 | `make pre-commit`             | static/docs hooks including actionlint; no dependency sync or hook installation           |
 | `make install-dev`            | full dev env (use this, not `uv pip install -e .`)                                        |
 | `make lint` / `make format`   | ruff directly                                                                             |
@@ -53,7 +52,8 @@ Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`; use `test-loc
 - **Secrets:** inline `# pragma: allowlist secret`, never whole-file excludes.
 - **Renovate:** 7-day cooldown on dependency PRs; `uv.lock` regenerated, not pinned.
 - **Releases:** `make release-version` / `release-assets` / `release` (`scripts/release.sh`) are what
-  the main release workflow runs too. Guards: tested `RELEASE_SHA`, `main`/`dev`, clean tree, in sync with origin; the
+  the main release workflow runs too. Guards: `main`/`dev`, clean tree, in sync with origin; CI binds to
+  tested `GITHUB_SHA`, while local releases default to `HEAD`. The
   token is `GH_TOKEN`, else the `gh auth login` session, else a hidden prompt. Never run them, nor
   `make deploy-doc-gh`, without per-action approval: they push, tag and publish.
 - **Docs:** developer pages live in `docs/developer/` (numbered, one purpose line, short tables);

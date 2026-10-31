@@ -1,5 +1,5 @@
 # Self-contained checks are safe locally. OS integration is an explicit, separate target.
-.PHONY: test-wheel test-installation test test-local test-all test-coverage test-integration
+.PHONY: test-wheel test-installation test-local test-all test-coverage test-integration
 
 N ?= 4
 
@@ -14,8 +14,6 @@ test-wheel: ## Install the existing verified wheel in isolation and load its ent
 	wheel=$$($(UV) run --no-sync python scripts/check_artifacts.py --wheel); \
 	version=$$($(UV) run --no-sync python scripts/check_artifacts.py --version); \
 	$(UV) run --isolated --no-project --with "$$wheel" python scripts/check_installation.py "$$version"
-
-test: test-local ## Alias for the safe local suites
 
 test-local: ## Run unit and isolated skills tests (N=4 workers by default; empty collection fails)
 	@$(UV) run --no-sync python -m pytest tests/unit tests/skills --numprocesses=$(N) $(PYTEST_ARGS)

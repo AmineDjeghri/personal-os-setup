@@ -24,7 +24,8 @@ metadata:
 - Formatting hooks can rewrite files and fail on their first run. Recheck their final content.
 - `properdocs.yml` uses `docs_dir: .`; new top-level output directories need exclusion. See [[docs-site]].
 - `packages.yaml` manager registrations are checked by `tests/unit/test_detect_os.py::TestPackagesYaml`.
-- Both `main` (stable) and `dev` (release candidates) release only tested revisions;
-  interrupted version/tag publication can resume verified asset uploads. See the release guide.
+- CI releases from `main` (stable) and `dev` (release candidates) bind to tested revisions;
+  local `make release` uses `HEAD`; GitHub Actions supplies `GITHUB_SHA` automatically.
+  Interrupted version/tag publication can resume verified asset uploads. See the release guide.
 - `make act` launches platform workflows and may mutate its execution environment. It is not a safe
   test-local replacement. `tests/archlinux` is a manual interactive sandbox, not CachyOS validation.

@@ -217,7 +217,7 @@ repo never shares that file with chezmoi, so a sync can't overwrite the CLI's li
 
 ### Deployment regression tests
 
-`make test` includes `tests/skills/`: isolated Make and chezmoi applies with a fixture `npx`,
+`make test-local` includes `tests/skills/`: isolated Make and chezmoi applies with a fixture `npx`,
 plus the unit checks for links, manifests, conflicts and content receipts. These never install
 real skills or packages. The chezmoi case skips if chezmoi is unavailable.
 

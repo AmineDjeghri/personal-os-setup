@@ -152,7 +152,8 @@ def release_shell(tmp_path, artifacts, request):
         PATH=str(bins) + os.pathsep + os.environ["PATH"],
         UV=str(bins / "uv"),
         GH_TOKEN="fixture-token",
-        RELEASE_SHA="tested",
+        GITHUB_ACTIONS="",
+        GITHUB_SHA="",
         STUB_BRANCH=request.param,
         FIXTURE_ROOT=str(tmp_path),
         ARTIFACT_CHECK=str(REPO / "scripts/check_artifacts.py"),
@@ -190,7 +191,10 @@ def release_shell(tmp_path, artifacts, request):
         ({"STUB_BRANCH": "feature/example"}, "main or dev only"),
         ({"STUB_DIRTY": " M source.py"}, "uncommitted changes"),
         ({"STUB_DIVERGED": "1"}, "not in sync"),
-        ({"RELEASE_SHA": ""}, "revision that passed required CI"),
+        (
+            {"GITHUB_ACTIONS": "true"},
+            "GitHub Actions requires GITHUB_SHA",
+        ),
     ],
 )
 def test_version_guards_precede_release_commands(release_shell, settings, message):
@@ -199,10 +203,31 @@ def test_version_guards_precede_release_commands(release_shell, settings, messag
     assert not any(name == "gh" or "semantic-release" in args for name, args in calls)
 
 
-def test_new_untested_tip_is_rejected_before_versioning(release_shell):
-    result, calls = release_shell.run("version", STUB_SOURCE_FAILURE="1")
+@pytest.mark.parametrize(
+    "settings",
+    [{}, {"GITHUB_ACTIONS": "true", "GITHUB_SHA": "tested"}],
+)
+def test_new_untested_tip_is_rejected_before_versioning(release_shell, settings):
+    result, calls = release_shell.run("version", STUB_SOURCE_FAILURE="1", **settings)
     assert result.returncode != 0
     assert not any(name == "gh" or "semantic-release" in args for name, args in calls)
+
+
+@pytest.mark.parametrize(
+    ("settings", "expected"),
+    [
+        ({}, "head"),
+        ({"GITHUB_SHA": "unrelated"}, "head"),
+        ({"GITHUB_ACTIONS": "true", "GITHUB_SHA": "tested"}, "tested"),
+    ],
+)
+def test_release_source_defaults_to_head_only_for_local_runs(release_shell, settings, expected):
+    result, calls = release_shell.run("version", **settings)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert [
+        "uv",
+        ["run", "--no-sync", "python", "scripts/check_release_source.py", expected],
+    ] in calls
 
 
 @pytest.mark.parametrize("action", ["version", "assets", "release"])

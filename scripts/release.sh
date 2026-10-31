@@ -76,17 +76,22 @@ resume_release_tag() {
 }
 
 cmd_version() {
-  local branch next source head remote_head
+  local branch next source head remote_head release_sha
   branch="$(git rev-parse --abbrev-ref HEAD)"
   [[ "$branch" == main || "$branch" == dev ]] || die "release from main or dev only (on $branch)"
   clean_tree
-  [[ -n "${RELEASE_SHA:-}" ]] || die "set RELEASE_SHA to the revision that passed required CI"
   git fetch -q origin "$branch"
   head="$(git rev-parse HEAD)" || die "could not resolve HEAD"
   remote_head="$(git rev-parse "origin/$branch")" || die "could not resolve origin/$branch"
   [[ "$head" == "$remote_head" ]] ||
     die "$branch is not in sync with origin/$branch"
-  source="$("$UV" run --no-sync python scripts/check_release_source.py "$RELEASE_SHA")"
+  if [[ "${GITHUB_ACTIONS:-}" == true ]]; then
+    release_sha="${GITHUB_SHA:-}"
+    [[ -n "$release_sha" ]] || die "GitHub Actions requires GITHUB_SHA"
+  else
+    release_sha="$head"
+  fi
+  source="$("$UV" run --no-sync python scripts/check_release_source.py "$release_sha")"
   [[ "$source" == source || "$source" == release ]] || die "unknown release source state"
   version_tag
   # Branch and tag pushes are separate: recover the tag before resuming asset publication.
