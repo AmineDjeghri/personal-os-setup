@@ -1,7 +1,7 @@
 # Check Format targets
 # This file contains targets for checking code format
 
-.PHONY: pre-commit-install pre-commit lint format
+.PHONY: pre-commit-install pre-commit lint format docs-build check
 
 pre-commit-install: install-dev
 	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
@@ -18,3 +18,10 @@ lint: ## Lint code with Ruff
 format: ## Format code with Ruff
 	@echo "Formatting code..."
 	@$(UV) run ruff format .
+
+docs-build: ## Build strict documentation without starting a server
+	@echo "${YELLOW}=========> Building documentation (strict)...${NC}"
+	@$(UV) run properdocs build -f properdocs.yml --strict --quiet --site-dir "$$(mktemp -d)"
+
+check: lint test-all docs-build ## Run static checks, every self-contained suite and strict docs
+	@echo "${YELLOW}=========> All quality gates passed.${NC}"

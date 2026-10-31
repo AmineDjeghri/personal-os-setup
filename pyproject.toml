@@ -79,6 +79,14 @@ upload_to_vcs_release = false  # semantic-release creates the GitHub release; ma
 # make release-version sets GIT_COMMIT_AUTHOR to your git identity; CI sets the bot.
 commit_author = { env = "GIT_COMMIT_AUTHOR", default = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" }
 commit_message = "chore(release): v{version} [skip ci]"
+# uv.lock records the version of this package itself, so it goes stale the moment semantic-release
+# bumps pyproject.toml: the next `uv sync` clones the lock and trips the clean-tree guard in
+# scripts/release.sh. Re-lock and stage it here so the release commit carries it in sync
+# (python-semantic-release's uv integration guide).
+build_command = """
+uv lock --upgrade-package "$PACKAGE_NAME"
+git add uv.lock
+"""
 
 [tool.semantic_release.branches.main]
 match = "main"
