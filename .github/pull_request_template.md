@@ -21,10 +21,10 @@
 ## ✅ PR Checklist
 
 - [ ] I have read and follow the [Contributing Guide](../CONTRIBUTING.md)
-- [ ] My **PR title** follows [conventional commits](../CONTRIBUTING.md#commit-convention) (`feat:`, `fix:`, etc.) — it becomes the squash commit message
+- [ ] My **PR title** follows [conventional commits](../docs/developer/3.conventions.md#commit-convention) (`feat:`, `fix:`, etc.) — it becomes the squash commit message
 - [ ] I ran `make check` locally — every hook, all self-contained suites and the strict docs build
 - [ ] I have added or updated tests and documentation where needed
-- [ ] This PR targets `main` (branch off `main`, PR into `main`)
+- [ ] This PR targets `dev` (branch off `dev`), or promotes `dev` into `main`
 
 ## 💬 Further Comments
 

@@ -33,7 +33,7 @@ Files added under `docs/` generally surface automatically via `same-dir`/mkdocs-
 
 ## When docs actually go live in CI
 
-`main-release.yml` deploys docs **only after successful artifact publication, including a recovered release**, and checks out the released tag. A PR with only `docs:`/`chore:` commits merged to `main` will **not** deploy docs even though the content changed — those types don't bump the version. To publish immediately, bundle the doc change with a releasable commit (`feat`/`fix`/`perf`), or run `make deploy-doc-gh` after confirming with the user (it pushes to a shared branch).
+`main-release.yml` deploys docs **only on `main` after successful artifact publication, including a recovered release**, and checks out the released tag. A PR with only `docs:`/`chore:` commits merged to `main` will **not** deploy docs even though the content changed — those types don't bump the version. To publish immediately, bundle the doc change with a releasable commit (`feat`/`fix`/`perf`), or run `make deploy-doc-gh` after confirming with the user (it pushes to a shared branch).
 
 First-time GitHub Pages setup (rarely needed again): repo Settings → Actions → General → Workflow permissions → "Read and write permissions"; Pages settings → "Deploy from a branch" → `gh-pages`.
 

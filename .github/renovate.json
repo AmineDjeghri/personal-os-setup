@@ -27,11 +27,15 @@
   "pinDigests": false,
   "packageRules": [
     {
-      "description": "requires-python: widen the range (keep the lower bound, only raise the upper bound) instead of replacing it",
+      "description": "Keep declared Python support fixed; change it manually with CI and documentation",
       "matchManagers": ["pep621"],
-      "matchDepNames": ["python"],
-      "rangeStrategy": "widen",
-      "semanticCommitType": "fix"
+      "matchDepTypes": ["requires-python"],
+      "enabled": false
+    },
+    {
+      "description": "Preserve compatibility with the full supported Python range",
+      "matchDatasources": ["pypi"],
+      "constraintsFiltering": "strict"
     },
     {
       "description": "Group pre-commit updates (tooling only, no release)",
@@ -75,6 +79,25 @@
       "dependencyDashboardApproval": true,
       "addLabels": ["needs-breaking-review"],
       "semanticCommitType": "fix"
+    },
+    {
+      "description": "Maintain stable pre-commit Node runtime updates as tooling",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["node-version"],
+      "matchPackageNames": ["node"],
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore",
+      "ignoreUnstable": true,
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Review major LTS upgrades of the pre-commit Node runtime",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["node-version"],
+      "matchPackageNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "addLabels": ["needs-compatibility-review"]
     }
   ],
   "lockFileMaintenance": {
@@ -83,5 +106,19 @@
   "pre-commit": {
     "enabled": true
   },
-  "platformAutomerge": false
+  "platformAutomerge": false,
+  "baseBranchPatterns": ["dev"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the Node runtime used by the markdownlint pre-commit hook",
+      "managerFilePatterns": ["/^\\.pre-commit-config\\.ya?ml$/"],
+      "matchStrings": [
+        "id: markdownlint-cli2\\r?\\n\\s+language_version: ['\\\"]?(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version",
+      "versioningTemplate": "node"
+    }
+  ]
 }

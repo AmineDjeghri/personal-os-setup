@@ -4,8 +4,9 @@ site_author: Amine DJEGHRI
 docs_dir: .
 # site_url: #TODO: Fill when deployment CI added
 #site_dir: public
-#repo_url:
-#edit_uri: blob/main/docs/
+repo_url: https://github.com/AmineDjeghri/personal-os-setup
+repo_name: personal-os-setup
+edit_uri: edit/main/
 
 
 theme:

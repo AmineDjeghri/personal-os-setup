@@ -24,7 +24,7 @@ metadata:
 - Formatting hooks can rewrite files and fail on their first run. Recheck their final content.
 - `properdocs.yml` uses `docs_dir: .`; new top-level output directories need exclusion. See [[docs-site]].
 - `packages.yaml` manager registrations are checked by `tests/unit/test_detect_os.py::TestPackagesYaml`.
-- The `dev` branch and its release workflow are retired. Only tested main revisions release;
+- Both `main` (stable) and `dev` (release candidates) release only tested revisions;
   interrupted version/tag publication can resume verified asset uploads. See the release guide.
 - `make act` launches platform workflows and may mutate its execution environment. It is not a safe
   test-local replacement. `tests/archlinux` is a manual interactive sandbox, not CachyOS validation.

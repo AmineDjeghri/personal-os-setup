@@ -76,7 +76,7 @@ fi
 cd "$REPO_ROOT"
 
 echo "⬇️ Pulling..."
-git pull
+git pull --ff-only
 # Log everything to a timestamped file inside .logs/
 mkdir -p .logs
 LOGFILE=".logs/install_$(date +%Y%m%d_%H%M%S).log"
@@ -100,12 +100,33 @@ link_command() {
     esac
 }
 
+run_logged() (
+    INSTALL_STATUS_FILE=$(mktemp)
+    trap 'rm -f "$INSTALL_STATUS_FILE"' 0
+    # POSIX sh reports only tee's status for a pipeline. Save the command's status separately.
+    if (
+        set +e
+        "$@"
+        INSTALL_COMMAND_STATUS=$?
+        printf '%s\n' "$INSTALL_COMMAND_STATUS" > "$INSTALL_STATUS_FILE"
+        exit "$INSTALL_COMMAND_STATUS"
+    ) 2>&1 | tee -a "$LOGFILE"; then
+        INSTALL_LOG_STATUS=0
+    else
+        INSTALL_LOG_STATUS=$?
+    fi
+    INSTALL_COMMAND_STATUS=$(cat "$INSTALL_STATUS_FILE")
+    [ -n "$INSTALL_COMMAND_STATUS" ] || exit 1
+    [ "$INSTALL_COMMAND_STATUS" -eq 0 ] || exit "$INSTALL_COMMAND_STATUS"
+    exit "$INSTALL_LOG_STATUS"
+)
+
+run_logged make install
+link_command
+
 # NOTE: The UI requires a real TTY. Piping stdout through `tee` makes stdout a pipe
 # and can break terminal ioctls. We only use `tee` for non-interactive steps.
 if [ -t 1 ]; then
-  make install 2>&1 | tee -a "$LOGFILE"
-  link_command
-
   if command -v script >/dev/null 2>&1; then
     OS_NAME=$(uname -s 2>/dev/null)
     if [ "$OS_NAME" = "Darwin" ]; then
@@ -113,16 +134,12 @@ if [ -t 1 ]; then
       script -q -a "$LOGFILE" make run
     else
       # Linux and others: script -c "command" logfile
-      script -q -a -c "make run" "$LOGFILE"
+      script -q -a -e -c "make run" "$LOGFILE"
     fi
   else
     echo "⚠️  'script' not found; running UI without logging to preserve TTY."
     make run
   fi
 else
-  {
-    make install
-    link_command
-    make run
-  } 2>&1 | tee -a "$LOGFILE"
+  run_logged make run
 fi

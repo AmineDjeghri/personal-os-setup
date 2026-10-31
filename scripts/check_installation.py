@@ -17,6 +17,10 @@ def check_installation(expected_version: str) -> None:
     assert entry.value == "personal_os_setup.frontend.main:main", entry.value
     assert callable(entry.load())
     import personal_os_setup
+    from personal_os_setup.frontend.app import PersonalOsSetupApp
+
+    # The launcher imports the UI lazily; still check its dependencies without running startup.
+    assert callable(PersonalOsSetupApp)
 
     assert (
         Path(personal_os_setup.__file__)

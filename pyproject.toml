@@ -3,7 +3,7 @@ name = "personal-os-setup"
 version = "2.20.0"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
-requires-python = ">=3.14,<3.16"
+requires-python = ">=3.14.0, <=3.14.8"
 dependencies = [
     # Engineering
     "textual==8.2.8",
@@ -101,6 +101,11 @@ make test-installation
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
+
+[tool.semantic_release.branches.dev]
+match = "dev"
+prerelease = true
+prerelease_token = "rc"
 
 # ---------------------------------------------------------------------------
 # Commit Convention:  [emoji] <type>[(<scope>)][!]: <description>

@@ -31,6 +31,7 @@ if name == 'git':
     if args == ['rev-parse', '--abbrev-ref', 'HEAD']:
         print(os.environ.get('STUB_BRANCH', 'main'))
     elif args == ['status', '--porcelain']:
+        if os.environ.get('STUB_STATUS_FAILURE'): sys.exit(128)
         print(os.environ.get('STUB_DIRTY', ''), end='')
     elif args[:1] == ['fetch']:
         if args[-1].startswith('refs/tags/'):
@@ -47,9 +48,10 @@ if name == 'git':
         if not state['remote_tagged']: sys.exit(2)
         print(state.get('remote_tag_head', 'head') + '\t' + args[-1])
     elif args[:1] == ['rev-parse']:
+        if os.environ.get('STUB_REV_PARSE_FAILURE'): sys.exit(128)
         ref = args[-1]
         if ref == 'HEAD': print(state.get('head', 'head'))
-        elif ref == 'origin/main':
+        elif ref == 'origin/' + os.environ.get('STUB_BRANCH', 'main'):
             print('other' if os.environ.get('STUB_DIVERGED') else state.get('origin_head', 'head'))
         elif ref == 'FETCH_HEAD^{commit}': print(state.get('fetch_head', 'head'))
         elif ref.startswith('refs/tags/'):
@@ -64,7 +66,7 @@ if name == 'git':
         state_path.write_text(json.dumps(state))
     elif args[:1] == ['push']:
         assert args[:2] == ['push', 'origin'], args
-        if args[2] == 'main':
+        if args[2] == os.environ.get('STUB_BRANCH', 'main'):
             if os.environ.get('STUB_BRANCH_PUSH_FAILURE'): sys.exit(1)
             state['origin_head'] = state['head']
         else:
@@ -97,7 +99,7 @@ elif name == 'uv':
         state_path.write_text(json.dumps(state))
         # PSR publishes the branch and tag separately. Persist a successful first push
         # even when the second push fails; retries can start with no local tag.
-        subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+        subprocess.run(['git', 'push', 'origin', os.environ.get('STUB_BRANCH', 'main')], check=True)
         subprocess.run(['git', 'push', 'origin', 'refs/tags/v' + state['version']], check=True)
     else: raise AssertionError(args)
 elif name == 'make':
@@ -132,8 +134,8 @@ else: raise AssertionError((name,args))
 """
 
 
-@pytest.fixture
-def release_shell(tmp_path, artifacts):
+@pytest.fixture(params=["main", "dev"])
+def release_shell(tmp_path, artifacts, request):
     _, _, wheel, sdist = artifacts()
     bins = tmp_path / "bin"
     bins.mkdir()
@@ -151,6 +153,7 @@ def release_shell(tmp_path, artifacts):
         UV=str(bins / "uv"),
         GH_TOKEN="fixture-token",
         RELEASE_SHA="tested",
+        STUB_BRANCH=request.param,
         FIXTURE_ROOT=str(tmp_path),
         ARTIFACT_CHECK=str(REPO / "scripts/check_artifacts.py"),
         GITHUB_OUTPUT=str(outputs),
@@ -177,13 +180,14 @@ def release_shell(tmp_path, artifacts):
         sdist=sdist,
         state=state,
         outputs=outputs,
+        branch=request.param,
     )
 
 
 @pytest.mark.parametrize(
     ("settings", "message"),
     [
-        ({"STUB_BRANCH": "feature/example"}, "main only"),
+        ({"STUB_BRANCH": "feature/example"}, "main or dev only"),
         ({"STUB_DIRTY": " M source.py"}, "uncommitted changes"),
         ({"STUB_DIVERGED": "1"}, "not in sync"),
         ({"RELEASE_SHA": ""}, "revision that passed required CI"),
@@ -199,6 +203,15 @@ def test_new_untested_tip_is_rejected_before_versioning(release_shell):
     result, calls = release_shell.run("version", STUB_SOURCE_FAILURE="1")
     assert result.returncode != 0
     assert not any(name == "gh" or "semantic-release" in args for name, args in calls)
+
+
+@pytest.mark.parametrize("action", ["version", "assets", "release"])
+@pytest.mark.parametrize("failure", ["STUB_STATUS_FAILURE", "STUB_REV_PARSE_FAILURE"])
+def test_git_errors_stop_before_validation_or_publication(release_shell, action, failure):
+    result, calls = release_shell.run(action, **{failure: "1"})
+    assert result.returncode != 0, result.stdout + result.stderr
+    assert not any(name in ("make", "gh") or "semantic-release" in args for name, args in calls)
+    assert not any(name == "git" and args[0] in ("push", "tag") for name, args in calls)
 
 
 def test_existing_head_tag_resumes_instead_of_reporting_no_release(release_shell):
@@ -222,7 +235,7 @@ def test_retry_finishes_tag_push_without_another_version_bump(release_shell, fre
     result, calls = release_shell.run("version", STUB_NEXT="2.21.0", STUB_TAG_PUSH_FAILURE="1")
     assert result.returncode != 0
     assert [args for name, args in calls if name == "git" and args[0] == "push"] == [
-        ["push", "origin", "main"],
+        ["push", "origin", release_shell.branch],
         ["push", "origin", "refs/tags/v2.21.0"],
     ]
     state = json.loads(release_shell.state.read_text())
@@ -238,7 +251,7 @@ def test_retry_finishes_tag_push_without_another_version_bump(release_shell, fre
     validation = calls.index(["make", ["--no-print-directory", "test-installation"]])
     push = calls.index(["git", ["push", "origin", "refs/tags/v2.21.0"]])
     assert validation < push
-    assert not any(args == ["push", "origin", "main"] for _, args in calls)
+    assert not any(args == ["push", "origin", release_shell.branch] for _, args in calls)
     assert json.loads(release_shell.state.read_text())["remote_tagged"]
 
 
@@ -247,7 +260,7 @@ def test_failed_branch_push_never_publishes_tag_or_assets(release_shell):
     result, calls = release_shell.run("release", STUB_NEXT="2.21.0", STUB_BRANCH_PUSH_FAILURE="1")
     assert result.returncode != 0
     assert [args for name, args in calls if name == "git" and args[0] == "push"] == [
-        ["push", "origin", "main"]
+        ["push", "origin", release_shell.branch]
     ]
     assert not any(name == "gh" for name, _ in calls)
 
@@ -385,3 +398,19 @@ def test_assets_reject_invalid_inputs_before_github(release_shell, damage):
     result, calls = release_shell.run("assets", **settings)
     assert result.returncode != 0
     assert not any(name == "gh" for name, _ in calls)
+
+
+def test_dev_candidate_uses_prerelease_tag_and_assets(release_shell, artifacts):
+    if release_shell.branch != "dev":
+        pytest.skip("candidate publication is specific to dev")
+    release_shell.wheel.unlink()
+    release_shell.sdist.unlink()
+    _, _, wheel, sdist = artifacts("2.21.0-rc.1")
+    release_shell.state.write_text(json.dumps({"version": "2.20.0", "tagged": False}))
+    result, calls = release_shell.run("release", STUB_NEXT="2.21.0-rc.1")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "version=2.21.0-rc.1" in release_shell.outputs.read_text()
+    create = next(args for name, args in calls if name == "gh" and args[1] == "create")
+    assert create[2] == "v2.21.0-rc.1" and "--prerelease" in create
+    assert (release_shell.remote / wheel.name).read_bytes() == wheel.read_bytes()
+    assert (release_shell.remote / sdist.name).read_bytes() == sdist.read_bytes()

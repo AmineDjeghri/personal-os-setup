@@ -1,6 +1,6 @@
 ---
 name: ship-feature
-description: Use when starting work, committing or opening a PR — "start a new feature", "commit this", "what branch should this target". Covers branch naming, conventional commits and the main-targeted squash-merge release flow.
+description: Use when starting work, committing or opening a PR — "start a new feature", "commit this", "what branch should this target". Covers branch naming, conventional commits and the dev-to-main squash-merge release flow.
 metadata:
   hermes:
     origin: repo:personal-os-setup
@@ -14,9 +14,10 @@ This repo drives releases from commit messages via `python-semantic-release`, so
 
 ## Branching
 
-- All work branches off **`main`** and is named `feature/<name>` or `bugfix/<name>`.
-- **The `dev` branch is retired** — it no longer exists on `origin`. Anything describing a `dev` → `main` promotion PR, or a dev prerelease workflow, is stale: PRs target `main` directly.
-- `git checkout main && git pull` before branching, to start from a fast-forward-clean base.
+- All work branches off **`dev`** and is named `feature/<name>` or `bugfix/<name>`.
+- Feature PRs target `dev` for release candidates; promote `dev` to `main` for stable releases.
+- After a stable release, merge `main` back into `dev`; keep stable version/changelog metadata and regenerate `uv.lock`. Commit and push each require approval.
+- `git checkout dev && git pull` before branching, to start from a fast-forward-clean base.
 
 ## Commit messages
 
@@ -43,12 +44,12 @@ Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit c
    `PRE_COMMIT_ARGS="--files <paths>"`; the default covers tracked files.
 2. Use `make test-local PYTEST_ARGS="..."` for focused debugging. Full validation targets reject
    `PYTEST_ARGS` and `PYTEST_ADDOPTS`. See [[run-tests]] for isolation and platform boundaries.
-3. If the branch is behind `main`: `git merge main` (if already pushed) or `git rebase main`
+3. If the branch is behind `dev`: `git merge dev` (if already pushed) or `git rebase dev`
    (if only local). Re-run `make check` after syncing.
 
 ## Opening the PR
 
-- Target **`main`**.
+- Target **`dev`** for features/fixes; **`main`** for the stable promotion from `dev`.
 - **The PR title must follow the commit convention** (e.g. `feat: add new plugin`) — all PRs squash-merge, and the PR title becomes the commit message semantic-release evaluates.
 - CI (`ci.yml` → `quality-and-tests.yml`) runs static checks and full safe suites plus platform
   integration. Linux/macOS integration installs real packages; Windows integration is read-only.
@@ -56,8 +57,8 @@ Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit c
 
 ## What happens after merge
 
-- Merging to `main` → `🚀 Release — Main` runs semantic-release: it bumps the version from the conventional commit(s), tags, cuts the GitHub Release *if the merged commits were releasable*, and deploys docs **only if a release actually happened** (an all-`docs:`/`chore:` PR triggers neither — see [[docs-site]]). A non-releasable merge is a normal outcome, not a failure.
-- The `dev` branch and release workflow are retired. Main releases bind to the tested CI revision, verify artifacts before publication, resume interrupted uploads, and deploy docs from the released tag.
+- Merging to `main` → `🚀 Release — Main / Dev` runs semantic-release: it bumps the version from the conventional commit(s), tags, cuts the GitHub Release *if the merged commits were releasable*, and deploys docs **only if a release actually happened** (an all-`docs:`/`chore:` PR triggers neither — see [[docs-site]]). A non-releasable merge is a normal outcome, not a failure.
+- Merging releasable changes to `dev` publishes an `rc` prerelease without deploying docs. Both release branches bind to the tested CI revision, verify artifacts before publication and resume interrupted uploads.
 
 Branch/PR flow: `docs/developer/3.conventions.md`, “Branches and pull requests”.
 

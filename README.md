@@ -44,7 +44,10 @@ personal-os-setup
 
 Installation uses `~/.personal-os-setup` on Unix or `%USERPROFILE%\.personal-os-setup` on Windows.
 Running the installer inside an existing clone updates that checkout instead.
-The launcher pulls updates before starting the app. System changes require confirmation in the TUI.
+
+For a checkout installed in a virtual environment, the launcher pulls updates, synchronizes runtime
+dependencies and restarts after a code update. A failed dependency sync stops startup; rerun the installer.
+System changes require confirmation in the TUI.
 
 ## Develop
 

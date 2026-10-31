@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared release implementation: main only; checked artifacts precede public publication.
+# Shared release implementation: main/dev; checked artifacts precede public publication.
 set -euo pipefail
 : "${UV:=uv}"
 GH_HOST="${GH_HOST:-${GITHUB_SERVER_URL:+${GITHUB_SERVER_URL#https://}}}"
@@ -9,7 +9,11 @@ ARTIFACTS_CHECKED=false
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 output() { [[ -z "${GITHUB_OUTPUT:-}" ]] || echo "$1" >>"$GITHUB_OUTPUT"; }
-clean_tree() { [[ -z "$(git status --porcelain)" ]] || die "uncommitted changes: commit or stash them first"; }
+clean_tree() {
+  local status
+  status="$(git status --porcelain)" || die "could not check working tree status"
+  [[ -z "$status" ]] || die "uncommitted changes: commit or stash them first"
+}
 
 github_token() {
   [[ -z "${GH_TOKEN:-}" ]] || return 0
@@ -29,15 +33,19 @@ version_tag() {
 }
 
 check_tag() {
-  [[ "$(git rev-parse --verify "refs/tags/$TAG^{commit}")" == "$(git rev-parse HEAD)" ]] ||
+  local head local_tag remote_tag
+  head="$(git rev-parse HEAD)" || die "could not resolve HEAD"
+  local_tag="$(git rev-parse --verify "refs/tags/$TAG^{commit}")" || die "could not resolve local $TAG"
+  [[ "$local_tag" == "$head" ]] ||
     die "$TAG must point at the clean checkout being published"
   git fetch -q origin "refs/tags/$TAG"
-  [[ "$(git rev-parse 'FETCH_HEAD^{commit}')" == "$(git rev-parse HEAD)" ]] ||
+  remote_tag="$(git rev-parse 'FETCH_HEAD^{commit}')" || die "could not resolve remote $TAG"
+  [[ "$remote_tag" == "$head" ]] ||
     die "remote $TAG does not match this checkout"
 }
 
 resume_release_tag() {
-  local status
+  local status head local_tag
   # The source guard has already verified the metadata-only release child.
   # A tag lookup error is not evidence that the tag is absent.
   if git ls-remote --exit-code origin "refs/tags/$TAG" >/dev/null; then
@@ -48,7 +56,9 @@ resume_release_tag() {
     make --no-print-directory test-installation
     clean_tree
     if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-      [[ "$(git rev-parse "refs/tags/$TAG^{commit}")" == "$(git rev-parse HEAD)" ]] ||
+      head="$(git rev-parse HEAD)" || die "could not resolve HEAD"
+      local_tag="$(git rev-parse "refs/tags/$TAG^{commit}")" || die "could not resolve local $TAG"
+      [[ "$local_tag" == "$head" ]] ||
         die "local $TAG does not match the verified release commit"
     else
       status=$?
@@ -66,13 +76,15 @@ resume_release_tag() {
 }
 
 cmd_version() {
-  local branch next source
+  local branch next source head remote_head
   branch="$(git rev-parse --abbrev-ref HEAD)"
-  [[ "$branch" == main ]] || die "release from main only (on $branch)"
+  [[ "$branch" == main || "$branch" == dev ]] || die "release from main or dev only (on $branch)"
   clean_tree
   [[ -n "${RELEASE_SHA:-}" ]] || die "set RELEASE_SHA to the revision that passed required CI"
   git fetch -q origin "$branch"
-  [[ "$(git rev-parse HEAD)" == "$(git rev-parse "origin/$branch")" ]] ||
+  head="$(git rev-parse HEAD)" || die "could not resolve HEAD"
+  remote_head="$(git rev-parse "origin/$branch")" || die "could not resolve origin/$branch"
+  [[ "$head" == "$remote_head" ]] ||
     die "$branch is not in sync with origin/$branch"
   source="$("$UV" run --no-sync python scripts/check_release_source.py "$RELEASE_SHA")"
   [[ "$source" == source || "$source" == release ]] || die "unknown release source state"

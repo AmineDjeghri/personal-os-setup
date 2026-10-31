@@ -5,6 +5,9 @@ runs:
   steps:
     - name: Install uv
       uses: astral-sh/setup-uv@v10.3.0
+      with:
+        version: '0.13.5'
+        enable-cache: true
 
     - name: Install Make (Windows)
       if: runner.os == 'Windows'
@@ -13,4 +16,6 @@ runs:
 
     - name: Install Python Dependencies
       shell: bash
+      env:
+        UV_PYTHON: '3.14.8'
       run: make install-dev
