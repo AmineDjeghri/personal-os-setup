@@ -17,7 +17,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 # Each external command has an explicit stateful fixture implementation. Unknown calls fail.
-STUB = r"""import json, os, pathlib, shutil, sys
+STUB = r"""import json, os, pathlib, shutil, subprocess, sys
 name = pathlib.Path(sys.argv[0]).name
 args = sys.argv[1:]
 root = pathlib.Path(os.environ['FIXTURE_ROOT'])
@@ -25,6 +25,7 @@ with (root / 'calls.jsonl').open('a') as stream:
     stream.write(json.dumps([name, args]) + '\n')
 state_path = root / 'state.json'
 state = json.loads(state_path.read_text())
+state.setdefault('remote_tagged', state['tagged'])
 remote = root / 'remote'
 if name == 'git':
     if args == ['rev-parse', '--abbrev-ref', 'HEAD']:
@@ -32,16 +33,49 @@ if name == 'git':
     elif args == ['status', '--porcelain']:
         print(os.environ.get('STUB_DIRTY', ''), end='')
     elif args[:1] == ['fetch']:
-        pass
+        if args[-1].startswith('refs/tags/'):
+            if not state['remote_tagged']: sys.exit(1)
+            remote_head = os.environ.get('STUB_REMOTE_TAG', state.get('remote_tag_head', 'head'))
+            state['fetch_head'] = remote_head
+            if ':' in args[-1]:
+                if state['tagged'] and state.get('tag_head', 'head') != remote_head: sys.exit(1)
+                state.update(tagged=True, tag_head=remote_head)
+            state_path.write_text(json.dumps(state))
+    elif args[:1] == ['ls-remote']:
+        assert args[1:4] == ['--exit-code', 'origin', 'refs/tags/v' + state['version']], args
+        if os.environ.get('STUB_TAG_LOOKUP_FAILURE'): sys.exit(128)
+        if not state['remote_tagged']: sys.exit(2)
+        print(state.get('remote_tag_head', 'head') + '\t' + args[-1])
     elif args[:1] == ['rev-parse']:
         ref = args[-1]
-        if ref == 'HEAD': print('head')
-        elif ref == 'origin/main': print('other' if os.environ.get('STUB_DIVERGED') else 'head')
-        elif ref == 'FETCH_HEAD^{commit}': print(os.environ.get('STUB_REMOTE_TAG', 'head'))
+        if ref == 'HEAD': print(state.get('head', 'head'))
+        elif ref == 'origin/main':
+            print('other' if os.environ.get('STUB_DIVERGED') else state.get('origin_head', 'head'))
+        elif ref == 'FETCH_HEAD^{commit}': print(state.get('fetch_head', 'head'))
         elif ref.startswith('refs/tags/'):
-            if not state['tagged']: sys.exit(1)
-            print('old' if os.environ.get('STUB_TAG_OTHER') else 'head')
+            if not state['tagged'] or ref.removesuffix('^{commit}') != 'refs/tags/v' + state['version']:
+                sys.exit(1)
+            print('old' if os.environ.get('STUB_TAG_OTHER') else state.get('tag_head', 'head'))
         else: raise AssertionError(args)
+    elif args[:1] == ['tag']:
+        assert args == ['tag', '-a', 'v' + state['version'], '-m', 'v' + state['version'], 'HEAD'], args
+        assert not state['tagged'], 'never replace an existing local tag'
+        state.update(tagged=True, tag_head=state.get('head', 'head'))
+        state_path.write_text(json.dumps(state))
+    elif args[:1] == ['push']:
+        assert args[:2] == ['push', 'origin'], args
+        if args[2] == 'main':
+            if os.environ.get('STUB_BRANCH_PUSH_FAILURE'): sys.exit(1)
+            state['origin_head'] = state['head']
+        else:
+            assert args[2] == 'refs/tags/v' + state['version'], args
+            if os.environ.get('STUB_TAG_PUSH_FAILURE'): sys.exit(1)
+            assert state['tagged'] and not state.get('remote_tagged', False)
+            state.update(remote_tagged=True, remote_tag_head=state['tag_head'])
+        state_path.write_text(json.dumps(state))
+    elif args[:1] == ['log']:
+        print({'--format=%cn': 'Fixture', '--format=%ce': 'fixture@example.invalid',
+               '--format=%cI': '2026-01-01T00:00:00+00:00'}[args[-1]])
     elif args[:1] == ['config']:
         print('Fixture' if args[-1] == 'user.name' else 'fixture@example.invalid')
     else: raise AssertionError(args)
@@ -53,15 +87,23 @@ elif name == 'uv':
         os.execv(sys.executable, [sys.executable, os.environ['ARTIFACT_CHECK'], *args[index+1:]])
     elif 'scripts/check_release_source.py' in args:
         if os.environ.get('STUB_SOURCE_FAILURE'): sys.exit(1)
+        print('release' if state.get('prepared_release') else 'source')
     elif 'semantic-release' in args and '--print' in args:
         print(os.environ.get('STUB_NEXT', state['version']))
     elif 'semantic-release' in args:
         assert '--no-vcs-release' in args, args
-        state.update(tagged=True, version=os.environ['STUB_NEXT'])
+        state.update(tagged=True, version=os.environ['STUB_NEXT'], head='release',
+                     tag_head='release', prepared_release=True, remote_tagged=False)
         state_path.write_text(json.dumps(state))
+        # PSR publishes the branch and tag separately. Persist a successful first push
+        # even when the second push fails; retries can start with no local tag.
+        subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+        subprocess.run(['git', 'push', 'origin', 'refs/tags/v' + state['version']], check=True)
     else: raise AssertionError(args)
 elif name == 'make':
-    assert args in (['--no-print-directory', 'build-package'], ['--no-print-directory', 'test-wheel']), args
+    assert args in (['--no-print-directory', 'build-package'], ['--no-print-directory', 'test-wheel'],
+                    ['--no-print-directory', 'test-installation']), args
+    if os.environ.get('STUB_VALIDATION_FAILURE'): sys.exit(1)
 elif name == 'gh':
     assert args[0] == 'release', args
     action = args[1]
@@ -171,6 +213,114 @@ def test_new_version_defers_public_release(release_shell):
     result, calls = release_shell.run("version", STUB_NEXT="2.21.0")
     assert result.returncode == 0, result.stderr
     assert any("--no-vcs-release" in args for _, args in calls)
+    assert not any(name == "gh" for name, _ in calls)
+
+
+@pytest.mark.parametrize("fresh_checkout", [False, True])
+def test_retry_finishes_tag_push_without_another_version_bump(release_shell, fresh_checkout):
+    release_shell.state.write_text(json.dumps({"version": "2.20.0", "tagged": False}))
+    result, calls = release_shell.run("version", STUB_NEXT="2.21.0", STUB_TAG_PUSH_FAILURE="1")
+    assert result.returncode != 0
+    assert [args for name, args in calls if name == "git" and args[0] == "push"] == [
+        ["push", "origin", "main"],
+        ["push", "origin", "refs/tags/v2.21.0"],
+    ]
+    state = json.loads(release_shell.state.read_text())
+    assert state["origin_head"] == state["head"] == "release"
+    assert not state["remote_tagged"]
+    if fresh_checkout:
+        state["tagged"] = False
+        release_shell.state.write_text(json.dumps(state))
+    result, calls = release_shell.run("version")
+    assert result.returncode == 0, result.stderr
+    assert "version=2.21.0" in release_shell.outputs.read_text()
+    assert not any("semantic-release" in args for _, args in calls)
+    validation = calls.index(["make", ["--no-print-directory", "test-installation"]])
+    push = calls.index(["git", ["push", "origin", "refs/tags/v2.21.0"]])
+    assert validation < push
+    assert not any(args == ["push", "origin", "main"] for _, args in calls)
+    assert json.loads(release_shell.state.read_text())["remote_tagged"]
+
+
+def test_failed_branch_push_never_publishes_tag_or_assets(release_shell):
+    release_shell.state.write_text(json.dumps({"version": "2.20.0", "tagged": False}))
+    result, calls = release_shell.run("release", STUB_NEXT="2.21.0", STUB_BRANCH_PUSH_FAILURE="1")
+    assert result.returncode != 0
+    assert [args for name, args in calls if name == "git" and args[0] == "push"] == [
+        ["push", "origin", "main"]
+    ]
+    assert not any(name == "gh" for name, _ in calls)
+
+
+def test_branch_only_publication_can_finish_the_verified_asset_pair(release_shell, artifacts):
+    release_shell.state.write_text(json.dumps({"version": "2.20.0", "tagged": False}))
+    result, _ = release_shell.run("release", STUB_NEXT="2.21.0", STUB_TAG_PUSH_FAILURE="1")
+    assert result.returncode != 0
+    state = json.loads(release_shell.state.read_text())
+    state["tagged"] = False  # A new checkout only received the published branch.
+    release_shell.state.write_text(json.dumps(state))
+    release_shell.wheel.unlink()
+    release_shell.sdist.unlink()
+    _, _, wheel, sdist = artifacts("2.21.0")
+    result, calls = release_shell.run("release")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert not any("semantic-release" in args for _, args in calls)
+    assert calls.index(["make", ["--no-print-directory", "test-installation"]]) < calls.index(
+        ["git", ["push", "origin", "refs/tags/v2.21.0"]]
+    )
+    assert [args for name, args in calls if name == "make"] == [
+        ["--no-print-directory", "test-installation"]
+    ]
+    assert not (release_shell.remote / ".draft").exists()
+    for archive in (wheel, sdist):
+        assert (release_shell.remote / archive.name).read_bytes() == archive.read_bytes()
+
+
+def test_failed_recovery_tag_push_stops_before_assets_and_can_retry(release_shell):
+    release_shell.state.write_text(
+        json.dumps({"version": "2.20.0", "tagged": False, "prepared_release": True})
+    )
+    result, calls = release_shell.run("release", STUB_TAG_PUSH_FAILURE="1")
+    assert result.returncode != 0
+    assert not any(name == "gh" for name, _ in calls)
+    result, calls = release_shell.run("release")
+    assert result.returncode == 0, result.stderr
+    assert any(name == "make" and args[-1] == "test-installation" for name, args in calls)
+    assert not any("semantic-release" in args for _, args in calls)
+
+
+@pytest.mark.parametrize("failure", ["STUB_VALIDATION_FAILURE", "STUB_TAG_LOOKUP_FAILURE"])
+def test_missing_tag_recovery_fails_before_git_publication(release_shell, failure):
+    release_shell.state.write_text(
+        json.dumps({"version": "2.20.0", "tagged": False, "prepared_release": True})
+    )
+    result, calls = release_shell.run("release", **{failure: "1"})
+    assert result.returncode != 0
+    assert not any(name == "git" and args[0] in ("push", "tag") for name, args in calls)
+    assert not any(name == "gh" for name, _ in calls)
+
+
+def test_recovery_fetches_existing_remote_tag_without_republishing(release_shell):
+    release_shell.state.write_text(
+        json.dumps(
+            {"version": "2.20.0", "tagged": False, "remote_tagged": True, "prepared_release": True}
+        )
+    )
+    result, calls = release_shell.run("version")
+    assert result.returncode == 0, result.stderr
+    assert not any(name == "git" and args[0] in ("push", "tag") for name, args in calls)
+    assert not any("semantic-release" in args for _, args in calls)
+
+
+def test_recovery_does_not_replace_conflicting_remote_tag(release_shell):
+    release_shell.state.write_text(
+        json.dumps(
+            {"version": "2.20.0", "tagged": False, "remote_tagged": True, "prepared_release": True}
+        )
+    )
+    result, calls = release_shell.run("release", STUB_REMOTE_TAG="other")
+    assert result.returncode != 0
+    assert not any(name == "git" and args[0] in ("push", "tag") for name, args in calls)
     assert not any(name == "gh" for name, _ in calls)
 
 

@@ -25,7 +25,13 @@ REPO = Path(__file__).resolve().parents[3]
             1,
             "zero integration tests passed",
         ),
-        ("def test_ok(): pass", ["-k", "absent"], 1, "deselection removed every integration case"),
+        ("def test_ok(): pass", ["-k", "absent"], 1, "1 integration test(s) deselected"),
+        (
+            "def test_ok(): pass\ndef test_omitted(): pass",
+            ["-k", "ok"],
+            1,
+            "1 integration test(s) deselected",
+        ),
         ("", [], 1, "zero integration tests passed"),
         ("def test_bad(): assert False", [], 1, "1 test(s) failed"),
         (
@@ -34,7 +40,7 @@ REPO = Path(__file__).resolve().parents[3]
             1,
             "1 test(s) failed",
         ),
-        ("def test_ok(): pass", ["--collect-only"], 0, ""),
+        ("def test_ok(): pass", ["--collect-only"], 1, "collection-only run"),
     ],
 )
 def test_execution_boundary(tmp_path, source, options, status, message):
@@ -65,7 +71,4 @@ def test_execution_boundary(tmp_path, source, options, status, message):
         text=True,
     )
     assert result.returncode == status, result.stdout + result.stderr
-    if message:
-        assert message in summary.read_text()
-    else:
-        assert not summary.exists(), "collection is diagnostic, not completed validation"
+    assert message in summary.read_text()

@@ -35,11 +35,12 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
 | `make pre-commit`             | static/docs hooks including actionlint; no dependency sync or hook installation           |
 | `make install-dev`            | full dev env (use this, not `uv pip install -e .`)                                        |
 | `make lint` / `make format`   | ruff directly                                                                             |
-| `make test-integration`       | **never locally** (CI-only; installs real packages)                                       |
+| `make test-integration`       | **CI only**: Linux/macOS mutate packages; Windows is read-only                            |
 
 Run `make check` before any PR. It establishes local validation; required CI additionally runs
 self-contained checks and executed integration on Ubuntu/macOS/Windows. CachyOS integration is not
 covered by hosted CI. `make test-local` alone omits artifact/runtime and strict documentation checks.
+Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`; use `test-local` for filtered runs.
 
 ## Conventions
 
@@ -111,7 +112,7 @@ covered by hosted CI. `make test-local` alone omits artifact/runtime and strict 
   `nicegui-frontend-testing` was removed as unused.
 - **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
   put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
-  see `.claude/skills/skill-deployment`.
+  see the shared [skill-deployment skill](src/personal_os_setup/config/chezmoi/dot_claude/skills/skill-deployment/SKILL.md).
 
 ## Known drift (trust nothing blindly)
 

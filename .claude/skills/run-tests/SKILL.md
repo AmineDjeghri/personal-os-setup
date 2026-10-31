@@ -8,7 +8,7 @@ metadata:
 
 # Testing in personal-os-setup
 
-Read `tests/README.md` and `docs/developer/4.testing.md` for the test map and current targets.
+Read `docs/developer/4.testing.md` for the test suites and current targets.
 
 ## Safe local checks
 
@@ -20,6 +20,9 @@ Read `tests/README.md` and `docs/developer/4.testing.md` for the test map and cu
    Coverage does not establish OS integration completeness; no threshold is imposed yet.
 4. `make check` runs static/docs hooks and `test-all`. `make install-dev` and
    `make pre-commit-install` prepare the environment/hooks separately. Checks do not install them.
+
+Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`. Use
+`make test-local PYTEST_ARGS="-k release"` for focused debugging, including collection-only runs.
 
 ## Isolation conventions
 
@@ -46,7 +49,7 @@ Never run either without explicit authorization; a generic request to test means
 Windows integration is deliberately read-only.
 
 Hosted CI requires self-contained tests and executed integration on Ubuntu/macOS/Windows.
-Other operating systems' skips are expected, but zero passing integration tests fail through
-`scripts/integration_results.py`. Collection-only output is diagnostic, not completed validation.
+Other operating systems' skips are expected, but zero passing integration tests, deselection and
+collection-only runs fail through `scripts/integration_results.py`.
 CachyOS integration is not exercised by hosted CI; the Arch container is an interactive sandbox.
 A local `make check` pass does not establish that required CI passed.

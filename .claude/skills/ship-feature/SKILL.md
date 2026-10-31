@@ -29,7 +29,8 @@ Conventional Commits, gitmoji prefix optional: `[emoji] <type>[(<scope>)][!]: <d
 | `feat!` / `BREAKING CHANGE:` footer                         | major        |
 | `chore`, `ci`, `docs`, `style`, `refactor`, `test`, `build` | no release   |
 
-Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handle null response from API`. Full type/emoji table and scope list in `CONTRIBUTING.md`.
+Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handle null response from API`.
+Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit convention”.
 
 **Never manually bump the version in `pyproject.toml`** — semantic-release does it on merge. **Never create tags manually.**
 
@@ -37,21 +38,27 @@ Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handl
 
 ## Before opening a PR
 
-1. `make test` — unit + skill-deployment tests only. Safe to run anytime; see [[run-tests]] for what it does *not* cover (integration tests are destructive — don't run them casually). `make test-all` adds the built-wheel install smoke, `make check` adds every hook and the strict docs build.
-2. `make pre-commit` — runs prepared hooks on tracked files, including the strict docs build; install dependencies/hooks separately. A local pass does not establish hosted CI success.
-3. If the branch is behind `main`: `git merge main` (if already pushed, safe) or `git rebase main` (if only local, cleaner history) — either is fine since PR merge always squashes. Re-run both checks after syncing.
+1. `make check` — static/docs hooks, full safe unit/skills suites and artifact/runtime checks.
+   Dependencies/hooks must already be installed. For new files, pass explicit paths through
+   `PRE_COMMIT_ARGS="--files <paths>"`; the default covers tracked files.
+2. Use `make test-local PYTEST_ARGS="..."` for focused debugging. Full validation targets reject
+   `PYTEST_ARGS` and `PYTEST_ADDOPTS`. See [[run-tests]] for isolation and platform boundaries.
+3. If the branch is behind `main`: `git merge main` (if already pushed) or `git rebase main`
+   (if only local). Re-run `make check` after syncing.
 
 ## Opening the PR
 
 - Target **`main`**.
 - **The PR title must follow the commit convention** (e.g. `feat: add new plugin`) — all PRs squash-merge, and the PR title becomes the commit message semantic-release evaluates.
-- CI (`ci.yml` → `quality-and-tests.yml`) runs `make pre-commit` then, in parallel, `make test-all` plus OS-specific `make test-integration` jobs. Those genuinely install/upgrade real packages on the CI runner — expected there, never on your own machine.
+- CI (`ci.yml` → `quality-and-tests.yml`) runs static checks and full safe suites plus platform
+  integration. Linux/macOS integration installs real packages; Windows integration is read-only.
+  Run these only on disposable CI hosts. A local pass does not establish hosted CI success.
 
 ## What happens after merge
 
 - Merging to `main` → `🚀 Release — Main` runs semantic-release: it bumps the version from the conventional commit(s), tags, cuts the GitHub Release *if the merged commits were releasable*, and deploys docs **only if a release actually happened** (an all-`docs:`/`chore:` PR triggers neither — see [[docs-site]]). A non-releasable merge is a normal outcome, not a failure.
 - The `dev` branch and release workflow are retired. Main releases bind to the tested CI revision, verify artifacts before publication, resume interrupted uploads, and deploy docs from the released tag.
 
-Exact git commands: `CONTRIBUTING.md` § "4.4 Pushing your work" (its `dev`-branch passages are obsolete, and a few CONTRIBUTING.md claims about local tooling are stale — check [[repo-gotchas]] before trusting it literally).
+Branch/PR flow: `docs/developer/3.conventions.md`, “Branches and pull requests”.
 
 For test conventions specific to frontend/factory code (never invoke real package managers from a test), see [[add-system-action]] and [[run-tests]].

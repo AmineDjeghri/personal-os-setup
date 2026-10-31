@@ -36,8 +36,37 @@ check_tag() {
     die "remote $TAG does not match this checkout"
 }
 
+resume_release_tag() {
+  local status
+  # The source guard has already verified the metadata-only release child.
+  # A tag lookup error is not evidence that the tag is absent.
+  if git ls-remote --exit-code origin "refs/tags/$TAG" >/dev/null; then
+    git fetch -q origin "refs/tags/$TAG:refs/tags/$TAG"
+  else
+    status=$?
+    [[ "$status" == 2 ]] || die "could not check remote $TAG"
+    make --no-print-directory test-installation
+    clean_tree
+    if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+      [[ "$(git rev-parse "refs/tags/$TAG^{commit}")" == "$(git rev-parse HEAD)" ]] ||
+        die "local $TAG does not match the verified release commit"
+    else
+      status=$?
+      [[ "$status" == 1 ]] || die "could not check local $TAG"
+      GIT_COMMITTER_NAME="$(git log -1 --format=%cn)" \
+        GIT_COMMITTER_EMAIL="$(git log -1 --format=%ce)" \
+        GIT_COMMITTER_DATE="$(git log -1 --format=%cI)" \
+        git tag -a "$TAG" -m "$TAG" HEAD
+    fi
+    github_token
+    git push origin "refs/tags/$TAG"
+    ARTIFACTS_CHECKED=true
+  fi
+  check_tag
+}
+
 cmd_version() {
-  local branch next
+  local branch next source
   branch="$(git rev-parse --abbrev-ref HEAD)"
   [[ "$branch" == main ]] || die "release from main only (on $branch)"
   clean_tree
@@ -45,10 +74,15 @@ cmd_version() {
   git fetch -q origin "$branch"
   [[ "$(git rev-parse HEAD)" == "$(git rev-parse "origin/$branch")" ]] ||
     die "$branch is not in sync with origin/$branch"
-  "$UV" run --no-sync python scripts/check_release_source.py "$RELEASE_SHA"
+  source="$("$UV" run --no-sync python scripts/check_release_source.py "$RELEASE_SHA")"
+  [[ "$source" == source || "$source" == release ]] || die "unknown release source state"
   version_tag
-  # A previous run may have pushed the release commit/tag and failed before uploading assets.
-  if [[ "$(git rev-parse -q --verify "refs/tags/$TAG^{commit}" || true)" == "$(git rev-parse HEAD)" ]]; then
+  # Branch and tag pushes are separate: recover the tag before resuming asset publication.
+  if [[ "$source" == release ]]; then
+    resume_release_tag
+    RELEASE_READY=true
+    echo "Resuming $TAG: verify artifacts and finish publication."
+  elif [[ "$(git rev-parse -q --verify "refs/tags/$TAG^{commit}" || true)" == "$(git rev-parse HEAD)" ]]; then
     check_tag
     RELEASE_READY=true
     echo "Resuming $TAG: verify artifacts and finish publication."

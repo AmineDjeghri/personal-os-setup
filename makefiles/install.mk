@@ -7,10 +7,10 @@ install-uv: ## Install uv only when missing
 	@echo "${YELLOW}=========> installing uv ${NC}"
 ifeq ($(OS),Windows_NT)
 	@powershell -NoProfile -ExecutionPolicy Bypass -Command "\
-		$$ErrorActionPreference = 'Stop'; \
-		$$uv = Get-Command uv -ErrorAction SilentlyContinue; \
-		if ($$uv) { \
-		  Write-Host 'uv exists at' $$uv.Source -ForegroundColor Green; \
+		\$$ErrorActionPreference = 'Stop'; \
+		\$$uv = Get-Command uv -ErrorAction SilentlyContinue; \
+		if (\$$uv) { \
+		  Write-Host 'uv exists at' \$$uv.Source -ForegroundColor Green; \
 		} else { \
 		  Write-Host 'Installing uv' -ForegroundColor Yellow; \
 		  irm https://astral.sh/uv/install.ps1 | iex; \

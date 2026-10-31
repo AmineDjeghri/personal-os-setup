@@ -91,10 +91,10 @@ version_pattern = "v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-.]\\w+)?)"  # matches v1.
 commit_author = { env = "GIT_COMMIT_AUTHOR", default = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" }
 commit_message = "chore(release): v{version} [skip ci]"
 
-# (python-semantic-release's uv integration guide).
+# Stop before staging or publication if any build step fails.
 build_command = """
-uv lock --upgrade-package "$PACKAGE_NAME"
-git add uv.lock
+uv lock &&
+git add uv.lock &&
 make test-installation
 """
 

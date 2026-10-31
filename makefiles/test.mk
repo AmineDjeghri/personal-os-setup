@@ -3,6 +3,9 @@
 
 N ?= 4
 
+# Full gates reject diagnostic options instead of reporting partial execution as validation.
+require-full-tests = $(if $(strip $(PYTEST_ARGS) $(PYTEST_ADDOPTS)),$(error $@ requires complete execution; use test-local PYTEST_ARGS="..." for focused or collection-only runs))
+
 test-installation: build-package ## Build and verify artifacts, then smoke-check the installed wheel
 	@$(MAKE) --no-print-directory test-wheel
 
@@ -18,14 +21,17 @@ test-local: ## Run unit and isolated skills tests (N=4 workers by default; empty
 	@$(UV) run --no-sync python -m pytest tests/unit tests/skills --numprocesses=$(N) $(PYTEST_ARGS)
 
 test-all: ## Run safe local suites and the built-wheel smoke; OS integration remains separate
-	@$(MAKE) --no-print-directory test-local
+	$(require-full-tests)
+	@$(MAKE) --no-print-directory test-local $(if $(filter 1,$(TEST_COVERAGE)),PYTEST_ARGS="--cov=personal_os_setup --cov=scripts --cov-report=term-missing --cov-report=xml:reports/coverage.xml")
 	@$(MAKE) --no-print-directory test-installation
 
 # Coverage reuses test-all, without running the same suites twice in CI.
-test-coverage: export PYTEST_ARGS = --cov=personal_os_setup --cov=scripts --cov-report=term-missing --cov-report=xml:reports/coverage.xml
-test-coverage: test-all ## Run safe checks and report coverage separately from OS integration completeness
+test-coverage: ## Run safe checks and report coverage separately from OS integration completeness
+	$(require-full-tests)
+	@$(MAKE) --no-print-directory test-all TEST_COVERAGE=1
 
 # Serial: real package managers cannot safely share state across parallel tests.
-# The reporting plugin allows other platforms' skips, but requires passing tests.
+# The reporting plugin allows other platforms' skips, but requires complete execution.
 test-integration: ## CI/disposable hosts only: Linux/macOS mutate packages; Windows checks are read-only
+	$(require-full-tests)
 	@$(UV) run --no-sync python -m pytest -p scripts.integration_results tests/integration -v -ra

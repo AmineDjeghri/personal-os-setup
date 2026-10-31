@@ -46,6 +46,7 @@ repos:
     rev: v0.24.0
     hooks:
       - id: markdownlint-cli2
+        language_version: '24.22.1'
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.3
