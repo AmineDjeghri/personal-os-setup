@@ -93,6 +93,11 @@ jobs:
       - name: Run Integration Tests
         id: integration_tests
         shell: bash
+        env:
+          # Fails runs that executed zero passing tests (see scripts/integration_results.py);
+          # a local `make test-integration` stays unchanged.
+          PYTEST_ADDOPTS: -p scripts.integration_results
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "::group::Integration tests output"
           make test-integration
@@ -119,6 +124,11 @@ jobs:
       - name: Run Integration Tests
         id: integration_tests_macos
         shell: bash
+        env:
+          # Fails runs that executed zero passing tests (see scripts/integration_results.py);
+          # a local `make test-integration` stays unchanged.
+          PYTEST_ADDOPTS: -p scripts.integration_results
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "::group::Integration tests output"
           make test-integration
@@ -148,7 +158,7 @@ jobs:
         shell: bash
         run: |
           echo "::group::Integration tests output"
-          uv run pytest tests/integration -v
+          uv run python -m pytest -p scripts.integration_results tests/integration -v -ra
           echo "::endgroup::"
 
       - name: Cleanup Artifacts
