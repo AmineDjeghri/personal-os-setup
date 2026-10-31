@@ -12,7 +12,7 @@ config_root = src_root / "personal_os_setup" / "config"
 nav = mkdocs_gen_files.Nav()
 
 for path in sorted(src_root.glob("**/*.py")):
-    if "__init__" in str(path):
+    if path.name == "__init__.py":
         print("Skipping", path)
         continue
     # Only the importable package is API.

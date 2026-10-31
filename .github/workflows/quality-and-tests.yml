@@ -1,166 +1,93 @@
-# =============================================================================
-# Reusable Workflow — 👷 Quality Check & Tests
-# =============================================================================
-# Shared by: ci.yml, main-release.yml, dev-release.yml
-# Runs pre-commit first, then tests sequentially.
-# =============================================================================
 name: "👷 Quality Check & Tests"
-
 on:
   workflow_call:
-
 permissions:
   contents: read
-
 jobs:
-
   pre-commit:
     name: "🧹 Pre-commit"
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Check Out
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
-      - name: Run Pre-commit
-        id: pre_commit
-        shell: bash
-        run: |
-          echo "::group::Pre-commit output"
-          make pre-commit
-          echo "::endgroup::"
-
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
-
-  tests:
-    name: "🧪 Tests"
-    runs-on: ubuntu-latest
-    needs: pre-commit
     timeout-minutes: 10
     steps:
-      - name: Check Out
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
-      - name: Run Tests
-        id: tests
-        shell: bash
-        run: |
-          echo "::group::Tests output"
-          make test-all
-          echo "::endgroup::"
-
-      - name: Report comprehensive validation status
+      - uses: ./.github/actions/install-python-deps
+      - run: make pre-commit
+      - uses: ./.github/actions/cleanup-artifacts
         if: always()
-        env:
-          TESTS_RESULT: ${{ steps.tests.outcome }}
-        run: |
-          if [ "$TESTS_RESULT" = success ]; then
-            echo 'All self-contained suites passed (unit, skills, built-wheel smoke).' >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo 'Software validation is incomplete: make test-all failed or did not run. A partially green run is insufficient.' >> "$GITHUB_STEP_SUMMARY"
-          fi
 
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
-
-  integration-ubuntu:
-    name: "🐧 Integration Tests (Ubuntu 26.04)"
-    runs-on: ubuntu-26.04
+  tests:
+    name: "🧪 Self-contained (${{ matrix.os }})"
     needs: pre-commit
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-26.04, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: Check Out
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - uses: ./.github/actions/install-python-deps
+      - name: Safe software checks with separate coverage reporting
+        if: runner.os == 'Linux'
+        run: make test-coverage
+      - name: Safe software checks
+        if: runner.os != 'Linux'
+        run: make test-all
+      - name: Upload self-contained coverage
+        if: runner.os == 'Linux' && always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: self-contained-coverage
+          path: reports/coverage.xml
+          if-no-files-found: warn
+      - uses: ./.github/actions/cleanup-artifacts
+        if: always()
 
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
+  integration:
+    name: "Integration (${{ matrix.os }})"
+    needs: pre-commit
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-26.04, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/install-python-deps
+      # Linux/macOS mutate only these disposable runners. Windows tests are read-only.
+      - name: Run platform integration and require executed passing tests
+        shell: bash
+        run: make test-integration
+      - uses: ./.github/actions/cleanup-artifacts
+        if: always()
 
-      - name: Run Integration Tests
-        id: integration_tests
+  validation:
+    name: Required platform validation
+    needs: [pre-commit, tests, integration]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report validation boundary
         shell: bash
         env:
-          # Fails runs that executed zero passing tests (see scripts/integration_results.py);
-          # a local `make test-integration` stays unchanged.
-          PYTEST_ADDOPTS: -p scripts.integration_results
-          PYTHONPATH: ${{ github.workspace }}
+          CHECKS: ${{ needs.pre-commit.result }}
+          TESTS: ${{ needs.tests.result }}
+          INTEGRATION: ${{ needs.integration.result }}
         run: |
-          echo "::group::Integration tests output"
-          make test-integration
-          echo "::endgroup::"
-
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
-
-  integration-macos:
-    name: "🍎 Integration Tests (macOS latest)"
-    runs-on: macos-latest
-    needs: pre-commit
-    timeout-minutes: 20
-    steps:
-      - name: Check Out
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
-      - name: Run Integration Tests
-        id: integration_tests_macos
-        shell: bash
-        env:
-          # Fails runs that executed zero passing tests (see scripts/integration_results.py);
-          # a local `make test-integration` stays unchanged.
-          PYTEST_ADDOPTS: -p scripts.integration_results
-          PYTHONPATH: ${{ github.workspace }}
-        run: |
-          echo "::group::Integration tests output"
-          make test-integration
-          echo "::endgroup::"
-
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
-
-  integration-windows:
-    name: "🪟 Integration Tests (Windows latest)"
-    runs-on: windows-latest
-    needs: pre-commit
-    timeout-minutes: 20
-    steps:
-      - name: Check Out
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
-      # windows-latest has no GNU make on PATH, so run pytest directly instead of `make test-integration`.
-      - name: Run Integration Tests
-        id: integration_tests_windows
-        shell: bash
-        run: |
-          echo "::group::Integration tests output"
-          uv run python -m pytest -p scripts.integration_results tests/integration -v -ra
-          echo "::endgroup::"
-
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
+          echo 'CachyOS integration is not exercised by this hosted matrix. The Arch container is a manual sandbox.' >> "$GITHUB_STEP_SUMMARY"
+          if [ "$CHECKS" = success ] && [ "$TESTS" = success ] && [ "$INTEGRATION" = success ]; then
+            echo 'Required hosted platform validation passed: static/docs hooks, self-contained checks and executed Ubuntu/macOS/Windows integration.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Required platform validation is incomplete. A local pass or a partially green run is insufficient.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

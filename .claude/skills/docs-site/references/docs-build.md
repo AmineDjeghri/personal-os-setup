@@ -1,6 +1,6 @@
 # Docs build & deploy (properdocs/mkdocs)
 
-Pipeline: `make deploy-doc-gh` → `properdocs build && properdocs gh-deploy` (CI Release workflow on
+Pipeline: `make deploy-doc-gh` → `properdocs gh-deploy -f properdocs.yml --strict` (CI Release workflow on
 main; `deploy-doc-local` builds + serves). Docs build breaking on main = Release workflow fails.
 
 ## How the site is assembled (`docs_dir: .`)
@@ -25,16 +25,14 @@ it from the mkdocs crawl — or the deploy breaks on merge, not locally.
 ## Local verification (reproduce CI before pushing)
 
 ```bash
-uv sync --all-groups --python 3.14   # creates venv/ (gitignored); rewrites the version string in uv.lock → revert before commit
-./venv/bin/properdocs build          # invoke the synced env directly
+make install-dev  # once, locked dev/docs tools in .venv
+make docs-build   # strict build into a cleaned temporary directory
 ```
 
-- `uv run` mis-resolves the interpreter to a cached 3.11 despite `requires-python ==3.14.*` —
-  always pass `--python 3.14`, or call `venv/bin/...` binaries directly.
-- A green build ends with `Documentation built in N seconds`; pre-existing anchor INFO warnings
-  are noise, `ERROR` lines are not.
-- mkdocs crawls the local `venv/` created by the sync unless the exclude glob lists it — keep
-  `venv/**` in the glob list (`.venv/**` alone is not enough when uv creates `venv/`).
+- Material's native Mermaid integration uses the SuperFences `fence_code_format` formatter.
+  No additional Mermaid plugin or build-time CDN probe is needed.
+- The strict build validates links and anchors. Published diagrams load in the browser.
+- New top-level output folders must join the exclude glob because `docs_dir: .` crawls the root.
 
 ## URL-coverage check for a page restructure (split/move)
 

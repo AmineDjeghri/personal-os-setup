@@ -38,7 +38,7 @@ Built on [Textual](https://textual.textualize.io/) (`textual`), not a web/GUI fr
 - `dialogs.py` — `ConfirmScreen` (Yes/No) and `PromptScreen` (label + `Input` + OK/Cancel), both `ModalScreen` subclasses that dismiss with a typed result (`bool` / `str | None`) consumed by the pushing callback.
 - `main.py` — thin entry point: `sudo_preauth()` then `PersonalOsSetupApp().run()`.
 
-Frontend behavior is covered by `tests/unit/test_app.py` using Textual's headless `App.run_test()`/`Pilot` harness. When adding tests here, never click a button wired to a real package-manager/system action (e.g. real `brew`/`apt`/`winget` commands) — build a synthetic `SystemAction` with an in-memory `run` callable instead, the way the existing confirm-flow test does, so tests can't mutate the host system.
+Frontend behavior is covered by `tests/unit/frontend/test_app.py` using Textual's headless `App.run_test()`/`Pilot` harness. When adding tests here, never click a button wired to a real package-manager/system action (e.g. real `brew`/`apt`/`winget` commands) — build a synthetic `SystemAction` with an in-memory `run` callable instead, the way the existing confirm-flow test does, so tests can't mutate the host system.
 
 ### Settings/logging (`settings.py`)
 

@@ -3,28 +3,30 @@
 
 .PHONY: pre-commit-install pre-commit lint format docs-build check
 
-pre-commit-install: install-dev
-	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
-	$(UV) run pre-commit install --hook-type pre-commit --hook-type commit-msg
+PRE_COMMIT_ARGS ?= --all-files
 
-pre-commit: pre-commit-install ## Run pre-commit
+pre-commit-install: ## Install the git hooks once after install-dev
+	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
+	$(UV) run --no-sync pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+pre-commit: ## Run checks using the prepared development environment
 	@echo "${YELLOW}=========> Running pre-commit...${NC}"
-	$(UV) run pre-commit run --all-files
+	$(UV) run --no-sync pre-commit run $(PRE_COMMIT_ARGS)
 
 lint: ## Lint code with Ruff
 	@echo "Linting code..."
-	@$(UV) run ruff check .
+	@$(UV) run --no-sync ruff check .
 
 format: ## Format code with Ruff
 	@echo "Formatting code..."
-	@$(UV) run ruff format .
+	@$(UV) run --no-sync ruff format .
 
 docs-build: ## Build strict documentation without starting a server
 	@echo "${YELLOW}=========> Building documentation (strict)...${NC}"
-	@$(UV) run properdocs build -f properdocs.yml --strict --quiet --site-dir "$$(mktemp -d)"
+	@site=$$(mktemp -d); trap 'rm -rf "$$site"' EXIT; \
+	$(UV) run --no-sync properdocs build -f properdocs.yml --strict --quiet --site-dir "$$site"
 
-check: ## Run every hook, all self-contained suites and the strict docs build (the CI gate)
+check: ## Run all static/docs hooks and self-contained software checks
 	@$(MAKE) --no-print-directory pre-commit
 	@$(MAKE) --no-print-directory test-all
-	@$(MAKE) --no-print-directory docs-build
 	@echo "${YELLOW}=========> All quality gates passed.${NC}"

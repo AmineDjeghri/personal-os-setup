@@ -2,6 +2,9 @@
 # This file includes all modular makefiles from the makefiles/ directory
 # Each makefile is organized by functionality for better maintainability
 
+.DEFAULT_GOAL := help
+SHELL := bash
+
 # Include common variables and settings
 include makefiles/common.mk
 

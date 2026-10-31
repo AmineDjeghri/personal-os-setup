@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def support():
     path = (
-        Path(__file__).resolve().parents[2]
+        Path(__file__).resolve().parents[3]
         / "src/personal_os_setup/config/chezmoi/dot_claude/skills_support.py"
     )
     spec = importlib.util.spec_from_file_location("skills_support", path)

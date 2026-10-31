@@ -8,8 +8,7 @@ fails when ANY of these holds:
 * a deselection removed every integration case;
 * a test failed.
 
-Enable it explicitly with ``-p scripts.integration_results`` (CI only; ``make test-integration``
-stays unchanged locally).
+Enabled by ``make test-integration``. Collection-only runs remain diagnostic.
 """
 
 import os
@@ -88,7 +87,7 @@ class IntegrationResults:
                 )
                 if reasons:
                     stream.write(f"Incomplete because: {'; '.join(reasons)}. {RULE}\n")
-        # Exit 5 ("no tests collected") is swallowed by `make test-integration`; force a failure.
+        # Give empty/all-skipped runs the same failing status as a failed integration case.
         if reasons and exitstatus in (pytest.ExitCode.OK, pytest.ExitCode.NO_TESTS_COLLECTED):
             session.exitstatus = pytest.ExitCode.TESTS_FAILED
 

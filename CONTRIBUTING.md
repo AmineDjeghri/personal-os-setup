@@ -12,7 +12,8 @@ report unacceptable behavior by opening an issue. Team: the contributors of the 
    [commit convention](docs/developer/3.conventions.md#commit-convention): it becomes the squash
    commit and decides the next version ([Release](docs/developer/5.release.md)).
 
-**Local first:** GitHub Actions runs the same `make` targets you run locally (`make pre-commit`,
-`make test-all`), so a local `make check` means a CI pass. `make act` runs the workflows locally.
+**Local checks:** `make check` runs static/docs hooks and safe software/artifact checks. Required
+CI also runs platform integration on disposable hosts; a local pass does not establish a CI pass.
+See [Testing](docs/developer/4.testing.md) before using `make act` or any integration harness.
 
 Security issues: [SECURITY.md](SECURITY.md), never a public issue.

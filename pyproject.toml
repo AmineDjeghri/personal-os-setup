@@ -25,6 +25,7 @@ dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "pytest-xdist==3.8.0",
+    "pytest-cov==7.1.0",
     "pre-commit==4.7.0",
     "ruff==0.17.2",
     "python-semantic-release==10.7.0",
@@ -34,7 +35,6 @@ docs = [
     "properdocs==1.6.7",
     "mkdocs-material==9.7.7",
     "mkdocstrings==1.0.8",
-    "mkdocs-mermaid2-plugin==1.2.3",
     "mkdocs-gen-files==0.6.1",
     "mkdocstrings-python==2.0.10",
     "mkdocs-same-dir==0.1.5",
@@ -56,6 +56,8 @@ personal-os-setup = "personal_os_setup.frontend.main:main"
 
 #### pytest configuration
 [tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/skills"]
+pythonpath = ["."]
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 
@@ -63,7 +65,7 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.ruff]
 # The chezmoi payload is deployed verbatim (shipped skills, dotfiles): ruff would reformat the
 # python snippets inside those markdown files and silently change their meaning.
-extend-exclude = ["*.ipynb", "src/personal_os_setup/config/**"]
+extend-exclude = ["src/personal_os_setup/config/**"]
 line-length = 100
 # Enable all `pydocstyle` rules, limiting to those that adhere to the Google convention via `convention = "google"`
 lint.select = ["D", "F401"]
@@ -72,12 +74,19 @@ lint.pydocstyle.convention = "google"
 
 
 
+[tool.coverage.run]
+source = ["personal_os_setup", "scripts"]
+omit = ["src/personal_os_setup/config/*"]
+
+[tool.coverage.report]
+show_missing = true
+
 # python-semantic-release configuration
 [tool.semantic_release]
 commit_parser = "scripts.emoji_commit_parser:EmojiAngularParser"
 version_toml = ["pyproject.toml:project.version"]
 version_pattern = "v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-.]\\w+)?)"  # matches v1.0.0, v1.0.0-rc.1, etc.
-upload_to_vcs_release = false  # semantic-release creates the GitHub release; make release-assets attaches dist/ to it
+# scripts/release.sh uses --no-vcs-release; verified assets are uploaded to a draft before publication.
 # make release-version sets GIT_COMMIT_AUTHOR to your git identity; CI sets the bot.
 commit_author = { env = "GIT_COMMIT_AUTHOR", default = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" }
 commit_message = "chore(release): v{version} [skip ci]"
@@ -86,16 +95,12 @@ commit_message = "chore(release): v{version} [skip ci]"
 build_command = """
 uv lock --upgrade-package "$PACKAGE_NAME"
 git add uv.lock
+make test-installation
 """
 
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
-
-[tool.semantic_release.branches.dev]
-match = "dev"
-prerelease = true
-prerelease_token = "rc"  # release candidate: 1.1.0-rc.1, 1.1.0-rc.2, etc.
 
 # ---------------------------------------------------------------------------
 # Commit Convention:  [emoji] <type>[(<scope>)][!]: <description>
@@ -105,11 +110,6 @@ prerelease_token = "rc"  # release candidate: 1.1.0-rc.1, 1.1.0-rc.2, etc.
 #   🐛 fix / bugfix / hotfix   → patch bump  (1.0.0 → 1.0.1)
 #   ⚡️ perf                    → patch bump
 #   💥 feat! / BREAKING CHANGE → major bump  (1.0.0 → 2.0.0)
-#
-# Dev Branch (release candidates):
-#   ✨ feat / feature          → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
-#   🐛 fix / bugfix / hotfix   → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
-#   💥 feat! / BREAKING CHANGE → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
 #
 # No Release (all branches):
 #   ♻️ refactor  🧪 test  📝 docs  🎨 style  🔧 chore  👷 ci  📦 build

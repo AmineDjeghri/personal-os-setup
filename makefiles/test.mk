@@ -1,39 +1,31 @@
-# Testing targets
-# This file contains all testing-related targets
-
-.PHONY: test-installation test test-all test-integration
+# Self-contained checks are safe locally. OS integration is an explicit, separate target.
+.PHONY: test-wheel test-installation test test-local test-all test-coverage test-integration
 
 N ?= 4
 
-test-installation: build-package ## Install the built wheel in a throwaway env and check the personal-os-setup command loads (does not start it)
-	@echo "${YELLOW}=========> Testing installation...${NC}"
-	@wheel=$$(ls -t dist/*.whl | head -1); \
-	$(UV) run --isolated --no-project --with "$$wheel" python -c \
-		"from importlib.metadata import entry_points; ep = entry_points(group='console_scripts')['personal-os-setup']; ep.load(); print('OK', ep.name, '->', ep.value)"
+test-installation: build-package ## Build and verify artifacts, then smoke-check the installed wheel
+	@$(MAKE) --no-print-directory test-wheel
 
-test: ## Run unit tests with pytest (parallel via pytest-xdist). Usage: make test [N=<num_workers>] (default: 4)
-	@echo "${YELLOW}Running tests with $(N) worker(s)...${NC}"
+test-wheel: ## Install the existing verified wheel in isolation and load its entry point without starting the app
 	@set -e; \
-	$(UV) run pytest tests/unit tests/skills --numprocesses=$(N) || rc=$$?; \
-	if [ "$${rc:-0}" -eq 5 ]; then \
-		echo "${YELLOW}No tests collected (pytest exit code 5) — treating as success.${NC}"; \
-	else \
-		exit "$${rc:-0}"; \
-	fi
+	wheel=$$($(UV) run --no-sync python scripts/check_artifacts.py --wheel); \
+	version=$$($(UV) run --no-sync python scripts/check_artifacts.py --version); \
+	$(UV) run --isolated --no-project --with "$$wheel" python scripts/check_installation.py "$$version"
 
-test-all: ## Run every self-contained suite (unit, skills, built-wheel smoke)
-	@$(MAKE) --no-print-directory test
+test: test-local ## Alias for the safe local suites
+
+test-local: ## Run unit and isolated skills tests (N=4 workers by default; empty collection fails)
+	@$(UV) run --no-sync python -m pytest tests/unit tests/skills --numprocesses=$(N) $(PYTEST_ARGS)
+
+test-all: ## Run safe local suites and the built-wheel smoke; OS integration remains separate
+	@$(MAKE) --no-print-directory test-local
 	@$(MAKE) --no-print-directory test-installation
-	@echo "${YELLOW}=========> All self-contained suites passed.${NC}"
 
-# Not parallelized: these tests drive real system package managers
-# (pacman/apt/brew) which aren't safe to run concurrently.
-test-integration: ## Run integration tests (requires Ubuntu with passwordless sudo)
-	@echo "${YELLOW}Running integration tests...${NC}"
-	@set -e; \
-	$(UV) run pytest tests/integration -v || rc=$$?; \
-	if [ "$${rc:-0}" -eq 5 ]; then \
-		echo "${YELLOW}No tests collected (pytest exit code 5) — treating as success.${NC}"; \
-	else \
-		exit "$${rc:-0}"; \
-	fi
+# Coverage reuses test-all, without running the same suites twice in CI.
+test-coverage: export PYTEST_ARGS = --cov=personal_os_setup --cov=scripts --cov-report=term-missing --cov-report=xml:reports/coverage.xml
+test-coverage: test-all ## Run safe checks and report coverage separately from OS integration completeness
+
+# Serial: real package managers cannot safely share state across parallel tests.
+# The reporting plugin allows other platforms' skips, but requires passing tests.
+test-integration: ## CI/disposable hosts only: Linux/macOS mutate packages; Windows checks are read-only
+	@$(UV) run --no-sync python -m pytest -p scripts.integration_results tests/integration -v -ra

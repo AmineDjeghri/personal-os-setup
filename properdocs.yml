@@ -54,7 +54,6 @@ plugins:
         - scripts/gen_example_pages.py
   - search
   - same-dir
-  - mermaid2
   - literate-nav:
       nav_file: SUMMARY.md
   - exclude:
@@ -65,6 +64,8 @@ plugins:
         - docker_data/**
         - dist/**
         - reports/**
+        - htmlcov/**
+        - tests/**
         - bin/**
         - docker/**
         - .idea/**
@@ -95,7 +96,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid_custom
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - tables
