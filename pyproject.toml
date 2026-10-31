@@ -8,7 +8,7 @@ dependencies = [
     # Engineering
     "textual==8.2.8",
     "pydantic==2.14.1",
-    "pydantic-settings==2.16.0",
+    "pydantic-settings==2.16.1",
     "loguru==0.7.3",
     "PyYAML==6.0.3",
     "build==1.6.1", # For building some aur packages like rivalcfg-gui
