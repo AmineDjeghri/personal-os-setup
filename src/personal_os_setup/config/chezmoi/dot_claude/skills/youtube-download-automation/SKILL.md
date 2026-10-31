@@ -32,13 +32,13 @@ Project: `<personal-os-setup>/docs/home-server/music/youtube_ai_download/`. Its 
 
 **Run it with `uv run --no-project yt_dl.py …` from that folder.** `--no-project` is load-bearing: the folder sits inside a uv project, and bare `uv run` would bind to that project's env instead of the script's PEP 723 deps.
 
-| Path | Role |
-|---|---|
-| `.archive.txt` | downloaded video IDs; decides whether a re-run downloads or no-ops |
-| `overrides.json` | the metadata decisions, keyed by video ID |
-| `.staging/` | download target, gitignored, outside the watched library |
-| `downloads.log` | optional `--log` output |
-| `LIBRARY_ROOT` | **hard-coded `/media/music` in `yt_dl.py`** (no flag, no env var). Finished files land in `<LIBRARY_ROOT>/YouTube/<folder>/NN - Artist - Title.m4a`, tags embedded by the script, moved in with one rename so beets imports the folder whole |
+| Path             | Role                                                                                                                                                                                                                                         |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.archive.txt`   | downloaded video IDs; decides whether a re-run downloads or no-ops                                                                                                                                                                           |
+| `overrides.json` | the metadata decisions, keyed by video ID                                                                                                                                                                                                    |
+| `.staging/`      | download target, gitignored, outside the watched library                                                                                                                                                                                     |
+| `downloads.log`  | optional `--log` output                                                                                                                                                                                                                      |
+| `LIBRARY_ROOT`   | **hard-coded `/media/music` in `yt_dl.py`** (no flag, no env var). Finished files land in `<LIBRARY_ROOT>/YouTube/<folder>/NN - Artist - Title.m4a`, tags embedded by the script, moved in with one rename so beets imports the folder whole |
 
 **Where it runs matters.** `/media/music` exists on the media server / add-on container, not on a
 dev workstation. Before any download run `ls -ld /media/music`. If it is missing the script still
@@ -60,15 +60,15 @@ Rate limit is ~1 s/request, so a 50-video playlist takes minutes — run it in t
 
 ## 2. Metadata decisions
 
-| Field | Rule |
-|---|---|
-| `artist` | The performer, not the channel. Live-title channels are uploaders, not artists. |
-| `title` | Original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite or translate; keep `(Live …)` and venue info. |
-| `album` | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist matches `Album contains "Live"` — an album without "Live" silently drops out of it. |
-| `year` | Concert year when it differs from the upload year. |
-| `genre` | Optional. Title Case, `;` separator with no space (`Rock;Pop`), mapped onto `references/genre-vocabulary.md`. **No override → no genre tag at all** (the script neutralises yt-dlp's category fallback). Never hand-tag a file the pipeline owns. Sourcing: `references/genre-sourcing.md`. |
-| `folder` | Set it **explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the `Singles` default rarely fires. Playlists: folder = playlist title. Non-music clips: `Other`. |
-| `split` | `true` only for videos with YouTube chapters that should become tracks. |
+| Field    | Rule                                                                                                                                                                                                                                                                                        |
+|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `artist` | The performer, not the channel. Live-title channels are uploaders, not artists.                                                                                                                                                                                                             |
+| `title`  | Original video title **minus channel noise only** (`[4K]`, `[Audio HQ]`, `HD`, `(Best Quality)`, `\| Channel`, a leading `Artist - `, a stray year). Never rewrite or translate; keep `(Live …)` and venue info.                                                                            |
+| `album`  | Typically `Live at <Venue> (<City>, <Year>)`. Navidrome's smart playlist matches `Album contains "Live"` — an album without "Live" silently drops out of it.                                                                                                                                |
+| `year`   | Concert year when it differs from the upload year.                                                                                                                                                                                                                                          |
+| `genre`  | Optional. Title Case, `;` separator with no space (`Rock;Pop`), mapped onto `references/genre-vocabulary.md`. **No override → no genre tag at all** (the script neutralises yt-dlp's category fallback). Never hand-tag a file the pipeline owns. Sourcing: `references/genre-sourcing.md`. |
+| `folder` | Set it **explicitly for a single-video link** — `playlist_title` defaults to the video's own title, so the `Singles` default rarely fires. Playlists: folder = playlist title. Non-music clips: `Other`.                                                                                    |
+| `split`  | `true` only for videos with YouTube chapters that should become tracks.                                                                                                                                                                                                                     |
 
 - **Non-music clips** (entrances, chants, interviews, fireworks…) are never classified alone: list them with a proposed handling and wait for confirmation before using `Other`.
 - A video the user labels by genre or occasion is a metadata hint, not permission to change the code that writes it.
@@ -105,14 +105,14 @@ Report only the delta and stop (§0 still applies). Treat an ID in `.archive.txt
 
 ## 6. References
 
-| File | Content |
-|---|---|
-| `references/pipeline-quirks.md` | archive/resume/re-download, filename collisions, plan-index quirks, ffmpeg passes |
-| `references/yt-dlp-api-facts.md` | yt-dlp internals the script relies on: PP keys, runtime `outtmpl`, chapter splitting, info-dict → tag map |
-| `references/genre-sourcing.md` | choosing a genre at ingest: sources, limits, matching guard |
-| `references/genre-retag.md` | bulk genre merge on existing files: usage, merge policy, writer ownership, recount |
-| `references/genre-vocabulary.md` | format rules, marker rules, 4-value cap |
-| `references/genre-aliases.txt` | merge map + never-write tokens (machine-readable, used by `genre_tag.py`) |
-| `references/genre-whitelist.txt`, `genre-whitelist-extra.txt` | lowercase whitelists (beets' list; regional/Spotify supplement). The skill owns them |
-| `scripts/genre_tag.py` | bulk genre merge from last.fm/iTunes: dry run, `--apply`, `--restore`, resumable |
-| `scripts/plan_tools.py` | `delta` (what is new) and `coverage` (overrides vs plan); shared parser, exits 2 on empty parse |
+| File                                                          | Content                                                                                                   |
+|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| `references/pipeline-quirks.md`                               | archive/resume/re-download, filename collisions, plan-index quirks, ffmpeg passes                         |
+| `references/yt-dlp-api-facts.md`                              | yt-dlp internals the script relies on: PP keys, runtime `outtmpl`, chapter splitting, info-dict → tag map |
+| `references/genre-sourcing.md`                                | choosing a genre at ingest: sources, limits, matching guard                                               |
+| `references/genre-retag.md`                                   | bulk genre merge on existing files: usage, merge policy, writer ownership, recount                        |
+| `references/genre-vocabulary.md`                              | format rules, marker rules, 4-value cap                                                                   |
+| `references/genre-aliases.txt`                                | merge map + never-write tokens (machine-readable, used by `genre_tag.py`)                                 |
+| `references/genre-whitelist.txt`, `genre-whitelist-extra.txt` | lowercase whitelists (beets' list; regional/Spotify supplement). The skill owns them                      |
+| `scripts/genre_tag.py`                                        | bulk genre merge from last.fm/iTunes: dry run, `--apply`, `--restore`, resumable                          |
+| `scripts/plan_tools.py`                                       | `delta` (what is new) and `coverage` (overrides vs plan); shared parser, exits 2 on empty parse           |

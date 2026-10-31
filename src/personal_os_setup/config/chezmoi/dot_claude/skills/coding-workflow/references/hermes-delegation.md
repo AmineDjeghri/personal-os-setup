@@ -4,11 +4,11 @@ Hermes-only (read from `coding-workflow` § 6): how the orchestrator plans, brie
 
 ## 1. Division of labor
 
-| Task | Agent |
-|---|---|
-| Home Assistant, Hermes gateway/admin, scheduling (cron), memory, audits, container/system ops | **Hermes** |
+| Task                                                                                                                          | Agent                                                              |
+|-------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| Home Assistant, Hermes gateway/admin, scheduling (cron), memory, audits, container/system ops                                 | **Hermes**                                                         |
 | **Every in-repo file change** — code, workflows/CI, docs, READMEs, skills, and one-line edits — in any repo the user works on | **Claude Code**, driven by Hermes via `claude -p` (or interactive) |
-| Reading a repo, writing the spec/plan, reviewing a diff or PR, verifying CI state | **Hermes** |
+| Reading a repo, writing the spec/plan, reviewing a diff or PR, verifying CI state                                             | **Hermes**                                                         |
 
 **Every in-repo edit is delegated — including the small and the mechanical.** "It is only one
 line" or "it is just a YAML tweak" is not a reason to reach for the orchestrating agent's own file

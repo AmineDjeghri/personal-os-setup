@@ -14,19 +14,19 @@ publishable instead of dropping it.
 
 ## Placeholder mapping (keep one convention everywhere)
 
-| Real value — never publish | Placeholder |
-|---|---|
-| personal email (`*.gmail.com`, private addresses) | `user@example.com` |
-| the user's own domain or contact address | `contact@example.com` |
-| the user's real name inside a command example, or in prose/a handle | `Your Name`, the generic voice ("the user", "the repo owner") |
-| `git config user.name "<real name>"` | `"<your name>"` |
-| numeric GitHub noreply id (`<id>+<login>@users.noreply.github.com`) | `12345678+your-username@users.noreply.github.com` |
-| bare login in an email example | `your-username@users.noreply.github.com` |
-| a phantom/stranger address quoted as a cautionary example | `someone@users.noreply.github.com`, "a stranger's GitHub account" |
-| add-on slug, host paths, LAN/global IPs, MACs, SSIDs, tunnel hostnames, live exposure findings | `<repo>_<slug>`, `<host>`, `172.30.32.x`, `<device>` |
-| `/addon_configs/<hex>_<slug>` / `<hex8>_<addon>` / `app_<hex8>_<addon>` | `/addon_configs/<hash>_<addon>` / `<hash>_<addon>` / `app_<hash>_<addon>` |
-| host username in a shell example | "the host user" |
-| owner's own repo URL used as a self-reference | the bare repo name |
+| Real value — never publish                                                                     | Placeholder                                                               |
+|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| personal email (`*.gmail.com`, private addresses)                                              | `user@example.com`                                                        |
+| the user's own domain or contact address                                                       | `contact@example.com`                                                     |
+| the user's real name inside a command example, or in prose/a handle                            | `Your Name`, the generic voice ("the user", "the repo owner")             |
+| `git config user.name "<real name>"`                                                           | `"<your name>"`                                                           |
+| numeric GitHub noreply id (`<id>+<login>@users.noreply.github.com`)                            | `12345678+your-username@users.noreply.github.com`                         |
+| bare login in an email example                                                                 | `your-username@users.noreply.github.com`                                  |
+| a phantom/stranger address quoted as a cautionary example                                      | `someone@users.noreply.github.com`, "a stranger's GitHub account"         |
+| add-on slug, host paths, LAN/global IPs, MACs, SSIDs, tunnel hostnames, live exposure findings | `<repo>_<slug>`, `<host>`, `172.30.32.x`, `<device>`                      |
+| `/addon_configs/<hex>_<slug>` / `<hex8>_<addon>` / `app_<hex8>_<addon>`                        | `/addon_configs/<hash>_<addon>` / `<hash>_<addon>` / `app_<hash>_<addon>` |
+| host username in a shell example                                                               | "the host user"                                                           |
+| owner's own repo URL used as a self-reference                                                  | the bare repo name                                                        |
 
 Use `example.com` for every domain — a domain the user actually owns is itself an identifier.
 

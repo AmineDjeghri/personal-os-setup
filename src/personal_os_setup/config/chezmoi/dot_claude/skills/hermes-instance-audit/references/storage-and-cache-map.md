@@ -21,26 +21,26 @@ blob/blob-shaped file dominates its parent.
 
 ## Map: path → meaning → verdict
 
-| Path (under `/config`) | What it is | Verdict |
-|---|---|---|
-| `.hermes/hermes-agent/.git` | git checkout history, 40+ packfiles | needs a decision — see below |
-| `.hermes/hermes-agent/{venv,node_modules}` | the LIVE runtime the gateway runs from | keep |
-| `.hermes/tools/*` | managed ffmpeg / chromium / node / python runtimes | keep |
-| `.hermes/installs/<hash>/environments/<id>/venv` | PM dependency generation | needs a decision |
-| `.hermes/state.db` | session/state history | data — vacuum, never delete |
-| `.hermes/logs/` | `gateway-exit-diag.log` alone can be 40 M; `.1/.2/.3` are the rotations of a 5 MB-capped log | regenerable |
-| `.hermes/cache/{uv,scratch,web}` | uv package cache; scratch self-prunes at 24 h | regenerable |
-| `.hermes/skills/.curator_backups/*.tar.gz` | weekly curator snapshots | keep (restore path) |
-| `.npm/_cacache`, `.npm/_npx` | npm caches | regenerable |
-| `.cache/pre-commit` | per-hook virtualenvs | regenerable (rebuilt on next run) |
-| `.cache/huggingface/hub/models--Systran--faster-whisper-*` | local STT models | partially regenerable — check config |
-| `.cache/{electron,node-gyp,pip}`, `~/.local/share/uv/tools` | download/build caches | regenerable |
-| `.local/share/uv/python/cpython-*` | uv-managed interpreters | rebuildable, but referenced — check first |
-| `.local/share/claude/versions/<ver>` | full Claude Code CLI builds | keep newest only |
-| `.local/state`, `.config`, `.gitconfig`, `.pki`, `.certs` | real user state | keep |
-| `.linuxbrew`, `.oh-my-zsh`, `.go`, `.npm-global` | installed shell/tooling | keep |
-| `workspace/*/.venv`, `workspace/.worktrees` | repo dev envs and extra checkouts | rebuildable — ask |
-| `workspace/*` repos, `workspace/jym/models/*.onnx` | the user's source and model assets | data |
+| Path (under `/config`)                                      | What it is                                                                                   | Verdict                                   |
+|-------------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------|
+| `.hermes/hermes-agent/.git`                                 | git checkout history, 40+ packfiles                                                          | needs a decision — see below              |
+| `.hermes/hermes-agent/{venv,node_modules}`                  | the LIVE runtime the gateway runs from                                                       | keep                                      |
+| `.hermes/tools/*`                                           | managed ffmpeg / chromium / node / python runtimes                                           | keep                                      |
+| `.hermes/installs/<hash>/environments/<id>/venv`            | PM dependency generation                                                                     | needs a decision                          |
+| `.hermes/state.db`                                          | session/state history                                                                        | data — vacuum, never delete               |
+| `.hermes/logs/`                                             | `gateway-exit-diag.log` alone can be 40 M; `.1/.2/.3` are the rotations of a 5 MB-capped log | regenerable                               |
+| `.hermes/cache/{uv,scratch,web}`                            | uv package cache; scratch self-prunes at 24 h                                                | regenerable                               |
+| `.hermes/skills/.curator_backups/*.tar.gz`                  | weekly curator snapshots                                                                     | keep (restore path)                       |
+| `.npm/_cacache`, `.npm/_npx`                                | npm caches                                                                                   | regenerable                               |
+| `.cache/pre-commit`                                         | per-hook virtualenvs                                                                         | regenerable (rebuilt on next run)         |
+| `.cache/huggingface/hub/models--Systran--faster-whisper-*`  | local STT models                                                                             | partially regenerable — check config      |
+| `.cache/{electron,node-gyp,pip}`, `~/.local/share/uv/tools` | download/build caches                                                                        | regenerable                               |
+| `.local/share/uv/python/cpython-*`                          | uv-managed interpreters                                                                      | rebuildable, but referenced — check first |
+| `.local/share/claude/versions/<ver>`                        | full Claude Code CLI builds                                                                  | keep newest only                          |
+| `.local/state`, `.config`, `.gitconfig`, `.pki`, `.certs`   | real user state                                                                              | keep                                      |
+| `.linuxbrew`, `.oh-my-zsh`, `.go`, `.npm-global`            | installed shell/tooling                                                                      | keep                                      |
+| `workspace/*/.venv`, `workspace/.worktrees`                 | repo dev envs and extra checkouts                                                            | rebuildable — ask                         |
+| `workspace/*` repos, `workspace/jym/models/*.onnx`          | the user's source and model assets                                                           | data                                      |
 
 ## Per-item rules (each one cost time to establish)
 

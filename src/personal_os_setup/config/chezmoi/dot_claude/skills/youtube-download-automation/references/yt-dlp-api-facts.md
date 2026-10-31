@@ -43,10 +43,10 @@ The `outtmpl` template and the metadata PP both read the mutated values. An arch
 
 `FFmpegMetadataPP` builds its tag map from the entry dict (`yt_dlp/postprocessor/ffmpeg.py`, `_get_metadata_object`), taking the **first present** key of each group:
 
-| Tag | Keys tried, in order |
-|---|---|
+| Tag    | Keys tried, in order                                                  |
+|--------|-----------------------------------------------------------------------|
 | artist | `artist`, `artists`, `creator`, `creators`, `uploader`, `uploader_id` |
-| genre | `genre`, `genres`, `categories`, `tags` |
+| genre  | `genre`, `genres`, `categories`, `tags`                               |
 
 **The genre fallback is a data-corruption trap.** With no `genre` key, `FFmpegMetadataPP` falls through `genres`/`categories`/`tags` and writes YouTube's *category* ("People & Blogs", "Sports"…) as the genre; beets does not clean it up. Set `e["genre"]` from an explicit decision, or pop `categories`/`tags`/`genres`/`genre` so nothing is written.
 

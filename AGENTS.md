@@ -25,13 +25,13 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
 
 ## Commands
 
-| Command | Purpose |
-|---|---|
-| `make test` | unit + isolated skill deployment tests (`tests/unit`, `tests/skills`; exit 5 = success) |
-| `make pre-commit` | ruff, detect-secrets, commitizen, yaml/json/toml, uv-lock — CI runs this exact command |
-| `make install-dev` | full dev env (use this, not `uv pip install -e .`) |
-| `make lint` / `make format` | ruff directly |
-| `make test-integration` | **never locally** (CI-only; installs real packages) |
+| Command                     | Purpose                                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------------------|
+| `make test`                 | unit + isolated skill deployment tests (`tests/unit`, `tests/skills`; exit 5 = success) |
+| `make pre-commit`           | ruff, detect-secrets, commitizen, yaml/json/toml, uv-lock — CI runs this exact command  |
+| `make install-dev`          | full dev env (use this, not `uv pip install -e .`)                                      |
+| `make lint` / `make format` | ruff directly                                                                           |
+| `make test-integration`     | **never locally** (CI-only; installs real packages)                                     |
 
 Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 
@@ -54,19 +54,19 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 
 ## Index
 
-| Topic | Where |
-|---|---|
-| Deep architecture (frontend, tasks, managers) | `CLAUDE.md` |
-| Developer guide (setup, conventions, testing, release) | `docs/developer/` |
-| PR flow / ship process | `.claude/skills/ship-feature` |
-| Documented-vs-reality drift | `.claude/skills/repo-gotchas` |
-| Tests & coverage | `.claude/skills/run-tests` |
-| Docs site gotchas | `.claude/skills/docs-site` |
-| Repo skill layout / adding skills | `.claude/skills/skill-layout` |
-| New TUI action / package-manager backend | `.claude/skills/add-system-action` |
-| Chezmoi dotfiles source scripts | `.claude/skills/chezmoi-scripts` |
-| VM test lab (CachyOS host) | `.claude/skills/vm-lab` |
-| Forking this repo for your own setup | `.claude/skills/fork-and-customize` |
+| Topic                                                  | Where                               |
+|--------------------------------------------------------|-------------------------------------|
+| Deep architecture (frontend, tasks, managers)          | `CLAUDE.md`                         |
+| Developer guide (setup, conventions, testing, release) | `docs/developer/`                   |
+| PR flow / ship process                                 | `.claude/skills/ship-feature`       |
+| Documented-vs-reality drift                            | `.claude/skills/repo-gotchas`       |
+| Tests & coverage                                       | `.claude/skills/run-tests`          |
+| Docs site gotchas                                      | `.claude/skills/docs-site`          |
+| Repo skill layout / adding skills                      | `.claude/skills/skill-layout`       |
+| New TUI action / package-manager backend               | `.claude/skills/add-system-action`  |
+| Chezmoi dotfiles source scripts                        | `.claude/skills/chezmoi-scripts`    |
+| VM test lab (CachyOS host)                             | `.claude/skills/vm-lab`             |
+| Forking this repo for your own setup                   | `.claude/skills/fork-and-customize` |
 
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 

@@ -21,12 +21,12 @@ monitors, listing scouts, periodic scrapes. Source-specific access facts: `refer
 
 ## 0. Decide first: Hermes cron, not a new service
 
-| Want | Build it as |
-|---|---|
-| Scheduled fetch/filter/summarize/deliver | **Hermes cron job(s)** — no daemon, container or new repo |
-| Reusable procedure the job follows | a **skill** in the shared authored tree |
-| Non-trivial fetch/normalize/dedupe logic | a **PEP 723 script** in the repo, run via `uv run --no-project` |
-| A page to look at it | *only then* consider a UI — an add-on, or the user's existing app |
+| Want                                     | Build it as                                                       |
+|------------------------------------------|-------------------------------------------------------------------|
+| Scheduled fetch/filter/summarize/deliver | **Hermes cron job(s)** — no daemon, container or new repo         |
+| Reusable procedure the job follows       | a **skill** in the shared authored tree                           |
+| Non-trivial fetch/normalize/dedupe logic | a **PEP 723 script** in the repo, run via `uv run --no-project`   |
+| A page to look at it                     | *only then* consider a UI — an add-on, or the user's existing app |
 
 - **No new HA add-on for a scheduled job the agent can run directly.** The user's one general-purpose UI add-on
   (NiceGUI + FastAPI + Ollama) is unauthenticated and LAN-only by design, with its own tooling and release

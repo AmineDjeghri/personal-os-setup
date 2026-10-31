@@ -218,13 +218,13 @@ sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 
 | Feature                      | system (`root`) | user        | Notes / Explanation                                                                                                   |
 |------------------------------|-----------------|-------------|-----------------------------------------------------------------------------------------------------------------------|
-| Autostart on boot            | ✅               | ⚠️ Possible | Root/systemd can autostart VMs easily. Users can use `systemd --user` or autostart scripts, but extra setup required. |
-| USB passthrough              | ✅               | ⚠️ Possible | Root can attach any USB device. Users can do it if they’re in `libvirt`/`kvm` groups and udev rules allow access.     |
-| Bluetooth / Zigbee           | ✅               | ⚠️ Possible | Needs hardware access; root can do it directly. Users need correct groups and permissions.                            |
-| Headless server use          | ✅               | ✅           | Works for both. Headless VM does not require GUI.                                                                     |
-| Network bridges              | ✅               | ⚠️ Possible | Root can create bridges freely. Users need pre-made bridges or `sudo` for creation.                                   |
-| IP forwarding / port mapping | ✅               | ❌           | Modifying `sysctl` and `iptables` requires root. Users cannot forward ports without `sudo`.                           |
-| Cloudflare tunnel stability  | ✅               | ✅           | Independent of root vs user. Tunnels are stable as long as service runs correctly.                                    |
+| Autostart on boot            | ✅              | ⚠️ Possible | Root/systemd can autostart VMs easily. Users can use `systemd --user` or autostart scripts, but extra setup required. |
+| USB passthrough              | ✅              | ⚠️ Possible | Root can attach any USB device. Users can do it if they’re in `libvirt`/`kvm` groups and udev rules allow access.     |
+| Bluetooth / Zigbee           | ✅              | ⚠️ Possible | Needs hardware access; root can do it directly. Users need correct groups and permissions.                            |
+| Headless server use          | ✅              | ✅          | Works for both. Headless VM does not require GUI.                                                                     |
+| Network bridges              | ✅              | ⚠️ Possible | Root can create bridges freely. Users need pre-made bridges or `sudo` for creation.                                   |
+| IP forwarding / port mapping | ✅              | ❌          | Modifying `sysctl` and `iptables` requires root. Users cannot forward ports without `sudo`.                           |
+| Cloudflare tunnel stability  | ✅              | ✅          | Independent of root vs user. Tunnels are stable as long as service runs correctly.                                    |
 
 * Create the VM: ( we are adding --network bridge=br0) to use the bridge.
 If the DHCP server is down, the VM will not get an IP address and will have a lot of problems. Enable temporarily the DHCP server of your router.
@@ -488,13 +488,13 @@ other add-on port is LAN-only — note that the LAN is *not* a trust boundary (a
 add-on can reach every other add-on and Home Assistant itself on `8123`), so "LAN-only" means
 "not on the internet", not "safe".
 
-| Public? | Service | Front door | Blocked at the edge (Cloudflare WAF rule) |
-|---|---|---|---|
-| yes — Access | Home Assistant | Cloudflare Access (email OTP) | — |
-| yes — Access | Hermes WebUI | Cloudflare Access + add-on `password` | — (whole hostname is credential-grade) |
-| yes — Access | Navidrome | **Cloudflare Access service token** — the client sends `CF-Access-Client-Id` / `CF-Access-Client-Secret` (one token per user: the only per-person revoke path). No email policy, so a plain browser gets `403` | nothing path-level — the token is the gate, and clients still need `/rest/*` |
-| not installed | Vaultwarden | deleted for now — on reinstall it gets **no** Access (the Bitwarden apps cannot answer a challenge) | `/admin*`, `POST /identity/accounts/register*`, and **disable signups in `/admin`** (verified open: `/api/config` reported `disableUserRegistration: false`) |
-| yes — app login | AIOStreams | **none** — app login (`auth_required`) | `/api/v1/status`, `/builtins/*` |
+| Public?         | Service        | Front door                                                                                                                                                                                                     | Blocked at the edge (Cloudflare WAF rule)                                                                                                                    |
+|-----------------|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| yes — Access    | Home Assistant | Cloudflare Access (email OTP)                                                                                                                                                                                  | —                                                                                                                                                            |
+| yes — Access    | Hermes WebUI   | Cloudflare Access + add-on `password`                                                                                                                                                                          | — (whole hostname is credential-grade)                                                                                                                       |
+| yes — Access    | Navidrome      | **Cloudflare Access service token** — the client sends `CF-Access-Client-Id` / `CF-Access-Client-Secret` (one token per user: the only per-person revoke path). No email policy, so a plain browser gets `403` | nothing path-level — the token is the gate, and clients still need `/rest/*`                                                                                 |
+| not installed   | Vaultwarden    | deleted for now — on reinstall it gets **no** Access (the Bitwarden apps cannot answer a challenge)                                                                                                            | `/admin*`, `POST /identity/accounts/register*`, and **disable signups in `/admin`** (verified open: `/api/config` reported `disableUserRegistration: false`) |
+| yes — app login | AIOStreams     | **none** — app login (`auth_required`)                                                                                                                                                                         | `/api/v1/status`, `/builtins/*`                                                                                                                              |
 
 The actual hostnames are whatever is configured in the Cloudflared add-on (`external_hostname`
 

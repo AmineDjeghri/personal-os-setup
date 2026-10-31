@@ -18,9 +18,9 @@ metadata:
 Never start from an empty repo. Fork the template matching the project type — all three already ship CI/CD,
 a GitHub Pages docs site, pre-commit and release tooling, so you replace content, not plumbing.
 
-| Build target | Fork | Stack / notes |
-|---|---|---|
-| Python package / library | [python-package-template](https://github.com/AmineDjeghri/python-package-template) | uv-based package, tests, pre-commit, semantic-release |
+| Build target                                              | Fork                                                                                             | Stack / notes                                                                  |
+|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Python package / library                                  | [python-package-template](https://github.com/AmineDjeghri/python-package-template)               | uv-based package, tests, pre-commit, semantic-release                          |
 | Generative-AI project, or full-stack (backend + frontend) | [generative-ai-project-template](https://github.com/AmineDjeghri/generative-ai-project-template) | FastAPI + NiceGUI; litellm/ollama (cloud + local LLMs); langfuse observability |
 | Home Assistant addon | [ha-addons](https://github.com/AmineDjeghri/ha-addons) (octo-fiesta pattern: per-addon `config.yaml`/`Dockerfile`/`run.sh`, HA Store release flow) — or fork it as the base for your own addon collection |
 

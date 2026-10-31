@@ -11,11 +11,11 @@ what skills this repo provides, how they get onto a machine, and how to add or c
 
 ## The three layers
 
-| Layer           | What it is                                           | Source of truth                                                                     | Lands in           | Reaches                 |
-|-----------------|------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------|-------------------------|
+| Layer           | What it is                                           | Source of truth                                                                     | Lands in                                | Reaches                       |
+|-----------------|------------------------------------------------------|-------------------------------------------------------------------------------------|-----------------------------------------|-------------------------------|
 | **Authored**    | Skills you write and keep                            | `src/personal_os_setup/config/chezmoi/dot_claude/skills/` (listed in `skills.keep`) | `~/.claude/skills` + `~/.agents/skills` | Claude Code, Codex and Hermes |
 | **Third-party** | Skills from other repos, installed with `npx skills` | `third-party-skills.lock.json` (repo root)                                          | `~/.claude/skills` + `~/.agents/skills` | Claude Code, Codex and Hermes |
-| **Repo-local**  | Runbooks for working on this repo only               | `.claude/skills/` (+ `.agents/skills/` symlinks)                                    | read in place      | whoever opens this repo |
+| **Repo-local**  | Runbooks for working on this repo only               | `.claude/skills/` (+ `.agents/skills/` symlinks)                                    | read in place                           | whoever opens this repo       |
 
 Authored skills deploy once into `~/.claude/skills`; per-skill links in `~/.agents/skills` expose
 them to Codex. Hermes reads `~/.claude/skills` too, so no extra Hermes copy is needed. Never put the same skill name in
@@ -59,31 +59,31 @@ Media:
 
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `report-pdf` | Creating PDF reports with the shared report workflow |
+| `report-pdf`                  | Creating PDF reports with the shared report workflow                                                                                                |
 | `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
 ### Third-party skills (16)
 
 Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 
-| Skill                          | Source                      | Use it for                                                                       |
-|--------------------------------|-----------------------------|----------------------------------------------------------------------------------|
-| `grill-me`                     | `mattpocock/skills`         | Being interviewed about a plan or design until every branch is resolved          |
-| `grill-with-docs`              | `mattpocock/skills`         | The same interview, plus building a `GLOSSARY.md` and decision records as you go |
-| `grilling`                     | `mattpocock/skills`         | The reusable interview primitive the two skills above call                       |
-| `tdd`                          | `mattpocock/skills`         | Test-first development, one red-green-refactor slice at a time                   |
-| `diagnosing-bugs`              | `mattpocock/skills`         | A gated loop for hard bugs and performance regressions                           |
-| `handoff`                      | `mattpocock/skills`         | Compacting a conversation into a document another agent can continue from        |
-| `differential-review`          | `trailofbits/skills`        | Security-focused review of a PR, commit or diff                                  |
-| `find-skills`                  | `vercel-labs/skills`        | Discovering and installing skills                                                |
-| `claude-code`                  | `NousResearch/hermes-agent` | Delegating coding work to the Claude Code CLI                                    |
-| `hermes-agent`                 | `NousResearch/hermes-agent` | Using, configuring and extending Hermes Agent                                    |
-| `hermes-agent-skill-authoring` | `NousResearch/hermes-agent` | Writing in-repo `SKILL.md` files                                                 |
-| `home-assistant-best-practices` | `homeassistant-ai/skills` | Home Assistant configuration practices |
-| `modern-python` | `trailofbits/skills` | Modern Python project tooling |
-| `bash-script-validator` | `akin-ozer/cc-devops-skills` | Validating Bash scripts |
-| `github-actions-validator` | `akin-ozer/cc-devops-skills` | Validating GitHub Actions workflows |
-| `makefile-validator` | `akin-ozer/cc-devops-skills` | Validating Makefiles |
+| Skill                           | Source                       | Use it for                                                                       |
+|---------------------------------|------------------------------|----------------------------------------------------------------------------------|
+| `grill-me`                      | `mattpocock/skills`          | Being interviewed about a plan or design until every branch is resolved          |
+| `grill-with-docs`               | `mattpocock/skills`          | The same interview, plus building a `GLOSSARY.md` and decision records as you go |
+| `grilling`                      | `mattpocock/skills`          | The reusable interview primitive the two skills above call                       |
+| `tdd`                           | `mattpocock/skills`          | Test-first development, one red-green-refactor slice at a time                   |
+| `diagnosing-bugs`               | `mattpocock/skills`          | A gated loop for hard bugs and performance regressions                           |
+| `handoff`                       | `mattpocock/skills`          | Compacting a conversation into a document another agent can continue from        |
+| `differential-review`           | `trailofbits/skills`         | Security-focused review of a PR, commit or diff                                  |
+| `find-skills`                   | `vercel-labs/skills`         | Discovering and installing skills                                                |
+| `claude-code`                   | `NousResearch/hermes-agent`  | Delegating coding work to the Claude Code CLI                                    |
+| `hermes-agent`                  | `NousResearch/hermes-agent`  | Using, configuring and extending Hermes Agent                                    |
+| `hermes-agent-skill-authoring`  | `NousResearch/hermes-agent`  | Writing in-repo `SKILL.md` files                                                 |
+| `home-assistant-best-practices` | `homeassistant-ai/skills`    | Home Assistant configuration practices                                           |
+| `modern-python`                 | `trailofbits/skills`         | Modern Python project tooling                                                    |
+| `bash-script-validator`         | `akin-ozer/cc-devops-skills` | Validating Bash scripts                                                          |
+| `github-actions-validator`      | `akin-ozer/cc-devops-skills` | Validating GitHub Actions workflows                                              |
+| `makefile-validator`            | `akin-ozer/cc-devops-skills` | Validating Makefiles                                                             |
 
 ### Repo-local skills (9)
 
@@ -110,7 +110,7 @@ Open the **Sync dotfiles** tab, expand `.claude`, and select the **whole `.claud
 | Button                 | What it does                                                                                                                                                         |
 |------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | diff selected          | Shows what would change in `~/.claude`                                                                                                                               |
-| apply selected         | Copies authored skills, links them for Codex, and replays third-party skills for Claude Code and Codex                                                                              |
+| apply selected         | Copies authored skills, links them for Codex, and replays third-party skills for Claude Code and Codex                                                               |
 | re-add selected        | Pulls a skill you edited live back into the repo's source tree                                                                                                       |
 | chezmoi: clean backups | (action button above the list) Deletes the `<name>_<timestamp>_backup` copies that earlier applies left next to managed files, including those in `~/.claude/skills` |
 
@@ -175,14 +175,14 @@ not.
 
 ### `make` targets
 
-| Command                                  | Purpose                                                                                                                     |
-|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| Command                                  | Purpose                                                                                                                                                                                                                              |
+|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `make skills-status`                     | One read-only report: repo vs live copy per skill (`OK` / `DIFFERS` / `MISSING`), Codex links, names present in both `~/.claude/skills` and `~/.hermes/skills`, repo skills missing from `skills.keep`, third-party lock and content |
-| `make skills-repo-to-live`               | Copy authored skills repo → `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides) |
-| `make skills-live-to-repo NAME=<name>`   | Save a live skill into the repo and add it to `skills.keep`                                                                 |
-| `make skills-thirdparty-live-to-repo`            | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                             |
-| `make skills-thirdparty-repo-to-live`          | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                                           |
-| `make skills-link` / `make skills-check` | Create / verify the `.agents/skills` symlinks for repo-local skills                                                         |
+| `make skills-repo-to-live`               | Copy authored skills repo → `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides)                                                                                   |
+| `make skills-live-to-repo NAME=<name>`   | Save a live skill into the repo and add it to `skills.keep`                                                                                                                                                                          |
+| `make skills-thirdparty-live-to-repo`    | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                                                                                                                                      |
+| `make skills-thirdparty-repo-to-live`    | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                                                                                                                                                    |
+| `make skills-link` / `make skills-check` | Create / verify the `.agents/skills` symlinks for repo-local skills                                                                                                                                                                  |
 
 ### What `skills-thirdparty-repo-to-live` does
 
