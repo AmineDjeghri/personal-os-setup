@@ -1,19 +1,15 @@
 # Contributing
 
-Thanks for contributing! ❤️ Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md);
-report unacceptable behavior by opening an issue. Team: the contributors of the repository.
+1. Pick an issue and wait to be assigned; coordinate with any existing assignee.
+2. Follow [Setup](docs/developer/1.setup.md), then branch from `main` using
+   `feature/<name>` or `bugfix/<name>`.
+3. Update the relevant docs and run `make check` ([Testing](docs/developer/4.testing.md)).
+4. Open a PR to `main` with a [Conventional Commit title](docs/developer/3.conventions.md#commit-convention).
+   PRs are squash-merged; the title determines the release version.
 
-1. **Pick an issue**: comment on it (or create it) and wait to be assigned, so two people don't
-   work on the same thing. If the assignee seems inactive, ask them first.
-2. **Set up** once: [Setup](docs/developer/1.setup.md).
-3. **Branch** off `main` and follow the [Conventions](docs/developer/3.conventions.md).
-4. **Check** before pushing: `make check` ([Testing](docs/developer/4.testing.md)).
-5. **Open a pull request** to `main`. Its title follows the
-   [commit convention](docs/developer/3.conventions.md#commit-convention): it becomes the squash
-   commit and decides the next version ([Release](docs/developer/5.release.md)).
+CI runs platform integration in addition to local checks. See [Release](docs/developer/5.release.md)
+for publication and recovery.
 
-**Local checks:** `make check` runs static/docs hooks and safe software/artifact checks. Required
-CI also runs platform integration on disposable hosts; a local pass does not establish a CI pass.
-See [Testing](docs/developer/4.testing.md) before using `make act` or any integration harness.
-
-Security issues: [SECURITY.md](SECURITY.md), never a public issue.
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report security issues through
+[SECURITY.md](SECURITY.md), never a public issue. Coding agents need separate approval for
+commits, pushes, PRs and system changes; see `AGENTS.md`.
