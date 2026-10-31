@@ -1,13 +1,11 @@
-# Release targets. A laptop and GitHub Actions (main-release.yml, dev-release.yml) run the same ones.
-# The logic is in scripts/release.sh; docs/developer/5.release.md explains the flow.
-
+# Release logic is shared by manual releases and the main workflow.
 .PHONY: release-version release-assets release
 
-release-version: ## On a clean main/dev in sync with origin: version, changelog, commit, tag, push, GitHub release
+release-version: ## Version/tag/push from tested main; build and smoke-check before publishing the tag (requires RELEASE_SHA)
 	@UV="$(UV)" scripts/release.sh version
 
-release-assets: ## Attach dist/ wheel + sdist of the current version to its GitHub release
+release-assets: ## Validate the clean tagged checkout and assets, upload missing files, then publish the draft
 	@UV="$(UV)" scripts/release.sh assets
 
-release: ## release-version, then build-package and release-assets (docs: make deploy-doc-gh after)
+release: ## Version and verify artifacts, then finish or recover GitHub publication (requires RELEASE_SHA)
 	@UV="$(UV)" scripts/release.sh release

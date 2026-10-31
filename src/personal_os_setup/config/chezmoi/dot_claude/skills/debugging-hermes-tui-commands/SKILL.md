@@ -45,17 +45,10 @@ If a command exists in the TUI but doesn't show in autocomplete:
 
 1. Add a `CommandDef` entry to `COMMAND_REGISTRY` in `hermes_cli/commands.py`:
    ```python
-   (
-       CommandDef(
-           "commandname",
-           "Description of the command",
-           "Session",
-           cli_only=True,
-           aliases=("alias",),
-           args_hint="[arg1|arg2|arg3]",
-           subcommands=("arg1", "arg2", "arg3"),
-       ),
-   )
+   CommandDef("commandname", "Description of the command", "Session",
+              cli_only=True, aliases=("alias",),
+              args_hint="[arg1|arg2|arg3]",
+              subcommands=("arg1", "arg2", "arg3")),
    ```
 
 2. Pick `cli_only` vs gateway availability carefully:

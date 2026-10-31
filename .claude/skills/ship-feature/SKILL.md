@@ -15,7 +15,7 @@ This repo drives releases from commit messages via `python-semantic-release`, so
 ## Branching
 
 - All work branches off **`main`** and is named `feature/<name>` or `bugfix/<name>`.
-- **The `dev` branch is retired** — it no longer exists on `origin`. Anything describing a `dev` → `main` promotion PR, or a `🔶 Release — Dev` prerelease, is stale: PRs target `main` directly.
+- **The `dev` branch is retired** — it no longer exists on `origin`. Anything describing a `dev` → `main` promotion PR, or a dev prerelease workflow, is stale: PRs target `main` directly.
 - `git checkout main && git pull` before branching, to start from a fast-forward-clean base.
 
 ## Commit messages
@@ -37,20 +37,20 @@ Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handl
 
 ## Before opening a PR
 
-1. `make test` — unit tests only. Safe to run anytime; see [[run-tests]] for what it does *not* cover (integration tests are destructive — don't run them casually).
-2. `make pre-commit` — installs hooks then runs them on all files. CI runs this exact command, so a local pass means CI's pre-commit job passes.
+1. `make test` — unit + skill-deployment tests only. Safe to run anytime; see [[run-tests]] for what it does *not* cover (integration tests are destructive — don't run them casually). `make test-all` adds the built-wheel install smoke, `make check` adds every hook and the strict docs build.
+2. `make pre-commit` — runs prepared hooks on tracked files, including the strict docs build; install dependencies/hooks separately. A local pass does not establish hosted CI success.
 3. If the branch is behind `main`: `git merge main` (if already pushed, safe) or `git rebase main` (if only local, cleaner history) — either is fine since PR merge always squashes. Re-run both checks after syncing.
 
 ## Opening the PR
 
 - Target **`main`**.
 - **The PR title must follow the commit convention** (e.g. `feat: add new plugin`) — all PRs squash-merge, and the PR title becomes the commit message semantic-release evaluates.
-- CI (`ci.yml` → `quality-and-tests.yml`) runs `make pre-commit` then, in parallel, `make test` plus OS-specific `make test-integration` jobs. Those genuinely install/upgrade real packages on the CI runner — expected there, never on your own machine.
+- CI (`ci.yml` → `quality-and-tests.yml`) runs `make pre-commit` then, in parallel, `make test-all` plus OS-specific `make test-integration` jobs. Those genuinely install/upgrade real packages on the CI runner — expected there, never on your own machine.
 
 ## What happens after merge
 
 - Merging to `main` → `🚀 Release — Main` runs semantic-release: it bumps the version from the conventional commit(s), tags, cuts the GitHub Release *if the merged commits were releasable*, and deploys docs **only if a release actually happened** (an all-`docs:`/`chore:` PR triggers neither — see [[docs-site]]). A non-releasable merge is a normal outcome, not a failure.
-- `.github/workflows/dev-release.yml` (`🔶 Release — Dev`) still exists but is inert — its trigger is the deleted `dev` branch. Ignore it; don't recreate `dev`.
+- The `dev` branch and release workflow are retired. Main releases bind to the tested CI revision, verify artifacts before publication, resume interrupted uploads, and deploy docs from the released tag.
 
 Exact git commands: `CONTRIBUTING.md` § "4.4 Pushing your work" (its `dev`-branch passages are obsolete, and a few CONTRIBUTING.md claims about local tooling are stale — check [[repo-gotchas]] before trusting it literally).
 

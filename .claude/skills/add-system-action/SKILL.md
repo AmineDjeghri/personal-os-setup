@@ -36,7 +36,7 @@ For anything involving the chezmoi source tree (`config/chezmoi/`) — a `run_*`
 4. Register it in `tasks/factory.py::_PACKAGE_MANAGER_FACTORY_BY_DISTRO` (maps `(distro, manager_name)` → class) and, if it should get its own tab/button, `_UI_VISIBLE_MANAGERS_BY_DISTRO`.
 5. Add its packages under the right distro/manager/category in `src/personal_os_setup/config/packages.yaml`.
 
-Before a PR, run `make test` and `make pre-commit` — see [[ship-feature]] for the git/PR workflow.
+Before a PR, run `make check` — see [[ship-feature]] for the git/PR workflow.
 
 ## Distro-keying facts worth knowing
 

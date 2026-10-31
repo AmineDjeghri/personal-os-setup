@@ -25,15 +25,21 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
 
 ## Commands
 
-| Command                     | Purpose                                                                                 |
-|-----------------------------|-----------------------------------------------------------------------------------------|
-| `make test`                 | unit + isolated skill deployment tests (`tests/unit`, `tests/skills`; exit 5 = success) |
-| `make pre-commit`           | ruff, detect-secrets, commitizen, yaml/json/toml, uv-lock — CI runs this exact command  |
-| `make install-dev`          | full dev env (use this, not `uv pip install -e .`)                                      |
-| `make lint` / `make format` | ruff directly                                                                           |
-| `make test-integration`     | **never locally** (CI-only; installs real packages)                                     |
+| Command                       | Purpose                                                                                   |
+|-------------------------------|-------------------------------------------------------------------------------------------|
+| `make check`                  | local gate: static/docs hooks, then `test-all`                                            |
+| `make test-local`             | safe unit + isolated skills suites; also the default pytest discovery                     |
+| `make test-coverage`          | safe checks with separate Python coverage; no threshold                                   |
+| `make test-all`               | every self-contained suite: unit + skills, then the built-wheel install smoke             |
+| `make test`                   | alias for safe `test-local`; empty collection fails                                       |
+| `make pre-commit`             | static/docs hooks including actionlint; no dependency sync or hook installation           |
+| `make install-dev`            | full dev env (use this, not `uv pip install -e .`)                                        |
+| `make lint` / `make format`   | ruff directly                                                                             |
+| `make test-integration`       | **never locally** (CI-only; installs real packages)                                       |
 
-Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
+Run `make check` before any PR. It establishes local validation; required CI additionally runs
+self-contained checks and executed integration on Ubuntu/macOS/Windows. CachyOS integration is not
+covered by hosted CI. `make test-local` alone omits artifact/runtime and strict documentation checks.
 
 ## Conventions
 
@@ -46,7 +52,7 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 - **Secrets:** inline `# pragma: allowlist secret`, never whole-file excludes.
 - **Renovate:** 7-day cooldown on dependency PRs; `uv.lock` regenerated, not pinned.
 - **Releases:** `make release-version` / `release-assets` / `release` (`scripts/release.sh`) are what
-  the release workflows run too. Guards: `main` (or `dev`), clean tree, in sync with origin; the
+  the main release workflow runs too. Guards: tested `RELEASE_SHA`, `main`, clean tree, in sync with origin; the
   token is `GH_TOKEN`, else the `gh auth login` session, else a hidden prompt. Never run them, nor
   `make deploy-doc-gh`, without per-action approval: they push, tag and publish.
 - **Docs:** developer pages live in `docs/developer/` (numbered, one purpose line, short tables);
@@ -54,19 +60,19 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 
 ## Index
 
-| Topic                                                  | Where                               |
-|--------------------------------------------------------|-------------------------------------|
-| Deep architecture (frontend, tasks, managers)          | `CLAUDE.md`                         |
-| Developer guide (setup, conventions, testing, release) | `docs/developer/`                   |
-| PR flow / ship process                                 | `.claude/skills/ship-feature`       |
-| Documented-vs-reality drift                            | `.claude/skills/repo-gotchas`       |
-| Tests & coverage                                       | `.claude/skills/run-tests`          |
-| Docs site gotchas                                      | `.claude/skills/docs-site`          |
-| Repo skill layout / adding skills                      | `.claude/skills/skill-layout`       |
-| New TUI action / package-manager backend               | `.claude/skills/add-system-action`  |
-| Chezmoi dotfiles source scripts                        | `.claude/skills/chezmoi-scripts`    |
-| VM test lab (CachyOS host)                             | `.claude/skills/vm-lab`             |
-| Forking this repo for your own setup                   | `.claude/skills/fork-and-customize` |
+| Topic                                                    | Where                                 |
+|----------------------------------------------------------|---------------------------------------|
+| Deep architecture (frontend, tasks, managers)            | `CLAUDE.md`                           |
+| Developer guide (setup, conventions, testing, release)   | `docs/developer/`                     |
+| PR flow / ship process                                   | `.claude/skills/ship-feature`         |
+| Documented-vs-reality drift                              | `.claude/skills/repo-gotchas`         |
+| Tests & coverage                                         | `.claude/skills/run-tests`            |
+| Docs site gotchas                                        | `.claude/skills/docs-site`            |
+| Repo skill layout / adding skills                        | `.claude/skills/skill-layout`         |
+| New TUI action / package-manager backend                 | `.claude/skills/add-system-action`    |
+| Chezmoi dotfiles source scripts                          | `.claude/skills/chezmoi-scripts`      |
+| VM test lab (CachyOS host)                               | `.claude/skills/vm-lab`               |
+| Forking this repo for your own setup                     | `.claude/skills/fork-and-customize`   |
 
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
@@ -109,9 +115,8 @@ Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
 
 ## Known drift (trust nothing blindly)
 
-- `make help` Development section broken (greps nonexistent `makefiles/dev.mk`)
 - `make install` installs zero dev/docs deps → use `make install-dev`
-- actionlint/zizmor/pip-audit hooks are commented out in `.pre-commit-config.yaml`
+- actionlint is active; zizmor/pip-audit remain disabled in `.pre-commit-config.yaml`
 - `make docker-prod`/`docker-dev` don't exist
 - Docs said `_PRIMARY_MANAGERS_BY_DISTRO` — the real constant is `_UI_VISIBLE_MANAGERS_BY_DISTRO`
 - `properdocs.yml` uses `docs_dir: .` — new top-level dirs must join the exclude glob or they

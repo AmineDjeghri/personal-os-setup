@@ -1,23 +1,16 @@
-name: 'Install Python Dependencies'
-description: 'Install uv and Python dependencies for the project'
-
+name: Install Python Dependencies
+description: Prepare uv, Make and the locked development environment on each platform
 runs:
-  using: 'composite'
+  using: composite
   steps:
-
-    - name: Install Python Dependencies
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        make install-uv
-        make install-dev
-
-    # windows-latest has no GNU make/uv: pin setup-uv (no floating major tag), then run what `make install-dev` runs.
-    - name: Install uv (Windows)
-      if: runner.os == 'Windows'
+    - name: Install uv
       uses: astral-sh/setup-uv@v10.3.0
 
-    - name: Install Python Dependencies (Windows)
+    - name: Install Make (Windows)
       if: runner.os == 'Windows'
+      shell: powershell
+      run: choco install make --no-progress --yes
+
+    - name: Install Python Dependencies
       shell: bash
-      run: uv sync --all-groups
+      run: make install-dev

@@ -84,7 +84,7 @@ class TestChezmoiDiff:
         ):
             chezmoi_diff([Path("/home/user/.zshrc"), Path("/home/user/.p10k.zsh")])
         argv = mock_run.call_args[0][0]
-        assert argv[-2:] == ["/home/user/.zshrc", "/home/user/.p10k.zsh"]
+        assert argv[-2:] == [str(Path("/home/user/.zshrc")), str(Path("/home/user/.p10k.zsh"))]
 
 
 class TestChezmoiApply:
@@ -157,7 +157,7 @@ class TestChezmoiReAdd:
         ):
             chezmoi_re_add([Path("/home/user/.zshrc")])
         argv = mock_run.call_args[0][0]
-        assert argv[-1] == "/home/user/.zshrc"
+        assert argv[-1] == str(Path("/home/user/.zshrc"))
 
 
 class TestChezmoiManagedPaths:
@@ -227,7 +227,7 @@ class TestChezmoiForget:
         assert result.ok is True
         argv = mock_run.call_args[0][0]
         assert "--force" in argv
-        assert argv[-1] == "/home/user/.zshrc"
+        assert argv[-1] == str(Path("/home/user/.zshrc"))
 
     def test_forget_failure(self):
         mock_result = MagicMock(returncode=1, stdout="", stderr="not managed")

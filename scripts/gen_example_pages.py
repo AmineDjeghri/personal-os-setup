@@ -13,7 +13,7 @@ summary_lines = ["* [Overview](index.md)\n"]
 for path in sorted(
     p for p in examples_root.rglob("*.py") if p.stem != "__init__" and "__pycache__" not in p.parts
 ):
-    source = path.read_text()
+    source = path.read_text(encoding="utf-8")
 
     try:
         tree = ast.parse(source)
@@ -24,9 +24,11 @@ for path in sorted(
     title = path.stem.replace("_", " ").title()
     first_line = docstring.split("\n")[0].rstrip(".") if docstring else ""
 
+    first_line = first_line.replace("|", "\\|")
+
     # Preserve subfolder structure relative to examples_root
     rel_path = path.relative_to(examples_root)
-    doc_rel = rel_path.with_suffix(".md")
+    doc_rel = rel_path.with_suffix(".md").as_posix()
 
     # Use subfolder prefix in index and summary (e.g. "scripts/run_evaluation_example")
     index_rows.append(f"| [{title}]({doc_rel}) | {first_line} |")

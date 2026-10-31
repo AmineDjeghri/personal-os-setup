@@ -28,12 +28,12 @@ Files added under `docs/` generally surface automatically via `same-dir`/mkdocs-
 
 ## Building/previewing
 
-- `make deploy-doc-local` → `install-dev` then `properdocs build && properdocs serve` — local live preview; run it after any docs change before opening a PR.
-- `make deploy-doc-gh` → `properdocs build && properdocs gh-deploy` — **pushes directly to the `gh-pages` branch**. Remote-mutating: run it deliberately (CI normally does it), and confirm with the user first.
+- `make deploy-doc-local` → `properdocs serve -f properdocs.yml` — local live preview; run it after any docs change before opening a PR.
+- `make deploy-doc-gh` → `properdocs gh-deploy -f properdocs.yml --strict` — **pushes directly to the `gh-pages` branch**. Remote-mutating: run it deliberately (CI normally does it), and confirm with the user first.
 
 ## When docs actually go live in CI
 
-`main-release.yml` deploys docs **only if its semantic-release step cut a release**. A PR with only `docs:`/`chore:` commits merged to `main` will **not** deploy docs even though the content changed — those types don't bump the version. To publish immediately, bundle the doc change with a releasable commit (`feat`/`fix`/`perf`), or run `make deploy-doc-gh` after confirming with the user (it pushes to a shared branch).
+`main-release.yml` deploys docs **only after successful artifact publication, including a recovered release**, and checks out the released tag. A PR with only `docs:`/`chore:` commits merged to `main` will **not** deploy docs even though the content changed — those types don't bump the version. To publish immediately, bundle the doc change with a releasable commit (`feat`/`fix`/`perf`), or run `make deploy-doc-gh` after confirming with the user (it pushes to a shared branch).
 
 First-time GitHub Pages setup (rarely needed again): repo Settings → Actions → General → Workflow permissions → "Read and write permissions"; Pages settings → "Deploy from a branch" → `gh-pages`.
 
@@ -52,5 +52,4 @@ When splitting: write the new page, trim the old one to its own topic, add the i
 ## Linked Files
 
 - `references/docs-build.md` — how the mkdocstrings auto-stub walker works, the hyphenated-module-path
-  trap when vendoring code that ships `.py` under a data dir, local build verification (`--python 3.14`
-  gotcha), and the URL-coverage check for restructures.
+  trap when vendoring code that ships `.py` under a data dir, local strict build verification, and the URL-coverage check for restructures.

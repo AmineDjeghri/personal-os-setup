@@ -1,95 +1,131 @@
 #!/usr/bin/env bash
-# Release steps, shared by a laptop (make release*) and GitHub Actions (main-release.yml, dev-release.yml).
-#
-#   scripts/release.sh version   # guards, then semantic-release: version, CHANGELOG.md, commit, tag, push, GitHub release
-#   scripts/release.sh assets    # attach dist/ wheel + sdist of the current version to the GitHub release
-#   scripts/release.sh release   # version, then (if HEAD got the tag) make build-package, then assets
-#
-# GitHub token, in this order: GH_TOKEN, the `gh auth login` session, a hidden prompt (terminal only).
-# The token is never printed; it only travels through the environment.
+# Shared release implementation: main only; checked artifacts precede public publication.
 set -euo pipefail
-
 : "${UV:=uv}"
 GH_HOST="${GH_HOST:-${GITHUB_SERVER_URL:+${GITHUB_SERVER_URL#https://}}}"
-GH_HOST="${GH_HOST:-github.com}"
-export GH_HOST
+export GH_HOST="${GH_HOST:-github.com}"
+RELEASE_READY=false
+ARTIFACTS_CHECKED=false
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 output() { [[ -z "${GITHUB_OUTPUT:-}" ]] || echo "$1" >>"$GITHUB_OUTPUT"; }
+clean_tree() { [[ -z "$(git status --porcelain)" ]] || die "uncommitted changes: commit or stash them first"; }
 
 github_token() {
   [[ -z "${GH_TOKEN:-}" ]] || return 0
   GH_TOKEN="$(gh auth token --hostname "$GH_HOST" 2>/dev/null || true)"
   if [[ -z "$GH_TOKEN" ]]; then
     [[ -t 0 ]] || die "no GitHub token: set GH_TOKEN or run: gh auth login --hostname $GH_HOST"
-    echo "Not logged in: run 'gh auth login --hostname $GH_HOST' once, or paste a token now."
-    read -rsp "GitHub token for $GH_HOST (repo scope, input hidden): " GH_TOKEN
+    read -rsp "GitHub token for $GH_HOST (input hidden): " GH_TOKEN
     echo
     [[ -n "$GH_TOKEN" ]] || die "no token given"
   fi
   export GH_TOKEN
 }
 
+version_tag() {
+  VERSION="$("$UV" version --short)"
+  TAG="v$VERSION" # Keep the semantic-release spelling; Python artifact names use PEP 440.
+}
+
+check_tag() {
+  [[ "$(git rev-parse --verify "refs/tags/$TAG^{commit}")" == "$(git rev-parse HEAD)" ]] ||
+    die "$TAG must point at the clean checkout being published"
+  git fetch -q origin "refs/tags/$TAG"
+  [[ "$(git rev-parse 'FETCH_HEAD^{commit}')" == "$(git rev-parse HEAD)" ]] ||
+    die "remote $TAG does not match this checkout"
+}
+
 cmd_version() {
-  local branch version
+  local branch next
   branch="$(git rev-parse --abbrev-ref HEAD)"
-  case "$branch" in
-    main | dev) ;;
-    *) die "release from main or dev only (on $branch)" ;;
-  esac
-  [[ -z "$(git status --porcelain)" ]] || die "uncommitted changes: commit or stash them first"
+  [[ "$branch" == main ]] || die "release from main only (on $branch)"
+  clean_tree
+  [[ -n "${RELEASE_SHA:-}" ]] || die "set RELEASE_SHA to the revision that passed required CI"
   git fetch -q origin "$branch"
   [[ "$(git rev-parse HEAD)" == "$(git rev-parse "origin/$branch")" ]] ||
-    die "$branch is not in sync with origin/$branch: pull or push first"
-  github_token
-  if [[ -z "${GIT_COMMIT_AUTHOR:-}" ]]; then
-    GIT_COMMIT_AUTHOR="$(git config user.name) <$(git config user.email)>"
+    die "$branch is not in sync with origin/$branch"
+  "$UV" run --no-sync python scripts/check_release_source.py "$RELEASE_SHA"
+  version_tag
+  # A previous run may have pushed the release commit/tag and failed before uploading assets.
+  if [[ "$(git rev-parse -q --verify "refs/tags/$TAG^{commit}" || true)" == "$(git rev-parse HEAD)" ]]; then
+    check_tag
+    RELEASE_READY=true
+    echo "Resuming $TAG: verify artifacts and finish publication."
+  else
+    github_token
+    export GIT_COMMIT_AUTHOR="${GIT_COMMIT_AUTHOR:-$(git config user.name) <$(git config user.email)>}"
+    export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}."
+    next="$(env -u GITHUB_OUTPUT "$UV" run --no-sync semantic-release version --print)"
+    if [[ -z "$next" ]] || git rev-parse -q --verify "refs/tags/v$next" >/dev/null; then
+      echo "No releasable commits since the last tag."
+      output "released=false"
+      return
+    fi
+    # build_command updates the lock and runs make test-installation before commit/tag/push.
+    GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null \
+      env -u GITHUB_OUTPUT "$UV" run --no-sync semantic-release -v version --no-vcs-release
+    version_tag
+    [[ "$VERSION" == "$next" ]] || die "semantic-release version differs from its preview"
+    clean_tree
+    check_tag
+    RELEASE_READY=true
+    ARTIFACTS_CHECKED=true
   fi
-  export GIT_COMMIT_AUTHOR
-  export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}." # the commit parser is scripts/emoji_commit_parser.py
-
-  version="$("$UV" run --group dev semantic-release version --print 2>/dev/null | tr -d '[:space:]')"
-  if [[ -z "$version" ]] || git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
-    echo "No releasable commit since the last tag (only chore/docs/refactor/...): nothing to release."
-    output "released=false"
-    return 0
-  fi
-  # The release commit must not run the pre-commit hooks: disable them for this call only.
-  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null \
-    "$UV" run --group dev semantic-release -v version
-  echo "Released v$version"
   output "released=true"
-  output "version=$version"
+  output "version=$VERSION"
 }
 
-cmd_assets() {
-  local version dist tag
+cmd_assets() (
+  clean_tree
+  version_tag
+  check_tag
+  local paths file name names asset_tmp draft
+  local files=() missing=()
+  paths="$("$UV" run --no-sync python scripts/check_artifacts.py)"
+  while IFS= read -r file; do files+=("$file"); done <<< "$paths"
+  if [[ "$ARTIFACTS_CHECKED" != true ]]; then make --no-print-directory test-wheel; fi
   github_token
-  version="$("$UV" version --short)"
-  dist="$("$UV" version | awk '{print $1}' | tr - _)"
-  tag="v$version"
-  local files=("dist/$dist-$version-py3-none-any.whl" "dist/$dist-$version.tar.gz")
-  for f in "${files[@]}"; do
-    [[ -f "$f" ]] || die "$f not found: run make build-package"
-  done
-  if ! gh release view "$tag" >/dev/null 2>&1; then
-    local flags=(--verify-tag --title "$tag" --generate-notes)
-    if [[ "$version" == *-* ]]; then flags+=(--prerelease); fi
-    gh release create "$tag" "${flags[@]}"
+  if ! names="$(gh release view "$TAG" --json assets --jq '.assets[].name')"; then
+    local flags=(--draft --verify-tag --title "$TAG" --generate-notes)
+    if [[ "$("$UV" run --no-sync python scripts/check_artifacts.py --prerelease)" == true ]]; then
+      flags+=(--prerelease)
+    fi
+    gh release create "$TAG" "${flags[@]}"
+    names="$(gh release view "$TAG" --json assets --jq '.assets[].name')"
   fi
-  gh release upload "$tag" "${files[@]}" --clobber
-  echo "Attached to $tag: ${files[*]}"
-}
+  draft="$(gh release view "$TAG" --json isDraft --jq '.isDraft')"
+  asset_tmp="$(mktemp -d)"
+  trap 'rm -rf -- "$asset_tmp"' EXIT
+  # Compare all existing assets first. Never replace a different published artifact.
+  for file in "${files[@]}"; do
+    name="${file##*/}"
+    if printf '%s\n' "$names" | grep -Fxq "$name"; then
+      gh release download "$TAG" --pattern "$name" --dir "$asset_tmp"
+      cmp -s "$file" "$asset_tmp/$name" || die "existing release asset differs: $name"
+    else
+      missing+=("$file")
+    fi
+  done
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    gh release upload "$TAG" "${missing[@]}"
+  fi
+  # Download and compare the complete remote pair before publishing a draft.
+  for file in "${files[@]}"; do
+    name="${file##*/}"
+    if [[ ! -f "$asset_tmp/$name" ]]; then
+      gh release download "$TAG" --pattern "$name" --dir "$asset_tmp"
+    fi
+    cmp -s "$file" "$asset_tmp/$name" || die "uploaded release asset differs: $name"
+  done
+  if [[ "$draft" == true ]]; then gh release edit "$TAG" --draft=false; fi
+  echo "Verified release $TAG: ${files[*]}"
+)
 
 cmd_release() {
-  local version
   cmd_version
-  version="$("$UV" version --short)"
-  if ! git tag --points-at HEAD | grep -qx "v$version"; then
-    echo "Nothing released: stopping."
-    return 0
-  fi
-  make --no-print-directory build-package
+  [[ "$RELEASE_READY" == true ]] || return 0
+  if [[ "$ARTIFACTS_CHECKED" != true ]]; then make --no-print-directory build-package; fi
   cmd_assets
 }
 
