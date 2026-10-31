@@ -21,7 +21,9 @@ test: ## Run unit tests with pytest (parallel via pytest-xdist). Usage: make tes
 		exit "$${rc:-0}"; \
 	fi
 
-test-all: test test-installation ## Run every self-contained suite (unit, skills, built-wheel smoke)
+test-all: ## Run every self-contained suite (unit, skills, built-wheel smoke)
+	@$(MAKE) --no-print-directory test
+	@$(MAKE) --no-print-directory test-installation
 	@echo "${YELLOW}=========> All self-contained suites passed.${NC}"
 
 # Not parallelized: these tests drive real system package managers

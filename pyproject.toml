@@ -26,7 +26,7 @@ dev = [
     "pytest-asyncio==1.4.0",
     "pytest-xdist==3.8.0",
     "pre-commit==4.7.0",
-    "ruff==0.17.1",
+    "ruff==0.17.2",
     "python-semantic-release==10.7.0",
 ]
 
@@ -61,7 +61,9 @@ asyncio_default_fixture_loop_scope = "function"
 
 ############### ruff configuration
 [tool.ruff]
-extend-exclude = ["*.ipynb"]
+# The chezmoi payload is deployed verbatim (shipped skills, dotfiles): ruff would reformat the
+# python snippets inside those markdown files and silently change their meaning.
+extend-exclude = ["*.ipynb", "src/personal_os_setup/config/**"]
 line-length = 100
 # Enable all `pydocstyle` rules, limiting to those that adhere to the Google convention via `convention = "google"`
 lint.select = ["D", "F401"]

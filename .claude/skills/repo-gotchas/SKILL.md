@@ -12,7 +12,7 @@ Cross-check these before assuming documentation is current — several claims in
 
 ## Makefile
 
-- **`make test-installation` is stale** (`uv run --directory . awesome-os`) — the target invokes an `awesome-os` console script, but `pyproject.toml`'s `[project.scripts]` registers only `personal-os-setup`. Don't rely on it.
+- **`make test-installation` is real and isolated** — it builds the wheel, installs it into a throwaway `uv run --isolated --no-project` env and loads the `personal-os-setup` console script. It is part of `make test-all`, so a broken entry point fails there. (Older notes describing it as an `awesome-os` stub are obsolete.)
 - **`make install` installs zero dev/docs dependencies** — `pyproject.toml` sets `default-groups = []`, so plain `uv sync` (what `make install` runs) gets you only runtime deps. Use `make install-dev` (`uv sync --all-groups`) for pytest/ruff/pre-commit/mkdocs tooling.
 - `common.mk`'s `$(UV)` variable falls back to `~/.local/bin/uv` if `uv` isn't on `PATH` — if it's installed somewhere else, every target fails with a plain "command not found" rather than a clear error.
 

@@ -27,13 +27,16 @@ CLAUDE.md imports this file and adds Claude-specific depth — don't duplicate r
 
 | Command                     | Purpose                                                                                 |
 |-----------------------------|-----------------------------------------------------------------------------------------|
-| `make test`                 | unit + isolated skill deployment tests (`tests/unit`, `tests/skills`; exit 5 = success) |
+| `make check`                | the CI gate: every hook, `test-all`, then the strict docs build                         |
+| `make test-all`             | every self-contained suite: unit + skills, then the built-wheel install smoke           |
+| `make test`                 | unit + isolated skill deployment tests only (`tests/unit`, `tests/skills`; exit 5 = ok) |
 | `make pre-commit`           | ruff, detect-secrets, commitizen, yaml/json/toml, uv-lock — CI runs this exact command  |
 | `make install-dev`          | full dev env (use this, not `uv pip install -e .`)                                      |
 | `make lint` / `make format` | ruff directly                                                                           |
 | `make test-integration`     | **never locally** (CI-only; installs real packages)                                     |
 
-Run `make test` + `make pre-commit` before any PR — local pass == CI pass.
+Run `make check` before any PR — local pass == CI pass. `make test` alone does not count as
+validation: it skips the wheel-install smoke and the strict docs build.
 
 ## Conventions
 

@@ -72,9 +72,16 @@
       "matchManagers": ["pip", "pep621"],
       "matchDepTypes": ["dependencies", "project.dependencies"],
       "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
       "addLabels": ["needs-breaking-review"],
       "semanticCommitType": "fix"
     }
   ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "pre-commit": {
+    "enabled": true
+  },
   "platformAutomerge": false
 }

@@ -37,7 +37,7 @@ Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handl
 
 ## Before opening a PR
 
-1. `make test` — unit tests only. Safe to run anytime; see [[run-tests]] for what it does *not* cover (integration tests are destructive — don't run them casually).
+1. `make test` — unit + skill-deployment tests only. Safe to run anytime; see [[run-tests]] for what it does *not* cover (integration tests are destructive — don't run them casually). `make test-all` adds the built-wheel install smoke, `make check` adds every hook and the strict docs build.
 2. `make pre-commit` — installs hooks then runs them on all files. CI runs this exact command, so a local pass means CI's pre-commit job passes.
 3. If the branch is behind `main`: `git merge main` (if already pushed, safe) or `git rebase main` (if only local, cleaner history) — either is fine since PR merge always squashes. Re-run both checks after syncing.
 
@@ -45,7 +45,7 @@ Examples: `✨ feat(auth): add GitHub App token rotation`, `🐛 fix(llm): handl
 
 - Target **`main`**.
 - **The PR title must follow the commit convention** (e.g. `feat: add new plugin`) — all PRs squash-merge, and the PR title becomes the commit message semantic-release evaluates.
-- CI (`ci.yml` → `quality-and-tests.yml`) runs `make pre-commit` then, in parallel, `make test` plus OS-specific `make test-integration` jobs. Those genuinely install/upgrade real packages on the CI runner — expected there, never on your own machine.
+- CI (`ci.yml` → `quality-and-tests.yml`) runs `make pre-commit` then, in parallel, `make test-all` plus OS-specific `make test-integration` jobs. Those genuinely install/upgrade real packages on the CI runner — expected there, never on your own machine.
 
 ## What happens after merge
 

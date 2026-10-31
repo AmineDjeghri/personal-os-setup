@@ -57,4 +57,4 @@ jq are required; the chezmoi case skips if chezmoi is absent. Native Windows ski
 
 ## Before trusting a "tests pass" claim
 
-`make pre-commit` and `make test` together are the CI-equivalent local check *except* for the commit-message format (only checked at real `git commit` time, see [[ship-feature]]) and the OS-specific integration suite (only checked on matching CI runners).
+`make check` (every hook, `test-all`, then the strict docs build) is the CI-equivalent local check *except* for the commit-message format (only checked at real `git commit` time, see [[ship-feature]]) and the OS-specific integration suite (only checked on matching CI runners).

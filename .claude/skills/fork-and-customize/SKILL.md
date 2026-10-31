@@ -30,6 +30,6 @@ Most personalization lives in **data** (`packages.yaml`, the chezmoi source dir,
 
 ## Getting your fork running locally
 
-Same as any contributor: `make install-dev`, `make run` to launch the TUI, `make test` to confirm the suite passes against your changes. Heavily edited `packages.yaml` is checked by `tests/unit/test_detect_os.py::TestPackagesYaml` — it catches a manager name with no registered backend. See [[run-tests]] for what's safe locally (`make test`) versus destructive (`make test-integration`).
+Same as any contributor: `make install-dev`, `make run` to launch the TUI, `make test-all` (or `make check` for the full CI gate) to confirm the suites pass against your changes. Heavily edited `packages.yaml` is checked by `tests/unit/test_detect_os.py::TestPackagesYaml` — it catches a manager name with no registered backend. See [[run-tests]] for what's safe locally (`make test`) versus destructive (`make test-integration`).
 
 To keep pulling upstream improvements, keep customizations in the data/config files above rather than in shared code paths (`factory.py`, `app.py`, `tasks/managers/`) — that keeps upstream merge conflicts minimal.

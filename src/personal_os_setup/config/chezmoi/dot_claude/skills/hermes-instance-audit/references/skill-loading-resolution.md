@@ -61,20 +61,13 @@ Run from the repo under test with the install's own interpreter; a heredoc may h
 write the probe to a file and invoke it by path when that happens.
 
 ```python
-import sys
-
-sys.path.insert(0, "/config/.hermes/hermes-agent")  # the hermes-agent checkout
+import sys; sys.path.insert(0, "/config/.hermes/hermes-agent")   # the hermes-agent checkout
 from agent import skill_utils as su
-
-print(
-    "project_discovery:", su._skills_cfg_get("project_discovery")
-)  # False => nothing below can load
-print("root:", su.find_project_root())  # None => no project, by construction
+print("project_discovery:", su._skills_cfg_get("project_discovery"))   # False => nothing below can load
+print("root:", su.find_project_root())                                 # None => no project, by construction
 print("trusted:", sorted(str(p) for p in su._project_trusted_dirs_from_config()))
-print("dirs:", [str(p) for p in su.get_project_skills_dirs()])  # the final answer
-print(
-    "untrusted:", su.get_untrusted_project_skills_root()
-)  # (root, count) when the cwd's repo has skills but is untrusted
+print("dirs:", [str(p) for p in su.get_project_skills_dirs()])          # the final answer
+print("untrusted:", su.get_untrusted_project_skills_root())            # (root, count) when the cwd's repo has skills but is untrusted
 ```
 
 Interpretation: `root=None` + `dirs=[]` while a trust entry exists = the SURFACE CWD, not the trust list, is

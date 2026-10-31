@@ -23,5 +23,8 @@ docs-build: ## Build strict documentation without starting a server
 	@echo "${YELLOW}=========> Building documentation (strict)...${NC}"
 	@$(UV) run properdocs build -f properdocs.yml --strict --quiet --site-dir "$$(mktemp -d)"
 
-check: lint test-all docs-build ## Run static checks, every self-contained suite and strict docs
+check: ## Run every hook, all self-contained suites and the strict docs build (the CI gate)
+	@$(MAKE) --no-print-directory pre-commit
+	@$(MAKE) --no-print-directory test-all
+	@$(MAKE) --no-print-directory docs-build
 	@echo "${YELLOW}=========> All quality gates passed.${NC}"
