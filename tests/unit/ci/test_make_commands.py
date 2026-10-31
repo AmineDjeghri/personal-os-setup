@@ -71,6 +71,7 @@ def make_tests(tmp_path):
         env.pop("PYTEST_ADDOPTS", None)
         env.pop("PYTEST_ARGS", None)
         env.pop("MAKEFLAGS", None)
+        env.pop("TEST_COVERAGE", None)
         result = subprocess.run(
             [shutil.which("make"), "--no-print-directory", target, *args],
             cwd=tmp_path,
@@ -107,7 +108,14 @@ def test_focused_target_accepts_filters(make_tests):
 
 
 @pytest.mark.parametrize("target", ["test-all", "test-coverage"])
-def test_full_targets_run_both_safe_suites_and_installation(make_tests, target):
+@pytest.mark.parametrize("inherited_coverage", [None, "1"])
+def test_full_targets_run_both_safe_suites_and_installation(
+    make_tests, target, monkeypatch, inherited_coverage
+):
+    if inherited_coverage is None:
+        monkeypatch.delenv("TEST_COVERAGE", raising=False)
+    else:
+        monkeypatch.setenv("TEST_COVERAGE", inherited_coverage)
     result, calls = make_tests(target)
     assert result.returncode == 0, result.stderr
     assert calls[0][:7] == [
