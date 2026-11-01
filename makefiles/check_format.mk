@@ -24,9 +24,10 @@ format: ## Format code with Ruff
 docs-build: ## Build strict documentation without starting a server
 	@echo "${YELLOW}=========> Building documentation (strict)...${NC}"
 	@site=$$(mktemp -d); trap 'rm -rf "$$site"' EXIT; \
-	$(UV) run --no-sync properdocs build -f properdocs.yml --strict --quiet --site-dir "$$site"
+	$(UV) run --no-sync properdocs build -f properdocs.yml --strict --site-dir "$$site"
 
 check: ## Run all static/docs hooks and self-contained software checks
 	@$(MAKE) --no-print-directory pre-commit
 	@$(MAKE) --no-print-directory test-all
+	@$(MAKE) --no-print-directory docs-build
 	@echo "${YELLOW}=========> All quality gates passed.${NC}"
