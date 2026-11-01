@@ -1451,6 +1451,8 @@
       
         
       
+        
+      
     
     
     
@@ -1592,10 +1594,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#where-to-add-things" class="md-nav__link">
     <span class="md-ellipsis">
       
         Where to add things
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-a-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a setting
       
     </span>
   </a>
@@ -1682,6 +1706,34 @@
     
   
     5. Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6.fork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Fork
   
 
     
@@ -3124,10 +3176,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#where-to-add-things" class="md-nav__link">
     <span class="md-ellipsis">
       
         Where to add things
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-a-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a setting
       
     </span>
   </a>
@@ -3203,10 +3277,11 @@
 
 
 <h1 id="2-project-structure">2. Project structure<a class="headerlink" href="#2-project-structure" title="Permanent link">&para;</a></h1>
-<p>Where things are.</p>
+<p>Where things are, and where to add yours.</p>
+<h2 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/personal_os_setup/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  detect_os.py        OS / distro / WSL detection, builds the package list for this machine
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  settings.py         settings and logging (loguru)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  settings.py         ApplicationSettings (pydantic-settings) and the loguru logger
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  frontend/           Textual TUI (app.py, dialogs.py, dotfiles_tree.py, main.py, app.tcss)
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  tasks/              system actions and package managers (factory.py, managers/, system/)
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  config/
@@ -3223,9 +3298,12 @@
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>docs/developer/       this guide
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>scripts/              release.sh, vm.sh, docs generators, emoji_commit_parser.py
 </span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>makefiles/            one .mk per concern, included by Makefile
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>.claude/skills/       repo skills for AI agents (also linked in .agents/skills)
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>install_unix.sh       one-line installer (Linux, WSL2, macOS)
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>install_windows.ps1   one-line installer (Windows)
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>.github/              workflows, composite actions, Renovate, issue and PR templates
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>.claude/skills/       repo skills for AI agents (also linked in .agents/skills)
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>install_unix.sh       one-line installer (Linux, WSL2, macOS)
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>install_windows.ps1   one-line installer (Windows)
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>properdocs.yml        documentation site (MkDocs Material)
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>CHANGELOG.md          written by semantic-release, never by hand
 </span></code></pre></div>
 <h2 id="where-to-add-things">Where to add things<a class="headerlink" href="#where-to-add-things" title="Permanent link">&para;</a></h2>
 <table>
@@ -3258,6 +3336,11 @@
 <td>skill <code>docs-site</code></td>
 </tr>
 <tr>
+<td>a setting</td>
+<td><code>settings.py</code></td>
+<td><a href="#add-a-setting">Add a setting</a></td>
+</tr>
+<tr>
 <td>an authored agent skill</td>
 <td><code>.claude/skills/&lt;name&gt;/</code> then <code>make skills-link</code></td>
 <td>skill <code>skill-layout</code></td>
@@ -3269,6 +3352,12 @@
 </tr>
 </tbody>
 </table>
+<h2 id="add-a-setting">Add a setting<a class="headerlink" href="#add-a-setting" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add a field to <code>ApplicationSettings</code> in <code>settings.py</code>; it is read from the environment or <code>.env</code>.</li>
+<li>Read it through the module-level <code>settings</code> object, never <code>os.environ</code>.</li>
+<li>A secret is a <code>SecretStr</code>: read it with <code>.get_secret_value()</code>.</li>
+</ol>
 
 
 

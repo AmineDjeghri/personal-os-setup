@@ -1451,6 +1451,8 @@
       
         
       
+        
+      
     
     
     
@@ -1586,6 +1588,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-site" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1597,10 +1610,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#everyday-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Everyday commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#optional-environments-and-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
         Optional environments and tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editor-and-agent-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editor and agent rules
       
     </span>
   </a>
@@ -1715,6 +1750,34 @@
     
   
     5. Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6.fork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Fork
   
 
     
@@ -3179,6 +3242,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-site" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3190,10 +3264,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#everyday-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Everyday commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#optional-environments-and-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
         Optional environments and tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editor-and-agent-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editor and agent rules
       
     </span>
   </a>
@@ -3277,25 +3373,100 @@ If uv is missing, run <code>make install-uv</code>; use <code>make update-uv</co
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/AmineDjeghri/personal-os-setup.git
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>personal-os-setup
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>make<span class="w"> </span>install-dev
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>make<span class="w"> </span>check
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>make<span class="w"> </span>run
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>make<span class="w"> </span>pre-commit<span class="w">   </span><span class="c1"># static checks and hooks</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>make<span class="w"> </span>test-all<span class="w">     </span><span class="c1"># tests</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>make<span class="w"> </span>docs-build<span class="w">   </span><span class="c1"># strict documentation build</span>
 </span></code></pre></div>
-<p>This creates <code>.venv</code>, validates the checkout and starts the TUI.  If dependency metadata changes, run <code>uv lock</code> before
-<code>make install-dev</code>; its <code>--locked</code> check requires an up-to-date <code>uv.lock</code>.
-<code>make install</code> provides runtime dependencies only; checks do not install tools or hooks.</p>
-<p>To use the <code>personal-os-setup</code> launcher with this clone, run <code>./install_unix.sh</code> from it
+<p><code>make check</code> runs all three at once (and first warns if the Git hooks are missing).</p>
+<p>This creates <code>.venv</code>, installs the development/docs tools and, in a Git checkout, the Git hooks, then
+validates the checkout. If dependency metadata changes, run <code>uv lock</code> before <code>make install-dev</code>; its
+<code>--locked</code> check requires an up-to-date <code>uv.lock</code>. Checks never install tools or hooks.</p>
+<h2 id="run">Run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span>run
+</span></code></pre></div>
+<p>This starts the TUI. To use the <code>personal-os-setup</code> launcher with this clone, run <code>./install_unix.sh</code> from it
 (or <code>./install_windows.ps1</code> in administrator PowerShell). The installer updates the existing clone.</p>
 <h2 id="documentation-site">Documentation site<a class="headerlink" href="#documentation-site" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span>deploy-doc-local
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>make<span class="w"> </span>deploy-doc-local
 </span></code></pre></div>
+<h2 id="everyday-commands">Everyday commands<a class="headerlink" href="#everyday-commands" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make check</code></td>
+<td>The full local gate before a pull request</td>
+</tr>
+<tr>
+<td><code>make test-local</code></td>
+<td>Self-contained tests only</td>
+</tr>
+<tr>
+<td><code>make pre-commit</code></td>
+<td>Run the static hooks; <code>FILES="path/a path/b"</code> limits them to files</td>
+</tr>
+<tr>
+<td><code>make docs-build</code></td>
+<td>Strict documentation build</td>
+</tr>
+<tr>
+<td><code>make deploy-doc-local</code></td>
+<td>Preview the documentation site</td>
+</tr>
+<tr>
+<td><code>make clean</code></td>
+<td>Remove caches and temporary files</td>
+</tr>
+<tr>
+<td><code>make help</code></td>
+<td>List all targets</td>
+</tr>
+</tbody>
+</table>
 <h2 id="optional-environments-and-tools">Optional environments and tools<a class="headerlink" href="#optional-environments-and-tools" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Select <code>.venv/bin/python</code>; mark <code>src</code> as Sources Root and <code>tests</code> as Test Sources Root.</li>
-<li>Use <code>.editorconfig</code> for indentation and line endings, including CRLF for PowerShell files.</li>
-<li>Agent rules: <code>AGENTS.md</code>; project skills: <code>.claude/skills/</code>.</li>
-</ul>
-<p>Agent rules live in <code>AGENTS.md</code>; <code>CLAUDE.md</code> links to it for Claude Code.
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make install-prod</code></td>
+<td>Production dependencies only (installs uv first when missing)</td>
+</tr>
+<tr>
+<td><code>make install-tools</code></td>
+<td>Quality and docs tools without the application dependencies</td>
+</tr>
+<tr>
+<td><code>make install-release</code></td>
+<td>Packaging and release tools without the application dependencies</td>
+</tr>
+<tr>
+<td><code>make update-uv</code></td>
+<td>Update an existing uv installation</td>
+</tr>
+<tr>
+<td><code>make act</code></td>
+<td>Run GitHub Actions locally (<code>make install-act</code> first; needs Docker)</td>
+</tr>
+</tbody>
+</table>
+<p>For publication, see <a href="../5.release/#credentials">release credentials</a>.</p>
+<h2 id="editor-and-agent-rules">Editor and agent rules<a class="headerlink" href="#editor-and-agent-rules" title="Permanent link">&para;</a></h2>
+<p>Select <code>.venv/bin/python</code>; mark <code>src</code> as Sources Root and <code>tests</code> as Test Sources Root.
+Follow <code>.editorconfig</code> for indentation and line endings, including CRLF for PowerShell files.
+Project skills live in <code>.claude/skills/</code>.
+Agent rules live in <code>AGENTS.md</code>; <code>CLAUDE.md</code> links to it for Claude Code.
 Edit <code>AGENTS.md</code> to update the shared instructions.</p>
+<p><code>make help</code> lists all targets. Next: <a href="../3.conventions/">Conventions</a> and <a href="../4.testing/">Testing</a>.</p>
 
 
 

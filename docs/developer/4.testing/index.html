@@ -1451,6 +1451,8 @@
       
         
       
+        
+      
     
     
     
@@ -1670,10 +1672,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-validation" class="md-nav__link">
+  <a href="#writing-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform validation
+        Writing tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI
       
     </span>
   </a>
@@ -1715,6 +1728,34 @@
     
   
     5. Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6.fork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Fork
   
 
     
@@ -3179,10 +3220,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-validation" class="md-nav__link">
+  <a href="#writing-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform validation
+        Writing tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI
       
     </span>
   </a>
@@ -3271,16 +3323,17 @@
 <h1 id="4-testing">4. Testing<a class="headerlink" href="#4-testing" title="Permanent link">&para;</a></h1>
 <p>Run safe local checks; CI validates platform integration separately.</p>
 <h2 id="before-a-pull-request">Before a pull request<a class="headerlink" href="#before-a-pull-request" title="Permanent link">&para;</a></h2>
-<p>Complete <a href="../1.setup/">setup</a> then run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>make<span class="w"> </span>pre-commit
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span>test-all
+<p>Complete <a href="../1.setup/">setup</a>, then run the three checks:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>make<span class="w"> </span>pre-commit<span class="w">   </span><span class="c1"># static checks and hooks</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span>test-all<span class="w">     </span><span class="c1"># tests</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>make<span class="w"> </span>docs-build<span class="w">   </span><span class="c1"># strict documentation build</span>
 </span></code></pre></div>
-<p>Or</p>
+<p><code>make check</code> runs all three at once (and first warns if the Git hooks are missing):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span>check
 </span></code></pre></div>
-<p>This runs <code>make pre-commit</code> (including strict docs), then <code>make test-all</code>: unit/isolated skills tests, archive validation
-and isolated wheel installation. It checks the installed version, entry point and bundled resources
-without starting the app. It does not install dependencies or Git hooks.</p>
+<p><code>test-all</code> covers the unit/isolated skills tests, archive validation and an isolated wheel installation
+that checks the installed version, entry point and bundled resources without starting the app.
+It does not install dependencies or Git hooks.</p>
 <h2 id="focused-checks">Focused checks<a class="headerlink" href="#focused-checks" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3290,6 +3343,10 @@ without starting the app. It does not install dependencies or Git hooks.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>make check</code></td>
+<td><code>pre-commit-status</code>, <code>pre-commit</code>, <code>test-all</code> and <code>docs-build</code></td>
+</tr>
 <tr>
 <td><code>make test-local</code></td>
 <td>Unit and isolated skills suites; also the default pytest discovery</td>
@@ -3303,27 +3360,41 @@ without starting the app. It does not install dependencies or Git hooks.</p>
 <td><code>test-all</code> with Python coverage in <code>reports/coverage.xml</code>; no threshold</td>
 </tr>
 <tr>
+<td><code>make test-installation</code></td>
+<td>Build and verify archives, then smoke-check the installed wheel</td>
+</tr>
+<tr>
 <td><code>make pre-commit</code></td>
-<td>Static and docs hooks</td>
+<td>Static and docs hooks; <code>FILES="path/a path/b"</code> limits them to files</td>
+</tr>
+<tr>
+<td><code>make pre-commit-status</code></td>
+<td>Warn when the Git hooks are not installed</td>
 </tr>
 <tr>
 <td><code>make docs-build</code></td>
 <td>Strict documentation build</td>
 </tr>
+<tr>
+<td><code>make build-package</code></td>
+<td>Build and verify the wheel/sdist</td>
+</tr>
 </tbody>
 </table>
 <p>Use <code>N=1</code> to debug the normally parallel tests (<code>N=4</code>). Empty test collection fails.
-For a filtered run, use <code>make test-local PYTEST_ARGS="-k release"</code>.
-<code>check</code>, <code>test-all</code>, <code>test-coverage</code> and <code>test-integration</code> reject nonempty <code>PYTEST_ARGS</code>
-or <code>PYTEST_ADDOPTS</code>; collection and selection filters cannot count as full validation.
-Put fixtures in temporary directories and use synthetic catalogs/actions for frontend tests.
-Release/system tests use command stubs.
+For a filtered run, use <code>make test-local ARGS="-k release"</code>.
+<code>check</code>, <code>test-all</code>, <code>test-coverage</code> and <code>test-integration</code> reject nonempty <code>ARGS</code>
+or <code>PYTEST_ADDOPTS</code>; collection and selection filters cannot count as full validation.</p>
+<h2 id="writing-tests">Writing tests<a class="headerlink" href="#writing-tests" title="Permanent link">&para;</a></h2>
+<p>Use <code>tests/unit/test_&lt;module&gt;.py</code>; <code>tests/README.md</code> maps the suites.
+Use temporary directories, <code>tmp_path</code> and <code>monkeypatch</code> so parallel tests share no state, and
+synthetic catalogs/actions for frontend tests. Release/system tests use command stubs and never publish.
 Installer regressions cover failed steps and terminal/nonterminal exit status using temporary roots.
 The Windows harness runs with PowerShell and fake Git/winget/Make commands; it skips if PowerShell is absent.
 Startup tests stub dependency synchronization, process restart and sudo.</p>
 <p>Coverage measures Python execution separately from subprocess, wheel and OS checks.
 The initial macOS/Python 3.14.8 baseline was 60% across 195 passing safe cases.</p>
-<h2 id="platform-validation">Platform validation<a class="headerlink" href="#platform-validation" title="Permanent link">&para;</a></h2>
+<h2 id="ci">CI<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -3359,10 +3430,15 @@ The initial macOS/Python 3.14.8 baseline was 60% across 195 passing safe cases.<
 empty, all-skipped, filtered, collection-only or failing runs fail. Other-platform skips are expected.
 A local pass covers local checks; required platform CI jobs must also pass.</p>
 <h2 id="static-and-documentation-hooks">Static and documentation hooks<a class="headerlink" href="#static-and-documentation-hooks" title="Permanent link">&para;</a></h2>
-<p>Hooks check formatting/lint, syntax, secrets, Markdown/spelling, the lockfile, skill links,
-docs and workflow syntax. Commitizen runs only at the commit-msg stage.
-See <code>.pre-commit-config.yaml</code> for the full list; zizmor, pip-audit and bandit are disabled.
-Configuration payload Markdown stays excluded because it includes templates and third-party content.</p>
+<p>Hooks check formatting and lint (Ruff), syntax and whitespace, secrets, Markdown and spelling, the
+lockfile and the strict docs build, skill links, workflow syntax (actionlint) and workflow security (zizmor). Commitizen runs only at the commit-msg stage.
+<code>make install-dev</code> installs the Git hooks in a checkout (not in CI or Docker); run
+<code>make pre-commit-install</code> if that step failed, and <code>make pre-commit-status</code> (part of <code>make check</code>) warns
+when they are missing. <code>make pre-commit</code> only runs the hooks and never installs them.
+See <code>.pre-commit-config.yaml</code> for the full list; pip-audit, bandit and markdown-link-check are disabled. <code>.github/zizmor.yml</code> holds the one
+zizmor exception: the release workflow's checkouts keep their credentials because they push.
+Configuration payload Markdown (<code>src/personal_os_setup/config/</code>) stays excluded from linting
+because it includes templates and third-party content.</p>
 
 
 

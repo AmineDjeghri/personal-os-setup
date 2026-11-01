@@ -1451,6 +1451,8 @@
       
         
       
+        
+      
     
     
     
@@ -1737,6 +1739,34 @@
     
   
     5. Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6.fork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Fork
   
 
     
@@ -3316,31 +3346,38 @@
 <p>The rules every change follows.</p>
 <h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Python, ruff (format and lint), Google docstrings: they generate the API reference
-  (mkdocstrings).</li>
-<li>Run things with <code>make</code> targets (<code>make help</code>): CI runs the same ones.</li>
+<li>Use the <code>make</code> targets (<code>make help</code>): CI runs the same ones.</li>
+<li>Docstrings on public functions and classes (Google style): they generate the API reference.</li>
+<li>Settings through <code>ApplicationSettings</code> (<code>settings.py</code>, pydantic-settings), not <code>os.environ</code> scattered in the code.</li>
 <li>
-<p>Logging with loguru (<code>from loguru import logger</code>). Log, then raise:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. The current directory is: </span><span class="si">{</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<p>Logging with the package's loguru logger, not <code>print</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">personal_os_setup.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Loaded </span><span class="si">{}</span><span class="s2"> items"</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
 </span></code></pre></div>
-<p>In a loop, log and continue instead of raising when one failure must not stop the others.</p>
 </li>
 <li>
-<p>System-changing actions (installs, <code>chezmoi apply</code>, drivers, <code>sudo</code>) always go through the
-  TUI's confirmation dialog.</p>
+<p>Log, then raise; do not swallow exceptions:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. Current directory: </span><span class="si">{</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></code></pre></div>
+<p>In an <code>except</code> block, <code>logger.exception(...)</code> logs the message and the stack trace. Not
+raising is fine only when a loop must go on after one failure.</p>
 </li>
-<li>Use uv for everything (environments, runs, builds). For large data, Polars; for CPU-bound work,
-  a <code>multiprocessing</code> pool.</li>
+<li>
+<p>Large data: Polars. CPU-bound work: <code>multiprocessing</code> pool map.</p>
+</li>
+<li>System-changing actions (installs, <code>chezmoi apply</code>, drivers, <code>sudo</code>) always go through the
+  TUI's confirmation dialog.</li>
 </ul>
 <h2 id="branches-and-pull-requests">Branches and pull requests<a class="headerlink" href="#branches-and-pull-requests" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Comment on (or create) the issue and wait to be assigned.</li>
 <li>Branch off <code>dev</code>: <code>feature/&lt;name&gt;</code> or <code>bugfix/&lt;name&gt;</code>. Stay up to date with <code>git merge dev</code>
    (branch already pushed) or <code>git rebase dev</code> (local only).</li>
-<li>Run <code>make check</code> (<a href="../4.testing/">4. Testing</a>), then open a pull request to <code>dev</code>; its <strong>title</strong> follows the commit convention below: it becomes the
-   squash commit and decides the version.</li>
+<li>Run <code>make check</code> (<a href="../4.testing/">4. Testing</a>), then open a pull request to <code>dev</code>. Its <strong>title</strong>
+   follows the commit convention below: it becomes the squash commit and decides the version.</li>
 <li>When <code>dev</code> is ready, a pull request <code>dev</code> → <code>main</code> releases it.</li>
 <li>After a release, merge <code>main</code> back into <code>dev</code> (merge commit, direct push). On conflicts on
    <code>CHANGELOG.md</code> or a <code>pyproject.toml</code> version, keep <code>main</code>'s and regenerate <code>uv.lock</code> with <code>uv lock</code>.</li>
@@ -3367,7 +3404,7 @@
 <tr>
 <td><code>main</code> → <code>dev</code> (sync)</td>
 <td>merge commit, direct push</td>
-<td>sync stable metadata without a new releasable commit</td>
+<td>syncs stable metadata; <code>[skip ci]</code> in the release commit prevents a spurious RC</td>
 </tr>
 </tbody>
 </table>
@@ -3416,34 +3453,35 @@
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>✨ feat(auth): add GitHub App token rotation
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>🐛 fix(llm): handle empty response from the API
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>💥 feat!(api): remove the v1 endpoint
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>feat(auth): redesign token flow
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>BREAKING CHANGE: /v1/token removed, use /v2/auth instead
+<p>A <code>!</code> or a <code>BREAKING CHANGE:</code> footer makes any allowed type a breaking change (major release).</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>✨ feat(auth): add GitHub App token rotation
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>🐛 fix(llm): handle empty response from the API
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>💥 feat!(api): remove the v1 endpoint
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>feat(auth): redesign token flow
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>BREAKING CHANGE: /v1/token removed, use /v2/auth instead
 </span></code></pre></div>
-<p>Scopes are optional.</p>
-<p>On <code>dev</code>, a releasable commit bumps the release candidate instead (<code>1.1.0-rc.1</code> → <code>1.1.0-rc.2</code>).</p>
-<p>Common scopes: <code>tui</code>, <code>wsl</code>, <code>chezmoi</code>, <code>frontend</code>, <code>ci</code>, <code>deps</code>. The commit message is checked on
-commit (commitizen) and the pull request title by <code>ci.yml</code>.</p>
+<p>On <code>dev</code>, a releasable commit increments the release-candidate counter (<code>1.1.0-rc.1</code> → <code>1.1.0-rc.2</code>)
+unless a larger bump is needed (for example, a breaking change → <code>2.0.0-rc.1</code> when the last stable
+release was <code>1.0.0</code>).</p>
+<p>Scopes are optional. Common scopes: <code>tui</code>, <code>wsl</code>, <code>chezmoi</code>, <code>frontend</code>, <code>ci</code>, <code>deps</code>. The commit message is checked on commit
+(commitizen) and the pull request title by <code>ci.yml</code>.</p>
 <h2 id="secrets">Secrets<a class="headerlink" href="#secrets" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Never write a credential to a file of this public repository, even untracked; use environment
-  variables or <code>gh auth login</code>.</li>
-<li><code>detect-secrets</code> runs on commit. For a line that intentionally references a secret placeholder (<code>${{ secrets.X }}</code>),
-  add <code># pragma: allowlist secret</code>. Keep suppressions inline; never exclude a whole file to silence one line.</li>
+<li>Never write a credential to a file of this public repository, even untracked; use environment variables or <code>gh auth login</code>.</li>
+<li><code>detect-secrets</code> runs on commit. For a line that intentionally references a secret placeholder
+  (<code>${{ secrets.X }}</code>), add <code># pragma: allowlist secret</code>. Keep suppressions inline; never exclude a whole file to silence one line.</li>
 </ul>
 <h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
-<p>Adding, renaming or removing one, in the same change: the setting in <code>settings.py</code> if the app
-reads it, <code>.env.example</code> if a laptop needs it, and the workflow <code>env:</code> if CI needs it.
-Update the <a href="../5.release/#credentials">release credentials</a> if a release target reads it.</p>
+<p>Adding, renaming or removing one, in the same change: the setting in <code>settings.py</code>, and the workflow <code>env:</code> if CI
+needs it.
+  Update the <a href="../5.release/#credentials">release credentials</a> if a release target reads it.</p>
 <h2 id="dependencies-renovate">Dependencies (Renovate)<a class="headerlink" href="#dependencies-renovate" title="Permanent link">&para;</a></h2>
-<p>Renovate (<code>.github/renovate.json</code>) opens pull requests to <code>dev</code> with the <code>renovate</code> and <code>dependencies</code> labels; most routine
-updates have a 7-day cooldown; security fixes are not grouped and open at once. Runtime dependencies include exact pins and ranges;
-<code>uv.lock</code> makes builds reproducible. Review every Renovate pull request; a dependency dashboard
-issue lists the pending ones.</p>
+<p>Renovate (<code>.github/renovate.json</code>) opens pull requests to <code>dev</code> with the <code>renovate</code> and <code>dependencies</code> labels;
+most routine updates have a 7-day cooldown; security fixes are not grouped and open at once. Runtime
+dependencies include exact pins and ranges; <code>uv.lock</code> makes builds reproducible. Review every Renovate
+pull request; a dependency dashboard issue lists the pending ones.</p>
 <ol>
 <li>Renovate does not widen the Python range. The supported interpreter moves by hand, together with
    the CI action and this document.</li>
