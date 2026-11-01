@@ -107,7 +107,7 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
   already reaches Hermes (it reads `~/.claude/skills`), so never add `-a hermes-agent`: two roots
   Hermes reads → `Ambiguous skill name … Refusing to guess`. `-a claude-code -a codex` is safe
   (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
-  disjoint from shipped/deployed ones, and check before installing (the lock's three
+  disjoint from shipped/deployed ones, and check before installing (the lock's two
   `NousResearch/hermes-agent` names are a documented exception — see `skill-deployment`).
 - **Three former entries are no longer in this repo:** `skill-creator` was vendored from
   `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name

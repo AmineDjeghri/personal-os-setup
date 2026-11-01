@@ -37,15 +37,6 @@
       "installedAt": "2026-10-18T23:18:18.837Z",
       "updatedAt": "2026-11-01T19:29:03.425Z"
     },
-    "hermes-agent-skill-authoring": {
-      "source": "NousResearch/hermes-agent",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
-      "skillPath": "optional-skills/software-development/hermes-agent-skill-authoring/SKILL.md",
-      "skillFolderHash": "d2f486cb4f9445f7ec3c2de55b321ecf83fc52fb",
-      "installedAt": "2026-10-18T23:18:28.125Z",
-      "updatedAt": "2026-11-01T19:18:25.158Z"
-    },
     "diagnosing-bugs": {
       "source": "mattpocock/skills",
       "sourceType": "github",

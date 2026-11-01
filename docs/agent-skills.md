@@ -78,7 +78,6 @@ Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 | `find-skills`                   | `vercel-labs/skills`         | Discovering and installing skills                                                |
 | `claude-code`                   | `NousResearch/hermes-agent`  | Delegating coding work to the Claude Code CLI                                    |
 | `hermes-agent`                  | `NousResearch/hermes-agent`  | Using, configuring and extending Hermes Agent                                    |
-| `hermes-agent-skill-authoring`  | `NousResearch/hermes-agent`  | Writing in-repo `SKILL.md` files                                                 |
 | `home-assistant-best-practices` | `homeassistant-ai/skills`    | Home Assistant configuration practices                                           |
 | `modern-python`                 | `trailofbits/skills`         | Modern Python project tooling                                                    |
 | `bash-script-validator`         | `akin-ozer/cc-devops-skills` | Validating Bash scripts                                                          |

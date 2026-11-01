@@ -93,7 +93,7 @@ copy-only: it overwrites whatever is live and deletes nothing.
   explicitly to enable it. A strict replay fails instead.
 - **Windows Git Bash** → the replay attempts the same installation and surfaces errors; no silent no-op.
 
-**Lock carve-out:** `claude-code`, `hermes-agent` and `hermes-agent-skill-authoring` come from
+**Lock carve-out:** `claude-code` and `hermes-agent` come from
 `NousResearch/hermes-agent` and also ship with Hermes. Installing them in Claude/Codex is intentional;
 if Hermes also has a bundled copy under `~/.hermes/skills`, run `make skills-status` and reconcile the
 duplicate. Never add Hermes as a separate npx target.
