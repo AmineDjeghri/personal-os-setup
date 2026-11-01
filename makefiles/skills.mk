@@ -23,6 +23,9 @@ SKILLS_LINK = $(SKILLS_PYTHON) $(SKILLS_SUPPORT) link --source "$(SKILLS_SRC)" -
 HERMES_SKILLS_LIVE := $(HOME)/.hermes/skills
 SKILLS_KEEP := skills.keep
 
+# "repo <time>  live <time>  -> <which is newer>" from the newest file mtime under each dir (args: repo live).
+SKILLS_NEWER = $(SKILLS_PYTHON) -c 'import os,sys,time; m=lambda d: max((os.path.getmtime(os.path.join(r,f)) for r,_,fs in os.walk(d) for f in fs if f!=".DS_Store"),default=0); a,b=m(sys.argv[1]),m(sys.argv[2]); g,y,n=sys.argv[3:6]; t=lambda x: time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(x)); c=lambda x,o: (g if x>o else y if x<o else n); print("repo "+c(a,b)+t(a)+n+"  live "+c(b,a)+t(b)+n+"  -> "+(g+"live is NEWER" if b>a else g+"repo is NEWER" if a>b else "same time")+n)'
+
 
 skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
 	@mkdir -p $(AGENTS_SKILLS)
@@ -75,7 +78,7 @@ _skills-scan:
 		if [ ! -e "$(SKILLS_DST)/$$name" ]; then \
 			[ "$$SKILLS_SCAN_MODE" = "all" ] && { printf "  $(YELLOW)MISSING$(NC)  $$name\n"; rc=1; }; \
 		elif ! diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" >/dev/null 2>&1; then \
-			printf "  $(RED)DIFFERS$(NC)  $$name\n"; diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" | sed 's/^/           /'; rc=1; \
+			printf "  $(RED)DIFFERS$(NC)  $$name  ($$($(SKILLS_NEWER) "$$d" "$(SKILLS_DST)/$$name" "$(GREEN)" "$(YELLOW)" "$(NC)"))\n"; diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" | sed 's/^/           /'; rc=1; \
 		elif [ "$$SKILLS_SCAN_MODE" = "all" ]; then printf "  $(GREEN)OK$(NC)       $$name\n"; fi; \
 	done; \
 	if [ "$$SKILLS_SCAN_MODE" = "drift" ]; then \
@@ -126,9 +129,6 @@ skills-personal-live-to-repo: ## Save live personal skills into the repo: NAME=<
 	done
 
 # ── Aggregate: both classes, both directions ──────────────────────────────────────────────────
-# "personal" = the authored tree in this repo, "thirdparty" = the npx skills lock. Each aggregate
-# keeps going after a failing step and exits non-zero at the end, so one broken class never hides
-# the other's result.
 skills-all-repo-to-live: ## Deploy EVERYTHING out: personal tree + third-party replay + Codex links, then verify
 	@rc=0; \
 	$(MAKE) --no-print-directory skills-personal-repo-to-live || rc=1; \
@@ -150,12 +150,7 @@ skills-all-live-to-repo: ## Capture EVERYTHING back: unlisted live skills + the 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
 # (a global install: $(XDG_STATE_HOME)/skills/.skill-lock.json on current CLIs, $(HOME)/.agents/.skill-lock.json
-# on older ones), so the committed COPY below is what
-# makes a new machine rebuildable. The copy deliberately does NOT sit in the chezmoi source: a
-# `chezmoi apply` must never overwrite the tool's live lock with a stale record.
-#
-# Lock identities and installed content are checked by src/personal_os_setup/config/chezmoi/dot_claude/skills_support.py.
-# Local content receipts are separate from the CLI lock and never committed.
+# on older ones)
 THIRD_PARTY_LOCK := third-party-skills.lock.json
 XDG_STATE := $(or $(XDG_STATE_HOME),$(HOME)/.local/state)
 # First existing wins (XDG first); if neither exists, point at the XDG path so the error names where it should be.
