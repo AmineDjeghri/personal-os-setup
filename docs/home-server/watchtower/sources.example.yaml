@@ -1,0 +1,22 @@
+# watchtower sources — the live copy of this file lives OUTSIDE the repo
+# (default: ~/.hermes/watchtower/sources.yaml). This example is the schema.
+#
+# Adding a source is a YAML edit, never a code change — as long as its `kind`
+# is one watchtower already implements (`uv run watchtower.py --doctor` prints
+# OK/FAIL for every entry). A new kind = one small fetch_* function.
+
+sources:
+  - id: trendshift-weekly          # short slug; used in state, ledger and health lines
+    kind: trendshift_jsonld        # which extractor to use
+    label: Trendshift weekly       # human name shown in the digest header
+    url: https://trendshift.io/weekly
+    limit: 25                      # cap items per run (code-enforced)
+    min_items: 20                  # fewer than this = broken extractor, not "no news"
+    enabled: true
+
+  # - id: some-blog
+  #   kind: rss
+  #   label: Some blog
+  #   url: https://example.com/feed.xml
+  #   limit: 10
+  #   enabled: false               # keep it here, turned off, until its extractor exists
