@@ -37,7 +37,7 @@ def fbx_login():
     """
     try:
         # 1. Get the Challenge
-        r = requests.get(f"{FBX_URL}/api/v4/login/")
+        r = requests.get(f"{FBX_URL}/api/v4/login/", timeout=5)
         if r.status_code != 200:
             print(f"Failed to reach Freebox login: {r.status_code}")
             return None
@@ -51,7 +51,7 @@ def fbx_login():
 
         # 3. Open the Session
         payload = {"app_id": FBX_APP_ID, "password": password}
-        r = requests.post(f"{FBX_URL}/api/v4/login/session/", json=payload)
+        r = requests.post(f"{FBX_URL}/api/v4/login/session/", json=payload, timeout=5)
         resp = r.json()
 
         if resp.get("success"):
@@ -69,7 +69,7 @@ def get_fbx_devices(session_token):
     headers = {"X-Fbx-App-Auth": session_token}
     try:
         # 'lan/browser/pub' is the endpoint that lists all networked devices
-        r = requests.get(f"{FBX_URL}/api/v4/lan/browser/pub", headers=headers)
+        r = requests.get(f"{FBX_URL}/api/v4/lan/browser/pub", headers=headers, timeout=5)
         if not r.json().get("success"):
             print("Failed to get LAN list")
             return []
@@ -210,7 +210,10 @@ def sync():
                 }
                 try:
                     requests.post(
-                        f"{AGH_URL}/control/clients/update", auth=(AGH_USER, AGH_PASS), json=payload
+                        f"{AGH_URL}/control/clients/update",
+                        auth=(AGH_USER, AGH_PASS),
+                        json=payload,
+                        timeout=5,
                     )
                     synced_count += 1
                 except Exception as e:
@@ -221,7 +224,10 @@ def sync():
             payload = {"name": name, "ids": final_ids, "use_global_settings": True}
             try:
                 r = requests.post(
-                    f"{AGH_URL}/control/clients/add", auth=(AGH_USER, AGH_PASS), json=payload
+                    f"{AGH_URL}/control/clients/add",
+                    auth=(AGH_USER, AGH_PASS),
+                    json=payload,
+                    timeout=5,
                 )
                 synced_count += 1
             except Exception as e:

@@ -14,15 +14,17 @@ Use [README.md](../../README.md#linux--wsl2--macos) as it automatically handles 
 Before installing packages, it's recommended to update your system.
 
 ### 1. Package Selection
+
 The app displays all available packages from [packages.yaml](../../src/personal_os_setup/config/packages.yaml) organized by category:
+
 - **Core tools**: `git`, `curl`, `zsh`
 - **Terminal tools**: `bat`, `btop`, `fzf`, `lsd`, `fastfetch`
 - **Apps**: Code editor, messaging apps, media players, etc.
 
 You can multi-select packages using the interactive interface.
 
-
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
+
 The app provides buttons to automate the terminal configuration:
 
 - **Install JetBrainsMono Nerd Font**: Required for proper theme rendering
@@ -52,11 +54,13 @@ stale.
 See the [zshrc configuration file](../../src/personal_os_setup/config/unix/.zshrc) for the default configuration used by this project.
 
 If you need to revert changes:
+
 - Uninstall Oh My Zsh and Powerlevel10k files
 - Uninstall Zsh package
 - Reset Bash as default shell
 
 Additional system configuration options (only if you have NVIDIA GPU):
+
 - **Detect NVIDIA**: Check if NVIDIA GPU is available
 - **Setup NVIDIA (WSL)**: Configure NVIDIA drivers for WSL2
 - **Detect CUDA**: Check CUDA installation
@@ -66,7 +70,6 @@ Additional system configuration options (only if you have NVIDIA GPU):
 
 To install CUDA on native Linux, follow the pre-installation actions from the official guide:
 [CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/archive/12.6.0/cuda-installation-guide-linux/index.html#pre-installation-actions)
-
 
 ### CUDA in Docker
 
@@ -85,7 +88,35 @@ newgrp docker                 # activate the change in the current shell
 
 > **Pro Tip:** `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
 
+### Testing the Ubuntu flow in a VM
+
+Rehearse the whole flow (installer one-liner → TUI) in a disposable KVM/QEMU VM on any Linux host before touching your
+real machine. Host setup (`make vm-deps`, cleanup, the firewall fix) is on the shared
+[Testing this project in a VM](../vm/README.md) page. For CachyOS see
+[its VM section](CachyOS.md#testing-the-cachyos-flow-in-a-vm).
+
+| Command                        | Guest                                                                                                                            |
+|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `make vm-ubuntu-server`        | Ubuntu Server 26.04, unattended autoinstall (user/password `pos-dev`, override with `AUTOINSTALL_USER` / `AUTOINSTALL_PASSWORD`) |
+| `make vm-ubuntu-server-manual` | same ISO, manual click-through install                                                                                           |
+| `make vm-ubuntu`               | Ubuntu Desktop 26.04, manual install                                                                                             |
+
+Manage the VM:
+
+| Command              | What it does                                                                         |
+|----------------------|--------------------------------------------------------------------------------------|
+| `make vm-list`       | List this project's libvirt VMs and their state                                      |
+| `make vm-clean`      | Destroy and undefine all this project's VMs and wipe their disks (keeps cached ISOs) |
+| `make vm-clean-isos` | Delete cached install ISOs too (re-downloaded on the next `make vm-*`)               |
+
+1. Run `make vm-deps` once, then log out and back in so the `libvirt`/`kvm` groups apply.
+2. Start a guest with one of the commands above. Re-running a command on an existing VM just starts it again; to change
+   settings (such as the autoinstall credentials) run `make vm-clean` first.
+3. Inside the guest, run the [Linux one-liner](../../README.md#linux--wsl2--macos), then `personal-os-setup`.
+4. If the VM has no internet during install, see `make vm-ufw-allow` on the shared page.
+
 ### Apps shortcuts
+
 For app configuration, tips, and shortcuts (PyCharm, Obsidian, Bitwarden, Nautilus, the terminal
 tools cheatsheet, and a table of what's available on which OS), check
 [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md).

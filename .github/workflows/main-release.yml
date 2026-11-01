@@ -1,173 +1,91 @@
-# =============================================================================
-# Main Release
-# =============================================================================
-# Triggered on: push to main, PR merged to main, or manual trigger
-# =============================================================================
-name: "🚀 Release — Main"
-
+name: "🚀 Release — Main / Dev"
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+    branches: [main, dev]
   workflow_dispatch:
-
-permissions: # needed for semantic release and publishing releases
+permissions:
   contents: write
-  id-token: write
-
 concurrency:
   cancel-in-progress: false
-  group: ${{ github.workflow }}-${{ github.ref }}
-
+  group: release-${{ github.ref }}
 jobs:
   quality-checks:
     name: "👷 Quality Check & Tests"
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && (github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]'))
     uses: ./.github/workflows/quality-and-tests.yml
     secrets: inherit  # pragma: allowlist secret
 
   release:
-    name: "🏷️ Stable Version & Tag"
-    runs-on: ubuntu-latest
+    name: Verified release publication
     needs: quality-checks
-    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
-      released: ${{ steps.semantic_release.outputs.released }}
-      version: ${{ steps.semantic_release.outputs.version }}
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
     steps:
-      - name: Check Out
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
+          # Remain on the release branch so semantic-release can commit. GITHUB_SHA rejects a newer
+          # untested tip; the exact metadata-only release commit is allowed on retries.
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
+      - uses: ./.github/actions/install-python-deps
       - name: Configure Git Bot Identity
-        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Semantic Release — Bump Version & Tag
-        id: semantic_release
+      - name: Version, verify artifacts and finish or recover publication
+        id: release
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          export PYTHONPATH="${PYTHONPATH}:."
-          # Disable git pre-commit hooks
-          git config core.hooksPath /dev/null
-          echo "::group::Semantic Release output"
-          NEW_VERSION=$(uv run semantic-release -v version --print | tr -d '[:space:]')
-          if [ -n "$NEW_VERSION" ]; then
-            uv run semantic-release -v version
-            {
-              echo "released=true"
-              echo "version=$NEW_VERSION"
-            } >> "$GITHUB_OUTPUT"
-          else
-            echo "released=false" >> "$GITHUB_OUTPUT"
-            echo "No releasable commits found — skipping release."
-          fi
-          echo "::endgroup::"
-
-      - name: Unset Git Hooks Path
+          GIT_COMMIT_AUTHOR: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        run: make release
+      - uses: ./.github/actions/cleanup-artifacts
         if: always()
-        shell: bash
-        run: |
-          # Re-enable git pre-commit hooks
-          git config --unset-all core.hooksPath || true
-
-      - name: Build Package
-        if: steps.semantic_release.outputs.released == 'true'
-        shell: bash
-        run: |
-          echo "::group::Build output"
-          make build-package
-          echo "::endgroup::"
-
-      - name: Publish to GitHub Release
-        if: steps.semantic_release.outputs.released == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_ENTERPRISE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          VERSION="${{ steps.semantic_release.outputs.version }}"
-          export GH_HOST=$(echo "$GITHUB_SERVER_URL" | sed 's|https://||')
-          gh release upload "v${VERSION}" dist/*.whl dist/*.tar.gz --clobber
-
-      - name: Cleanup Artifacts
-        if: always()
-        uses: ./.github/actions/cleanup-artifacts
 
   docs:
-    name: "📚 Deploy Docs"
+    name: "📚 Deploy released documentation"
+    needs: release
+    if: github.ref == 'refs/heads/main' && needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
-    needs: [release]
-    timeout-minutes: 5
-    if: needs.release.outputs.released == 'true'
+    timeout-minutes: 10
     steps:
-      - name: Check Out
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
-
-      - name: Install Python Dependencies
-        uses: ./.github/actions/install-python-deps
-
-      - name: Deploy Docs to GitHub Pages
-        id: deploy_docs
-        shell: bash
-        run: |
-          echo "::group::Deploy Docs output"
-          make deploy-doc-gh
-          echo "::endgroup::"
-
-      - name: Cleanup Artifacts
+          ref: v${{ needs.release.outputs.version }}
+      - uses: ./.github/actions/install-python-deps
+      - run: make deploy-doc-gh
+      - uses: ./.github/actions/cleanup-artifacts
         if: always()
-        uses: ./.github/actions/cleanup-artifacts
 
   summary:
     name: "📋 Summary"
-    runs-on: ubuntu-latest
     needs: [quality-checks, release, docs]
     if: always()
-    timeout-minutes: 5
+    runs-on: ubuntu-latest
     steps:
-      - name: Generate Summary
+      - name: Report publication outcome
         shell: bash
+        env:
+          CHECKS: ${{ needs.quality-checks.result }}
+          RELEASE: ${{ needs.release.result }}
+          DOCS: ${{ needs.docs.result }}
+          RELEASED: ${{ needs.release.outputs.released }}
+          VERSION: ${{ needs.release.outputs.version }}
         run: |
-          RELEASED="${{ needs.release.outputs.released }}"
-          VERSION="${{ needs.release.outputs.version }}"
-          QC="${{ needs.quality-checks.result }}"
-          REL="${{ needs.release.result }}"
-          DOCS="${{ needs.docs.result }}"
-
-          status_icon() { if [ "$1" == "success" ]; then echo "✅"; elif [ "$1" == "skipped" ]; then echo "⏭️"; else echo "❌"; fi; }
-
-          echo "## 🚀 Main Release Pipeline" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ "$REL" == "success" ] && [ "$DOCS" == "success" ]; then
-            echo "> 🎉 **Release \`v$VERSION\` completed successfully**" >> $GITHUB_STEP_SUMMARY
-          elif [ "$REL" == "skipped" ]; then
-            echo "> ℹ️ **No releasable commits** — nothing published." >> $GITHUB_STEP_SUMMARY
+          if [ "$CHECKS" != success ]; then
+            echo 'Release did not run: required validation failed or was skipped.' >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$RELEASE" = success ] && [ "$RELEASED" = false ]; then
+            echo 'No releasable commits since the last tag; nothing published.' >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$RELEASE" = success ] && [ "$RELEASED" = true ] && [ "$GITHUB_REF" = refs/heads/dev ] && [ "$DOCS" = skipped ]; then
+            echo "Release candidate v$VERSION was published successfully." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$RELEASE" = success ] && [ "$RELEASED" = true ] && [ "$DOCS" = success ]; then
+            echo "Release v$VERSION and its documentation were published successfully." >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "> ⚠️ **Release completed with issues** — check logs above." >> $GITHUB_STEP_SUMMARY
+            echo 'Publication is incomplete. Check the failed job; rerun to resume verified asset uploads or documentation deployment.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
-
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧹 Quality Checks | $(status_icon $QC) |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🏷️ Semantic Release & Build | $(status_icon $REL) |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📚 Deploy Docs | $(status_icon $DOCS) |" >> $GITHUB_STEP_SUMMARY

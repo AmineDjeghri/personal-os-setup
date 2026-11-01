@@ -1,0 +1,46 @@
+# Fermeture des volets à la tombée du jour.
+#
+# Déclencheur solaire, pas d'heure fixe : le coucher du soleil est calculé par
+# HA avec la latitude/longitude de la maison, donc il suit les saisons :
+# ~19 h 35 fin septembre, ~17 h 00 en décembre, ~22 h 00 en juin. Rien à
+# ajuster dans l'année.
+# Pour attendre qu'il fasse vraiment sombre : remplacer sun.sunset par sun.dusk
+# (fin du crépuscule civil, soirée ~34 min plus tard).
+#
+# 80 % fermé = position 20 dans Home Assistant (position 0 = fermé, 100 = ouvert).
+alias: 🌆 Fermeture des volets à la tombée du jour
+description: >-
+  Ferme les volets à 80 % au coucher du soleil (position 20 : 0 = fermé, 100 = ouvert).
+  Un volet déjà fermé à plus de 80 % n'est pas touché.
+triggers:
+  - trigger: sun.sunset
+  # Rattrape un redémarrage de HA pendant la nuit : un déclencheur solaire ne
+  # rejoue pas un événement déjà passé.
+  - trigger: homeassistant
+    event: start
+conditions:
+  # Vrai à l'instant exact du coucher du soleil (borne "after" incluse) et
+  # pendant toute la nuit jusqu'au lever du soleil suivant : couvre donc aussi
+  # un redémarrage nocturne. Évalué en direct sur les horaires solaires, sans
+  # dépendre de l'état de sun.sun (mis à jour de son côté).
+  - condition: sun
+    after: sunset
+    before: sunrise
+actions:
+  - repeat:
+      for_each:
+        - cover.volet_salon
+        - cover.volet_chambre
+      sequence:
+        - if:
+            # position inconnue (volet hors ligne) -> on ne touche à rien
+            - condition: template
+              value_template: >-
+                {{ state_attr(repeat.item, 'current_position') | int(0) > 20 }}
+          then:
+            - action: cover.set_cover_position
+              target:
+                entity_id: "{{ repeat.item }}"
+              data:
+                position: 20
+mode: single

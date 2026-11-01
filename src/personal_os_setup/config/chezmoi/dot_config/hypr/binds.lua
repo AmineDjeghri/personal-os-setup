@@ -47,8 +47,8 @@ hl.bind(mainMod .. " + Q",           hl.dsp.window.close(), { description = "Clo
 hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 -- hl.bind(mainMod .. " + J",           hl.dsp.layout("togglesplit"), { description = "Toggle split orientation" }) -- dwindle only
 
--- ALT+Tab: hymission is active
-hl.bind(mainMod .. " + Tab", function() hl.plugin.hymission.toggle("forceall") end, { description = "Toggle window overview" })
+-- ALT+Tab: Noctalia window switcher (hold ALT, Tab to cycle)
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd(noctCall .. "window-switcher hold"), { description = "Noctalia window switcher" })
 
 hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd(launchPrefix .. TERMINAL), { description = "Open terminal" })
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(launchPrefix .. FILE_MANAGER), { description = "Open file manager" })

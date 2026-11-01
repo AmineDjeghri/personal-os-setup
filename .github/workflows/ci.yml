@@ -2,7 +2,7 @@
 # CI — Quality Checks
 # =============================================================================
 # Validates code quality on every push and PR.
-# Runs on feature branches, but skips main and dev (handled by release workflows).
+# Main and dev are validated by their release workflow; other branches use this workflow.
 # =============================================================================
 name: "👷 CI — Validate"
 on:
@@ -10,7 +10,7 @@ on:
     branches:
       - "**"
       - "!main" # handled by main-release.yml
-      - "!dev" # handled by dev-release.yml
+      - "!dev" # handled by main-release.yml
   pull_request:
     types: [opened, edited, synchronize]
     branches:

@@ -4,8 +4,9 @@ site_author: Amine DJEGHRI
 docs_dir: .
 # site_url: #TODO: Fill when deployment CI added
 #site_dir: public
-#repo_url:
-#edit_uri: blob/main/docs/
+repo_url: https://github.com/AmineDjeghri/personal-os-setup
+repo_name: personal-os-setup
+edit_uri: edit/main/
 
 
 theme:
@@ -54,16 +55,18 @@ plugins:
         - scripts/gen_example_pages.py
   - search
   - same-dir
-  - mermaid2
   - literate-nav:
       nav_file: SUMMARY.md
   - exclude:
       glob:
         - node_modules/**
         - .venv/**
+        - venv/**
         - docker_data/**
         - dist/**
         - reports/**
+        - htmlcov/**
+        - tests/**
         - bin/**
         - docker/**
         - .idea/**
@@ -72,6 +75,11 @@ plugins:
         - .deepeval/**
         - .deepteam/**
         - .changelog/**
+        - .agents/**
+        - .chezmoiroot
+        - src/personal_os_setup/config/**
+        - AGENTS.md
+        - CLAUDE.md
         - docs/examples/data/sample.*
 
 markdown_extensions:
@@ -85,7 +93,11 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - tables
@@ -93,6 +105,7 @@ markdown_extensions:
 nav:
   - Home: README.md
   - Documentation: docs/
+  - Developer guide: docs/developer/
   - Examples: docs/examples/
   - API Reference: package/
   - Changelog: CHANGELOG.md

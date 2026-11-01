@@ -27,6 +27,6 @@ def show_vm_testing_link() -> TaskResult:
     """Show the published "Testing in a VM" doc URL for copy/paste."""
     return TaskResult(
         ok=True,
-        summary=f"{DOCS_SITE_URL}/linux/CachyOS/#testing-this-project-in-a-vm",
+        summary=f"{DOCS_SITE_URL}/vm/",
         details="Open this link in a browser to view the make vm-* VM lab docs.",
     )

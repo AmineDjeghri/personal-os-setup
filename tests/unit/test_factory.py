@@ -220,6 +220,11 @@ class TestDotfilesTrackNewFile:
             action.run_with_prompt("~/.config/foo/config.toml")
         mock_add.assert_called_once_with(Path.home() / ".config/foo/config.toml")
 
+    def test_clean_backups_action_is_confirmed_and_runs_chezmoi_clean_backups(self):
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "chezmoi: clean backups")
+        assert action.confirm is True
+        assert action.run.__name__ == "chezmoi_clean_backups"
+
 
 class TestSystemSectionExtras:
     """Docker post-install lives in "system", gated by distro."""

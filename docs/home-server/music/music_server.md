@@ -19,6 +19,7 @@ Is this free ? YES
 You can search and play **any song or album**, even if it is not in your collection yet.
 
 ---
+
 ## Components
 
 ### 1. Navidrome (Music Server)
@@ -36,6 +37,7 @@ It is responsible for:
 Navidrome **only knows about files that exist in your library folder**.  It does not download music by itself.
 
 ---
+
 ### 2. Subsonic Clients (Narjo, Symfonium, Subplayer, etc.)
 
 A **Subsonic client** is the application used to browse and play your music. Examples include: Narjo, Feishin..
@@ -47,6 +49,7 @@ Normally the client connects **directly to Navidrome**.
 Client → Navidrome
 
 ---
+
 ### 3. Octo-Fiesta (Auto-Download songs)
 
 Octo-Fiesta is a **proxy server** that sits between the client and Navidrome.
@@ -66,15 +69,14 @@ It extends your music library by using **TIDAL** when a song is missing for free
 - If the song **does NOT exist locally**, Octo-Fiesta searches TIDAL for example, and show you albums, tracks, artists that contains the name of the song. It streams the track immediately, downloads the track to your library and organizes it with metadata.
 - When you play a song, the client only downloads the requested song. However, the album’s metadata is downloaded in the client (like Narjo) and shows you other songs from the same album without downloading them.
 
-
 ### 5. (optional) Beets
+
 - [Beets](https://beets.readthedocs.io/en/stable/index.html): a music library manager that can import your music files, organize them, and add metadata.
 
   **It now runs as a Home Assistant add-on** — install it from the [Beets add-on](https://github.com/AmineDjeghri/ha-addons/tree/main/addons/beets) (see its [README](https://github.com/AmineDjeghri/ha-addons/blob/main/addons/beets/README.md) for all options, the manual interactive review command, and the docker notes). It watches `/media/music` (the Octo-Fiesta download folder), tags new files automatically, and replaces the host cronjobs below.
 
 The following section summarizes the key concepts and behaviors of **Beets** regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.
-
 
 in the [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml) file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :
 
@@ -96,11 +98,10 @@ import:
 
 Whenever you run `beet import /music` with this config, it will:
 
-* Files **stay in place** (no copy, no move)
-* Already imported folders are skipped
-* Duplicate tracks are removed
-* Imports can resume if interrupted
-
+- Files **stay in place** (no copy, no move)
+- Already imported folders are skipped
+- Duplicate tracks are removed
+- Imports can resume if interrupted
 
 **Importing** means scanning music files and adding them to the **Beets library database** (`library.db`).
 
@@ -113,26 +114,27 @@ Important:
 
 Typical metadata fields:
 
-* Artist
-* Album
-* Track title
-* Track number
-* Release year
-* Genre
-* MusicBrainz IDs
+- Artist
+- Album
+- Track title
+- Track number
+- Release year
+- Genre
+- MusicBrainz IDs
 
 Tagging is usually done automatically via **MusicBrainz**.
 
 **Autotagging** means automatically searching metadata databases and matching your music files and adding metadata to them.
 Beets computes a **match distance score** to determine the best candidate using the match section.
 
-#### Workflow:
+#### Workflow
+
 - My [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml)
 What I advise to play with is:
 - Use `-v` to see the output or `-vv` to see the details.
 - Use `autotag: yes` with `write: no` will not write metadata into the files. This is useful to preview the changes.
 - Use `autotag: yes` with `write: yes` , `timid: yes` and `quiet: no`  to validate manually when using the autotag the recommendations that are below the threshold
-- finally full auto silently: `autotag: yes` and  `timid: no` and `quiet: yes`.  Quiet will skip (check quiet_fallback) tracks bellow the threshold.
+- finally full auto silently: `autotag: yes` and  `timid: no` and `quiet: yes`.  Quiet will skip (check quiet_fallback) tracks below the threshold.
 - You can also play with  incremental and incremental_skip_later to skip some albums and tracks
 
 > The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:
@@ -144,28 +146,28 @@ Add these commands to your crontab with `crontab -e`  to run it:
 **Run every 5 minutes (no incremental)**
 `*/5 * * * * flock -n /tmp/beets.lock ~/.venv/bin/beet -vv import ~/haos_media/music --noincremental > ~/beets-cron.log 2>&1`
 
-You can also create a script to trigger them everytime your folder is updated.
+You can also create a script to trigger them every time your folder is updated.
 
+### Finding duplicates
 
-### Finding duplicates:
 Run this command :`beet duplicates -k title -k albumartist --full -p`
 
 or to delete : `beet duplicates -k title -k albumartist --delete`
 
 Add this to your crontab with `crontab -e`  to run it every 12 hours
+
 ```bash
 0 */12 * * * date >> ~/beets-duplicates.log && echo "Running duplicates..." >> ~/beets-duplicates.log && ~/.venv/bin/beet duplicates -k title -k albumartist --delete >> ~/beets-duplicates.log 2>&1
 ```
 
-[Chroma ](https://beets.readthedocs.io/en/stable/plugins/chroma.html#chromaprint-acoustid-plugin) :
+[Chroma](https://beets.readthedocs.io/en/stable/plugins/chroma.html#chromaprint-acoustid-plugin) :
 
 **Chromaprint :**
-wget https://github.com/acoustid/chromaprint/releases/download/v1.6.0/chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz
+wget <https://github.com/acoustid/chromaprint/releases/download/v1.6.0/chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz>
 tar xvf chromaprint-*-Linux.tar.gz
 tar xvf chromaprint-fpcalc-1.6.0-linux-x86_64.tar.gz
 sudo mv chromaprint-*/fpcalc /usr/local/bin/\nsudo chmod +x /usr/local/bin/fpcalc
 fpcalc -version
-
 
 **gstreamer1.0:**
 sudo apt-get update
@@ -189,7 +191,6 @@ python3-gi-cairo
 **PyGObject, FFmpeg:**
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0
 sudo apt install ffmpeg -y
-
 
 Test it with :
 fpcalc "path_to_file.flac"

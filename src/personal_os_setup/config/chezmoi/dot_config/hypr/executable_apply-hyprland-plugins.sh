@@ -26,7 +26,6 @@ plugin_is_loaded() {
 
 # To track a new plugin, add a "name repo_url" entry here.
 plugins=(
-  "hymission https://github.com/gfhdhytghd/hymission"
   "hyprbars https://github.com/hyprwm/hyprland-plugins"
 )
 

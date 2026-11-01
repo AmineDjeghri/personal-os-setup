@@ -2,6 +2,9 @@
 # This file includes all modular makefiles from the makefiles/ directory
 # Each makefile is organized by functionality for better maintainability
 
+.DEFAULT_GOAL := help
+SHELL := bash
+
 # Include common variables and settings
 include makefiles/common.mk
 
@@ -13,7 +16,9 @@ include makefiles/test.mk
 include makefiles/clean.mk
 include makefiles/ci.mk
 include makefiles/build.mk
+include makefiles/release.mk
 include makefiles/vm.mk
+include makefiles/skills.mk
 
 .PHONY: all help
 
@@ -27,8 +32,11 @@ help: ## Show this help message
 	@echo "Installation:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/install.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
-	@echo "Development:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/dev.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "Checkers & formatters:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/check_format.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Running the Application:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/run.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Testing:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/test.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -42,5 +50,11 @@ help: ## Show this help message
 	@echo "Build & Deploy:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/build.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
+	@echo "Release:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/release.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
 	@echo "Virtual Machines:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/vm.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Agent Skills:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefiles/skills.mk | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

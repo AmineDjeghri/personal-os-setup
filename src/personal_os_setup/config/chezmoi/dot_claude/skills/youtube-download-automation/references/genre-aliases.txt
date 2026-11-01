@@ -1,0 +1,61 @@
+# Genre aliases and never-write tokens — read by scripts/genre_tag.py
+# Format (case-insensitive, one rule per line):
+#   from -> to       merge two spellings of one genre ("to" must be a canonical token)
+#   drop: token      never write this token (not a genre)
+#   drop-re: regex   never write tokens matching this pattern
+# Canonical tokens themselves live in genre-whitelist.txt / genre-whitelist-extra.txt.
+
+# --- same genre under two names ---
+industrial -> industrial metal
+industrial rock -> industrial metal
+heavy metal -> metal
+rnb -> r&b
+contemporary r&b -> r&b
+chillout r&b -> r&b
+rnb contemporary -> r&b
+alternative rnb -> alternative r&b
+french rnb -> french r&b
+french hip hop -> french rap
+euro disco -> disco
+hi nrg -> disco
+diva house -> house
+uk funky -> house
+electro pop -> electropop
+dance pop -> dance-pop
+neo soul -> neo-soul
+boyband -> boy band
+pop edm -> electronic
+arabic music -> arabic pop
+world music -> world
+
+# --- regions, shelf labels, events, moods, artefacts, languages ---
+drop: maghreb
+drop: maghreb pop
+drop: maghrebi
+drop: north african
+drop: eurovision
+drop: chillout
+drop: chill
+drop: sophisti pop
+drop: sophisti-pop
+drop: pop in spanish
+drop: disney
+drop: arabica
+
+# --- last.fm troll tags ---
+drop-re: national socialist
+
+# --- YouTube categories (the pipeline's old fallback) are not genres ---
+drop: music
+drop: people & blogs
+drop: sports
+drop: entertainment
+drop: gaming
+drop: howto & style
+drop: news & politics
+drop: film & animation
+drop: autos & vehicles
+drop: pets & animals
+drop: travel & events
+drop: science & technology
+drop: nonprofits & activism

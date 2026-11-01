@@ -8,7 +8,7 @@ AI-assisted YouTube → music library pipeline. Downloads YouTube playlists (or 
 
 **Every metadata decision is made by the LLM agent, not by parsing rules.** Live YouTube titles are messy — `Artist - Song (Live at X)`, no-artist titles, artists mentioned only in the description, Arabic/French/English mixes. Regex heuristics get maybe 60–80% right; the LLM reads the actual title, uploader and description of every video and decides. The script is pure plumbing:
 
-```
+```text
 you paste a link
       │
       ▼
@@ -35,15 +35,12 @@ you paste a link
 
 ## Folder layout
 
-```
+```text
 youtube_ai_download/
 ├── yt_dl.py                  # the downloader — deps in its PEP 723 header
 ├── README.md                 # this file
 ├── overrides.json            # per-video LLM decisions (the "brain")
 ├── overrides.example.json    # template
-├── skill/
-│   └── yt-dlp-music-downloads/
-│       └── SKILL.md          # Hermes runbook — symlinked into ~/.hermes/skills
 ├── .staging/                 # downloads land here first (created at run time)
 ├── .archive.txt              # downloaded video IDs — incremental state (not in git)
 └── downloads.log             # tee'd run log (--log) — progress/resume debugging
@@ -88,6 +85,8 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
                         // (Live…) and venue info kept, never rewritten)
     "album":  "...",    // default: playlist title
     "year":   "2018",   // optional: concert year (default: upload year)
+    "genre":  "rai",    // optional: genre tag. Omitted → NO genre tag is written
+                        // (the video's YouTube *category* is never used as a genre)
     "folder": "Other",  // optional: download into YouTube/Other instead of the playlist folder
     "split":  true      // optional: video has YouTube chapters → split into per-chapter
                         // tracks (title = chapter name, track = section number)
@@ -99,15 +98,16 @@ Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs
 
 ## Naming rules (agreed)
 
-| What | Rule |
-|---|---|
-| Folder | playlist title → `YouTube/<playlist>/`; single links → `YouTube/Singles/`; non-music → `YouTube/Other/` |
-| File | `NN - Artist - Title.m4a` (NN = playlist position) |
-| Chapter split | `"split": true` → `NN - Artist - Title - SS - <chapter>.m4a` per YouTube chapter (SS = section number = track number; title = chapter name); the full file is discarded |
-| Artist / Title / Album | **decided by the LLM** in overrides.json |
-| Title | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`| Channel` stripped, leading `Artist - ` dropped, `(Live…)` + venue info kept |
-| Album | typically `Live at <Venue> (<City>, <Year>)` from the description |
-| Format | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless" |
+| What                   | Rule                                                                                                                                                                                        |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Folder                 | playlist title → `YouTube/<playlist>/`; single links → `YouTube/Singles/`; non-music → `YouTube/Other/`                                                                                     |
+| File                   | `NN - Artist - Title.m4a` (NN = playlist position)                                                                                                                                          |
+| Chapter split          | `"split": true` → `NN - Artist - Title - SS - <chapter>.m4a` per YouTube chapter (SS = section number = track number; title = chapter name); the full file is discarded                     |
+| Artist / Title / Album | **decided by the LLM** in overrides.json                                                                                                                                                    |
+| Title                  | original video title, **noise removed only** (no rewrites): `[4K]`/`[Audio HQ]`/`HD`/`(Best Quality)`/`\| Channel` stripped, leading `Artist -` prefix dropped, `(Live…)` + venue info kept |
+| Album                  | typically `Live at <Venue> (<City>, <Year>)` from the description                                                                                                                           |
+| Genre                  | optional, from `"genre"` in overrides.json; omitted → no genre tag (never the YouTube category)                                                                                             |
+| Format                 | audio-only, native m4a (AAC, YouTube's ceiling) — **never** re-encoded to "lossless"                                                                                                        |
 
 ## Incremental playlist updates
 
@@ -126,9 +126,9 @@ The script ends with a readable summary: per-video `Artist - Title [Album] (fold
 
 Downloads appear under **Artists** and as **"Live at …" albums** (album tag) — folders are invisible to Navidrome, no playlists are created. One smart playlist — rule **`Album contains "Live"`** — collects every live download automatically, including future ones. Non-music clips have album `Other` (excluded from that rule).
 
-## The skill
+## The agent runbook
 
-The Hermes runbook (`skill/yt-dlp-music-downloads/SKILL.md`) is symlinked into the agent's skills folder, so it's the live procedure while the source of truth stays here, versioned with the code.
+The agent-facing procedure is the skill `youtube-download-automation` (Hermes track of the personal-os-setup chezmoi source → `~/.hermes/skills`), which points back here for the script, this README and `overrides.json`. Nothing lives under `docs/` on purpose: a skill placed here gets crawled into the published site and is managed by nobody.
 
 ## Prerequisites / assumptions
 

@@ -3,6 +3,6 @@
 
 .PHONY: run
 
-run: ## Run the Stremio Addon (Dev Mode)
+run: ## Run the Application
 	@echo "Starting server..."
 	@$(UV) run python src/personal_os_setup/frontend/main.py

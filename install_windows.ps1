@@ -4,234 +4,205 @@ $ErrorActionPreference = 'Stop'
 
 $RepoFolderName = 'personal-os-setup'
 
-# If we are anywhere inside an existing git checkout of this repo, update it and continue from repo root.
-$git = Get-Command git -ErrorAction SilentlyContinue
-if (-not $git) {
-    $wingetPath = Ensure-Winget
-    if ($wingetPath) {
-        try {
-            Write-Host "Attempting: winget install -e --id Git.Git" -ForegroundColor DarkYellow
-            & $wingetPath install -e --id Git.Git --accept-source-agreements --accept-package-agreements
-            $git = Get-Command git -ErrorAction SilentlyContinue
-        } catch {
-            Write-Host "winget install Git.Git failed: $_" -ForegroundColor DarkYellow
-        }
+function Invoke-CheckedCommand {
+    param(
+        [Parameter(Mandatory=$true)][string]$Command,
+        [string[]]$Arguments
+    )
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Command '$Command' failed with exit code $LASTEXITCODE."
     }
 }
 
-$RepoRoot = $null
-if ($git) {
-    try {
-        $isInside = & $git.Source rev-parse --is-inside-work-tree 2>$null
-        if ($LASTEXITCODE -eq 0 -and $isInside -eq 'true') {
-            $repoRoot = & $git.Source rev-parse --show-toplevel 2>$null
-            if ($LASTEXITCODE -eq 0 -and $repoRoot) {
-                $leaf = Split-Path -Leaf $repoRoot
-                if ($leaf -eq $RepoFolderName) {
-                    Write-Host "Detected existing git checkout: $repoRoot" -ForegroundColor Green
-                    $RepoRoot = $repoRoot
-                    Set-Location $RepoRoot
-                    Write-Host "Pulling (fast-forward only)..." -ForegroundColor Yellow
-                    & $git.Source pull --ff-only
-                }
-            }
-        }
-    } catch {
-        Write-Host "Git repo detection/pull skipped: $_" -ForegroundColor DarkYellow
-    }
+function Update-SessionPath {
+    $registered = @(
+        [System.Environment]::GetEnvironmentVariable('Path', 'Machine'),
+        [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    ) | Where-Object { $_ }
+    $env:Path = (@($env:Path) + $registered) -join ';'
 }
 
-# If not already in a checkout, clone (or reuse) a fixed location in the user's profile
-# directory, so the repo lives in a stable place regardless of where the script is invoked from.
-if (-not $RepoRoot) {
-    $destination = Join-Path $env:USERPROFILE '.personal-os-setup'
-    if (Test-Path $destination) {
-        if ($git) {
-            try {
-                Write-Host "Found existing folder: $destination" -ForegroundColor Green
-                Set-Location $destination
-                $isInside = & $git.Source rev-parse --is-inside-work-tree 2>$null
-                if ($LASTEXITCODE -eq 0 -and $isInside -eq 'true') {
-                    Write-Host "Pulling (fast-forward only)..." -ForegroundColor Yellow
-                    & $git.Source pull --ff-only
-                    $RepoRoot = $destination
-                } else {
-                    throw "Folder exists but is not a git repo: $destination"
-                }
-            } catch {
-                throw $_
-            }
-        } else {
-            throw "Git is required to clone/update the repo, but 'git' was not found in PATH. Install Git and re-run."
-        }
-    } else {
-        if (-not $git) {
-            throw "Git is required to clone the repo, but 'git' was not found in PATH. Install Git and re-run."
-        }
-        Write-Host "Cloning repo into: $destination" -ForegroundColor Yellow
-        & $git.Source clone "https://github.com/AmineDjeghri/personal-os-setup.git" $destination
-        $RepoRoot = $destination
-        Set-Location $RepoRoot
-    }
-}
-
-Write-Host "Personal OS Setup (Windows)" -ForegroundColor Yellow
-
-function Resolve-Make {
-    $candidates = @('make', 'mingw32-make', 'gmake')
-    foreach ($name in $candidates) {
-        $cmd = Get-Command $name -ErrorAction SilentlyContinue
-        if ($cmd) { return $cmd.Source }
-    }
-    # Fallback: probe common locations
-    $possible = @()
-    $possible += "C:\\Program Files (x86)\\GnuWin32\\bin\\make.exe"
-    foreach ($p in $possible) {
-        if (Test-Path $p) { return $p }
-    }
+function Ensure-Winget {
+    $command = Get-Command winget -ErrorAction SilentlyContinue
+    if ($command) { return $command.Source }
     return $null
 }
 
-# Add a directory to PATH if missing (current session and persist for user)
+function Ensure-Git {
+    $command = Get-Command git -ErrorAction SilentlyContinue
+    if (-not $command) {
+        $wingetPath = Ensure-Winget
+        if (-not $wingetPath) {
+            throw "Git is required. Install Git for Windows and re-run this script."
+        }
+        Write-Host "Installing Git for Windows..." -ForegroundColor Yellow
+        Invoke-CheckedCommand -Command $wingetPath -Arguments @(
+            'install', '-e', '--id', 'Git.Git',
+            '--accept-source-agreements', '--accept-package-agreements'
+        ) | Out-Host
+        Update-SessionPath
+        $command = Get-Command git -ErrorAction SilentlyContinue
+    }
+    if (-not $command) {
+        throw "Git was not found after installation. Restart PowerShell and re-run."
+    }
+    return $command.Source
+}
+
+function Get-CheckoutRoot {
+    param([string]$GitPath)
+    # Outside a checkout, rev-parse is an expected failed probe.
+    try {
+        $inside = & $GitPath rev-parse --is-inside-work-tree 2>$null
+        if ($LASTEXITCODE -ne 0 -or $inside -ne 'true') { return $null }
+    } catch {
+        return $null
+    }
+    Invoke-CheckedCommand -Command $GitPath -Arguments @('rev-parse', '--show-toplevel')
+}
+
+function Resolve-Make {
+    foreach ($name in @('make', 'mingw32-make', 'gmake')) {
+        $command = Get-Command $name -ErrorAction SilentlyContinue
+        if ($command) { return $command.Source }
+    }
+    $fallback = 'C:\Program Files (x86)\GnuWin32\bin\make.exe'
+    if (Test-Path $fallback) { return $fallback }
+    return $null
+}
+
 function Add-ToPathIfMissing {
     param(
         [Parameter(Mandatory=$true)][string]$Dir,
         [switch]$Persist
     )
-    if (-not $Dir) { return }
-    $segments = $env:Path -split ';'
-    if ($segments -notcontains $Dir) {
-        # Update current session
+    if (($env:Path -split ';') -notcontains $Dir) {
         $env:Path = "$Dir;" + $env:Path
-        Write-Host "Added $Dir to PATH for current session" -ForegroundColor Yellow
-        if ($Persist) {
-            try {
-                # Read current user PATH, append dir if missing, and persist
-                $userPath = [System.Environment]::GetEnvironmentVariable('Path','User')
-                $userSegs = @()
-                if ($userPath) { $userSegs = $userPath -split ';' }
-                if ($userSegs -notcontains $Dir) {
-                    $newUserPath = if ([string]::IsNullOrEmpty($userPath)) { $Dir } else { "$Dir;" + $userPath }
-                    [System.Environment]::SetEnvironmentVariable('Path', $newUserPath, 'User')
-                    Write-Host "Persisted PATH update to user PATH" -ForegroundColor Yellow
-                }
-            } catch {
-                Write-Host "Failed to persist PATH: $_" -ForegroundColor DarkYellow
-            }
+    }
+    if ($Persist) {
+        $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+        if (($userPath -split ';') -notcontains $Dir) {
+            $newPath = if ($userPath) { "$Dir;$userPath" } else { $Dir }
+            [System.Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
         }
     }
 }
 
-function Ensure-Winget {
-    $winget = Get-Command winget -ErrorAction SilentlyContinue
-    if ($winget) { return $winget.Source }
+function Ensure-Bash {
+    param([string]$GitPath)
+    $gitDirectory = Split-Path -Parent $GitPath
+    if ($gitDirectory) {
+        $gitRoot = Split-Path -Parent $gitDirectory
+        $gitBin = Join-Path $gitRoot 'bin'
+        if (Test-Path (Join-Path $gitBin 'bash.exe')) {
+            # Prefer Git Bash to the Windows WSL bash shim.
+            $otherPaths = ($env:Path -split ';') | Where-Object { $_ -ne $gitBin }
+            $env:Path = "$gitBin;" + ($otherPaths -join ';')
+            return
+        }
+    }
+    if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
+        throw "Bash is required by Make. Install Git for Windows and re-run."
+    }
 }
-
-
 
 function Ensure-Make {
     $makePath = Resolve-Make
-    if ($makePath) {
-        Write-Host "Found make at $makePath" -ForegroundColor Green
-        return $makePath
-    }
-    # Prefer winget first
+    if ($makePath) { return $makePath }
     $wingetPath = Ensure-Winget
-    if ($wingetPath) {
-        try {
-            Write-Host "Attempting: winget install -e --id GnuWin32.Make" -ForegroundColor DarkYellow
-            & $wingetPath install -e --id GnuWin32.Make --accept-source-agreements --accept-package-agreements
-            # Re-resolve after install attempt
-            $makePath = Resolve-Make
-            $makeDir = Split-Path $makePath -Parent
-            Add-ToPathIfMissing -Dir $makeDir -Persist
-        } catch {
-            Write-Host "winget install GnuWin32.Make failed: $_" -ForegroundColor DarkYellow
-        }
-    } else {
-        Write-Host "winget not available; skipping winget install attempts" -ForegroundColor DarkYellow
+    if (-not $wingetPath) {
+        throw "GNU Make is required. Install it with winget, Chocolatey or Scoop and re-run."
     }
-
+    Write-Host "Installing GNU Make..." -ForegroundColor Yellow
+    Invoke-CheckedCommand -Command $wingetPath -Arguments @(
+        'install', '-e', '--id', 'GnuWin32.Make',
+        '--accept-source-agreements', '--accept-package-agreements'
+    ) | Out-Host
+    Update-SessionPath
+    $makePath = Resolve-Make
     if (-not $makePath) {
-        throw "Unable to find or install 'make'. Please install GNU Make manually (winget/choco/scoop) and re-run."
+        throw "GNU Make was not found after installation. Restart PowerShell and re-run."
     }
-    $makeDir = Split-Path $makePath -Parent
-    Add-ToPathIfMissing -Dir $makeDir -Persist
+    Add-ToPathIfMissing -Dir (Split-Path -Parent $makePath) -Persist
     return $makePath
 }
 
-# Invoke make robustly using resolved path or common aliases
 function Invoke-Make {
-    param(
-        [Parameter(Mandatory=$true)][string[]]$Args
-    )
-    $candidates = @()
-    $resolved = Resolve-Make
-    if ($resolved) { $candidates += $resolved }
-    $candidates += @('make','mingw32-make','gmake')
-
+    param([Parameter(Mandatory=$true)][string[]]$MakeArguments)
+    $makePath = Resolve-Make
+    if (-not $makePath) { throw "GNU Make is unavailable." }
     $makefile = Join-Path $RepoRoot 'Makefile'
-
-    foreach ($c in $candidates) {
-        try {
-            # --no-print-directory avoids "entering/leaving directory" noise
-            & "$c" --no-print-directory -f $makefile @Args
-            return
-        } catch { }
-    }
-    throw "Failed to execute make with args: $Args"
+    Invoke-CheckedCommand -Command $makePath -Arguments (
+        @('--no-print-directory', '-f', $makefile) + $MakeArguments
+    )
 }
 
 function Ensure-Chezmoi {
-    $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
-    if ($chezmoi) {
-        Write-Host "Found chezmoi at $($chezmoi.Source)" -ForegroundColor Green
-        return $chezmoi.Source
-    }
+    if (Get-Command chezmoi -ErrorAction SilentlyContinue) { return }
     $wingetPath = Ensure-Winget
     if ($wingetPath) {
         try {
-            Write-Host "Attempting: winget install -e --id twpayne.chezmoi" -ForegroundColor DarkYellow
-            & $wingetPath install -e --id twpayne.chezmoi --accept-source-agreements --accept-package-agreements
-            $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+            Invoke-CheckedCommand -Command $wingetPath -Arguments @(
+                'install', '-e', '--id', 'twpayne.chezmoi',
+                '--accept-source-agreements', '--accept-package-agreements'
+            ) | Out-Host
+            Update-SessionPath
+            if (Get-Command chezmoi -ErrorAction SilentlyContinue) { return }
         } catch {
-            Write-Host "winget install twpayne.chezmoi failed: $_" -ForegroundColor DarkYellow
+            Write-Host "Optional chezmoi installation failed: $_" -ForegroundColor DarkYellow
         }
-    } else {
-        Write-Host "winget not available; skipping winget install attempts" -ForegroundColor DarkYellow
     }
-
-    if (-not $chezmoi) {
-        Write-Host "Unable to find or install 'chezmoi'. Install it manually (https://www.chezmoi.io/install/) if you need it." -ForegroundColor DarkYellow
-        return $null
-    }
-    return $chezmoi.Source
+    Write-Host "Install chezmoi manually if you need dotfiles deployment." -ForegroundColor DarkYellow
 }
 
 function Install-CommandShim {
     $exe = Join-Path $RepoRoot '.venv\Scripts\personal-os-setup.exe'
     if (-not (Test-Path $exe)) { return }
-
     $shimDir = Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps'
     if (Test-Path $shimDir) {
         $shimPath = Join-Path $shimDir 'personal-os-setup.cmd'
-        Set-Content -Path $shimPath -Value "@echo off`r`n`"$exe`" %*" -Encoding ASCII
+        Set-Content -Path $shimPath -Value @('@echo off', ('"{0}" %*' -f $exe)) -Encoding ASCII
         Write-Host "Linked personal-os-setup -> $shimPath" -ForegroundColor Green
     } else {
-        $venvScripts = Join-Path $RepoRoot '.venv\Scripts'
-        Add-ToPathIfMissing -Dir $venvScripts -Persist
+        Add-ToPathIfMissing -Dir (Join-Path $RepoRoot '.venv\Scripts') -Persist
     }
 }
 
+# Define every helper before bootstrapping a machine that may not have Git yet.
+$git = Ensure-Git
+$RepoRoot = $null
+$checkout = Get-CheckoutRoot -GitPath $git
+if ($checkout -and (Split-Path -Leaf $checkout) -eq $RepoFolderName) {
+    $RepoRoot = $checkout
+}
+if (-not $RepoRoot) {
+    $destination = Join-Path $env:USERPROFILE '.personal-os-setup'
+    if (Test-Path $destination) {
+        Set-Location $destination
+        $checkout = Get-CheckoutRoot -GitPath $git
+        if (-not $checkout -or
+            [System.IO.Path]::GetFullPath($checkout) -ne [System.IO.Path]::GetFullPath($destination)) {
+            throw "Folder exists but is not the expected Git checkout: $destination"
+        }
+    } else {
+        Invoke-CheckedCommand -Command $git -Arguments @(
+            'clone', 'https://github.com/AmineDjeghri/personal-os-setup.git', $destination
+        ) | Out-Host
+    }
+    $RepoRoot = $destination
+}
+
+Set-Location $RepoRoot
+Write-Host "Pulling (fast-forward only)..." -ForegroundColor Yellow
+Invoke-CheckedCommand -Command $git -Arguments @('pull', '--ff-only') | Out-Host
+Ensure-Bash -GitPath $git
 $null = Ensure-Make
-$null = Ensure-Chezmoi
+Ensure-Chezmoi
 
 Write-Host "Running: make install" -ForegroundColor Yellow
-Invoke-Make -Args @('install')
-
+Invoke-Make -MakeArguments @('install')
 Install-CommandShim
-
 Write-Host "Running: make run" -ForegroundColor Yellow
-Invoke-Make -Args @('run')
-
+Invoke-Make -MakeArguments @('run')
 Write-Host "Done" -ForegroundColor Green

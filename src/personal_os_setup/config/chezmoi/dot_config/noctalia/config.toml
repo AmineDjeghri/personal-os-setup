@@ -92,7 +92,7 @@ enabled = true
 [nightlight]
 enabled = true
 force = true
-temperature_day = 7000
+temperature_day = 7100
 temperature_night = 7000
 
 [plugin_settings."nzlov/daily-wallpaper"]
@@ -208,22 +208,22 @@ color = "error"
 type = "spacer"
 
 [widget.temp]
-display = "text"
+visualization = "none"
 glyph = "cpu-2"
-show_label = true
+show_value = true
 stat = "cpu_temp"
 type = "sysmon"
 
 [widget.sysmon_2]
-display = "text"
+visualization = "none"
 glyph = "gpu-usage"
-show_label = true
+show_value = true
 stat = "gpu_usage"
 type = "sysmon"
 
 [widget.sysmon_3]
-display = "text"
-show_label = true
+visualization = "none"
+show_value = true
 stat = "ram_pct"
 type = "sysmon"
 
@@ -263,6 +263,7 @@ color = "secondary"
 active_pill_size = 2.5
 capsule = true
 capsule_fill = "on_primary"
-display = "name"
+label_source = "name"
+show_labels = true
 inactive_pill_size = 1.0
 pill_scale = 0.80

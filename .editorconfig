@@ -1,0 +1,20 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Markdown keeps 4: Python-Markdown needs 4-space nested lists (.markdownlint-cli2.yaml MD007).
+[*.{yml,yaml,json,toml}]
+indent_size = 2
+
+[{Makefile,*.mk}]
+indent_style = tab
+
+# Windows-runtime files are CRLF on checkout (.gitattributes).
+[*.{bat,ps1,reg}]
+end_of_line = crlf

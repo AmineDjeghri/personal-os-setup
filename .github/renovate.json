@@ -20,32 +20,105 @@
   "prHourlyLimit": 10,
   "vulnerabilityAlerts": {
     "enabled": true,
-    "addLabels": ["security"]
+    "addLabels": ["security"],
+    "semanticCommitType": "fix"
   },
   "osvVulnerabilityAlerts": true,
   "pinDigests": false,
   "packageRules": [
     {
-      "description": "Group pre-commit updates",
+      "description": "Keep declared Python support fixed; change it manually with CI and documentation",
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["requires-python"],
+      "enabled": false
+    },
+    {
+      "description": "Preserve compatibility with the full supported Python range",
+      "matchDatasources": ["pypi"],
+      "constraintsFiltering": "strict"
+    },
+    {
+      "description": "Group pre-commit updates (tooling only, no release)",
       "matchManagers": ["pre-commit"],
       "groupName": "pre-commit dependencies",
       "groupSlug": "pre-commit",
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
     },
     {
-      "description": "Group Python/pip updates",
-      "matchManagers": ["pip", "pep621"],
-      "groupName": "python dependencies",
-      "groupSlug": "python",
-      "minimumReleaseAge": "7 days"
-    },
-    {
-      "description": "Group GitHub Actions updates",
+      "description": "Group GitHub Actions updates (CI only, no release)",
       "matchManagers": ["github-actions"],
       "groupName": "github-actions",
       "groupSlug": "github-actions",
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
+    },
+    {
+      "description": "Production Python dependency updates -> trigger a patch release so consumers get the new compatibility range",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["dependencies", "project.dependencies"],
+      "groupName": "python dependencies",
+      "groupSlug": "python",
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "fix"
+    },
+    {
+      "description": "Dev/docs Python dependency updates (dependency-groups) -> tooling only, no release needed",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["devDependencies", "optional-dependencies", "dependency-groups"],
+      "groupName": "python dev dependencies",
+      "groupSlug": "python-dev",
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore"
+    },
+    {
+      "description": "Major bumps of production deps need manual review for breaking changes",
+      "matchManagers": ["pip", "pep621"],
+      "matchDepTypes": ["dependencies", "project.dependencies"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "addLabels": ["needs-breaking-review"],
+      "semanticCommitType": "fix"
+    },
+    {
+      "description": "Maintain stable pre-commit Node runtime updates as tooling",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["node-version"],
+      "matchPackageNames": ["node"],
+      "minimumReleaseAge": "7 days",
+      "semanticCommitType": "chore",
+      "ignoreUnstable": true,
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Review major LTS upgrades of the pre-commit Node runtime",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["node-version"],
+      "matchPackageNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "addLabels": ["needs-compatibility-review"]
     }
   ],
-  "platformAutomerge": false
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "pre-commit": {
+    "enabled": true
+  },
+  "platformAutomerge": false,
+  "baseBranchPatterns": ["dev"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the Node runtime used by the markdownlint pre-commit hook",
+      "managerFilePatterns": ["/^\\.pre-commit-config\\.ya?ml$/"],
+      "matchStrings": [
+        "id: markdownlint-cli2\\r?\\n\\s+language_version: ['\\\"]?(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version",
+      "versioningTemplate": "node"
+    }
+  ]
 }

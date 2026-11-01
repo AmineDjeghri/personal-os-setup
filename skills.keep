@@ -1,0 +1,19 @@
+# Add one with: make skills-live-to-repo NAME=<name>. Audited by: make skills-status
+# Authored skills deliberately saved in the repo (one name per line; # comments ok).
+agent-skills-architecture
+claude-code-ops
+coding-workflow
+debugging-hermes-tui-commands
+git-line-endings
+github-actions-trigger-gotchas
+github-auth
+github-code-review
+github-pr-workflow
+github-repo-management
+hermes-cron-automations
+hermes-instance-audit
+hermes-session-recall
+report-pdf
+skill-deployment
+template-adoption
+youtube-download-automation

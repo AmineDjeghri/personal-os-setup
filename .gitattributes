@@ -1,0 +1,17 @@
+# Normalize line endings: LF in the repo, native on checkout
+* text=auto
+
+# Windows-runtime files: LF in the repo, CRLF on checkout
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.reg text eol=crlf
+
+# Explicitly mark binary files so Git never touches them
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.zip binary

@@ -1,17 +1,17 @@
 [project]
 name = "personal-os-setup"
-version = "2.11.1"
+version = "2.20.0"
 description = "A terminal-based interactive app that helps you setup and enhance your OS."
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.14.0, <=3.14.8"
 dependencies = [
     # Engineering
     "textual==8.2.8",
-    "pydantic==2.13.4",
-    "pydantic-settings==2.15.0",
+    "pydantic==2.14.1",
+    "pydantic-settings==2.16.0",
     "loguru==0.7.3",
     "PyYAML==6.0.3",
-    "build==1.5.1", # For building some aur packages like rivalcfg-gui
+    "build==1.6.1", # For building some aur packages like rivalcfg-gui
 ]
 
 ############### uv configuration
@@ -24,18 +24,19 @@ default-groups = []
 dev = [
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
-    "pre-commit==4.6.1",
-    "ruff==0.16.2",
-    "python-semantic-release==10.6.1",
+    "pytest-xdist==3.8.0",
+    "pytest-cov==7.1.0",
+    "pre-commit==4.7.0",
+    "ruff==0.17.2",
+    "python-semantic-release==10.7.0",
 ]
 
 docs = [
     "properdocs==1.6.7",
     "mkdocs-material==9.7.7",
-    "mkdocstrings==1.0.6",
-    "mkdocs-mermaid2-plugin==1.2.3",
+    "mkdocstrings==1.0.8",
     "mkdocs-gen-files==0.6.1",
-    "mkdocstrings-python==2.0.5",
+    "mkdocstrings-python==2.0.10",
     "mkdocs-same-dir==0.1.5",
     "mkdocs-exclude==1.0.2",
     "mkdocs-literate-nav==0.6.3",
@@ -55,28 +56,47 @@ personal-os-setup = "personal_os_setup.frontend.main:main"
 
 #### pytest configuration
 [tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/skills"]
+pythonpath = ["."]
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 
 ############### ruff configuration
 [tool.ruff]
-extend-exclude = ["*.ipynb"]
+# The chezmoi payload is deployed verbatim (shipped skills, dotfiles): ruff would reformat the
+# python snippets inside those markdown files and silently change their meaning.
+extend-exclude = ["src/personal_os_setup/config/**"]
 line-length = 100
-
 # Enable all `pydocstyle` rules, limiting to those that adhere to the Google convention via `convention = "google"`
 lint.select = ["D", "F401"]
 lint.ignore = ["D100", "D101", "D102", "D103", "D104", "D107", "D417"]
 lint.pydocstyle.convention = "google"
 
 
+
+[tool.coverage.run]
+source = ["personal_os_setup", "scripts"]
+omit = ["src/personal_os_setup/config/*"]
+
+[tool.coverage.report]
+show_missing = true
+
 # python-semantic-release configuration
 [tool.semantic_release]
 commit_parser = "scripts.emoji_commit_parser:EmojiAngularParser"
 version_toml = ["pyproject.toml:project.version"]
 version_pattern = "v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-.]\\w+)?)"  # matches v1.0.0, v1.0.0-rc.1, etc.
-upload_to_vcs_release = false  # Semantic-release automatically creates GitHub releases. Publication is handled by main-release.yml and dev-release.yml
-commit_author = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+# scripts/release.sh uses --no-vcs-release; verified assets are uploaded to a draft before publication.
+# make release-version sets GIT_COMMIT_AUTHOR to your git identity; CI sets the bot.
+commit_author = { env = "GIT_COMMIT_AUTHOR", default = "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" }
 commit_message = "chore(release): v{version} [skip ci]"
+
+# Stop before staging or publication if any build step fails.
+build_command = """
+uv lock &&
+git add uv.lock &&
+make test-installation
+"""
 
 [tool.semantic_release.branches.main]
 match = "main"
@@ -85,7 +105,7 @@ prerelease = false
 [tool.semantic_release.branches.dev]
 match = "dev"
 prerelease = true
-prerelease_token = "rc"  # release candidate: 1.1.0-rc.1, 1.1.0-rc.2, etc.
+prerelease_token = "rc"
 
 # ---------------------------------------------------------------------------
 # Commit Convention:  [emoji] <type>[(<scope>)][!]: <description>
@@ -95,11 +115,6 @@ prerelease_token = "rc"  # release candidate: 1.1.0-rc.1, 1.1.0-rc.2, etc.
 #   🐛 fix / bugfix / hotfix   → patch bump  (1.0.0 → 1.0.1)
 #   ⚡️ perf                    → patch bump
 #   💥 feat! / BREAKING CHANGE → major bump  (1.0.0 → 2.0.0)
-#
-# Dev Branch (release candidates):
-#   ✨ feat / feature          → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
-#   🐛 fix / bugfix / hotfix   → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
-#   💥 feat! / BREAKING CHANGE → rc bump    (1.1.0-rc.1 → 1.1.0-rc.2)
 #
 # No Release (all branches):
 #   ♻️ refactor  🧪 test  📝 docs  🎨 style  🔧 chore  👷 ci  📦 build

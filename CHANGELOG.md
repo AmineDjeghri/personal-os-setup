@@ -2,6 +2,242 @@
 
 <!-- version list -->
 
+## v2.20.0 (2026-10-28)
+
+### Bug Fixes
+
+- Codex skill deployment (#146) ([#146](https://github.com/AmineDjeghri/personal-os-setup/pull/146),
+  [`c54a248`](https://github.com/AmineDjeghri/personal-os-setup/commit/c54a2482498cb14d46ae04ac8d95cc697504e168))
+
+### Features
+
+- **skills**: Add report-pdf skill for reviewable task reports (#142)
+  ([#142](https://github.com/AmineDjeghri/personal-os-setup/pull/142),
+  [`1b1d430`](https://github.com/AmineDjeghri/personal-os-setup/commit/1b1d430c032bf82bba842af05afd6f2675c97b20))
+
+- **skills**: Additions-only genre pass for a curated library (#144)
+  ([#144](https://github.com/AmineDjeghri/personal-os-setup/pull/144),
+  [`ce9e0cc`](https://github.com/AmineDjeghri/personal-os-setup/commit/ce9e0cc9c9c7c194eb8e23c82d29ca2dd492340a))
+
+
+## v2.19.0 (2026-10-27)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic-settings to v2.16.0 (#138)
+  ([#138](https://github.com/AmineDjeghri/personal-os-setup/pull/138),
+  [`0bdefe9`](https://github.com/AmineDjeghri/personal-os-setup/commit/0bdefe9a5402776fcd8c1acb4431b671c44b3bfd))
+
+### Documentation
+
+- **skills**: One writer for genre tags, and no bare markers after a drop (#141)
+  ([#141](https://github.com/AmineDjeghri/personal-os-setup/pull/141),
+  [`7d949d9`](https://github.com/AmineDjeghri/personal-os-setup/commit/7d949d90442fbe0c8df876c001e2d60619605a5a))
+
+### Features
+
+- Shutters dusk automation (#140)
+  ([#140](https://github.com/AmineDjeghri/personal-os-setup/pull/140),
+  [`ea0c2eb`](https://github.com/AmineDjeghri/personal-os-setup/commit/ea0c2ebfe78b8e4e99d2e00d8d930fd7371c37ac))
+
+- Skills governance 2 (#139) ([#139](https://github.com/AmineDjeghri/personal-os-setup/pull/139),
+  [`bc0e403`](https://github.com/AmineDjeghri/personal-os-setup/commit/bc0e403b366db3baeee23cd41f36b844cd79cfc4))
+
+
+## v2.18.0 (2026-10-26)
+
+### Documentation
+
+- Correct typos and formatting in various markdown files
+  ([`fa3f268`](https://github.com/AmineDjeghri/personal-os-setup/commit/fa3f268649afb10328dc690bf112198d37638578))
+
+- Update docs
+  ([`4d4642a`](https://github.com/AmineDjeghri/personal-os-setup/commit/4d4642a877480977e6b4deb3741004e3e8a17e32))
+
+### Features
+
+- **vm**: Add a Windows guest target and Windows CI integration tests (#131)
+  ([#131](https://github.com/AmineDjeghri/personal-os-setup/pull/131),
+  [`c732a14`](https://github.com/AmineDjeghri/personal-os-setup/commit/c732a14a980a7e542509c2c803878d8adafa2902))
+
+
+## v2.17.0 (2026-10-19)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic to v2.14.1 (#137)
+  ([#137](https://github.com/AmineDjeghri/personal-os-setup/pull/137),
+  [`7478894`](https://github.com/AmineDjeghri/personal-os-setup/commit/74788940d9715980fc7f454248904c63bef40d1c))
+
+### Features
+
+- **binds**: Add Noctalia window switcher key binding and passwordless sync script
+  ([`93d8563`](https://github.com/AmineDjeghri/personal-os-setup/commit/93d85636bbcfbc1a1f991f77f56d1c86a7a14abe))
+
+
+## v2.16.2 (2026-10-17)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency pydantic to v2.14.0 (#135)
+  ([#135](https://github.com/AmineDjeghri/personal-os-setup/pull/135),
+  [`7aab913`](https://github.com/AmineDjeghri/personal-os-setup/commit/7aab91335ed498117ea33267f398fa36a203c8e6))
+
+- **deps**: Update python to >=3.14,<3.16 (#134)
+  ([#134](https://github.com/AmineDjeghri/personal-os-setup/pull/134),
+  [`ac181b1`](https://github.com/AmineDjeghri/personal-os-setup/commit/ac181b10951d73420f57083f87d2930756706d9c))
+
+- **renovate**: Add semantic commit type for Python version range widening
+  ([`d4a8d82`](https://github.com/AmineDjeghri/personal-os-setup/commit/d4a8d826b44835943bf7858f9f2e99a376b2c340))
+
+- **renovate**: Widen Python version range in package rules
+  ([`2417f7f`](https://github.com/AmineDjeghri/personal-os-setup/commit/2417f7f816fe988e50e72c8c935d0514cdb143dd))
+
+### Documentation
+
+- **home-server**: Document TV/PC power control and fill the integration gaps (#130)
+  ([#130](https://github.com/AmineDjeghri/personal-os-setup/pull/130),
+  [`0eec928`](https://github.com/AmineDjeghri/personal-os-setup/commit/0eec928fa985e9d22b2d64c6365753aabcc48655))
+
+- **home-server**: Matter Hub voice routines + LAN naming/DHCP ownership (#133)
+  ([#133](https://github.com/AmineDjeghri/personal-os-setup/pull/133),
+  [`30c5d8d`](https://github.com/AmineDjeghri/personal-os-setup/commit/30c5d8d79639aae651ec720ea6012301cea4cc3a))
+
+- **home-server**: Note the Matter Hub voice/room gotchas in the readme (#132)
+  ([#132](https://github.com/AmineDjeghri/personal-os-setup/pull/132),
+  [`01c2fa0`](https://github.com/AmineDjeghri/personal-os-setup/commit/01c2fa08045bf9af05f477f50cc9439fee7e1800))
+
+
+## v2.16.1 (2026-10-04)
+
+### Bug Fixes
+
+- **config**: Update temperature settings and widget display options
+  ([`794e011`](https://github.com/AmineDjeghri/personal-os-setup/commit/794e011104fc11a4e8596dc3aaacf6037765d3c4))
+
+### Documentation
+
+- **skills**: Never fold git commit/push into a compound command (#128)
+  ([#128](https://github.com/AmineDjeghri/personal-os-setup/pull/128),
+  [`267ee38`](https://github.com/AmineDjeghri/personal-os-setup/commit/267ee38b8c23586d35acdf810c16fbe047c6afbb))
+
+- **skills**: Require per-action approval for git commit in coding-workflow (#126)
+  ([#126](https://github.com/AmineDjeghri/personal-os-setup/pull/126),
+  [`c861901`](https://github.com/AmineDjeghri/personal-os-setup/commit/c861901aa84f140db0faffac81a36f4469c20dcf))
+
+
+## v2.16.0 (2026-09-28)
+
+### Documentation
+
+- **android-tv**: Note the parent-config limit and the addon resource count (#119)
+  ([#119](https://github.com/AmineDjeghri/personal-os-setup/pull/119),
+  [`68ac0f1`](https://github.com/AmineDjeghri/personal-os-setup/commit/68ac0f16c59e688f7303cbe96858a43395316bec))
+
+### Features
+
+- **home-server**: Add a sunset shutter automation (#124)
+  ([#124](https://github.com/AmineDjeghri/personal-os-setup/pull/124),
+  [`dbfc63b`](https://github.com/AmineDjeghri/personal-os-setup/commit/dbfc63bc89998a871b80f389964c63d9820e68fb))
+
+
+## v2.15.1 (2026-09-22)
+
+### Bug Fixes
+
+- **deps**: Update pypi dependency build to v1.6.1 (#115)
+  ([#115](https://github.com/AmineDjeghri/personal-os-setup/pull/115),
+  [`d40cf14`](https://github.com/AmineDjeghri/personal-os-setup/commit/d40cf14427043a1c788ed4710192dc2ae461f564))
+
+### Documentation
+
+- **aiostreams**: Publish a shareable template and use it in the Nuvio guide (#118)
+  ([#118](https://github.com/AmineDjeghri/personal-os-setup/pull/118),
+  [`f585389`](https://github.com/AmineDjeghri/personal-os-setup/commit/f5853891fcfbb5f39d629b36f25ed32acc2508bc))
+
+- **skill-deployment**: Distinguish shared vs repo-scoped skill loading (#112)
+  ([#112](https://github.com/AmineDjeghri/personal-os-setup/pull/112),
+  [`7d87b51`](https://github.com/AmineDjeghri/personal-os-setup/commit/7d87b51cfa5d20ab68350c31f72b35a6fee0c25b))
+
+
+## v2.15.0 (2026-09-16)
+
+### Features
+
+- **agents**: Add Cloudflare skills + MCP integration for Claude Code and Hermes (#111)
+  ([#111](https://github.com/AmineDjeghri/personal-os-setup/pull/111),
+  [`0dd5a5d`](https://github.com/AmineDjeghri/personal-os-setup/commit/0dd5a5deb88af48c942a1ea8ce73fad5ce78c7bf))
+
+
+## v2.14.2 (2026-09-15)
+
+### Bug Fixes
+
+- **deps**: Update python dependencies (#98)
+  ([#98](https://github.com/AmineDjeghri/personal-os-setup/pull/98),
+  [`dd61d9c`](https://github.com/AmineDjeghri/personal-os-setup/commit/dd61d9c05552584923824eb6ad34824f6b2bd626))
+
+
+## v2.14.1 (2026-09-15)
+
+### Bug Fixes
+
+- Update config
+  ([`40e176b`](https://github.com/AmineDjeghri/personal-os-setup/commit/40e176be30eb89864a22bcc53dd8aae95b876eb7))
+
+
+## v2.14.0 (2026-09-08)
+
+### Features
+
+- **skills**: Add make skills-deploy for chezmoi-source -> ~/.claude/skills (#108)
+  ([#108](https://github.com/AmineDjeghri/personal-os-setup/pull/108),
+  [`4ceacc3`](https://github.com/AmineDjeghri/personal-os-setup/commit/4ceacc32d81f339168a9ae0f377e443c5fadd1bb))
+
+
+## v2.13.2 (2026-09-07)
+
+### Bug Fixes
+
+- **vm-lab**: Scrub owner-name VM credentials, sync skills docs (#107)
+  ([#107](https://github.com/AmineDjeghri/personal-os-setup/pull/107),
+  [`9124ede`](https://github.com/AmineDjeghri/personal-os-setup/commit/9124edef1e3ff2ad35810689c23c59155b0f621a))
+
+
+## v2.13.1 (2026-09-07)
+
+### Bug Fixes
+
+- **docs**: Exclude the config/ data tree from API stubs and docs crawl (#106)
+  ([#106](https://github.com/AmineDjeghri/personal-os-setup/pull/106),
+  [`9d95c22`](https://github.com/AmineDjeghri/personal-os-setup/commit/9d95c224ec88d3e18571aa4d68fad158efadd957))
+
+
+## v2.13.0 (2026-09-07)
+
+### Features
+
+- **skills**: Add shared agent skills and canonical AGENTS.md (#103)
+  ([#103](https://github.com/AmineDjeghri/personal-os-setup/pull/103),
+  [`a557213`](https://github.com/AmineDjeghri/personal-os-setup/commit/a55721376714d304f8e4eefbd95059107a75fdae))
+
+
+## v2.12.0 (2026-09-07)
+
+### Features
+
+- Update server (#104) ([#104](https://github.com/AmineDjeghri/personal-os-setup/pull/104),
+  [`9e5c0a4`](https://github.com/AmineDjeghri/personal-os-setup/commit/9e5c0a41b52a962aece5bde2586b64ad2087afc1))
+
+
+## v2.11.2 (2026-09-03)
+
+### Bug Fixes
+
+- Add missing configs
+  ([`060a8c4`](https://github.com/AmineDjeghri/personal-os-setup/commit/060a8c4d279984ae3f82738781b07df0368e4ab9))
+
+
 ## v2.11.1 (2026-08-28)
 
 ### Bug Fixes

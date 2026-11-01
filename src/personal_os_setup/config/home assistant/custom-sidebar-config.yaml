@@ -94,6 +94,14 @@ order:
     text_color: "#ebc14b"
     order: 7
 
+  - new_item: true
+    item: Labels
+    href: "/config/labels"
+    icon: mdi:label
+    icon_color: "#ebd36f"
+    text_color: "#ebd36f"
+    order: 8
+
   - item: hacs
     icon_color: "#00BCD4"
     text_color: "#00BCD4"
@@ -101,19 +109,19 @@ order:
       [[[ @partial updates_count
           return updates_count > 0 ? updates_count : ''; ]]]
     notification_color: "#00BCD4"
-    order: 8
+    order: 9
 
   - item: Terminal
     icon: mdi:console
     icon_color: "#009e97"
     text_color: "#009e97"
-    order: 9
+    order: 10
 
   - item: File Editor
     icon: mdi:folder-edit
     icon_color: "#DFFFAC"
     text_color: "#DFFFAC"
-    order: 10
+    order: 11
 
   - new_item: true
     item: Logs
@@ -121,30 +129,30 @@ order:
     icon: mdi:math-log
     icon_color: "#9E9E9E"
     text_color: "#9E9E9E"
-    order: 11
+    order: 12
 
   - item: activity
     icon_color: "#9E9E9E"
     text_color: "#795548"
-    order: 12
+    order: 13
 
   - item: history
     icon_color: "#9E9E9E"
     text_color: "#795548"
-    order: 13
+    order: 14
 
   - item: settings
     name: Settings
     icon_color: "#9ab7ff"
     text_color: "#9ab7ff"
-    order: 14
+    order: 15
 
   - item: notifications
     icon_color: "#e8ff04"
     text_color: "#e8ff04"
     divider: true
     divider_color: "#e8ff04"
-    order: 15
+    order: 16
 
 # Hide remaining default items
   - item: To-do lists
