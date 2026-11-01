@@ -81,12 +81,12 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
 
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
-- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-repo-to-live`).
+- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-personal-repo-to-live`).
   Codex gets per-skill links in `~/.agents/skills`; `make skills-status` verifies them.
   Hermes reads `~/.claude/skills` too (`skills.external_dirs`), so nothing is duplicated into
   `~/.hermes/skills` — a name in both roots is unloadable (`Ambiguous skill name … Refusing to guess`);
   `make skills-status` flags it. The saved set is listed in `skills.keep`; save a live skill into the
-  repo with `make skills-live-to-repo NAME=<name>`.
+  repo with `make skills-personal-live-to-repo NAME=<name>`.
 - **Private content stays out:** an `exposure: private` skill is live only (`hermes curator pin`) —
   **this repo is PUBLIC**.
 - **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;

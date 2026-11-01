@@ -28,7 +28,7 @@ always-on, otherwise they're read on demand.
 
 Loading internals: `agent-skills-architecture` → "What actually loads".
 
-**No chezmoi (HA container/CLI):** `cd <repo> && make skills-repo-to-live` — copies the same source
+**No chezmoi (HA container/CLI):** `cd <repo> && make skills-personal-repo-to-live` — copies the same source
 to `~/.claude/skills` and links each authored name into `~/.agents/skills`. Existing Codex
 destinations that point elsewhere are conflicts; reconcile them manually. `make skills-status`
 verifies the links. Python 3 is required for the shared helper. The make target lives in `makefiles/skills.mk` (same file as
@@ -59,21 +59,21 @@ chezmoi --source "$S" apply -v --force --parent-dirs --refresh-externals=never \
 
 Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
-**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-repo-to-live` is
+**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-personal-repo-to-live` is
 copy-only: it overwrites whatever is live and deletes nothing.
 
 - Never deploy a skill that already lives elsewhere in the repo and is symlinked into the store
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-repo-to-live SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-live-to-repo NAME=<name>`.
+**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-personal-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-personal-repo-to-live SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-personal-live-to-repo NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
 **Who deploys what (one split, no overlap):**
 
 - **Authored tree** → chezmoi. `dot_claude/skills/` is ordinary managed files, so `chezmoi apply` writes
-  them; there is deliberately **no `run_` script for the copy** (`make skills-repo-to-live` is the no-chezmoi twin).
+  them; there is deliberately **no `run_` script for the copy** (`make skills-personal-repo-to-live` is the no-chezmoi twin).
   `run_after_zz-link-authored-skills.sh` only creates Codex links using the same helper as Make.
 - **npx replay** → the one thing chezmoi cannot do. Script:
   `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`

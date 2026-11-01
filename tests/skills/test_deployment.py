@@ -126,7 +126,7 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
         f"HERMES_SKILLS_LIVE={tmp}/hermes",
         f"LIVE_SKILLS_LOCK={tmp}/no-live-lock.json",
     ]
-    for target in ["skills-repo-to-live", "skills-repo-to-live", "skills-status"]:
+    for target in ["skills-personal-repo-to-live", "skills-personal-repo-to-live", "skills-status"]:
         result = subprocess.run(args + [target], cwd=repo, text=True, capture_output=True)
         assert result.returncode == 0, (target, result.stdout, result.stderr)
     source = repo / "src/personal_os_setup/config/chezmoi/dot_claude/skills"

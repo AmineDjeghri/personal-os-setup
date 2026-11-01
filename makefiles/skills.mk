@@ -6,7 +6,7 @@
 # (`make skills-status` flags it). Codex gets per-skill links in ~/.agents/skills.
 # The list of deliberately saved skills is skills.keep.
 
-.PHONY: skills-link skills-check skills-repo-to-live skills-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
+.PHONY: skills-link skills-check skills-personal-repo-to-live skills-personal-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
@@ -52,11 +52,11 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		printf "$(RED)STALE$(NC) $$l  (run: make skills-link)\n"; rc=1; \
 	done; exit $$rc
 
-skills-repo-to-live: ## Deploy authored skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
+skills-personal-repo-to-live: ## Deploy personal (authored/modified) skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
 ifeq ($(SKILLS_FORCE),1)
-	@printf "$(YELLOW)skills-repo-to-live: drift check SKIPPED (SKILLS_FORCE=1)$(NC)\n"
+	@printf "$(YELLOW)skills-personal-repo-to-live: drift check SKIPPED (SKILLS_FORCE=1)$(NC)\n"
 else
-	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
+	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-personal-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
 endif
 	@$(SKILLS_LINK) --preflight
 	@mkdir -p "$(SKILLS_DST)"
@@ -65,7 +65,7 @@ endif
 	@printf "$(GREEN)deployed$(NC) skills to $(SKILLS_DST)\n"
 
 # Internal scan behind skills-status (mode "all": MISSING or DIFFERS -> exit 1, full OK/DIFFERS/MISSING
-# report + Codex link check) and the skills-repo-to-live gate (mode "drift": DIFFERS only -> exit 1;
+# report + Codex link check) and the skills-personal-repo-to-live gate (mode "drift": DIFFERS only -> exit 1;
 # MISSING is fine, i.e. never deployed yet).
 _skills-scan:
 	@rc=0; \
@@ -105,9 +105,9 @@ skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes
 	else echo "  (no live lock at $(LIVE_SKILLS_LOCK) -- nothing installed via npx here)"; fi; \
 	exit $$rc
 
-skills-live-to-repo: ## Save a live skill into the repo: make skills-live-to-repo NAME=<name> (copies ~/.claude/skills/<name>, lists it in skills.keep)
-	@test -n "$(NAME)" || { printf "$(RED)usage:$(NC) make skills-live-to-repo NAME=<name>\n"; exit 1; }
-	@test -d "$(SKILLS_DST)/$(NAME)" || { printf "$(RED)skills-live-to-repo: no live skill$(NC) at $(SKILLS_DST)/$(NAME)\n"; exit 1; }
+skills-personal-live-to-repo: ## Save a live personal skill into the repo: make skills-personal-live-to-repo NAME=<name> (copies ~/.claude/skills/<name>, lists it in skills.keep)
+	@test -n "$(NAME)" || { printf "$(RED)usage:$(NC) make skills-personal-live-to-repo NAME=<name>\n"; exit 1; }
+	@test -d "$(SKILLS_DST)/$(NAME)" || { printf "$(RED)skills-personal-live-to-repo: no live skill$(NC) at $(SKILLS_DST)/$(NAME)\n"; exit 1; }
 	@mkdir -p "$(SKILLS_SRC)/$(NAME)"
 	@cp -R "$(SKILLS_DST)/$(NAME)/." "$(SKILLS_SRC)/$(NAME)/"
 	@touch $(SKILLS_KEEP)

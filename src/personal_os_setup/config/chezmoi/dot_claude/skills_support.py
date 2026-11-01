@@ -54,7 +54,7 @@ def link_authored(source, claude, codex, *, check=False, preflight=False):
         elif link.exists() or link.is_symlink():
             raise ValueError(f"CONFLICT {link}: expected a link to {target}; reconcile manually")
         elif check:
-            raise ValueError(f"MISSING {link}: run make skills-repo-to-live")
+            raise ValueError(f"MISSING {link}: run make skills-personal-repo-to-live")
         if not preflight and not (target / "SKILL.md").is_file():
             raise ValueError(f"MISSING {target}/SKILL.md: deploy authored files first")
     if not check and not preflight:

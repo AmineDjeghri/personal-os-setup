@@ -126,12 +126,12 @@ Things to know:
   **chezmoi: clean backups** to remove them.
 - **It does not check for drift.** Apply overwrites a live skill that was edited and not yet pulled back with
   re-add. Run `make skills-status` first if an agent may have edited a live skill.
-- **Re-add only handles files already tracked.** For a brand-new live-only skill, use `make skills-live-to-repo`.
+- **Re-add only handles files already tracked.** For a brand-new live-only skill, use `make skills-personal-live-to-repo`.
 
 ### Setting up a new machine
 
 Clone the repo, then apply `.claude` from the TUI. The third-party lock is replayed for you. Without the TUI:
-`make skills-repo-to-live` (authored skills) and `make skills-thirdparty-repo-to-live` (third-party skills).
+`make skills-personal-repo-to-live` (authored skills) and `make skills-thirdparty-repo-to-live` (third-party skills).
 
 ## Adding skills
 
@@ -139,9 +139,9 @@ Clone the repo, then apply `.claude` from the TUI. The third-party lock is repla
 
 1. Create `src/personal_os_setup/config/chezmoi/dot_claude/skills/<name>/SKILL.md`.
 2. Add `<name>` to `skills.keep`.
-3. Deploy from the TUI or with `make skills-repo-to-live`, then run `make skills-status` to confirm every skill reports `OK`.
+3. Deploy from the TUI or with `make skills-personal-repo-to-live`, then run `make skills-status` to confirm every skill reports `OK`.
 
-To keep a skill that already exists live (for example one an agent created), run `make skills-live-to-repo NAME=<name>`.
+To keep a skill that already exists live (for example one an agent created), run `make skills-personal-live-to-repo NAME=<name>`.
 
 ### From another repo (third-party)
 
@@ -175,14 +175,16 @@ not.
 
 ### `make` targets
 
-| Command                                  | Purpose                                                                                                                                                                                                                              |
-|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `make skills-status`                     | One read-only report: repo vs live copy per skill (`OK` / `DIFFERS` / `MISSING`), Codex links, names present in both `~/.claude/skills` and `~/.hermes/skills`, repo skills missing from `skills.keep`, third-party lock and content |
-| `make skills-repo-to-live`               | Copy authored skills repo → `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides)                                                                                   |
-| `make skills-live-to-repo NAME=<name>`   | Save a live skill into the repo and add it to `skills.keep`                                                                                                                                                                          |
-| `make skills-thirdparty-live-to-repo`    | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                                                                                                                                      |
-| `make skills-thirdparty-repo-to-live`    | Reinstall and verify for Claude Code and Codex (`AGENT=codex` selects only Codex)                                                                                                                                                    |
-| `make skills-link` / `make skills-check` | Create / verify the `.agents/skills` symlinks for repo-local skills                                                                                                                                                                  |
+| Command                                         | Purpose                                                                                                                                                                                                                              |
+|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `make skills-status`                            | One read-only report: repo vs live copy per skill (`OK` / `DIFFERS` / `MISSING`), Codex links, names present in both `~/.claude/skills` and `~/.hermes/skills`, repo skills missing from `skills.keep`, third-party lock and content |
+| `make skills-personal-repo-to-live`             | Copy the personal (authored/modified) skills repo → `~/.claude/skills` and link them into `~/.agents/skills`; refuses drift or link conflicts (`SKILLS_FORCE=1` overrides)                                                           |
+| `make skills-personal-live-to-repo NAME=<name>` | Save a live personal skill into the repo and add it to `skills.keep`                                                                                                                                                                 |
+| `make skills-thirdparty-live-to-repo`           | Copy the live `npx skills` lock into the repo as `third-party-skills.lock.json`                                                                                                                                                      |
+| `make skills-thirdparty-repo-to-live`           | Reinstall and verify third-party skills for Claude Code and Codex (`AGENT=codex` selects only Codex)                                                                                                                                 |
+| `make skills-link` / `make skills-check`        | Create / verify the `.agents/skills` symlinks for repo-local skills                                                                                                                                                                  |
+
+> Target names carry the skill class: `personal-*` = the authored/modified tree in this repo, `thirdparty-*` = the `npx skills` lock. Each class has both directions (`-repo-to-live`, `-live-to-repo`).
 
 ### What `skills-thirdparty-repo-to-live` does
 
