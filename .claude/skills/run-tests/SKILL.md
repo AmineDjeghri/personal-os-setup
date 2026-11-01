@@ -18,8 +18,8 @@ Read `docs/developer/4.testing.md` for the test suites and current targets.
    The console callable loads without starting the app (startup can self-update and prepare sudo).
 3. `make test-coverage` reuses `test-all` with separate Python coverage in `reports/coverage.xml`.
    Coverage does not establish OS integration completeness; no threshold is imposed yet.
-4. `make check` runs static/docs hooks and `test-all`. `make install-dev` and
-   `make pre-commit-install` prepare the environment/hooks separately. Checks do not install them.
+4. `make check` runs `pre-commit-status` (hook warning), static/docs hooks, `test-all` and `docs-build`.
+   `make install-dev` prepares the environment and the Git hooks; checks never install them.
 
 Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`. Use
 `make test-local PYTEST_ARGS="-k release"` for focused debugging, including collection-only runs.

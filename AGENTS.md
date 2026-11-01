@@ -32,7 +32,7 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
 | `make test-coverage`          | safe checks with separate Python coverage; no threshold                                   |
 | `make test-all`               | every self-contained suite: unit + skills, then the built-wheel install smoke             |
 | `make pre-commit`             | static/docs hooks including actionlint; no dependency sync or hook installation           |
-| `make install-dev`            | full dev env (use this, not `uv pip install -e .`)                                        |
+| `make install-dev`            | full dev env and Git hooks (use this, not `uv pip install -e .`)                          |
 | `make lint` / `make format`   | ruff directly                                                                             |
 | `make test-integration`       | **CI only**: Linux/macOS mutate packages; Windows is read-only                            |
 

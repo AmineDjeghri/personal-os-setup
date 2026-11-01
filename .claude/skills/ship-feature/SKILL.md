@@ -41,7 +41,7 @@ Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit c
 
 1. `make check` — static/docs hooks, full safe unit/skills suites and artifact/runtime checks.
    Dependencies/hooks must already be installed. For new files, pass explicit paths through
-   `PRE_COMMIT_ARGS="--files <paths>"`; the default covers tracked files.
+   `FILES="<paths>"`; the default covers tracked files.
 2. Use `make test-local PYTEST_ARGS="..."` for focused debugging. Full validation targets reject
    `PYTEST_ARGS` and `PYTEST_ADDOPTS`. See [[run-tests]] for isolation and platform boundaries.
 3. If the branch is behind `dev`: `git merge dev` (if already pushed) or `git rebase dev`

@@ -36,6 +36,7 @@ install-dev: ## Install all dev dependencies
 	@echo "${YELLOW}=========> Installing dependencies...\n  \
 	 Development dependencies (dev & docs) will be installed by install-dev.${NC}"
 	@$(UV) sync --locked --all-groups
+	@$(MAKE) --no-print-directory _pre-commit-install-auto
 	@echo "${GREEN}Dependencies installed.${NC}"
 
 install-prod: ## Install prod dependencies

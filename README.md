@@ -57,7 +57,6 @@ With Make, Bash, Git and uv available:
 git clone https://github.com/AmineDjeghri/personal-os-setup.git
 cd personal-os-setup
 make install-dev
-make pre-commit-install
 make check
 make run
 ```
