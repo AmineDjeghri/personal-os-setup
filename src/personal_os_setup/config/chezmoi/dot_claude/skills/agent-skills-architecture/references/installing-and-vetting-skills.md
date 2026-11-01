@@ -1,7 +1,7 @@
 # Installing and vetting community skills and plugins
 
-Three unrelated channels. Pick by WHO should see the result: `npx skills` installs a real directory into
-`~/.claude/skills` (both agents, via the shared dir); the Hermes hub installs straight into the own store
+Three unrelated channels. Pick by WHO should see the result: `npx skills` installs one copy under
+`~/.agents/skills` and links it into `~/.claude/skills` (both agents, via the shared dir); the Hermes hub installs straight into the own store
 (Hermes-only, tool-managed); a Claude plugin is Claude-only. Never treat them as the same pipeline, and use one
 channel per pack per agent.
 
@@ -42,7 +42,7 @@ the same skill name confuse the model:
 - **Claude Code** → the plugin (`plugin marketplace add` + `plugin install`). The vendor's plugin manifest can
   carry its MCP server too (`.claude-plugin/plugin.json` → `mcpServers`), so nothing else is needed that side.
 - **Hermes** → the skills CLI (`vercel-labs/skills`, npm package `skills`):
-  `npx -y skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy`. `-a claude-code` already reaches Hermes
+  `npx -y skills add <owner>/<repo> -s <skill> -a claude-code -g -y`. `-a claude-code` already reaches Hermes
   (it reads `~/.claude/skills`); never add `-a hermes-agent` (two roots Hermes reads → ambiguous names);
   `-a claude-code -a codex` is safe, never `-a '*'`. If the plugin already serves Claude, expect the skills twice —
   one canal per pack per agent. Destination is chosen by agent + scope alone — no `--dir` flag.

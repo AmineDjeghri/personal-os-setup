@@ -108,7 +108,8 @@ skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes
 	done; [ $$m -gt 0 ] && rc=1 || printf "  $(GREEN)(none)$(NC)\n"; \
 	printf "$(CYAN)== third-party skills ($(TARGET_AGENTS))$(NC)\n"; \
 	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then \
-		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)" || rc=1; \
+		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || rc=1; \
+		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || rc=1; \
 	else echo "  (no live lock at $(LIVE_SKILLS_LOCK) -- nothing installed via npx here)"; fi; \
 	exit $$rc
 
@@ -133,23 +134,30 @@ skills-personal-live-to-repo: ## Save live personal skills into the repo: NAME=<
 	done
 
 # ── Aggregate: both classes, both directions ──────────────────────────────────────────────────
-skills-all-repo-to-live: ## Deploy EVERYTHING out: personal tree + third-party replay + Codex links, then verify
-	@rc=0; \
-	$(MAKE) --no-print-directory skills-personal-repo-to-live || rc=1; \
-	$(MAKE) --no-print-directory skills-link || rc=1; \
-	$(MAKE) --no-print-directory skills-thirdparty-repo-to-live || { printf "$(YELLOW)third-party replay failed$(NC) -- needs npx + jq + a reachable lock\n"; rc=1; }; \
-	$(MAKE) --no-print-directory skills-check || rc=1; \
-	$(MAKE) --no-print-directory skills-status || rc=1; \
-	exit $$rc
+# Shell helpers for the aggregates: run() prints a numbered banner then the step, skip() records a
+# skipped one; both feed the summary table printed last. Needs rc, n, total and summary set first.
+SKILLS_STEPS = run() { n=$$((n+1)); printf "\n$(CYAN)━━━━━━━━ [%s/%s] %s ━━━━━━━━$(NC)\n" "$$n" "$$total" "$$1"; label=$$1; shift; \
+	if "$$@"; then summary="$$summary  $(GREEN)OK$(NC)       $$label\n"; \
+	else summary="$$summary  $(RED)FAILED$(NC)   $$label\n"; rc=1; fi; }; \
+	skip() { n=$$((n+1)); summary="$$summary  $(YELLOW)SKIPPED$(NC)  $$1 ($$2)\n"; }; \
+	finish() { printf "\n$(CYAN)━━━━━━━━ summary ━━━━━━━━$(NC)\n$$summary"; exit $$rc; }
+
+skills-all-repo-to-live: ## Deploy EVERYTHING out: personal tree + third-party replay + Codex links, then verify (FORCE=1 overrides both drift gates)
+	@rc=0; n=0; total=5; summary=""; $(SKILLS_STEPS); \
+	run "personal skills: repo -> live" $(MAKE) --no-print-directory skills-personal-repo-to-live; \
+	run "personal skills: Codex links" $(MAKE) --no-print-directory skills-link; \
+	run "third-party skills: install (npx)" $(MAKE) --no-print-directory skills-thirdparty-repo-to-live; \
+	run "check: .agents/skills links" $(MAKE) --no-print-directory skills-check; \
+	run "status: repo vs live, third-party, clashes" $(MAKE) --no-print-directory skills-status; \
+	finish
 
 skills-all-live-to-repo: ## Capture EVERYTHING back: unlisted live skills + the npx lock, then verify
-	@rc=0; \
-	$(MAKE) --no-print-directory skills-personal-live-to-repo ALL=1 || rc=1; \
-	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then \
-		$(MAKE) --no-print-directory skills-thirdparty-live-to-repo || rc=1; \
-	else printf "$(YELLOW)skills-all-live-to-repo:$(NC) no live npx lock -- third-party capture skipped\n"; fi; \
-	$(MAKE) --no-print-directory skills-status || rc=1; \
-	exit $$rc
+	@rc=0; n=0; total=3; summary=""; $(SKILLS_STEPS); \
+	run "personal skills: live -> repo" $(MAKE) --no-print-directory skills-personal-live-to-repo ALL=1; \
+	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then run "third-party skills: live lock -> repo" $(MAKE) --no-print-directory skills-thirdparty-live-to-repo; \
+	else skip "third-party skills: live lock -> repo" "no live npx lock"; fi; \
+	run "status: repo vs live, third-party, clashes" $(MAKE) --no-print-directory skills-status; \
+	finish
 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
@@ -164,7 +172,6 @@ JQ_TP_NAMES := .skills | keys[]
 AGENTS ?= claude-code codex
 # AGENT remains a compatible single-agent override.
 TARGET_AGENTS = $(if $(strip $(AGENT)),$(AGENT),$(AGENTS))
-SKILLS_RECEIPTS ?= $(XDG_STATE)/personal-os-setup/skills-installed.json
 
 skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the record we ship)
 	@test -f "$(LIVE_SKILLS_LOCK)" || { printf '$(RED)no live lock$(NC) at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
@@ -176,6 +183,6 @@ THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_
 
 skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex); no-op when unchanged, FORCE=1 reinstalls and skips the drift gate
 ifneq ($(SKILLS_FORCE_ON),1)
-	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)" || { echo; printf "$(RED)skills-thirdparty-repo-to-live: ABORTED$(NC) -- the installed copies above were edited after install.\n"; echo "Port the edit somewhere safe first, or re-run with FORCE=1 to overwrite them."; exit 1; }
+	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || { echo; printf "$(RED)skills-thirdparty-repo-to-live: ABORTED$(NC) -- the installed copies above were edited after install.\n"; echo "Port the edit somewhere safe first, or re-run with FORCE=1 to overwrite them."; exit 1; }
 endif
-	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=$(SKILLS_FORCE_ON) STRICT=1 bash $(THIRD_PARTY_REPLAY)
+	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" FORCE=$(SKILLS_FORCE_ON) STRICT=1 bash $(THIRD_PARTY_REPLAY)

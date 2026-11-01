@@ -1,18 +1,22 @@
 """Link authored skills and verify agent-specific third-party installations.
 
-The npx lock contains upstream Git tree IDs, not hashes of installed files (the
-installer filters and transforms files). Keep local content receipts separately.
+Third-party skills are installed by `npx skills` as symlinks: one canonical copy in
+~/.agents/skills (read by Codex) and a link in ~/.claude/skills (read by Claude Code and
+Hermes). The npx lock is the only record: it holds the upstream Git tree ID and the
+install time of each skill, so a hand edit is detected as files newer than that time.
 This module uses only the standard library so chezmoi can run it without uv sync.
 """
 
 import argparse
 from datetime import datetime
-import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import sys
+
+# Files may land a moment before npx stamps the lock; only later mtimes count as edits.
+EDIT_SLACK_SECONDS = 2
 
 
 def selected_agents(value):
@@ -69,15 +73,14 @@ def link_authored(source, claude, codex, *, check=False, preflight=False):
             print(f"LINKED {link}")
 
 
-def content_hash(directory, name):
-    """Hash installed paths, modes and bytes; require a matching skill manifest."""
-    if directory.is_symlink() or not directory.is_dir():
-        raise ValueError(f"MISSING {directory}: expected a real --copy installation")
+def check_installed(directory, name):
+    """Require a skill directory (or a link to one) with a matching SKILL.md manifest."""
+    if not directory.is_dir():
+        raise ValueError(f"MISSING {directory}: not installed")
     manifest = directory / "SKILL.md"
-    if manifest.is_symlink():
-        raise ValueError(f"INVALID {manifest}: manifest must be a regular file")
-    text = manifest.read_text()
-    sections = text.split("---", 2)
+    if not manifest.is_file():
+        raise ValueError(f"INVALID {manifest}: missing SKILL.md")
+    sections = manifest.read_text().split("---", 2)
     if len(sections) != 3 or sections[0].strip():
         raise ValueError(f"INVALID {manifest}: missing frontmatter")
     metadata = sections[1]
@@ -88,35 +91,56 @@ def content_hash(directory, name):
         or not re.search(r"^description:\s*\S", metadata, re.MULTILINE)
     ):
         raise ValueError(f"INVALID {manifest}: name/description mismatch")
-    digest = hashlib.sha256()
-    for path in sorted(directory.rglob("*")):
-        if path.name == ".DS_Store":
+
+
+def read_live_lock(live_lock):
+    """Read the npx lock, or an empty record when nothing was installed yet."""
+    return load_skills(live_lock) if live_lock and live_lock.is_file() else {}
+
+
+def pending_installs(lock, live_lock, agents, roots, *, everything=False):
+    """List (agent, name, source) still to install: missing, broken or out of step with the lock."""
+    live = read_live_lock(live_lock)
+    pending = []
+    for agent in agents:
+        for name, entry in load_skills(lock).items():
+            have = live.get(name, {})
+            stale = any(have.get(key) != entry[key] for key in ("source", "skillFolderHash"))
+            try:
+                check_installed(roots[agent] / name, name)
+                broken = False
+            except ValueError:
+                broken = True
+            if everything or stale or broken:
+                pending.append((agent, name, entry["source"]))
+    return pending
+
+
+def _stamp(moment):
+    return datetime.fromtimestamp(moment).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def installed_drift(lock, live_lock, agents, roots):
+    """List installed skills with files newer than the lock's record of the install."""
+    live = read_live_lock(live_lock)
+    drifted, seen = [], set()
+    for name in load_skills(lock):
+        recorded = live.get(name, {}).get("updatedAt") or live.get(name, {}).get("installedAt")
+        if not recorded:
             continue
-        if path.is_symlink():
-            raise ValueError(f"INVALID {path}: --copy installation contains a symlink")
-        if path.is_file():
-            relative = path.relative_to(directory).as_posix().encode()
-            contents = path.read_bytes()
-            executable = bool(path.stat().st_mode & 0o111)
-            digest.update(f"{len(relative)}:{len(contents)}:{executable}:".encode())
-            digest.update(relative)
-            digest.update(contents)
-    return digest.hexdigest()
-
-
-def installed_snapshot(skills, agents, roots):
-    """Collect content receipts for every requested agent and skill."""
-    return {
-        agent: {
-            name: {
-                "source": entry["source"],
-                "upstream": entry["skillFolderHash"],
-                "content": content_hash(roots[agent] / name, name),
-            }
-            for name, entry in skills.items()
-        }
-        for agent in agents
-    }
+        installed_at = datetime.fromisoformat(recorded.replace("Z", "+00:00")).timestamp()
+        for agent in agents:
+            directory = roots[agent] / name
+            if not directory.is_dir() or directory.resolve() in seen:
+                continue
+            seen.add(directory.resolve())
+            files = [p.stat().st_mtime for p in directory.resolve().rglob("*") if p.is_file()]
+            if files and max(files) > installed_at + EDIT_SLACK_SECONDS:
+                drifted.append(
+                    f"{name}: edited since install "
+                    f"(files last modified {_stamp(max(files))}, lock updated {_stamp(installed_at)})"
+                )
+    return drifted
 
 
 def newer_note(repo_entry, live_entry):
@@ -131,39 +155,8 @@ def newer_note(repo_entry, live_entry):
     return f"repo {repo_color}{repo_at}{reset}, live {live_color}{live_at}{reset} -> {verdict}"
 
 
-def installed_drift(lock, receipts, agents, roots):
-    """List installed skills whose files changed since the last recorded installation.
-
-    Missing installations or receipts are not drift: nothing was deployed yet.
-    """
-    if not receipts.is_file():
-        return []
-    saved = json.loads(receipts.read_text())
-    recorded = datetime.fromtimestamp(receipts.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
-    drifted = []
-    for agent in agents:
-        for name in load_skills(lock):
-            before = saved.get(agent, {}).get(name)
-            directory = roots[agent] / name
-            if before is None or not directory.exists():
-                continue
-            try:
-                now = content_hash(directory, name)
-            except ValueError as error:
-                drifted.append(f"{agent}/{name}: {error}")
-                continue
-            if now != before["content"]:
-                files = [p.stat().st_mtime for p in directory.rglob("*") if p.is_file()]
-                edited = datetime.fromtimestamp(max(files)).strftime("%Y-%m-%d %H:%M:%S")
-                drifted.append(
-                    f"{agent}/{name}: edited since install "
-                    f"(files last modified {edited}, install recorded {recorded})"
-                )
-    return drifted
-
-
-def verify_installations(lock, live_lock, receipts, agents, roots, *, record=False):
-    """Require matching lock identities and actual unchanged installed content."""
+def verify_installations(lock, live_lock, agents, roots):
+    """Require matching lock identities and a usable installation per agent and skill."""
     expected = load_skills(lock)
     live = load_skills(live_lock)
     for name, entry in expected.items():
@@ -177,31 +170,19 @@ def verify_installations(lock, live_lock, receipts, agents, roots, *, record=Fal
         raise ValueError(
             "EXTRA skills in live lock: review and run make skills-thirdparty-live-to-repo"
         )
-    snapshot = installed_snapshot(expected, agents, roots)
-    if record:
-        saved = json.loads(receipts.read_text()) if receipts.exists() else {}
-        saved.update(snapshot)
-        receipts.parent.mkdir(parents=True, exist_ok=True)
-        temporary = receipts.with_suffix(".tmp")
-        temporary.write_text(json.dumps(saved, indent=2) + "\n")
-        temporary.replace(receipts)
-    else:
-        if not receipts.is_file():
-            raise ValueError("MISSING content receipts: run make skills-thirdparty-repo-to-live")
-        saved = json.loads(receipts.read_text())
-        for agent in agents:
-            for name, entry in snapshot[agent].items():
-                if saved.get(agent, {}).get(name) != entry:
-                    raise ValueError(
-                        f"DRIFT {agent}/{name}: installed files changed or receipt missing"
-                    )
-    print(f"OK installed content for {', '.join(agents)} ({len(expected)} skills each)")
+    for agent in agents:
+        for name in expected:
+            check_installed(roots[agent] / name, name)
+    print(f"OK installed skills for {', '.join(agents)} ({len(expected)} skills each)")
 
 
 def main():
     """Run the shared Make/chezmoi helpers."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["link", "verify", "record", "agents", "plan", "drift"])
+    parser.add_argument(
+        "command",
+        choices=["link", "verify", "agents", "plan", "drift", "todo", "installed"],
+    )
     parser.add_argument("--source", type=Path)
     parser.add_argument(
         "--claude",
@@ -214,10 +195,8 @@ def main():
     )
     parser.add_argument("--lock", type=Path)
     parser.add_argument("--live-lock", type=Path)
-    state = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
-    parser.add_argument(
-        "--receipts", type=Path, default=state / "personal-os-setup/skills-installed.json"
-    )
+    parser.add_argument("--name")
+    parser.add_argument("--all", action="store_true")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--preflight", action="store_true")
     args = parser.parse_args()
@@ -233,42 +212,45 @@ def main():
             if args.command == "agents":
                 print(" ".join(agents))
                 return 0
+            roots = {"claude-code": args.claude, "codex": args.codex}
+            if args.command == "installed":
+                if args.name is None:
+                    raise ValueError("--name is required")
+                for agent in agents:
+                    check_installed(roots[agent] / args.name, args.name)
+                return 0
+            if args.lock is None:
+                raise ValueError("--lock is required")
             if args.command == "plan":
-                if args.lock is None:
-                    raise ValueError("--lock is required")
-                roots = {"claude-code": args.claude, "codex": args.codex}
                 for name in load_skills(args.lock):
                     authored = Path(__file__).resolve().parent / "skills" / name
                     if authored.exists():
                         raise ValueError(f"CONFLICT {name}: third-party name is repo-authored")
                     for agent in agents:
-                        if (roots[agent] / name).is_symlink():
+                        link = roots[agent] / name
+                        # npx itself links the Claude copy to the canonical Codex-side one.
+                        npx_link = agent == "claude-code" and (
+                            link.resolve() == (roots["codex"] / name).resolve()
+                        )
+                        if link.is_symlink() and not npx_link:
                             raise ValueError(
-                                f"CONFLICT {agent}/{name}: refusing to overwrite a symlink"
+                                f"CONFLICT {agent}/{name}: refusing to overwrite a foreign symlink"
                             )
                 return 0
+            if args.command == "todo":
+                for pending in pending_installs(
+                    args.lock, args.live_lock, agents, roots, everything=args.all
+                ):
+                    print("\t".join(pending))
+                return 0
             if args.command == "drift":
-                if args.lock is None:
-                    raise ValueError("--lock is required")
-                drifted = installed_drift(
-                    args.lock,
-                    args.receipts,
-                    agents,
-                    {"claude-code": args.claude, "codex": args.codex},
-                )
+                drifted = installed_drift(args.lock, args.live_lock, agents, roots)
                 for line in drifted:
                     print(f"DIFFERS {line}", file=sys.stderr)
                 return 1 if drifted else 0
-            if args.lock is None or args.live_lock is None:
-                raise ValueError("--lock and --live-lock are required")
-            verify_installations(
-                args.lock,
-                args.live_lock,
-                args.receipts,
-                agents,
-                {"claude-code": args.claude, "codex": args.codex},
-                record=args.command == "record",
-            )
+            if args.live_lock is None:
+                raise ValueError("--live-lock is required")
+            verify_installations(args.lock, args.live_lock, agents, roots)
     except (OSError, ValueError) as error:
         print(f"skills: {error}", file=sys.stderr)
         return 1

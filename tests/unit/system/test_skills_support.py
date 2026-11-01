@@ -3,6 +3,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -41,7 +42,7 @@ def installation(tmp_path):
     live = tmp_path / "live.json"
     for path in (lock, live):
         path.write_text(json.dumps(data))
-    return lock, live, tmp_path / "receipts.json", list(roots), roots
+    return lock, live, list(roots), roots
 
 
 def test_authored_links_are_repeatable_and_follow_updates(support, tmp_path):
@@ -84,57 +85,70 @@ def test_link_preflight_allows_fresh_deploy_and_check_rejects_missing(support, t
         support.link_authored(source, claude, codex, check=True)
 
 
-def test_matching_locks_do_not_prove_content_is_installed(support, installation):
-    lock, live, receipts, agents, roots = installation
+def test_matching_locks_do_not_prove_skill_is_installed(support, installation):
+    lock, live, agents, roots = installation
     (roots["codex"] / "example/SKILL.md").unlink()
-    with pytest.raises(OSError):
-        support.verify_installations(lock, live, receipts, agents, roots)
+    with pytest.raises(ValueError, match="INVALID"):
+        support.verify_installations(lock, live, agents, roots)
 
 
-def test_receipts_are_required_for_existing_installs(support, installation):
-    with pytest.raises(ValueError, match="MISSING content receipts"):
-        support.verify_installations(*installation)
-
-
-def test_record_then_verify_both_agents(support, installation):
-    support.verify_installations(*installation, record=True)
-    support.verify_installations(*installation)
-
-
-@pytest.mark.parametrize("agent", ["claude-code", "codex"])
-def test_edited_supporting_file_fails_verification(support, installation, agent):
-    support.verify_installations(*installation, record=True)
-    directory = installation[-1][agent] / "example"
-    (directory / "reference.md").write_text("Local edit.\n")
-    with pytest.raises(ValueError, match=f"DRIFT {agent}/example"):
-        support.verify_installations(*installation)
-
-
-def test_record_refuses_lock_drift(support, installation):
-    lock, live, receipts, agents, roots = installation
+def test_verify_refuses_lock_drift(support, installation):
+    lock, live, agents, roots = installation
     data = json.loads(live.read_text())
     data["skills"]["example"]["skillFolderHash"] = "changed-tree"
     live.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="live lock differs"):
-        support.verify_installations(lock, live, receipts, agents, roots, record=True)
-    assert not receipts.exists()
+        support.verify_installations(lock, live, agents, roots)
 
 
 def test_manifest_name_must_match_directory(support, installation):
     directory = installation[-1]["codex"] / "example"
     (directory / "SKILL.md").write_text("---\nname: other\ndescription: Example\n---\n")
     with pytest.raises(ValueError, match="name/description mismatch"):
-        support.verify_installations(*installation, record=True)
+        support.verify_installations(*installation)
 
 
-def test_third_party_symlinks_are_not_copy_installs(support, installation, tmp_path):
-    roots = installation[-1]
-    original = roots["codex"] / "example"
-    moved = tmp_path / "elsewhere"
-    original.rename(moved)
-    original.symlink_to(moved, target_is_directory=True)
-    with pytest.raises(ValueError, match="real --copy installation"):
-        support.verify_installations(*installation, record=True)
+def npx_style_install(roots, tmp_path):
+    """Mimic npx: one canonical copy on the Codex side, a link to it on the Claude side."""
+    link = roots["claude-code"] / "example"
+    shutil.rmtree(link)
+    link.symlink_to(roots["codex"] / "example", target_is_directory=True)
+    return link
+
+
+def test_symlinked_claude_copy_is_a_valid_installation(support, installation, tmp_path):
+    npx_style_install(installation[-1], tmp_path)
+    support.verify_installations(*installation)
+
+
+def test_pending_lists_only_what_is_missing_or_stale(support, installation):
+    lock, live, agents, roots = installation
+    assert support.pending_installs(lock, live, agents, roots) == []
+    shutil.rmtree(roots["codex"] / "example")
+    assert support.pending_installs(lock, live, agents, roots) == [
+        ("codex", "example", "example/repo")
+    ]
+    write_skill(roots["codex"])
+    data = json.loads(live.read_text())
+    data["skills"]["example"]["skillFolderHash"] = "changed-tree"
+    live.write_text(json.dumps(data))
+    assert len(support.pending_installs(lock, live, agents, roots)) == 2
+    assert len(support.pending_installs(lock, live, agents, roots, everything=True)) == 2
+
+
+def stamp_lock(live, moment):
+    data = json.loads(live.read_text())
+    data["skills"]["example"]["updatedAt"] = moment
+    live.write_text(json.dumps(data))
+
+
+def test_drift_reports_a_hand_edit_once_for_a_linked_install(support, installation, tmp_path):
+    lock, live, agents, roots = installation
+    npx_style_install(roots, tmp_path)
+    stamp_lock(live, "2000-01-01T00:00:00.000Z")
+    drifted = support.installed_drift(lock, live, agents, roots)
+    assert len(drifted) == 1
+    assert drifted[0].startswith("example: edited since install")
 
 
 @pytest.mark.parametrize("value", ["*", "hermes-agent", "codex hermes-agent", ""])
@@ -152,26 +166,3 @@ def test_lock_path_traversal_is_rejected(support, tmp_path):
     path.write_text(json.dumps({"version": 3, "skills": {"../escape": {}}}))
     with pytest.raises(ValueError, match="invalid skill name"):
         support.load_skills(path)
-
-
-def test_single_agent_receipt_update_preserves_other_agent(support, installation):
-    lock, live, receipts, agents, roots = installation
-    support.verify_installations(*installation, record=True)
-    support.verify_installations(lock, live, receipts, ["codex"], roots, record=True)
-    support.verify_installations(lock, live, receipts, agents, roots)
-
-
-def test_installed_drift_ignores_clean_and_undeployed(support, installation):
-    lock, _live, receipts, agents, roots = installation
-    assert support.installed_drift(lock, receipts, agents, roots) == []  # no receipts yet
-    support.verify_installations(*installation, record=True)
-    assert support.installed_drift(lock, receipts, agents, roots) == []
-
-
-def test_installed_drift_reports_hand_edits(support, installation):
-    lock, _live, receipts, agents, roots = installation
-    support.verify_installations(*installation, record=True)
-    (roots["codex"] / "example/reference.md").write_text("Local edit.\n")
-    drifted = support.installed_drift(lock, receipts, agents, roots)
-    assert len(drifted) == 1
-    assert drifted[0].startswith("codex/example: edited since install")

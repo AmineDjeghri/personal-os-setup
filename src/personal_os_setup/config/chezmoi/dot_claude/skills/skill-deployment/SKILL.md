@@ -78,16 +78,14 @@ copy-only: it overwrites whatever is live and deletes nothing.
 - **npx replay** → the one thing chezmoi cannot do. Script:
   `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`
   (plain shell, no template vars). It replays every entry of `third-party-skills.lock.json` with
-  `npx -y skills add <source> -s <name> -a <agent> -g -y --copy` for Claude Code and Codex by default.
+  `npx -y skills add <source> -s <name> -a <agent> -g -y` for Claude Code and Codex by default, only for entries that are missing, broken or stale.
 - **make** → `make skills-thirdparty-repo-to-live` installs for both agents. `AGENT=codex` selects only
-  Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `FORCE=1 STRICT=1` and fails
-  if Python 3, npx or jq is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
-- **Verification** → `make skills-status` checks lock identities, each agent's manifest, and local
-  content receipts (SHA-256 over installed paths, executable flags and bytes). The receipts live at
-  `$XDG_STATE_HOME/personal-os-setup/skills-installed.json`, defaulting to `~/.local/state`.
-  They are not the npx lock and must never be committed. Existing installs need one explicit replay.
-- **Stamp** → plain apply skips only when the lock, selected agents and installed content still verify.
-  Deleted/edited files trigger replay. Failed installs, missing metadata and lock drift never stamp.
+  Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `STRICT=1` (`FORCE=1` reinstalls
+  everything and skips the edit gate) and fails if Python 3 or npx is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
+- **Verification** → `make skills-status` checks lock identities and each agent's manifest, and reports `DIFFERS` for installed files
+  newer than the lock's `updatedAt` (a hand edit). No receipts or stamp files exist.
+- **Idempotent** → a plain apply or make run installs only what is missing, broken or stale, and
+  checks each result (`npx` exits 0 on cancel).
 - **Updates** → replay fetches current upstream. If a folder ID changed, review it, save the new live
   lock with `make skills-thirdparty-live-to-repo`, and replay again. The lock is a drift reference, not a pin.
 - **Packaged source** → the shared helper ships with `dot_claude`, so authored links work without
@@ -105,15 +103,15 @@ that ship their own per-harness plugins (hooks, slash commands) are a different 
 of this section.
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy   # one skill
-npx skills add <owner>/<repo> -a claude-code -a codex -g -y --copy                             # whole pack
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y   # one skill
+npx skills add <owner>/<repo> -a claude-code -a codex -g -y                             # whole pack
 ```
 
 - **Target `-a claude-code -a codex` — the Claude copy already reaches Hermes.** Hermes reads `~/.claude/skills` via
   `skills.external_dirs`, so the Claude installation serves Hermes too. Adding `-a hermes-agent` puts the same
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Lands as a real directory** in each selected agent’s skill directory (we pass `--copy` on every install, incl. `make skills-thirdparty-repo-to-live`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
+- **Lands as one canonical copy plus a symlink** (Linux/macOS): `~/.agents/skills/<name>` is real, `~/.claude/skills/<name>` links to it; check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
 - **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
   the live lock is never the record we ship. Replay/drift: `make skills-thirdparty-repo-to-live` / `make skills-status` in
@@ -126,7 +124,7 @@ npx skills add <owner>/<repo> -a claude-code -a codex -g -y --copy              
   collides with a shipped or deployed skill breaks that name for both. Compare against
   `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
 - **Symlink regressions exist** → verify the entry actually resolves in
-  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy`. A symlink that exists is not
+  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy` (not the default here). A symlink that exists is not
   proof the agent listed it.
 - **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
   a replay cannot re-prove it.

@@ -66,7 +66,7 @@ metadata:
 
 ## Governance — one rule (`AGENTS.md`)
 - Authored skills → chezmoi source `dot_claude/skills/<name>/`, deployed to `/config/.claude/skills/`; the saved set is `skills.keep`.
-- Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
+- Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
 - Plugin packs (`superpowers`, `cloudflare/skills`) → that harness's own channel, one canal per pack per agent.
 - Plugin install commands and the bundle-that-is-both case: `references/installing-and-vetting-skills.md`.
 

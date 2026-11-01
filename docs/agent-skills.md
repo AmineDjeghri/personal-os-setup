@@ -149,11 +149,11 @@ To keep a skill that already exists live (for example one an agent created), run
 ### From another repo (third-party)
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y
 make skills-thirdparty-live-to-repo     # copy the live lock into third-party-skills.lock.json
 ```
 
-Then run `make skills-thirdparty-repo-to-live` to verify both agents and record local content receipts.
+Then run `make skills-thirdparty-repo-to-live` to verify both agents.
 Commit the updated lock after review. Rules:
 
 - **Use `-a claude-code -a codex`.** Hermes already reads the Claude directory, so adding
@@ -194,27 +194,28 @@ not.
 
 ### What `skills-thirdparty-repo-to-live` does
 
-The replay installs each locked skill for `claude-code` and `codex` using `npx skills add … --copy`.
+The replay installs each locked skill for `claude-code` and `codex` using `npx skills add …`. npx keeps one canonical copy in `~/.agents/skills` (read by Codex) and links it into `~/.claude/skills` (read by Claude Code and Hermes); this setup targets Linux and macOS.
 Use `AGENT=codex` or `AGENTS="claude-code codex"` to select the agents explicitly. Hermes is never a
-separate target. Python 3, Node (`npx`) and `jq` are required; explicit Make replay fails when a tool
+separate target. Python 3 and Node (`npx`) are required; explicit Make replay fails when a tool
 is missing. A packaged chezmoi source without the repository lock still links authored skills,
 and optional third-party replay reports `SKIPPED`; set `LOCK` to a reviewed lock to enable replay.
 Windows Git Bash follows the same path and reports failures instead of silently succeeding.
 
-Verification checks both the live lock identities and each agent's actual `SKILL.md` and supporting files.
-A successful replay writes SHA-256 content receipts into
-`$XDG_STATE_HOME/personal-os-setup/skills-installed.json` (`~/.local/state` by default). These local
-receipts are separate from the upstream Git tree IDs in the npx lock. Missing receipts, missing files,
-local edits, broken links and lock drift fail verification. Existing installations need one explicit
-replay to establish receipts; the checker never creates a baseline from unverified existing files.
+The replay is idempotent. It installs only the skills that are missing, broken (dangling link, no valid
+`SKILL.md`) or whose live-lock entry differs from the committed one; `FORCE=1` reinstalls everything.
+After each install it checks the result, because `npx` exits 0 even when it cancels. Verification
+(`make skills-status`) checks the lock identities and that each agent has a usable `SKILL.md`.
 
-A plain chezmoi apply checks the lock, selected agents and installed content before skipping an
-unchanged replay. A deleted or edited skill is replayed. A stamp is written only after installation
-and verification succeed. Optional replay reports `SKIPPED` when tooling is unavailable; this is not
-installation success. The Make target always replays and treats missing tooling as an error.
+Hand edits are detected without any extra state file: the npx lock records when each skill was installed
+(`updatedAt`), so installed files that are newer than that are reported as `DIFFERS`, with both dates.
+`make skills-thirdparty-repo-to-live` refuses to run over such edits unless `FORCE=1` is given, like the
+personal gate. `FORCE=1` applies to both classes, including `skills-all-repo-to-live`.
+
+Optional chezmoi replay reports `SKIPPED` when tooling is unavailable; this is not installation success.
+The Make target treats missing tooling as an error.
 
 Replay fetches current upstream versions. If an upstream folder ID changed, verification fails:
-review the update, run `make skills-thirdparty-live-to-repo`, then replay again to establish matching receipts.
+review the update, run `make skills-thirdparty-live-to-repo`, then replay again.
 The committed lock remains an inventory and drift reference, not an immutable source pin.
 
 ### Where the `npx skills` lock lives
@@ -226,7 +227,7 @@ repo never shares that file with chezmoi, so a sync can't overwrite the CLI's li
 ### Deployment regression tests
 
 `make test-local` includes `tests/skills/`: isolated Make and chezmoi applies with a fixture `npx`,
-plus the unit checks for links, manifests, conflicts and content receipts. These never install
+plus the unit checks for links, manifests, conflicts and edit detection. These never install
 real skills or packages. The chezmoi case skips if chezmoi is unavailable.
 
 ### Governance
