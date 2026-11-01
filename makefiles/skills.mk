@@ -6,7 +6,7 @@
 # (`make skills-status` flags it). Codex gets per-skill links in ~/.agents/skills.
 # The list of deliberately saved skills is skills.keep.
 
-.PHONY: skills-link skills-check skills-personal-repo-to-live skills-personal-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
+.PHONY: skills-link skills-check skills-personal-repo-to-live skills-personal-live-to-repo skills-all-repo-to-live skills-all-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
@@ -105,14 +105,47 @@ skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes
 	else echo "  (no live lock at $(LIVE_SKILLS_LOCK) -- nothing installed via npx here)"; fi; \
 	exit $$rc
 
-skills-personal-live-to-repo: ## Save a live personal skill into the repo: make skills-personal-live-to-repo NAME=<name> (copies ~/.claude/skills/<name>, lists it in skills.keep)
-	@test -n "$(NAME)" || { printf "$(RED)usage:$(NC) make skills-personal-live-to-repo NAME=<name>\n"; exit 1; }
-	@test -d "$(SKILLS_DST)/$(NAME)" || { printf "$(RED)skills-personal-live-to-repo: no live skill$(NC) at $(SKILLS_DST)/$(NAME)\n"; exit 1; }
-	@mkdir -p "$(SKILLS_SRC)/$(NAME)"
-	@cp -R "$(SKILLS_DST)/$(NAME)/." "$(SKILLS_SRC)/$(NAME)/"
-	@touch $(SKILLS_KEEP)
-	@grep -qxF "$(NAME)" $(SKILLS_KEEP) || echo "$(NAME)" >> $(SKILLS_KEEP)
-	@printf "$(GREEN)kept$(NC) $(NAME): $(SKILLS_SRC)/$(NAME) + $(SKILLS_KEEP)\n"
+skills-personal-live-to-repo: ## Save live personal skills into the repo: NAME=<name> for one, ALL=1 for every unlisted one
+	@if [ -n "$(NAME)" ]; then names="$(NAME)"; \
+	elif [ "$(ALL)" = "1" ]; then \
+		names=$$(for d in "$(SKILLS_DST)"/*/; do \
+			[ -d "$$d" ] || continue; n=$$(basename "$$d"); \
+			grep -v '^[[:space:]]*#' $(SKILLS_KEEP) 2>/dev/null | grep -qxF "$$n" && continue; \
+			grep -qE "^[[:space:]]+\"$$n\": \{" $(THIRD_PARTY_LOCK) 2>/dev/null && continue; \
+			echo "$$n"; \
+		done); \
+		[ -n "$$names" ] || { printf "$(YELLOW)skills-personal-live-to-repo:$(NC) no unlisted live skill to capture\n"; exit 0; }; \
+	else printf "$(RED)usage:$(NC) make skills-personal-live-to-repo NAME=<name> | ALL=1\n"; exit 1; fi; \
+	for NAME in $$names; do \
+		[ -d "$(SKILLS_DST)/$$NAME" ] || { printf "$(RED)skip$(NC) %s: not live at %s\n" "$$NAME" "$(SKILLS_DST)/$$NAME"; continue; }; \
+		mkdir -p "$(SKILLS_SRC)/$$NAME"; \
+		cp -R "$(SKILLS_DST)/$$NAME/." "$(SKILLS_SRC)/$$NAME/"; \
+		touch $(SKILLS_KEEP); \
+		grep -qxF "$$NAME" $(SKILLS_KEEP) || echo "$$NAME" >> $(SKILLS_KEEP); \
+		printf "$(GREEN)kept$(NC) %s\n" "$$NAME"; \
+	done
+
+# ── Aggregate: both classes, both directions ──────────────────────────────────────────────────
+# "personal" = the authored tree in this repo, "thirdparty" = the npx skills lock. Each aggregate
+# keeps going after a failing step and exits non-zero at the end, so one broken class never hides
+# the other's result.
+skills-all-repo-to-live: ## Deploy EVERYTHING out: personal tree + third-party replay + Codex links, then verify
+	@rc=0; \
+	$(MAKE) --no-print-directory skills-personal-repo-to-live || rc=1; \
+	$(MAKE) --no-print-directory skills-link || rc=1; \
+	$(MAKE) --no-print-directory skills-thirdparty-repo-to-live || { printf "$(YELLOW)third-party replay failed$(NC) -- needs npx + jq + a reachable lock\n"; rc=1; }; \
+	$(MAKE) --no-print-directory skills-check || rc=1; \
+	$(MAKE) --no-print-directory skills-status || rc=1; \
+	exit $$rc
+
+skills-all-live-to-repo: ## Capture EVERYTHING back: unlisted live skills + the npx lock, then verify
+	@rc=0; \
+	$(MAKE) --no-print-directory skills-personal-live-to-repo ALL=1 || rc=1; \
+	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then \
+		$(MAKE) --no-print-directory skills-thirdparty-live-to-repo || rc=1; \
+	else printf "$(YELLOW)skills-all-live-to-repo:$(NC) no live npx lock -- third-party capture skipped\n"; fi; \
+	$(MAKE) --no-print-directory skills-status || rc=1; \
+	exit $$rc
 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
