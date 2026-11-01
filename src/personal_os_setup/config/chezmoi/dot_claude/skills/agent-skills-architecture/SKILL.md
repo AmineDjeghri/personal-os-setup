@@ -73,7 +73,7 @@ metadata:
 ## Deploying the shared dir (chezmoi / container)
 
 Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-personal-repo-to-live` and its
-`SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
+`FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
 don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
 `--source`) and the file-level `--source-path` fallback are in `skill-deployment`.
 
@@ -189,7 +189,7 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
   second source of truth parallel to the repo → `.claude/skills` flow; that duplication is rejected here.
 - **A lesson such a pass produces for a deployed skill is SOURCE work.** Repo-deployed names carry `created_by:
   agent`, so its write to the live copy goes through — and then the next deploy either ABORTS on the fresh
-  `DIFFERS` or a `SKILLS_FORCE=1` run overwrites the lesson. Write it in the source tree instead, name any drift you
+  `DIFFERS` or a `FORCE=1` run overwrites the lesson. Write it in the source tree instead, name any drift you
   caused with its file, and if every relevant skill is genuinely protected, report "Nothing to save" PLUS the exact
   edits the repo still needs — never a new overlapping curator skill.
 - **A file the source tree no longer has is not automatically stale live content to port back.** Compare size and

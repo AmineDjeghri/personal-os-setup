@@ -9,7 +9,7 @@
 - **Deleting a deployed name locally is a no-op** — the next `make skills-personal-repo-to-live` restores it. Tracks 1/2 are
   deleted by repo PR; say that instead of deleting.
 - `make skills-personal-repo-to-live` ABORTS on any `DIFFERS` (by design: it never silently reverts an in-place edit).
-  `SKILLS_FORCE=1 make skills-personal-repo-to-live` is the escape hatch and is safe ONLY once the newer live content has been ported
+  `FORCE=1 make skills-personal-repo-to-live` is the escape hatch and is safe ONLY once the newer live content has been ported
   into the source tree — otherwise it overwrites that content for good.
 - **`DIFFERS` never says which side is newer — check per FILE** with `stat -c '%s %y'` on both copies (the drifted set
   is usually mixed). Live strictly newer → port live→source (sanitized). Source strictly newer → port nothing, the

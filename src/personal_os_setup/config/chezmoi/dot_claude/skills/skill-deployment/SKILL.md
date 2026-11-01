@@ -66,7 +66,7 @@ copy-only: it overwrites whatever is live and deletes nothing.
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-personal-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-personal-repo-to-live SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-personal-live-to-repo NAME=<name>`.
+**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-personal-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-personal-repo-to-live FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-personal-live-to-repo NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
