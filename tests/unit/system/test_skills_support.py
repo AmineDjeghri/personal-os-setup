@@ -159,3 +159,19 @@ def test_single_agent_receipt_update_preserves_other_agent(support, installation
     support.verify_installations(*installation, record=True)
     support.verify_installations(lock, live, receipts, ["codex"], roots, record=True)
     support.verify_installations(lock, live, receipts, agents, roots)
+
+
+def test_installed_drift_ignores_clean_and_undeployed(support, installation):
+    lock, _live, receipts, agents, roots = installation
+    assert support.installed_drift(lock, receipts, agents, roots) == []  # no receipts yet
+    support.verify_installations(*installation, record=True)
+    assert support.installed_drift(lock, receipts, agents, roots) == []
+
+
+def test_installed_drift_reports_hand_edits(support, installation):
+    lock, _live, receipts, agents, roots = installation
+    support.verify_installations(*installation, record=True)
+    (roots["codex"] / "example/reference.md").write_text("Local edit.\n")
+    drifted = support.installed_drift(lock, receipts, agents, roots)
+    assert len(drifted) == 1
+    assert drifted[0].startswith("codex/example: edited since install")

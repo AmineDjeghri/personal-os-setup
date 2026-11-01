@@ -216,7 +216,7 @@ def gh_token() -> str | None:
             proc = subprocess.run(
                 [candidate, "auth", "token"], capture_output=True, text=True, timeout=10
             )
-        except (FileNotFoundError, subprocess.SubprocessError):
+        except FileNotFoundError, subprocess.SubprocessError:
             continue
         token = (proc.stdout or "").strip()
         if proc.returncode == 0 and token:

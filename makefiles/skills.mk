@@ -23,6 +23,10 @@ SKILLS_LINK = $(SKILLS_PYTHON) $(SKILLS_SUPPORT) link --source "$(SKILLS_SRC)" -
 HERMES_SKILLS_LIVE := $(HOME)/.hermes/skills
 SKILLS_KEEP := skills.keep
 
+# FORCE=1 overrides the drift gates of BOTH classes (and so of the skills-all-* targets, since
+# command-line variables reach sub-makes). SKILLS_FORCE=1 stays as an alias.
+SKILLS_FORCE_ON := $(if $(or $(filter 1,$(FORCE)),$(filter 1,$(SKILLS_FORCE))),1,0)
+
 # "repo <time>  live <time>  -> <which is newer>" from the newest file mtime under each dir (args: repo live).
 SKILLS_NEWER = $(SKILLS_PYTHON) -c 'import os,sys,time; m=lambda d: max((os.path.getmtime(os.path.join(r,f)) for r,_,fs in os.walk(d) for f in fs if f!=".DS_Store"),default=0); a,b=m(sys.argv[1]),m(sys.argv[2]); g,y,n=sys.argv[3:6]; t=lambda x: time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(x)); c=lambda x,o: (g if x>o else y if x<o else n); print("repo "+c(a,b)+t(a)+n+"  live "+c(b,a)+t(b)+n+"  -> "+(g+"live is NEWER" if b>a else g+"repo is NEWER" if a>b else "same time")+n)'
 
@@ -56,10 +60,10 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 	done; exit $$rc
 
 skills-personal-repo-to-live: ## Deploy personal (authored/modified) skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
-ifeq ($(SKILLS_FORCE),1)
-	@printf "$(YELLOW)skills-personal-repo-to-live: drift check SKIPPED (SKILLS_FORCE=1)$(NC)\n"
+ifeq ($(SKILLS_FORCE_ON),1)
+	@printf "$(YELLOW)skills-personal-repo-to-live: drift check SKIPPED (FORCE=1)$(NC)\n"
 else
-	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-personal-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
+	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-personal-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with FORCE=1 to overwrite them."; exit 1; }
 endif
 	@$(SKILLS_LINK) --preflight
 	@mkdir -p "$(SKILLS_DST)"
@@ -170,5 +174,8 @@ skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the rec
 # The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
 THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
-skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex)
-	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=1 STRICT=1 bash $(THIRD_PARTY_REPLAY)
+skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex); no-op when unchanged, FORCE=1 reinstalls and skips the drift gate
+ifneq ($(SKILLS_FORCE_ON),1)
+	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)" || { echo; printf "$(RED)skills-thirdparty-repo-to-live: ABORTED$(NC) -- the installed copies above were edited after install.\n"; echo "Port the edit somewhere safe first, or re-run with FORCE=1 to overwrite them."; exit 1; }
+endif
+	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=$(SKILLS_FORCE_ON) STRICT=1 bash $(THIRD_PARTY_REPLAY)

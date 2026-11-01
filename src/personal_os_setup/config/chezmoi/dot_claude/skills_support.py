@@ -6,6 +6,7 @@ This module uses only the standard library so chezmoi can run it without uv sync
 """
 
 import argparse
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -118,6 +119,49 @@ def installed_snapshot(skills, agents, roots):
     }
 
 
+def newer_note(repo_entry, live_entry):
+    """Describe which lock entry was updated last (ISO timestamps sort as text)."""
+    repo_at = repo_entry.get("updatedAt") or repo_entry.get("installedAt") or "unknown"
+    live_at = live_entry.get("updatedAt") or live_entry.get("installedAt") or "unknown"
+    green, yellow, reset = ("\033[0;32m", "\033[0;33m", "\033[0m") if sys.stderr.isatty() else ("",) * 3
+    if "unknown" in (repo_at, live_at) or repo_at == live_at:
+        return f"repo {repo_at}, live {live_at}"
+    repo_color, live_color = (yellow, green) if live_at > repo_at else (green, yellow)
+    verdict = f"{green}{'live' if live_at > repo_at else 'repo'} is NEWER{reset}"
+    return f"repo {repo_color}{repo_at}{reset}, live {live_color}{live_at}{reset} -> {verdict}"
+
+
+def installed_drift(lock, receipts, agents, roots):
+    """List installed skills whose files changed since the last recorded installation.
+
+    Missing installations or receipts are not drift: nothing was deployed yet.
+    """
+    if not receipts.is_file():
+        return []
+    saved = json.loads(receipts.read_text())
+    recorded = datetime.fromtimestamp(receipts.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+    drifted = []
+    for agent in agents:
+        for name in load_skills(lock):
+            before = saved.get(agent, {}).get(name)
+            directory = roots[agent] / name
+            if before is None or not directory.exists():
+                continue
+            try:
+                now = content_hash(directory, name)
+            except ValueError as error:
+                drifted.append(f"{agent}/{name}: {error}")
+                continue
+            if now != before["content"]:
+                files = [p.stat().st_mtime for p in directory.rglob("*") if p.is_file()]
+                edited = datetime.fromtimestamp(max(files)).strftime("%Y-%m-%d %H:%M:%S")
+                drifted.append(
+                    f"{agent}/{name}: edited since install "
+                    f"(files last modified {edited}, install recorded {recorded})"
+                )
+    return drifted
+
+
 def verify_installations(lock, live_lock, receipts, agents, roots, *, record=False):
     """Require matching lock identities and actual unchanged installed content."""
     expected = load_skills(lock)
@@ -125,7 +169,10 @@ def verify_installations(lock, live_lock, receipts, agents, roots, *, record=Fal
     for name, entry in expected.items():
         have = live.get(name, {})
         if any(have.get(key) != entry[key] for key in ("source", "skillFolderHash")):
-            raise ValueError(f"DRIFT {name}: live lock differs; review upstream and save the lock")
+            raise ValueError(
+                f"DRIFT {name}: live lock differs ({newer_note(entry, have)}); "
+                "review upstream and save the lock"
+            )
     if set(live) - set(expected):
         raise ValueError(
             "EXTRA skills in live lock: review and run make skills-thirdparty-live-to-repo"
@@ -154,7 +201,7 @@ def verify_installations(lock, live_lock, receipts, agents, roots, *, record=Fal
 def main():
     """Run the shared Make/chezmoi helpers."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["link", "verify", "record", "agents", "plan"])
+    parser.add_argument("command", choices=["link", "verify", "record", "agents", "plan", "drift"])
     parser.add_argument("--source", type=Path)
     parser.add_argument(
         "--claude",
@@ -200,6 +247,18 @@ def main():
                                 f"CONFLICT {agent}/{name}: refusing to overwrite a symlink"
                             )
                 return 0
+            if args.command == "drift":
+                if args.lock is None:
+                    raise ValueError("--lock is required")
+                drifted = installed_drift(
+                    args.lock,
+                    args.receipts,
+                    agents,
+                    {"claude-code": args.claude, "codex": args.codex},
+                )
+                for line in drifted:
+                    print(f"DIFFERS {line}", file=sys.stderr)
+                return 1 if drifted else 0
             if args.lock is None or args.live_lock is None:
                 raise ValueError("--lock and --live-lock are required")
             verify_installations(
