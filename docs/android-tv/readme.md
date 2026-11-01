@@ -1,4 +1,4 @@
-# TV Setup (googletv / android tv)
+# TV Setup (googletv or android tv)
 
 One of the best TV OS is Google TV. Here are some reasons why you should consider using Google TV:
 
@@ -6,15 +6,15 @@ One of the best TV OS is Google TV. Here are some reasons why you should conside
 - It's not as responsive as Apple TV, but you can tweak it to make it faster.
 - You can use alternative launchers like 'Projectivy'.
 
-This page covers the TV side: picture settings, performance, apps and the launcher. The streaming side — Nuvio/Stremio, AIOStreams, debrid and the addons — lives on its own page: **[Nuvio / Stremio + AIOStreams](nuvio-stremio-aiostreams.md)**.
+This page covers the TV side: picture settings, performance, apps and the launcher. The streaming side — Nuvio/Stremio, AIOStreams, debrid and the addons — lives on its own page: **[Nuvio and Stremio + AIOStreams](nuvio-stremio-aiostreams.md)**.
 
 Table of contents
 <!-- TOC -->
-- [TV Setup (googletv / android tv)](#tv-setup-googletv--android-tv)
+- [TV Setup (googletv or android tv)](#tv-setup-googletv-or-android-tv)
     - [All TV types:](#all-tv-types)
     - [Google TV OS:](#google-tv-os)
         - [Best google TV apps:](#best-google-tv-apps)
-            - [What is Stremio / Nuvio ?](#what-is-stremio--nuvio-)
+            - [What is Stremio and Nuvio ?](#what-is-stremio-and-nuvio)
 <!-- TOC -->
 
 ## All TV types
@@ -54,7 +54,7 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
     - You can create channels in the menu and add stremio, smartube, spotify to the home screen.
 - [Stremio](https://www.stremio.com/) / [Nuvio](https://nuvioapp.space/)
 
-#### What is Stremio / Nuvio ?
+#### What is Stremio and Nuvio ?
 
 ![nuvio-ios](nuvio-ios.png)
 
@@ -66,4 +66,4 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 - Addons...etc will be synchronized between all your devices.
 - For the streams themselves you will use a **debrid service** (AllDebrid, Real-Debrid, TorBox…), which is what makes playback instant and means you never need a VPN. The [streaming page](nuvio-stremio-aiostreams.md) explains it and sets it all up.
 
-Keep going with the streaming setup: **[Nuvio / Stremio + AIOStreams](nuvio-stremio-aiostreams.md)** — create a Nuvio account, subscribe to a debrid service, load a ready-made AIOStreams configuration and you are watching.
+Keep going with the streaming setup: **[Nuvio and Stremio + AIOStreams](nuvio-stremio-aiostreams.md)** — create a Nuvio account, subscribe to a debrid service, load a ready-made AIOStreams configuration and you are watching.

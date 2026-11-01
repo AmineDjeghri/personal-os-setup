@@ -1,4 +1,4 @@
-# Nuvio / Stremio + AIOStreams
+# Nuvio and Stremio + AIOStreams
 
 This page takes you from nothing to a working streaming setup on **Nuvio** (everything below applies to **Stremio** as well), then covers the advanced parts: how the pieces relate, sharing your configuration, keeping several configurations, and changing one setting per device.
 
@@ -7,30 +7,30 @@ This page takes you from nothing to a working streaming setup on **Nuvio** (ever
 
 Table of contents
 <!-- TOC -->
-- [Nuvio / Stremio + AIOStreams](#nuvio--stremio--aiostreams)
+- [Nuvio and Stremio + AIOStreams](#nuvio-and-stremio-aiostreams)
     - [How the pieces fit together](#how-the-pieces-fit-together)
-    - [Part 1 — Quick start](#part-1--quick-start)
-        - [Step 1 — What you need](#step-1--what-you-need)
-        - [Step 2 — Create your Nuvio account](#step-2--create-your-nuvio-account)
-        - [Step 3 — Subscribe to a debrid service](#step-3--subscribe-to-a-debrid-service)
-        - [Step 4 — Load a ready-made configuration](#step-4--load-a-ready-made-configuration)
-        - [Step 5 — Give it your debrid account](#step-5--give-it-your-debrid-account)
-        - [Step 6 — Install the addon in Nuvio](#step-6--install-the-addon-in-nuvio)
-        - [Step 7 — Test it](#step-7--test-it)
-        - [Step 8 — If something doesn't work](#step-8--if-something-doesnt-work)
-        - [💡 Nuvio/Stremio Tips](#-nuviostremio-tips)
-    - [Part 2 — Advanced](#part-2--advanced)
-        - [🧩 What is AIOStreams?](#-what-is-aiostreams)
-        - [🔗 Template or parent config?](#-template-or-parent-config)
-        - [🌱 Setting up a child configuration](#-setting-up-a-child-configuration)
-        - [🔀 Turning an addon off for one device (variant)](#-turning-an-addon-off-for-one-device-variant)
-        - [🧾 Reading the stream list](#-reading-the-stream-list)
-        - [(Optional) — Custom addons you can plug in](#optional--custom-addons-you-can-plug-in)
-        - [🔌 Proxy (optional)](#-proxy-optional)
-        - [👤 Profiles in Nuvio](#-profiles-in-nuvio)
-        - [🗂️ Manage Nuvio from nuvio.tv (Website)](#-manage-nuvio-from-nuviotv-website)
+    - [Part 1 — Quick start](#part-1-quick-start)
+        - [Step 1 — What you need](#step-1-what-you-need)
+        - [Step 2 — Create your Nuvio account](#step-2-create-your-nuvio-account)
+        - [Step 3 — Subscribe to a debrid service](#step-3-subscribe-to-a-debrid-service)
+        - [Step 4 — Load a ready-made configuration](#step-4-load-a-ready-made-configuration)
+        - [Step 5 — Give it your debrid account](#step-5-give-it-your-debrid-account)
+        - [Step 6 — Install the addon in Nuvio](#step-6-install-the-addon-in-nuvio)
+        - [Step 7 — Test it](#step-7-test-it)
+        - [Step 8 — If something doesn't work](#step-8-if-something-doesnt-work)
+        - [💡 Nuvio and Stremio Tips](#nuvio-and-stremio-tips)
+    - [Part 2 — Advanced](#part-2-advanced)
+        - [🧩 What is AIOStreams?](#what-is-aiostreams)
+        - [🔗 Template or parent config?](#template-or-parent-config)
+        - [🌱 Setting up a child configuration](#setting-up-a-child-configuration)
+        - [🔀 Turning an addon off for one device (variant)](#turning-an-addon-off-for-one-device-variant)
+        - [🧾 Reading the stream list](#reading-the-stream-list)
+        - [(Optional) — Custom addons you can plug in](#optional-custom-addons-you-can-plug-in)
+        - [🔌 Proxy (optional)](#proxy-optional)
+        - [👤 Profiles in Nuvio](#profiles-in-nuvio)
+        - [🗂️ Manage Nuvio from nuvio.tv (Website)](#manage-nuvio-from-nuviotv-website)
         - [Collections](#collections)
-        - [Useful Stremio/Nuvio Resources](#useful-stremionuvio-resources)
+        - [Useful Stremio and Nuvio Resources](#useful-stremio-and-nuvio-resources)
 <!-- TOC -->
 
 ## How the pieces fit together
@@ -112,7 +112,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 
 ### Step 7 — Test it
 
-Open any movie or series in Nuvio: you should see your addons providing streams — Statusio appears in the list only if you installed it — with the decorator emojis described in [Reading the stream list](#-reading-the-stream-list).
+Open any movie or series in Nuvio: you should see your addons providing streams — Statusio appears in the list only if you installed it — with the decorator emojis described in [Reading the stream list](#reading-the-stream-list).
 
 The last thing to do is authorise your IP address on the debrid service: since the addons are hosted on different servers, your debrid account sees a new IP and blocks cached access until you confirm it. Start any stream, go to your debrid account page, accept the prompt — cached streams switch from ⏳ to ⚡️.
 
@@ -123,7 +123,7 @@ The last thing to do is authorise your IP address on the debrid service: since t
 - **The addon does not appear in Nuvio** — the manifest link was not accepted: copy it again from *Save and Install* and re-add it.
 - **You lost your UUID or password** — they belong to your AIOStreams account; recover them from there rather than starting over, otherwise your configuration is orphaned.
 
-### 💡 Nuvio/Stremio Tips
+### 💡 Nuvio and Stremio Tips
 
 - In Stremio/Nuvio Settings, you can select the preferred 'Audio language' and 'Subtitles'. This will automatically set the audio and subs automatically when you watch something. This is not synced between devices, you need to do it manually on each of your device.
 - All settings & addons will sync between your devices if you use the same account.
@@ -300,7 +300,7 @@ You can customize how your collections look by adding cover images and configuri
 
 After configuring these settings, add your collections to your home screen for easy access.
 
-### Useful Stremio/Nuvio Resources
+### Useful Stremio and Nuvio Resources
 
 - **Subreddits**: [r/Stremio](https://www.reddit.com/r/Stremio/) & [r/StremioAddons](https://www.reddit.com/r/StremioAddons/)
 - **Addons Catalog**: [stremio-addons.net](https://stremio-addons.net/)

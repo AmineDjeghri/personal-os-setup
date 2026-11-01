@@ -1,23 +1,23 @@
-# SSH & TLS/SSL fundamentals
+# SSH and TLS and SSL fundamentals
 
 <!-- TOC -->
 
-* [SSH & TLS/SSL fundamentals](#ssh--tlsssl-fundamentals)
+* [SSH and TLS and SSL fundamentals](#ssh-and-tls-and-ssl-fundamentals)
     * [Why bother understanding this](#why-bother-understanding-this)
     * [SSH: two separate trust directions](#ssh-two-separate-trust-directions)
         * [1. Client verifies the server (known_hosts)](#1-client-verifies-the-server-known_hosts)
         * [2. Server verifies the client (authorized_keys)](#2-server-verifies-the-client-authorized_keys)
         * [What's actually happening underneath (key exchange)](#whats-actually-happening-underneath-key-exchange)
         * [Session multiplexing](#session-multiplexing)
-    * [TLS/SSL: trust at internet scale](#tlsssl-trust-at-internet-scale)
+    * [TLS and SSL: trust at internet scale](#tls-and-ssl-trust-at-internet-scale)
         * [The problem TLS solves that SSH doesn't](#the-problem-tls-solves-that-ssh-doesnt)
         * [How a TLS certificate is verified](#how-a-tls-certificate-is-verified)
-        * [Mutual TLS (mTLS) — TLS's version of authorized_keys](#mutual-tls-mtls--tlss-version-of-authorized_keys)
+        * [Mutual TLS (mTLS) — TLS's version of authorized_keys](#mutual-tls-mtls-tlss-version-of-authorized_keys)
         * [Why corporate laptops have their own CA (TLS interception)](#why-corporate-laptops-have-their-own-ca-tls-interception)
-    * [SSH vs TLS — side by side](#ssh-vs-tls--side-by-side)
+    * [SSH vs TLS — side by side](#ssh-vs-tls-side-by-side)
     * [Applying this to the home server](#applying-this-to-the-home-server)
         * [SSH into the server](#ssh-into-the-server)
-        * [TLS for anything exposed via Cloudflare Tunnel / a reverse proxy](#tls-for-anything-exposed-via-cloudflare-tunnel--a-reverse-proxy)
+        * [TLS for anything exposed via Cloudflare Tunnel or a reverse proxy](#tls-for-anything-exposed-via-cloudflare-tunnel-or-a-reverse-proxy)
         * [Self-signed certs on the LAN](#self-signed-certs-on-the-lan)
     * [Common errors and what they actually mean](#common-errors-and-what-they-actually-mean)
 
@@ -109,7 +109,7 @@ Once authenticated, a single SSH connection can carry multiple logical "channels
 `scp`/`sftp` transfers, port forwards (`-L`/`-R`, handy for reaching services on the home server without exposing them
 publicly), and X11 forwarding, all inside the one encrypted connection.
 
-## TLS/SSL: trust at internet scale
+## TLS and SSL: trust at internet scale
 
 ### The problem TLS solves that SSH doesn't
 
@@ -227,7 +227,7 @@ personal device instead.
 * If exposing SSH outside the LAN (not recommended without a good reason), consider putting it behind the same
   Cloudflare Tunnel used for Home Assistant rather than port-forwarding it directly on the router.
 
-### TLS for anything exposed via Cloudflare Tunnel / a reverse proxy
+### TLS for anything exposed via Cloudflare Tunnel or a reverse proxy
 
 * Cloudflare Tunnel terminates TLS at Cloudflare's edge using a certificate Cloudflare manages — you don't need to run
   your own cert for the public hostname. This is why it "just works" from a browser with a padlock and no warnings.

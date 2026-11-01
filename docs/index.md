@@ -12,7 +12,7 @@ Explore the documentation using the vertical navbar, or jump straight to a secti
 - **Websites & browser extensions**: [docs/apps](apps/awesome_websites_browser_extensions.md)
 - **Agent skills** (TUI and `make` workflows): [docs/agent-skills](agent-skills.md)
 
-## Features & Benefits
+## Features and Benefits
 
 - **One-liner installers**
     - Windows: PowerShell script that installs selected apps via `winget`, enables WSL, applies Windows Terminal defaults, and fetches GlazeWM config.

@@ -130,7 +130,7 @@ Downloads appear under **Artists** and as **"Live at …" albums** (album tag) �
 
 The agent-facing procedure is the skill `youtube-download-automation` (Hermes track of the personal-os-setup chezmoi source → `~/.hermes/skills`), which points back here for the script, this README and `overrides.json`. Nothing lives under `docs/` on purpose: a skill placed here gets crawled into the published site and is managed by nobody.
 
-## Prerequisites / assumptions
+## Prerequisites and assumptions
 
 - **(optional, recommended)** Beets addon watching `/media/music` — adds last.fm genres, cover art, and triggers Navidrome's rescan right after import. Without it the pipeline still works: tags are embedded by the script, and Navidrome picks up new files on its own scan schedule (and at startup).
 - Downloads run where `/media` is reachable — this machine: the Hermes agent addon (mounts `/media` rw, has `ffmpeg` + `uv`)

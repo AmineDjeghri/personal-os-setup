@@ -27,7 +27,7 @@
         * [GameMode](#gamemode)
         * [MangoHud](#mangohud)
         * [Proton](#proton)
-        * [HDR / 10-bit desktop](#hdr--10-bit-desktop)
+        * [HDR and 10-bit desktop](#hdr-and-10-bit-desktop)
             * [Verifying HDR actually works](#verifying-hdr-actually-works)
     * [Testing the CachyOS flow in a VM](#testing-the-cachyos-flow-in-a-vm)
     * [Apps shortcuts](#apps-shortcuts)
@@ -297,7 +297,7 @@ mid-2026 update, **auto-detects and enables HDR per-game** with no launch option
 Install/manage versions via **ProtonUp-Qt** (also handles GE-Proton if a specific game needs
 it instead). Set the version per-game in Steam: right-click → Properties → Compatibility.
 
-### HDR / 10-bit desktop
+### HDR and 10-bit desktop
 
 **Quick visual check (two monitors, one HDR + one non-HDR):** Play the same HDR YouTube video
 (e.g. <https://youtu.be/MV5hhbqDNLs?t=145>) at 2Min25 in a browser window on each display — one on
@@ -307,7 +307,7 @@ If HDR is actually working, the window that started on the HDR display should lo
 highlights and more saturated than the dragged-over one, even though both are now physically on
 the same HDR-capable panel — because the dragged-in window was already tone-mapped down to SDR
 before the move, while the other was rendered with the real PQ curve and wide gamut from the
-start.  For a rigorous, numeric confirmation (not just "does it look different"), use the mpv IPC method [below](#Verifying-HDR-actually-works).
+start.  For a rigorous, numeric confirmation (not just "does it look different"), use the mpv IPC method [below](#verifying-hdr-actually-works).
 
 Desktop HDR is a Hyprland output setting, independent of Steam/Proton — do this first if you
 want HDR games to actually look right, not just run:
@@ -399,7 +399,7 @@ Manage the VM:
 
 The ISO URL is scraped from SourceForge and is **not checksum-verified**; if that breaks, the script tells you to download
 the ISO yourself from [cachyos.org](https://cachyos.org/download/). Inside the guest, run the
-[Linux one-liner](../../README.md#linux--wsl2--macos), then `personal-os-setup`. Re-running `make vm-cachyos` starts the
+[Linux one-liner](../../README.md#linux-and-wsl2-and-macos), then `personal-os-setup`. Re-running `make vm-cachyos` starts the
 existing VM again.
 
 ## Apps shortcuts
@@ -407,4 +407,4 @@ existing VM again.
 For per-app configuration and shortcuts (Vicinae, Obsidian, PyCharm, Bitwarden, Nautilus,
 the terminal tools cheatsheet), plus a table of what's available on CachyOS vs. Windows/macOS
 and their alternatives, check
-[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability-and-alternatives-across-oses).

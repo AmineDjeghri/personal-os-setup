@@ -9,13 +9,13 @@ If you are using a headless server (ubuntu-server for example), prefer to use a 
 
 The Personal OS Setup provides a **Terminal UI (TUI) application** that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:
 
-Use [README.md](../../README.md#linux--wsl2--macos) as it automatically handles the OS setup with the interactive TUI application.
+Use [README.md](../../README.md#linux-and-wsl2-and-macos) as it automatically handles the OS setup with the interactive TUI application.
 
 Before installing packages, it's recommended to update your system.
 
 ### 1. Package Selection
 
-The app displays all available packages from [packages.yaml](../../src/personal_os_setup/config/packages.yaml) organized by category:
+The app displays all available packages from [packages.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/packages.yaml) organized by category:
 
 - **Core tools**: `git`, `curl`, `zsh`
 - **Terminal tools**: `bat`, `btop`, `fzf`, `lsd`, `fastfetch`
@@ -43,7 +43,7 @@ The app provides buttons to automate the terminal configuration:
 plugins or the theme. Those (oh-my-zsh itself, `zsh-autocomplete`,
 `zsh-autosuggestions`, `zsh-syntax-highlighting`, `fzf-zsh-plugin`,
 `powerlevel10k`) are instead declared as `git-repo` externals in
-[.chezmoiexternal.toml](../../src/personal_os_setup/config/chezmoi/.chezmoiexternal.toml),
+[.chezmoiexternal.toml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/chezmoi/.chezmoiexternal.toml),
 each with a `refreshPeriod = "168h"` (7 days). That refresh isn't tied to
 clicking **Sync zsh plugins/theme** specifically: *any* `chezmoi apply`
 call — even one scoped to a single unrelated dotfile from the "Sync
@@ -51,7 +51,7 @@ dotfiles" tab — rebuilds chezmoi's full target state first, which checks
 every external's cache and silently re-pulls any that are more than 7 days
 stale.
 
-See the [zshrc configuration file](../../src/personal_os_setup/config/unix/.zshrc) for the default configuration used by this project.
+See the [zshrc configuration file](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/unix/.zshrc) for the default configuration used by this project.
 
 If you need to revert changes:
 
@@ -112,7 +112,7 @@ Manage the VM:
 1. Run `make vm-deps` once, then log out and back in so the `libvirt`/`kvm` groups apply.
 2. Start a guest with one of the commands above. Re-running a command on an existing VM just starts it again; to change
    settings (such as the autoinstall credentials) run `make vm-clean` first.
-3. Inside the guest, run the [Linux one-liner](../../README.md#linux--wsl2--macos), then `personal-os-setup`.
+3. Inside the guest, run the [Linux one-liner](../../README.md#linux-and-wsl2-and-macos), then `personal-os-setup`.
 4. If the VM has no internet during install, see `make vm-ufw-allow` on the shared page.
 
 ### Apps shortcuts

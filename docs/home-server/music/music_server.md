@@ -1,6 +1,6 @@
 # Music server
 
-## Navidrome + Octo-Fiesta + Narjo/Feishin Music Stack
+## Navidrome + Octo-Fiesta + Narjo and Feishin Music Stack
 
 This setup combines **Navidrome**, a **Subsonic-compatible music server**, with **Octo-Fiesta**, a proxy that extends your library using Deezer.  
 
@@ -78,7 +78,7 @@ It extends your music library by using **TIDAL** when a song is missing for free
 The following section summarizes the key concepts and behaviors of **Beets** regarding importing, tagging, configuration options, and command-line flags.
 Understanding these terms helps clarify how Beets works internally.
 
-in the [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml) file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :
+in the [config.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/unix/beets/config.yaml) file (I disabled copy and move because i use Octo-Fiesta and i don't care about messing with the original files) :
 
 ```yaml
 # import settings, check https://beets.readthedocs.io/en/stable/reference/config.html#importer-options
@@ -129,7 +129,7 @@ Beets computes a **match distance score** to determine the best candidate using 
 
 #### Workflow
 
-- My [config.yaml](../../../src/personal_os_setup/config/unix/beets/config.yaml)
+- My [config.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/unix/beets/config.yaml)
 What I advise to play with is:
 - Use `-v` to see the output or `-vv` to see the details.
 - Use `autotag: yes` with `write: no` will not write metadata into the files. This is useful to preview the changes.

@@ -4,7 +4,7 @@
 * [Home server (Ubuntu Server, KVM, Home Assistant OS)](#home-server-ubuntu-server-kvm-home-assistant-os)
     * [1. Ubuntu Server 26.04](#1-ubuntu-server-2604)
         * [Setup](#setup)
-        * [First checks / updates](#first-checks--updates)
+        * [First checks and updates](#first-checks-and-updates)
         * [Lid closed (Laptop)](#lid-closed-laptop)
     * [2. Home Assistant](#2-home-assistant)
         * [Virtualization](#virtualization)
@@ -12,26 +12,26 @@
             * [Create a bridge configuration](#create-a-bridge-configuration)
         * [Home Assistant OS in a VM](#home-assistant-os-in-a-vm)
             * [inside HA in your browser or mobile app:](#inside-ha-in-your-browser-or-mobile-app)
-        * [2. Accessing HAOS from outside your local network  — Cloudflare Tunnel Setup](#2-accessing-haos-from-outside-your-local-network--cloudflare-tunnel-setup)
+        * [2. Accessing HAOS from outside your local network  — Cloudflare Tunnel Setup](#2-accessing-haos-from-outside-your-local-network-cloudflare-tunnel-setup)
             * [1️⃣ Basic Information (Top Section)](#1-basic-information-top-section)
             * [2️⃣ Add Public Hostname (IMPORTANT)](#2-add-public-hostname-important)
             * [3️⃣ Browser Rendering Settings](#3-browser-rendering-settings)
             * [4️⃣ Policies (MOST IMPORTANT PART)](#4-policies-most-important-part)
-            * [5️⃣ (Optional) Add a Second Policy – Emergency Lockdown](#5-optional-add-a-second-policy--emergency-lockdown)
+            * [5️⃣ (Optional) Add a Second Policy – Emergency Lockdown](#5-optional-add-a-second-policy-emergency-lockdown)
             * [6️⃣ Login Methods](#6-login-methods)
             * [Go back to the previous page to see the policies](#go-back-to-the-previous-page-to-see-the-policies)
-            * [7️⃣ Save the Application ✅](#7-save-the-application-)
+            * [7️⃣ Save the Application ✅](#7-save-the-application)
             * [Activate MFA](#activate-mfa)
         * [Home Assistant devices, add-ons, and integrations](#home-assistant-devices-add-ons-and-integrations)
             * [Matter over Wi-Fi](#matter-over-wi-fi)
             * [Matter over Thread and Zigbee devices](#matter-over-thread-and-zigbee-devices)
-        * [Apps / Add-ons](#apps--add-ons)
+        * [Apps and Add-ons](#apps-and-add-ons)
         * [Integrations](#integrations)
-        * [Dashboard & Cards](#dashboard--cards)
+        * [Dashboard and Cards](#dashboard-and-cards)
         * [Automations, Scenes, Script, Helpers and Entities](#automations-scenes-script-helpers-and-entities)
     * [AdGuard Home address naming resolution using the router (Freebox)](#adguard-home-address-naming-resolution-using-the-router-freebox)
-        * [Sync the names from the Freebox (script + cron)](#sync-the-names-from-the-freebox-script--cron)
-        * [Network topology & DNS flows](#network-topology--dns-flows)
+        * [Sync the names from the Freebox (script + cron)](#sync-the-names-from-the-freebox-script-cron)
+        * [Network topology and DNS flows](#network-topology-and-dns-flows)
 * [todo:](#todo)
 <!-- TOC -->
 
@@ -50,7 +50,7 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
     * Install `openssh-server` and manage it remotely using SSH from another machine so you can copy-paste commands from the documentation.
     * enable ssh auto start : `sudo systemctl enable ssh` and  `sudo systemctl start ssh`
 
-### First checks / updates
+### First checks and updates
 
 * Run updates:
 
@@ -479,7 +479,7 @@ EOF
 * Deactivate ZHA, and add devices: <https://youtu.be/KA4XvVhyCtE?t=112>
 * If you are facing an issue with onboarding not loading after submitting, check: <https://community.home-assistant.io/t/smlight-slzb-06-new-installation-can-not-pass-the-zigbee2mqtt-onboarding-page/908462/2>
 
-### Apps / Add-ons
+### Apps and Add-ons
 
 #### Exposure model — what is reachable from outside the LAN
 
@@ -529,7 +529,7 @@ add-on READMEs: [AIOStreams](https://github.com/AmineDjeghri/ha-addons/tree/main
 
 * [Cloudflared](https://github.com/homeassistant-apps/app-cloudflared) (Cloudflare Tunnel)
     * Create tunnels for the addons that you want. For example an app running on <http://homeassistant.local:8081>
-    * ⚠️ Every entry added here is **public**: the tunnel is the only door, but it is a door. Add an entry only after reading the add-on's *Exposure* section, and check the [exposure model](#exposure-model--what-is-reachable-from-outside-the-lan) for which hostnames also need an Access policy.
+    * ⚠️ Every entry added here is **public**: the tunnel is the only door, but it is a door. Add an entry only after reading the add-on's *Exposure* section, and check the [exposure model](#exposure-model-what-is-reachable-from-outside-the-lan) for which hostnames also need an Access policy.
 
 * [Donetick](https://github.com/donetick/hassio-addons)
 
@@ -664,7 +664,7 @@ This next section is about controllers / routers add-ons :
     * **Test that separates a state bug from a real wake failure:** power the TV on with its own remote → turn it **off from Home Assistant** → turn it **on from Home Assistant**.
         * If that last step works, nothing is broken: the entity is `assumed_state` and `turn_on` only sends the key when it *believes* the device is off, so a stale "on" turns the action into a silent no-op — and since `POWER` is a toggle, Home Assistant's belief has to match the panel before the key means "on". Driving the off yourself resynchronises both sides and proves the standby connection is alive.
         * If it still fails, the device is not reachable in standby → fix points 1–3.
-    * Apps and keys: `media_player.play_media` (`media_content_type: app` + package id, e.g. `com.netflix.ninja`) and `remote.send_command` for D-pad/menu. Ready-made remote card: see [Dashboard & Cards](#dashboard--cards).
+    * Apps and keys: `media_player.play_media` (`media_content_type: app` + package id, e.g. `com.netflix.ninja`) and `remote.send_command` for D-pad/menu. Ready-made remote card: see [Dashboard and Cards](#dashboard-and-cards).
 
 * **Backup** :
 
@@ -738,9 +738,9 @@ This next section is about controllers / routers add-ons :
 * HA Label State: <https://github.com/andrew-codechimp/HA-Label-State>
     * Create two helpers for : entities & addons(apps) with 4 status: off,unavailable, unknown, not_home (away=not_home in raw format)
     * You need to always look at the raw format of the state to see the status of the entity or addon. For example IKEA water-leak sensor's translated status is 'Dry' but the raw format is 'off'. But when the detector is really off, the state is 'unavailable' so our automation can still be triggered.
-    * Example [addons_offline.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/addons_offline.yaml) & [low_battery.yaml](../../src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/low_battery.yaml)
+    * Example [addons_offline.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/addons_offline.yaml) & [low_battery.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/unix/home_server-and-home_assistant/automations_with_label_state/low_battery.yaml)
 
-### Dashboard & Cards
+### Dashboard and Cards
 
 * **Auto entities** : <https://github.com/thomasloven/lovelace-auto-entities>
 * **Custom sidebar**: <https://github.com/elchininet/custom-sidebar>
@@ -830,7 +830,7 @@ Who hands out the addresses, and who publishes the names:
 * This script will run every minute. If it discovers a new device, it will update the log file ``sync_agh.log`` with the latest sync information.
 * ⚠️ The name it takes from the Freebox (``primary_name``, i.e. the name you set on the device's page) is used **only when it creates a client**. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).
 
-### Network topology & DNS flows
+### Network topology and DNS flows
 
 ```mermaid
 graph TB

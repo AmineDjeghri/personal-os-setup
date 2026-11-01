@@ -1,15 +1,15 @@
-# Awesome websites & browser extensions
+# Awesome websites and browser extensions
 
 > For desktop app configuration/shortcuts (and a table of what's available per OS with
-> alternatives), see [apps_configuration_and_shorcuts.md](apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
+> alternatives), see [apps_configuration_and_shorcuts.md](apps_configuration_and_shorcuts.md#app-availability-and-alternatives-across-oses).
 
 <!-- TOC -->
-* [Awesome websites & browser extensions](#awesome-websites--browser-extensions)
+* [Awesome websites and browser extensions](#awesome-websites-and-browser-extensions)
     * [1. Browser Extensions](#1-browser-extensions)
         * [1.1. productivity Extensions](#11-productivity-extensions)
         * [1.2. ChatGPT Extensions](#12-chatgpt-extensions)
-        * [1.3. Privacy & security Extensions](#13-privacy--security-extensions)
-        * [1.4. Gaming, movies & other Extensions](#14-gaming-movies--other-extensions)
+        * [1.3. Privacy and security Extensions](#13-privacy-and-security-extensions)
+        * [1.4. Gaming, movies and other Extensions](#14-gaming-movies-and-other-extensions)
         * [1.5. Browser shortcuts (chromium):](#15-browser-shortcuts-chromium)
     * [2. Useful websites](#2-useful-websites)
         * [2.1. Mainstream website (DEPRECATED)](#21-mainstream-website-deprecated)
@@ -52,7 +52,7 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 * `Suite ChatGPT`: Enhances the ChatGPT experience.
 * `ChatGPT sidebar`: Provides a sidebar for easy access to ChatGPT.
 
-### 1.3. Privacy & security Extensions
+### 1.3. Privacy and security Extensions
 
 * `Bitwarden`: Manages your passwords.
 * `NordVPN`: Provides VPN services.
@@ -65,7 +65,7 @@ The Following extensions are all available in brave, chrome & edge (Chromium-bas
 * `iCloud Passwords`: Save your passwords, 2FAs and log in to sites with a single click.
 * `User agent switcher and manager`: Spoof your browser's user agent string. [Chrome Web Store](https://chromewebstore.google.com/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg)
 
-### 1.4. Gaming, movies & other Extensions
+### 1.4. Gaming, movies and other Extensions
 
 * `Watch2Gether`: Watch videos together with friends.
 * `Netflix Party is now Teleparty`
@@ -102,7 +102,7 @@ Contains a list of awesome websites that are not that popular but useful for eve
 
 * [r/InternetIsBeautiful](https://www.reddit.com/r/InternetIsBeautiful/) - A subreddit where people share interesting websites they found on the internet.
 * [Radio Garden](http://radio.garden/) - Listen to radio stations from around the world by rotating the globe. You can also search or sort by popularity.
-* [pdf tool](pdftool.org) -A privacy-first tool that lets you modify pdfs offline in your browser, no upload to server or cloud, no limits on editing, entirely for free
+* [pdf tool](https://pdftool.org) -A privacy-first tool that lets you modify pdfs offline in your browser, no upload to server or cloud, no limits on editing, entirely for free
 * [IP address check torrent  downloads](https://iknowwhatyoudownload.com/en/peer/) - Check what IP address is downloading torrents.
 
 ### 2.2. Development websites

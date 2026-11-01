@@ -1,4 +1,4 @@
-# Windows 11 & WSL setup
+# Windows 11 and WSL setup
 
 ![Windows WSL Terminal with taskbar](../images/windows_wsl_terminal_taskbar.png)
 
@@ -8,18 +8,18 @@ You can follow this repository to get a similar setup.
 
 Table of Contents
 <!-- TOC -->
-* [Windows 11 & WSL setup](#windows-11--wsl-setup)
-    * [1. Windows account & configuration](#1-windows-account--configuration)
+* [Windows 11 and WSL setup](#windows-11-and-wsl-setup)
+    * [1. Windows account and configuration](#1-windows-account-and-configuration)
         * [1.1. Windows account](#11-windows-account)
         * [1.2. Windows configuration](#12-windows-configuration)
             * [🎧Audio settings](#audio-settings)
-            * [🖥️ Monitor and Display Settings](#-monitor-and-display-settings)
+            * [🖥️ Monitor and Display Settings](#monitor-and-display-settings)
     * [2. Software](#2-software)
     * [3. Coding using Linux (WSL) inside Windows](#3-coding-using-linux-wsl-inside-windows)
         * [3.1. Install WSL:](#31-install-wsl)
-        * [3.2. Linux/WSL Setup - terminal, shell, Miniconda, CUDA & More:](#32-linuxwsl-setup---terminal-shell-miniconda-cuda--more)
+        * [3.2. Linux/WSL Setup - terminal, shell, Miniconda, CUDA & More:](#32-linux-and-wsl-setup-terminal-shell-miniconda-cuda-and-more)
             * [CUDA on WSL2](#cuda-on-wsl2)
-        * [3.3. WSL2 Utilities, Tips & Tricks :](#33-wsl2-utilities-tips--tricks-)
+        * [3.3. WSL2 Utilities, Tips & Tricks :](#33-wsl2-utilities-tips-and-tricks)
         * [3.4. backup and restore WSL](#34-backup-and-restore-wsl)
         * [3.5. Uninstall WSL:](#35-uninstall-wsl)
     * [4. More (deprecated)](#4-more-deprecated)
@@ -28,7 +28,7 @@ Table of Contents
 
 Install the Personal-OS-Setup TUI [app](../../README.md#windows-11)
 
-## 1. Windows account & configuration
+## 1. Windows account and configuration
 
 ### 1.1. Windows account
 
@@ -156,7 +156,7 @@ Other apps, websites and tips: (DEPRECATED)
 Automatic installation of these apps is available with the Personal-OS-Setup TUI [app](../../README.md#windows-11)
 
 For App configuration, check [apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md) —
-see the [app availability & alternatives table](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses)
+see the [app availability & alternatives table](../apps/apps_configuration_and_shorcuts.md#app-availability-and-alternatives-across-oses)
 for what's available on Windows vs. macOS/CachyOS and their alternatives.
 
 For browser extensions, check [browser_extensions.md](../apps/awesome_websites_browser_extensions.md)
@@ -193,7 +193,7 @@ machine.
 
 ### 3.1. Install WSL
 
-* Automatic installation of WSL available with the Personal-OS-Setup TUI [app](../../README.md#linux--wsl2--macos)
+* Automatic installation of WSL available with the Personal-OS-Setup TUI [app](../../README.md#linux-and-wsl2-and-macos)
 * Run the script in Windows Terminal
 * Or manual installation: Run this command in PowerShell ``` wsl --install ```. You can also select the drive where you want to install it instead of the default 'C' drive and this is what I recommend doing.
 
@@ -227,7 +227,7 @@ systemd=true
   enter an empty password).
 * Jump to the next section to configure your WSL /Ubuntu.
 
-### 3.2. Linux/WSL Setup - terminal, shell, Miniconda, CUDA & More
+### 3.2. Linux and WSL Setup - terminal, shell, Miniconda, CUDA and More
 
 After installing WSL, you have now ubuntu running inside windows.
 Follow these guides containing an automated script to customize your terminal,
@@ -247,7 +247,7 @@ shell, install Miniconda, CUDA, and more:
 Follow the official CUDA WSL guide:
 [CUDA Support for WSL 2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#cuda-support-for-wsl-2)
 
-### 3.3. WSL2 Utilities, Tips & Tricks
+### 3.3. WSL2 Utilities, Tips and Tricks
 
 * Take a look at [awesome-wsl](https://github.com/sirredbeard/awesome-wsl)
 * A surprising number of Linux GUI apps can run on WSL. GUI applications are officially supported on WSL2 and referred

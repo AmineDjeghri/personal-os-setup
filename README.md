@@ -22,7 +22,7 @@ with guides for desktops, home servers and Android TV.
 
 ## Get started
 
-### Linux / WSL2 / macOS
+### Linux and WSL2 and macOS
 
 ```bash
 sh -c "$(wget https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/install_unix.sh -O -)"

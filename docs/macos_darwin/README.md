@@ -2,7 +2,7 @@
 
 This document describes how to get a productive macOS setup (terminal + apps + UX tweaks) consistent with the rest of this repo.
 
-## Windows/Linux behavior mimicking in macOS
+## Windows and Linux behavior mimicking in macOS
 
 If you're coming from Windows or Linux, macOS has some different behaviors. You can remap keys to make the layout feel closer to Windows. This is useful if you frequently switch between macOS and Windows/Linux, as it reduces muscle memory conflicts and makes your workflow more consistent across platforms.
 
@@ -35,11 +35,11 @@ After remapping our keys, to copy-paste, it will be the same as in Windows/Linux
 
 The Personal OS Setup provides a **Terminal UI (TUI) application** that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:
 
-Use [README.md](../../README.md#linux--wsl2--macos) as it automatically handles the OS setup with the interactive TUI application.
+Use [README.md](../../README.md#linux-and-wsl2-and-macos) as it automatically handles the OS setup with the interactive TUI application.
 
 ### 1. Package Selection
 
-The app displays all available packages from [packages.yaml](../../src/personal_os_setup/config/packages.yaml) organized by category:
+The app displays all available packages from [packages.yaml](https://github.com/AmineDjeghri/personal-os-setup/blob/main/src/personal_os_setup/config/packages.yaml) organized by category:
 
 - **Core tools**: `git`, `curl`, `zsh`
 - **Dev tools**: `uv`, `Pycharm`, `Ghostty`, `Zed`, `Docker-Desktop`
@@ -51,16 +51,16 @@ You can multi-select packages using the interactive interface.
 
 ### 2. Terminal Setup (Zsh + Oh My Zsh + Powerlevel10k)
 
-This section is the same as Linux. Follow the terminal ZSH instructions in [Linux](../linux/README.md#2-terminal-setup-zsh--oh-my-zsh--powerlevel10k).
+This section is the same as Linux. Follow the terminal ZSH instructions in [Linux](../linux/README.md#2-terminal-setup-zsh-oh-my-zsh-powerlevel10k).
 
 ## 3. Recommended apps
 
 For per-app configuration and shortcuts shared across platforms (PyCharm, Obsidian, Raycast,
 Bitwarden, Zed, the terminal tools cheatsheet), plus a table of what's available on macOS vs.
 Windows/CachyOS and their alternatives, check
-[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability--alternatives-across-oses).
+[apps_configuration_and_shorcuts.md](../apps/apps_configuration_and_shorcuts.md#app-availability-and-alternatives-across-oses).
 
-## 4. UI/UX tweaks
+## 4. UI and UX tweaks
 
 - Enable sudo with Touch ID:
 
@@ -133,7 +133,7 @@ Manage the VM:
 
    The guest is Intel (x86_64), so Homebrew installs under `/usr/local`. Open a new Terminal tab and check
    `brew --version` before going on.
-5. Run the app with the one-liner from the [README](../../README.md#linux--wsl2--macos) (it clones the repo into
+5. Run the app with the one-liner from the [README](../../README.md#linux-and-wsl2-and-macos) (it clones the repo into
    `~/.personal-os-setup`, runs `make install` and `make run`), then use `personal-os-setup` for later runs. Exercise the
    Packages tab (brew formulae/casks), the Zsh and dotfiles sections, etc.
 6. Re-run `make vm-macos` to start the existing guest again; use `make vm-clean` (table above) to delete it.
