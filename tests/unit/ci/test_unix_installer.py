@@ -23,9 +23,9 @@ if name == 'git':
     elif args in (['pull'], ['pull', '--ff-only']): sys.exit(int(os.environ.get('FAIL_PULL', '0')))
     else: raise AssertionError(args)
 elif name == 'make':
-    assert args in (['install'], ['run']), args
+    assert args in (['install-prod'], ['run']), args
     print('fixture ' + args[0], flush=True)
-    sys.exit(int(os.environ.get('FAIL_' + args[0].upper(), '0')))
+    sys.exit(int(os.environ.get('FAIL_' + args[0].split('-')[0].upper(), '0')))
 elif name == 'script':
     if os.environ['FIXTURE_OS'] == 'Darwin':
         assert args[:3] == ['-q', '-a', args[2]] and args[-2:] == ['make', 'run'], args
@@ -86,7 +86,7 @@ def installer(tmp_path, request):
 def test_failed_install_stops_before_launcher_or_app(installer, terminal, system):
     result, calls, root = installer(terminal, system, FAIL_INSTALL="23")
     assert result.returncode == 23
-    assert [args for name, args in calls if name == "make"] == [["install"]]
+    assert [args for name, args in calls if name == "make"] == [["install-prod"]]
     assert not any(name == "script" for name, _ in calls)
     assert "fixture install" in next((root / ".logs").glob("*.log")).read_text()
 
@@ -101,7 +101,7 @@ def test_app_exit_status_reaches_installer_caller(installer, terminal, system):
 def test_successful_install_keeps_logging_and_runs_app(installer):
     result, calls, root = installer(False)
     assert result.returncode == 0
-    assert [args for name, args in calls if name == "make"] == [["install"], ["run"]]
+    assert [args for name, args in calls if name == "make"] == [["install-prod"], ["run"]]
     assert "fixture run" in next((root / ".logs").glob("*.log")).read_text()
 
 

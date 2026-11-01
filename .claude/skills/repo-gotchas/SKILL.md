@@ -9,7 +9,7 @@ metadata:
 # Tooling boundaries in personal-os-setup
 
 - Bare `make` displays help. `make install-uv` installs only when missing; `make update-uv`
-  explicitly updates. `make install` installs runtime dependencies; use `make install-dev` for tools.
+  explicitly updates. `make install-prod` installs runtime dependencies only; use `make install-dev` for tools.
 - `make pre-commit` runs prepared tools without synchronization or hook installation; `make install-dev`
   installs the Git hooks in a checkout (`make pre-commit-install` repeats it, `make pre-commit-status` checks it).
   New untracked files need explicit checking with `make pre-commit FILES="<paths>"`; `--all-files` sees only

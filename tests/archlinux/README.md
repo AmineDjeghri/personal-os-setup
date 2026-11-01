@@ -24,6 +24,6 @@ This drops you into `bash` in:
 From there you can try your normal workflow, for example:
 
 ```bash
-make install
+make install-prod
 make run
 ```

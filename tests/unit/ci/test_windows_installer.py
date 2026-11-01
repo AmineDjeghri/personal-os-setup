@@ -66,7 +66,7 @@ function Fixture-Winget {
 function Fixture-Make {
     Record-Command 'make' $args
     $global:LASTEXITCODE = 0
-    if ($args -contains 'install' -and $script:Scenario -eq 'install-failure') {
+    if ($args -contains 'install-prod' -and $script:Scenario -eq 'install-failure') {
         $global:LASTEXITCODE = 23
     }
     if ($args -contains 'run' -and $script:Scenario -eq 'run-failure') {
@@ -81,12 +81,12 @@ function Fixture-Make {
 @pytest.mark.parametrize(
     ("scenario", "targets", "code"),
     [
-        ("existing-git", ["install", "run"], None),
-        ("no-git", ["install", "run"], None),
+        ("existing-git", ["install-prod", "run"], None),
+        ("no-git", ["install-prod", "run"], None),
         ("git-install-failure", [], "23"),
         ("pull-failure", [], "17"),
-        ("install-failure", ["install"], "23"),
-        ("run-failure", ["install", "run"], "29"),
+        ("install-failure", ["install-prod"], "23"),
+        ("run-failure", ["install-prod", "run"], "29"),
     ],
 )
 def test_bootstrap_never_continues_after_critical_command_failure(

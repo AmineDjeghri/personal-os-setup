@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
       - uses: ./.github/actions/install-python-deps
       - run: make pre-commit
@@ -30,8 +31,9 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
       - uses: ./.github/actions/install-python-deps
       - name: Safe software checks with separate coverage reporting
@@ -42,7 +44,7 @@ jobs:
         run: make test-all
       - name: Upload self-contained coverage
         if: runner.os == 'Linux' && always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: self-contained-coverage
           path: reports/coverage.xml
@@ -60,8 +62,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
       - uses: ./.github/actions/install-python-deps
       # Linux/macOS mutate only these disposable runners. Windows tests are read-only.

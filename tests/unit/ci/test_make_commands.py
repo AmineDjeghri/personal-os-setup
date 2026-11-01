@@ -69,7 +69,7 @@ def make_tests(tmp_path):
     def run(target, *args, **updates):
         env = dict(os.environ, COMMAND_LOG=str(log))
         env.pop("PYTEST_ADDOPTS", None)
-        env.pop("PYTEST_ARGS", None)
+        env.pop("ARGS", None)
         env.pop("MAKEFLAGS", None)
         env.pop("TEST_COVERAGE", None)
         result = subprocess.run(
@@ -87,7 +87,7 @@ def make_tests(tmp_path):
 
 @pytest.mark.parametrize("target", ["test-all", "test-coverage", "test-integration"])
 @pytest.mark.parametrize("option", ["--collect-only", "-k one", "-m unit", "--deselect=one"])
-@pytest.mark.parametrize("variable", ["PYTEST_ARGS", "PYTEST_ADDOPTS"])
+@pytest.mark.parametrize("variable", ["ARGS", "PYTEST_ADDOPTS"])
 def test_comprehensive_targets_reject_reduced_runs(make_tests, target, option, variable):
     result, calls = make_tests(target, f"{variable}={option}")
     assert result.returncode != 0
@@ -102,7 +102,7 @@ def test_environment_cannot_reduce_comprehensive_checks(make_tests, target):
 
 
 def test_focused_target_accepts_filters(make_tests):
-    result, calls = make_tests("test-local", "PYTEST_ARGS=-k one")
+    result, calls = make_tests("test-local", "ARGS=-k one")
     assert result.returncode == 0, result.stderr
     assert calls[0][-2:] == ["-k", "one"]
 

@@ -200,8 +200,8 @@ Ensure-Bash -GitPath $git
 $null = Ensure-Make
 Ensure-Chezmoi
 
-Write-Host "Running: make install" -ForegroundColor Yellow
-Invoke-Make -MakeArguments @('install')
+Write-Host "Running: make install-prod" -ForegroundColor Yellow
+Invoke-Make -MakeArguments @('install-prod')
 Install-CommandShim
 Write-Host "Running: make run" -ForegroundColor Yellow
 Invoke-Make -MakeArguments @('run')

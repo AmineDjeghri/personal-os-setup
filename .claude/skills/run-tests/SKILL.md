@@ -21,8 +21,8 @@ Read `docs/developer/4.testing.md` for the test suites and current targets.
 4. `make check` runs `pre-commit-status` (hook warning), static/docs hooks, `test-all` and `docs-build`.
    `make install-dev` prepares the environment and the Git hooks; checks never install them.
 
-Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`. Use
-`make test-local PYTEST_ARGS="-k release"` for focused debugging, including collection-only runs.
+Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`. Use
+`make test-local ARGS="-k release"` for focused debugging, including collection-only runs.
 
 ## Isolation conventions
 

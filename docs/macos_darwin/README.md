@@ -134,7 +134,7 @@ Manage the VM:
    The guest is Intel (x86_64), so Homebrew installs under `/usr/local`. Open a new Terminal tab and check
    `brew --version` before going on.
 5. Run the app with the one-liner from the [README](../../README.md#linux-and-wsl2-and-macos) (it clones the repo into
-   `~/.personal-os-setup`, runs `make install` and `make run`), then use `personal-os-setup` for later runs. Exercise the
+   `~/.personal-os-setup`, runs `make install-prod` and `make run`), then use `personal-os-setup` for later runs. Exercise the
    Packages tab (brew formulae/casks), the Zsh and dotfiles sections, etc.
 6. Re-run `make vm-macos` to start the existing guest again; use `make vm-clean` (table above) to delete it.
 

@@ -31,7 +31,7 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
 | `make test-local`             | safe unit + isolated skills suites; also the default pytest discovery                     |
 | `make test-coverage`          | safe checks with separate Python coverage; no threshold                                   |
 | `make test-all`               | every self-contained suite: unit + skills, then the built-wheel install smoke             |
-| `make pre-commit`             | static/docs hooks including actionlint; no dependency sync or hook installation           |
+| `make pre-commit`             | static/docs hooks incl. actionlint and zizmor; no dependency sync or hook installation    |
 | `make install-dev`            | full dev env and Git hooks (use this, not `uv pip install -e .`)                          |
 | `make lint` / `make format`   | ruff directly                                                                             |
 | `make test-integration`       | **CI only**: Linux/macOS mutate packages; Windows is read-only                            |
@@ -39,7 +39,7 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
 Run `make check` before any PR. It establishes local validation; required CI additionally runs
 self-contained checks and executed integration on Ubuntu/macOS/Windows. CachyOS integration is not
 covered by hosted CI. `make test-local` alone omits artifact/runtime and strict documentation checks.
-Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`; use `test-local` for filtered runs.
+Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS="..."` for filtered runs.
 
 ## Conventions
 
@@ -116,8 +116,7 @@ Full validation targets reject `PYTEST_ARGS` and `PYTEST_ADDOPTS`; use `test-loc
 
 ## Known drift (trust nothing blindly)
 
-- `make install` installs zero dev/docs deps → use `make install-dev`
-- actionlint is active; zizmor/pip-audit remain disabled in `.pre-commit-config.yaml`
+- actionlint and zizmor are active; pip-audit, bandit and markdown-link-check remain disabled in `.pre-commit-config.yaml`
 - `make docker-prod`/`docker-dev` don't exist
 - Docs said `_PRIMARY_MANAGERS_BY_DISTRO` — the real constant is `_UI_VISIBLE_MANAGERS_BY_DISTRO`
 - `properdocs.yml` uses `docs_dir: .` — new top-level dirs must join the exclude glob or they

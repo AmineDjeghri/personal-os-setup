@@ -3,8 +3,6 @@
 
 .PHONY: pre-commit-install _pre-commit-install-auto pre-commit-status pre-commit lint format docs-build check
 
-PRE_COMMIT_ARGS ?= --all-files
-
 pre-commit-install: ## Install the git hooks once after install-dev
 	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
 	$(UV) run --no-sync pre-commit install --hook-type pre-commit --hook-type commit-msg
@@ -26,7 +24,7 @@ pre-commit-status: ## Warn when the Git hooks are not installed (non-fatal; skip
 
 pre-commit: ## Run checks using the prepared development environment
 	@echo "${YELLOW}=========> Running pre-commit...${NC}"
-	$(UV) run --no-sync pre-commit run $(if $(strip $(FILES)),--files $(FILES),$(PRE_COMMIT_ARGS))
+	$(UV) run --no-sync pre-commit run $(if $(strip $(FILES)),--files $(FILES),--all-files) $(ARGS)
 
 lint: ## Lint code with Ruff
 	@echo "Linting code..."

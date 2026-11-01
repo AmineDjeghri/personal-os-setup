@@ -7,10 +7,10 @@ repos:
     rev: v4.6.0
     hooks:
       - id: check-added-large-files
-        args: ['--maxkb=3000']
+        args: [ '--maxkb=3000' ]
       - id: check-toml
       - id: check-yaml
-        args: ['--unsafe']  # properdocs.yml uses !!python/name tags (mermaid fence); syntax is still checked
+        args: [ '--unsafe' ]  # properdocs.yml uses !!python/name tags (mermaid fence); syntax is still checked
       - id: check-json
         exclude: ^src/personal_os_setup/config/chezmoi/dot_config/zed/settings\.json$
       - id: end-of-file-fixer
@@ -32,15 +32,15 @@ repos:
       # Run the formatter.
       - id: ruff-format
 
-  -   repo: https://github.com/Yelp/detect-secrets
-      rev: v1.5.0
-      hooks:
-        -   id: detect-secrets
-            args: ['--exclude-files', '^src/personal_os_setup/config/chezmoi/dot_glzr/zebar/(amine-zebar|starter)/with-glazewm\.html$',
-                   '--exclude-files', '\.(png|gif|zip|jpg|jpeg|ico)$',
-                   '--exclude-files', '^uv\.lock$',
-                   '--exclude-lines','"skillFolderHash": "[0-9a-f]{40,}"',
-            ]
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [ '--exclude-files', '^src/personal_os_setup/config/chezmoi/dot_glzr/zebar/(amine-zebar|starter)/with-glazewm\.html$',
+                '--exclude-files', '\.(png|gif|zip|jpg|jpeg|ico)$',
+                '--exclude-files', '^uv\.lock$',
+                '--exclude-lines','"skillFolderHash": "[0-9a-f]{40,}"',
+        ]
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.24.0
@@ -52,15 +52,15 @@ repos:
     rev: v2.4.3
     hooks:
       - id: codespell
-        args: ['--ignore-words-list', 'hass,shotcut']
-        types: [markdown]
+        args: [ '--ignore-words-list', 'hass,shotcut' ]
+        types: [ markdown ]
         exclude: ^CHANGELOG\.md$
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.19.2
     hooks:
       - id: commitizen
-        stages: [commit-msg]
+        stages: [ commit-msg ]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.13.5
@@ -84,31 +84,14 @@ repos:
         files: ^(docs/|src/personal_os_setup/|scripts/gen_.*\.py$|properdocs\.yml$|pyproject\.toml$|uv\.lock$|makefiles/(build|check_format)\.mk$|[^/]+\.md$)
         pass_filenames: false
 
-#  - repo: https://github.com/pypa/pip-audit
-#    rev: v2.10.0
-#    hooks:
-#      - id: pip-audit
+
 
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
       - id: actionlint
 
-#  - repo: https://github.com/zizmorcore/zizmor-pre-commit
-#    rev: v1.25.2
-#    hooks:
-#      - id: zizmor
-
-#  - repo: https://github.com/tcort/markdown-link-check
-#    # Note: This hook does not block commits if links are broken. It just reports them.
-#    rev: v3.14.2
-#    hooks:
-#      - id: markdown-link-check
-#        name: Markdown Link Check
-#        args: ['--config', '.markdown-link-check.json']
-
-#  - repo: https://github.com/PyCQA/bandit
-#    rev: 1.9.2
-#    hooks:
-#      - id: bandit
-#        exclude: ^tests/
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.25.2
+    hooks:
+      - id: zizmor

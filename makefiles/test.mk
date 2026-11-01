@@ -4,7 +4,7 @@
 N ?= 4
 
 # Full gates reject diagnostic options instead of reporting partial execution as validation.
-require-full-tests = $(if $(strip $(PYTEST_ARGS) $(PYTEST_ADDOPTS)),$(error $@ requires complete execution; use test-local PYTEST_ARGS="..." for focused or collection-only runs))
+require-full-tests = $(if $(strip $(ARGS) $(PYTEST_ADDOPTS)),$(error $@ requires complete execution; use test-local ARGS="..." for focused or collection-only runs))
 
 test-installation: build-package ## Build and verify artifacts, then smoke-check the installed wheel
 	@$(MAKE) --no-print-directory test-wheel
@@ -16,11 +16,11 @@ test-wheel: ## Install the existing verified wheel in isolation and load its ent
 	$(UV) run --isolated --no-project --with "$$wheel" python scripts/check_installation.py "$$version"
 
 test-local: ## Run unit and isolated skills tests (N=4 workers by default; empty collection fails)
-	@$(UV) run --no-sync python -m pytest tests/unit tests/skills --numprocesses=$(N) $(PYTEST_ARGS)
+	@$(UV) run --no-sync python -m pytest tests/unit tests/skills --numprocesses=$(N) $(ARGS)
 
 test-all: ## Run safe local suites and the built-wheel smoke; OS integration remains separate
 	$(require-full-tests)
-	@$(MAKE) --no-print-directory test-local $(if $(filter 1,$(TEST_COVERAGE)),PYTEST_ARGS="--cov=personal_os_setup --cov=scripts --cov-report=term-missing --cov-report=xml:reports/coverage.xml")
+	@$(MAKE) --no-print-directory test-local $(if $(filter 1,$(TEST_COVERAGE)),ARGS="--cov=personal_os_setup --cov=scripts --cov-report=term-missing --cov-report=xml:reports/coverage.xml")
 	@$(MAKE) --no-print-directory test-installation
 
 # Coverage reuses test-all, without running the same suites twice in CI.

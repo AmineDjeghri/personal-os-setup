@@ -360,7 +360,7 @@ Manage the VM:
    `make vm-ufw-allow` in [the VM section](../vm/README.md).
 4. Inside Windows, open PowerShell **as administrator** and run the one-liner from the
    [Windows 11 install section](../../README.md#windows-11) (it runs `install_windows.ps1`: installs git/make/chezmoi
-   via winget, clones the repo, runs `make install` and `make run`).
+   via winget, clones the repo, runs `make install-prod` and `make run`).
 5. The TUI then starts — exercise the Packages tab, the WSL tab, etc. (WSL2 inside the VM additionally needs nested
    virtualization enabled on the host, plus a reboot; the VM is a throwaway so that is fine.)
 6. Re-run `make vm-windows` to reopen/restart the VM; use the table above to list or clean it up.

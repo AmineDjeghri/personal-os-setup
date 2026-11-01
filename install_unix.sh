@@ -121,7 +121,7 @@ run_logged() (
     exit "$INSTALL_LOG_STATUS"
 )
 
-run_logged make install
+run_logged make install-prod
 link_command
 
 # NOTE: The UI requires a real TTY. Piping stdout through `tee` makes stdout a pipe

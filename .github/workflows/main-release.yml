@@ -3,19 +3,21 @@ on:
   push:
     branches: [main, dev]
   workflow_dispatch:
-permissions:
-  contents: write
+permissions: {}
 concurrency:
   cancel-in-progress: false
   group: release-${{ github.ref }}
 jobs:
   quality-checks:
+    permissions:
+      contents: read
     name: "👷 Quality Check & Tests"
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && (github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]'))
     uses: ./.github/workflows/quality-and-tests.yml
-    secrets: inherit  # pragma: allowlist secret
 
   release:
+    permissions:
+      contents: write
     name: Verified release publication
     needs: quality-checks
     runs-on: ubuntu-latest
@@ -24,7 +26,7 @@ jobs:
       released: ${{ steps.release.outputs.released }}
       version: ${{ steps.release.outputs.version }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           # Remain on the release branch so semantic-release can commit. GITHUB_SHA rejects a newer
@@ -47,13 +49,15 @@ jobs:
         if: always()
 
   docs:
+    permissions:
+      contents: write
     name: "📚 Deploy released documentation"
     needs: release
     if: github.ref == 'refs/heads/main' && needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           ref: v${{ needs.release.outputs.version }}
