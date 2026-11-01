@@ -8,7 +8,7 @@
       "skillPath": "skills/autonomous-ai-agents/claude-code/SKILL.md",
       "skillFolderHash": "cc2e05d23617439d9584568a76cb3b933e21bb24",
       "installedAt": "2026-10-18T23:18:05.114Z",
-      "updatedAt": "2026-11-01T17:51:09.395Z"
+      "updatedAt": "2026-11-01T19:28:54.472Z"
     },
     "differential-review": {
       "source": "trailofbits/skills",
@@ -17,7 +17,7 @@
       "skillPath": "plugins/differential-review/skills/differential-review/SKILL.md",
       "skillFolderHash": "09ff02c96f84ad4b98184bcd5efae5b218caa910",
       "installedAt": "2026-10-18T23:18:08.357Z",
-      "updatedAt": "2026-11-01T17:51:15.975Z"
+      "updatedAt": "2026-11-01T19:28:56.535Z"
     },
     "find-skills": {
       "source": "vercel-labs/skills",
@@ -26,7 +26,7 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-10-18T23:18:09.096Z",
-      "updatedAt": "2026-11-01T17:51:17.459Z"
+      "updatedAt": "2026-11-01T19:28:57.504Z"
     },
     "hermes-agent": {
       "source": "NousResearch/hermes-agent",
@@ -35,16 +35,16 @@
       "skillPath": "skills/autonomous-ai-agents/hermes-agent/SKILL.md",
       "skillFolderHash": "5a11dec7e02045f60b3c912ae26eba51293b8fae",
       "installedAt": "2026-10-18T23:18:18.837Z",
-      "updatedAt": "2026-11-01T17:51:45.380Z"
+      "updatedAt": "2026-11-01T19:29:03.425Z"
     },
     "hermes-agent-skill-authoring": {
       "source": "NousResearch/hermes-agent",
       "sourceType": "github",
       "sourceUrl": "https://github.com/NousResearch/hermes-agent.git",
-      "skillPath": "skills/software-development/hermes-agent-skill-authoring/SKILL.md",
+      "skillPath": "optional-skills/software-development/hermes-agent-skill-authoring/SKILL.md",
       "skillFolderHash": "d2f486cb4f9445f7ec3c2de55b321ecf83fc52fb",
       "installedAt": "2026-10-18T23:18:28.125Z",
-      "updatedAt": "2026-10-26T23:22:32.814Z"
+      "updatedAt": "2026-11-01T19:18:25.158Z"
     },
     "diagnosing-bugs": {
       "source": "mattpocock/skills",
@@ -54,7 +54,7 @@
       "skillFolderHash": "5fdd6cc53385395441910b026c72d71768e993d4",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.621Z",
-      "updatedAt": "2026-11-01T17:51:12.090Z"
+      "updatedAt": "2026-11-01T19:29:12.572Z"
     },
     "grill-with-docs": {
       "source": "mattpocock/skills",
@@ -64,7 +64,7 @@
       "skillFolderHash": "eedaf2562c83155115e9c649fa3ecaac2e10e81d",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.621Z",
-      "updatedAt": "2026-11-01T17:51:26.174Z"
+      "updatedAt": "2026-11-01T19:29:13.948Z"
     },
     "tdd": {
       "source": "mattpocock/skills",
@@ -74,7 +74,7 @@
       "skillFolderHash": "667dbdd00c09d0e2189e082986e6a4d61a67c2a6",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.622Z",
-      "updatedAt": "2026-11-01T17:52:13.149Z"
+      "updatedAt": "2026-11-01T19:29:15.324Z"
     },
     "grill-me": {
       "source": "mattpocock/skills",
@@ -84,7 +84,7 @@
       "skillFolderHash": "3df14e2d3a89459bf300614be9247e3ce74798f8",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.622Z",
-      "updatedAt": "2026-11-01T17:51:23.362Z"
+      "updatedAt": "2026-11-01T19:29:16.781Z"
     },
     "grilling": {
       "source": "mattpocock/skills",
@@ -94,7 +94,7 @@
       "skillFolderHash": "f551b6e0d219fdda0b6abf277f8f915b3127d1e9",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.622Z",
-      "updatedAt": "2026-11-01T17:51:28.514Z"
+      "updatedAt": "2026-11-01T19:29:18.270Z"
     },
     "handoff": {
       "source": "mattpocock/skills",
@@ -104,7 +104,7 @@
       "skillFolderHash": "ce24892bd2d4b9e7fd5ac9b95c03175e18bef388",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-10-26T23:25:34.622Z",
-      "updatedAt": "2026-11-01T17:51:32.490Z"
+      "updatedAt": "2026-11-01T19:29:19.689Z"
     },
     "home-assistant-best-practices": {
       "source": "homeassistant-ai/skills",
@@ -113,7 +113,7 @@
       "skillPath": "skills/home-assistant-best-practices/SKILL.md",
       "skillFolderHash": "011e934cff024c4efde1742c2e474cd25bdb02ab",
       "installedAt": "2026-10-26T23:40:02.103Z",
-      "updatedAt": "2026-11-01T17:52:00.690Z"
+      "updatedAt": "2026-11-01T19:29:21.097Z"
     },
     "modern-python": {
       "source": "trailofbits/skills",
@@ -122,7 +122,7 @@
       "skillPath": "plugins/modern-python/skills/modern-python/SKILL.md",
       "skillFolderHash": "e84fa2b3a076b4333e4cc6187510f2b180eed427",
       "installedAt": "2026-10-26T23:40:04.114Z",
-      "updatedAt": "2026-11-01T17:52:07.397Z"
+      "updatedAt": "2026-11-01T19:29:22.890Z"
     },
     "bash-script-validator": {
       "source": "akin-ozer/cc-devops-skills",
@@ -131,7 +131,7 @@
       "skillPath": "devops-skills-plugin/skills/bash-script-validator/SKILL.md",
       "skillFolderHash": "2db3868057e1952e1c7155c06198db512536b0cc",
       "installedAt": "2026-10-26T23:40:06.292Z",
-      "updatedAt": "2026-11-01T17:52:46.039Z"
+      "updatedAt": "2026-11-01T19:29:24.489Z"
     },
     "github-actions-validator": {
       "source": "akin-ozer/cc-devops-skills",
@@ -140,7 +140,7 @@
       "skillPath": "devops-skills-plugin/skills/github-actions-validator/SKILL.md",
       "skillFolderHash": "323fd8190df28d1848530880fdf6df7db756e38c",
       "installedAt": "2026-10-26T23:40:06.293Z",
-      "updatedAt": "2026-11-01T17:51:20.401Z"
+      "updatedAt": "2026-11-01T19:29:26.059Z"
     },
     "makefile-validator": {
       "source": "akin-ozer/cc-devops-skills",
@@ -149,7 +149,7 @@
       "skillPath": "devops-skills-plugin/skills/makefile-validator/SKILL.md",
       "skillFolderHash": "5546ac45b6cbacd5a2496d714aaa429edb5e3eb3",
       "installedAt": "2026-10-26T23:40:06.293Z",
-      "updatedAt": "2026-11-01T17:52:03.744Z"
+      "updatedAt": "2026-11-01T19:29:27.911Z"
     },
     "skill-creator": {
       "source": "anthropics/skills",
@@ -159,7 +159,7 @@
       "skillFolderHash": "3cf9a8db32597ba3e24b584a3d696f4e11c7d7b6",
       "pluginName": "example-skills",
       "installedAt": "2026-11-01T17:16:17.544Z",
-      "updatedAt": "2026-11-01T17:52:10.402Z"
+      "updatedAt": "2026-11-01T19:29:29.476Z"
     }
   },
   "dismissed": {}
