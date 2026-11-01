@@ -50,7 +50,13 @@ agent=args[args.index('-a')+1]
 with open(os.environ['SMOKE_CALLS'],'a') as f: f.write(agent+'\\n')
 if os.environ.get('SMOKE_FAIL')==agent: sys.exit(1)
 root=os.environ['SKILLS_DST'] if agent=='claude-code' else os.environ['SKILLS_CODEX_DST']
-shutil.copytree(os.environ['SMOKE_FIXTURE'],pathlib.Path(root)/'example',dirs_exist_ok=True)
+canonical=pathlib.Path(os.environ['SKILLS_CODEX_DST'])/'example'
+shutil.copytree(os.environ['SMOKE_FIXTURE'],canonical,dirs_exist_ok=True)
+link=pathlib.Path(root)/'example'
+if agent=='claude-code' and not link.is_symlink():
+    shutil.rmtree(link,ignore_errors=True)
+    link.parent.mkdir(parents=True,exist_ok=True)
+    link.symlink_to(canonical,target_is_directory=True)
 shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
 """
     )
@@ -63,8 +69,6 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
         SKILLS_DST=str(tmp / "claude"),
         SKILLS_CODEX_DST=str(tmp / "codex"),
         LIVE_SKILLS_LOCK=str(tmp / "live.json"),
-        SKILLS_RECEIPTS=str(tmp / "receipts.json"),
-        STAMP=str(tmp / "stamp"),
         STRICT="1",
         SMOKE_CALLS=str(tmp / "calls"),
         SMOKE_FIXTURE=str(fixture),
@@ -95,20 +99,15 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
     result = replay(AGENT="codex", FORCE="1")
     assert result.returncode == 0, (result.stdout, result.stderr)
     assert (tmp / "calls").read_text().splitlines()[-1] == "codex"
-    failed_stamp = tmp / "failed-stamp"
-    result = replay(FORCE="1", SMOKE_FAIL="codex", STAMP=str(failed_stamp))
-    assert result.returncode != 0 and not failed_stamp.exists()
+    result = replay(FORCE="1", SMOKE_FAIL="codex")
+    assert result.returncode != 0 and "FAIL codex/example" in result.stderr
     no_tools = tmp / "no-tools"
     no_tools.mkdir()
     (no_tools / "dirname").symlink_to(shutil.which("dirname"))
-    result = replay(PATH=str(no_tools), STAMP=str(tmp / "missing-tool-stamp"))
+    result = replay(PATH=str(no_tools), FORCE="1")
     assert result.returncode != 0 and "npx is required" in result.stderr, result
-    result = replay(PATH=str(no_tools), STRICT="0", STAMP=str(tmp / "missing-tool-stamp"))
-    assert (
-        result.returncode == 0
-        and "SKIPPED" in result.stderr
-        and not (tmp / "missing-tool-stamp").exists()
-    )
+    result = replay(PATH=str(no_tools), FORCE="1", STRICT="0")
+    assert result.returncode == 0 and "SKIPPED" in result.stderr
     result = replay(AGENTS="*")
     assert result.returncode != 0
     # A Windows uname used to skip all work. It must now still reach the installer.
@@ -126,7 +125,7 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
         f"HERMES_SKILLS_LIVE={tmp}/hermes",
         f"LIVE_SKILLS_LOCK={tmp}/no-live-lock.json",
     ]
-    for target in ["skills-repo-to-live", "skills-repo-to-live", "skills-status"]:
+    for target in ["skills-personal-repo-to-live", "skills-personal-repo-to-live", "skills-status"]:
         result = subprocess.run(args + [target], cwd=repo, text=True, capture_output=True)
         assert result.returncode == 0, (target, result.stdout, result.stderr)
     source = repo / "src/personal_os_setup/config/chezmoi/dot_claude/skills"
@@ -180,8 +179,6 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
         SKILLS_DST=str(dest / ".claude/skills"),
         SKILLS_CODEX_DST=str(dest / ".agents/skills"),
         LIVE_SKILLS_LOCK=str(tmp / "live.json"),
-        SKILLS_RECEIPTS=str(tmp / "receipts.json"),
-        STAMP=str(tmp / "stamp"),
         LOCK=str(repo / "third-party-skills.lock.json"),
         STRICT="1",
     )
@@ -217,7 +214,6 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
     assert {p.name for p in (dest / ".agents/skills").iterdir() if p.is_symlink()} == authored
     for name in authored:
         assert (dest / ".agents/skills" / name).resolve() == dest / ".claude/skills" / name
-    assert (tmp / "stamp").is_file() and (tmp / "receipts.json").is_file()
 
 
 @pytest.mark.skipif(not shutil.which("chezmoi"), reason="chezmoi is not installed")
@@ -233,7 +229,6 @@ def test_packaged_chezmoi_source_links_authored_without_checkout(tmp_path):
         SKILLS_PYTHON=sys.executable,
         SKILLS_DST=str(dest / ".claude/skills"),
         SKILLS_CODEX_DST=str(dest / ".agents/skills"),
-        STAMP=str(tmp_path / "stamp"),
         STRICT="0",
     )
     env.pop("LOCK", None)
@@ -262,7 +257,6 @@ def test_packaged_chezmoi_source_links_authored_without_checkout(tmp_path):
     )
     assert result.returncode == 0, (result.stdout, result.stderr)
     assert "SKIPPED repository lock not found" in result.stderr
-    assert not (tmp_path / "stamp").exists()
     for manifest in (source / "dot_claude/skills").glob("*/SKILL.md"):
         target = dest / ".agents/skills" / manifest.parent.name
         assert target.is_symlink() and (target / "SKILL.md").is_file()

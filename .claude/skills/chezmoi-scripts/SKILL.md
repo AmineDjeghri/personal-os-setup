@@ -1,12 +1,18 @@
 ---
 name: chezmoi-scripts
-description: Use when adding/debugging a chezmoi run_/run_once_/run_onchange_ script under config/chezmoi/ — "why didn't my script run", "the noctalia script isn't triggering". Covers how "apply selected" scopes chezmoi apply, so scripts often skip.
+description: Use when adding/debugging a chezmoi run_/run_once_/run_onchange_ script under config/chezmoi/ — "why didn't my script run", "the noctalia script isn't triggering". Also use for ANY "set/disable X in my settings/config" request (change goes in the chezmoi source, never the live ~). Covers how "apply selected" scopes chezmoi apply, so scripts often skip.
 metadata:
   hermes:
     origin: repo:personal-os-setup
 ---
 
 # chezmoi script scoping in personal-os-setup
+
+## Config/settings requests: edit the repo source, not `~`
+
+A request is a change to this repo's chezmoi source
+(`src/personal_os_setup/config/chezmoi/`), deployed later through the TUI. Do NOT edit the live
+files (or any `~/.config/*`).
 
 ## The core gotcha: a targeted `chezmoi apply` does not run sibling scripts
 

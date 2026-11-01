@@ -23,6 +23,10 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
   release-branch actions. **If an approval prompt times out, STOP** — silence is not consent; say
   "prompt me again" is the user's call, not yours.
 
+## Config requests change the repo, never the machine (MANDATORY)
+
+"Disable X in settings", "set Y in my config", "add this to my shell/editor" means edit the
+
 ## Commands
 
 | Command                       | Purpose                                                                                   |
@@ -77,18 +81,19 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
 
 ## Skills & plugins — one rule: authored → the repo tree, third-party → npx
 
-- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-repo-to-live`).
+- **Authored skills** live in ONE tree, repo `dot_claude/skills/` → `~/.claude/skills` (`make skills-personal-repo-to-live`).
   Codex gets per-skill links in `~/.agents/skills`; `make skills-status` verifies them.
   Hermes reads `~/.claude/skills` too (`skills.external_dirs`), so nothing is duplicated into
   `~/.hermes/skills` — a name in both roots is unloadable (`Ambiguous skill name … Refusing to guess`);
   `make skills-status` flags it. The saved set is listed in `skills.keep`; save a live skill into the
-  repo with `make skills-live-to-repo NAME=<name>`.
+  repo with `make skills-personal-live-to-repo NAME=<name>`.
 - **Private content stays out:** an `exposure: private` skill is live only (`hermes curator pin`) —
   **this repo is PUBLIC**.
-- **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y --copy`;
-  `--copy` makes the agent dir hold a **real directory** regardless of the CLI's symlink default; the
+- **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y`;
+  npx keeps one canonical copy in `~/.agents/skills` and **symlinks** it into `~/.claude/skills`
+  (Linux/macOS only; Windows is not a target for third-party skills); the
   lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-live-to-repo`;
-  `make skills-thirdparty-repo-to-live` reinstalls for Claude Code and Codex). Use `AGENT=codex` for Codex only.
+  `make skills-thirdparty-repo-to-live` installs only what is missing or out of step, `FORCE=1` reinstalls everything). Use `AGENT=codex` for Codex only.
 - **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
   own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).
   Agent-created (Curator) skills are live only until triaged: promote, pin-private, or delete.
@@ -102,7 +107,7 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
   already reaches Hermes (it reads `~/.claude/skills`), so never add `-a hermes-agent`: two roots
   Hermes reads → `Ambiguous skill name … Refusing to guess`. `-a claude-code -a codex` is safe
   (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
-  disjoint from shipped/deployed ones, and check before installing (the lock's three
+  disjoint from shipped/deployed ones, and check before installing (the lock's two
   `NousResearch/hermes-agent` names are a documented exception — see `skill-deployment`).
 - **Three former entries are no longer in this repo:** `skill-creator` was vendored from
   `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name

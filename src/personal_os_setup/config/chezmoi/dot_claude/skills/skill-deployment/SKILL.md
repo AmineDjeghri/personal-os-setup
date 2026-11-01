@@ -28,7 +28,7 @@ always-on, otherwise they're read on demand.
 
 Loading internals: `agent-skills-architecture` → "What actually loads".
 
-**No chezmoi (HA container/CLI):** `cd <repo> && make skills-repo-to-live` — copies the same source
+**No chezmoi (HA container/CLI):** `cd <repo> && make skills-personal-repo-to-live` — copies the same source
 to `~/.claude/skills` and links each authored name into `~/.agents/skills`. Existing Codex
 destinations that point elsewhere are conflicts; reconcile them manually. `make skills-status`
 verifies the links. Python 3 is required for the shared helper. The make target lives in `makefiles/skills.mk` (same file as
@@ -59,35 +59,33 @@ chezmoi --source "$S" apply -v --force --parent-dirs --refresh-externals=never \
 
 Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
-**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-repo-to-live` is
+**Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-personal-repo-to-live` is
 copy-only: it overwrites whatever is live and deletes nothing.
 
 - Never deploy a skill that already lives elsewhere in the repo and is symlinked into the store
   (e.g. a `docs/...`-hosted one): `cp -R` follows the symlink and writes through it into the
   tracked source. Keep the symlink, don't duplicate the directory.
 
-**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-repo-to-live SKILLS_FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-live-to-repo NAME=<name>`.
+**Drift:** `make skills-status` (one read-only report: per-skill OK/DIFFERS/MISSING, Codex links, Hermes name clashes, unlisted skills, third-party content; non-zero on any problem). `skills-personal-repo-to-live` runs the same scan as its gate: only a DIFFERS aborts. Override with `make skills-personal-repo-to-live FORCE=1` only after porting the live edit into the repo — see `references/deploy-drift-and-reconciliation.md`. Save a live skill: `make skills-personal-live-to-repo NAME=<name>`.
 
 ## Third-party skills — `npx skills` (skills-only packs)
 
 **Who deploys what (one split, no overlap):**
 
 - **Authored tree** → chezmoi. `dot_claude/skills/` is ordinary managed files, so `chezmoi apply` writes
-  them; there is deliberately **no `run_` script for the copy** (`make skills-repo-to-live` is the no-chezmoi twin).
+  them; there is deliberately **no `run_` script for the copy** (`make skills-personal-repo-to-live` is the no-chezmoi twin).
   `run_after_zz-link-authored-skills.sh` only creates Codex links using the same helper as Make.
 - **npx replay** → the one thing chezmoi cannot do. Script:
   `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`
   (plain shell, no template vars). It replays every entry of `third-party-skills.lock.json` with
-  `npx -y skills add <source> -s <name> -a <agent> -g -y --copy` for Claude Code and Codex by default.
+  `npx -y skills add <source> -s <name> -a <agent> -g -y` for Claude Code and Codex by default, only for entries that are missing, broken or stale.
 - **make** → `make skills-thirdparty-repo-to-live` installs for both agents. `AGENT=codex` selects only
-  Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `FORCE=1 STRICT=1` and fails
-  if Python 3, npx or jq is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
-- **Verification** → `make skills-status` checks lock identities, each agent's manifest, and local
-  content receipts (SHA-256 over installed paths, executable flags and bytes). The receipts live at
-  `$XDG_STATE_HOME/personal-os-setup/skills-installed.json`, defaulting to `~/.local/state`.
-  They are not the npx lock and must never be committed. Existing installs need one explicit replay.
-- **Stamp** → plain apply skips only when the lock, selected agents and installed content still verify.
-  Deleted/edited files trigger replay. Failed installs, missing metadata and lock drift never stamp.
+  Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `STRICT=1` (`FORCE=1` reinstalls
+  everything and skips the edit gate) and fails if Python 3 or npx is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
+- **Verification** → `make skills-status` checks lock identities and each agent's manifest, and reports `DIFFERS` for installed files
+  newer than the lock's `updatedAt` (a hand edit). No receipts or stamp files exist.
+- **Idempotent** → a plain apply or make run installs only what is missing, broken or stale, and
+  checks each result (`npx` exits 0 on cancel).
 - **Updates** → replay fetches current upstream. If a folder ID changed, review it, save the new live
   lock with `make skills-thirdparty-live-to-repo`, and replay again. The lock is a drift reference, not a pin.
 - **Packaged source** → the shared helper ships with `dot_claude`, so authored links work without
@@ -95,7 +93,7 @@ copy-only: it overwrites whatever is live and deletes nothing.
   explicitly to enable it. A strict replay fails instead.
 - **Windows Git Bash** → the replay attempts the same installation and surfaces errors; no silent no-op.
 
-**Lock carve-out:** `claude-code`, `hermes-agent` and `hermes-agent-skill-authoring` come from
+**Lock carve-out:** `claude-code` and `hermes-agent` come from
 `NousResearch/hermes-agent` and also ship with Hermes. Installing them in Claude/Codex is intentional;
 if Hermes also has a bundled copy under `~/.hermes/skills`, run `make skills-status` and reconcile the
 duplicate. Never add Hermes as a separate npx target.
@@ -105,15 +103,15 @@ that ship their own per-harness plugins (hooks, slash commands) are a different 
 of this section.
 
 ```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y --copy   # one skill
-npx skills add <owner>/<repo> -a claude-code -a codex -g -y --copy                             # whole pack
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y   # one skill
+npx skills add <owner>/<repo> -a claude-code -a codex -g -y                             # whole pack
 ```
 
 - **Target `-a claude-code -a codex` — the Claude copy already reaches Hermes.** Hermes reads `~/.claude/skills` via
   `skills.external_dirs`, so the Claude installation serves Hermes too. Adding `-a hermes-agent` puts the same
   name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
   that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Lands as a real directory** in each selected agent’s skill directory (we pass `--copy` on every install, incl. `make skills-thirdparty-repo-to-live`); check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
+- **Lands as one canonical copy plus a symlink** (Linux/macOS): `~/.agents/skills/<name>` is real, `~/.claude/skills/<name>` links to it; check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
 - **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
   `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
   the live lock is never the record we ship. Replay/drift: `make skills-thirdparty-repo-to-live` / `make skills-status` in
@@ -126,7 +124,7 @@ npx skills add <owner>/<repo> -a claude-code -a codex -g -y --copy              
   collides with a shipped or deployed skill breaks that name for both. Compare against
   `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
 - **Symlink regressions exist** → verify the entry actually resolves in
-  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy`. A symlink that exists is not
+  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy` (not the default here). A symlink that exists is not
   proof the agent listed it.
 - **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
   a replay cannot re-prove it.

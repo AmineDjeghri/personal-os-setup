@@ -66,14 +66,14 @@ metadata:
 
 ## Governance — one rule (`AGENTS.md`)
 - Authored skills → chezmoi source `dot_claude/skills/<name>/`, deployed to `/config/.claude/skills/`; the saved set is `skills.keep`.
-- Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y --copy` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
+- Third-party skills → `npx skills add <owner>/<repo> -s <skill> -a claude-code -g -y` (never `-a hermes-agent`, never `-a '*'`); never vendored as a copy.
 - Plugin packs (`superpowers`, `cloudflare/skills`) → that harness's own channel, one canal per pack per agent.
 - Plugin install commands and the bundle-that-is-both case: `references/installing-and-vetting-skills.md`.
 
 ## Deploying the shared dir (chezmoi / container)
 
-Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-repo-to-live` and its
-`SKILLS_FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
+Deploy mechanics — the chezmoi `--source` = repo-root and run-from-HOME rules, `make skills-personal-repo-to-live` and its
+`FORCE=1` escape hatch, and the Deploying-from-a-container variant — live in the `skill-deployment` skill;
 don't restate them here. The container-specific debugging trail (a nested `.chezmoiroot` breaking the TUI's
 `--source`) and the file-level `--source-path` fallback are in `skill-deployment`.
 
@@ -183,13 +183,13 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
   with a slash are skill-relative; a bare `scripts/<name>.py` in prose is usually the REPO root's own directory —
   test `<skill-dir>/<rel>` and `<repo-root>/<rel>` before calling one broken.
 - The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT container
-  does). Deploy authored skills via chezmoi/`make skills-repo-to-live` or install plugin packs with `claude plugin`; do not install Node for this.
+  does). Deploy authored skills via chezmoi/`make skills-personal-repo-to-live` or install plugin packs with `claude plugin`; do not install Node for this.
 - Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager` (PyPI, 2
   stars, beta) and `xingkongliang/skills-manager` (Tauri app with its own library + SQLite + git sync). Both add a
   second source of truth parallel to the repo → `.claude/skills` flow; that duplication is rejected here.
 - **A lesson such a pass produces for a deployed skill is SOURCE work.** Repo-deployed names carry `created_by:
   agent`, so its write to the live copy goes through — and then the next deploy either ABORTS on the fresh
-  `DIFFERS` or a `SKILLS_FORCE=1` run overwrites the lesson. Write it in the source tree instead, name any drift you
+  `DIFFERS` or a `FORCE=1` run overwrites the lesson. Write it in the source tree instead, name any drift you
   caused with its file, and if every relevant skill is genuinely protected, report "Nothing to save" PLUS the exact
   edits the repo still needs — never a new overlapping curator skill.
 - **A file the source tree no longer has is not automatically stale live content to port back.** Compare size and

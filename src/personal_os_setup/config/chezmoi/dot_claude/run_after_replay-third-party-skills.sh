@@ -1,7 +1,8 @@
 #!/bin/bash
 # Shared by chezmoi and make. Authored files remain ordinary chezmoi-managed files.
-# Explicit make replay sets FORCE=1 and STRICT=1. Optional chezmoi replay may SKIP
-# unavailable tooling, but never stamps a skipped/failed/unverified installation.
+# Installs only what is missing, broken or out of step with the lock (FORCE=1: everything);
+# npx links the Claude copy to a canonical one under ~/.agents/skills. STRICT=1 (make) fails on
+# missing tooling, the optional chezmoi replay SKIPs instead. Every install is checked afterwards.
 set -eu
 set -o pipefail
 
@@ -35,52 +36,47 @@ if [ -z "${LOCK:-}" ]; then
 fi
 PYTHON=${SKILLS_PYTHON:-python3}
 command -v "$PYTHON" >/dev/null 2>&1 || fail_or_skip "python3 is required"
-command -v npx >/dev/null 2>&1 || fail_or_skip "npx is required"
-command -v jq >/dev/null 2>&1 || fail_or_skip "jq is required"
-# No Windows no-op: Git Bash follows this same path and surfaces any tool failure.
 agents=$("$PYTHON" "$helper" agents --agents "${AGENT:-${AGENTS:-claude-code codex}}")
 claude=${SKILLS_DST:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills}
 codex=${SKILLS_CODEX_DST:-$HOME/.agents/skills}
 state=${XDG_STATE_HOME:-$HOME/.local/state}
-live=${LIVE_SKILLS_LOCK:-}
-if [ -z "$live" ]; then
-    live=$state/skills/.skill-lock.json
-    [ -f "$live" ] || live=$HOME/.agents/.skill-lock.json
-fi
-receipts=${SKILLS_RECEIPTS:-$state/personal-os-setup/skills-installed.json}
-STAMP=${STAMP:-${XDG_CACHE_HOME:-$HOME/.cache}/personal-os-setup/skills-replay.stamp}
-# Python supplies portable SHA-256 on macOS, Linux and Windows Git Bash.
-sum=$("$PYTHON" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$LOCK")-$agents
-verify() {
-    "$PYTHON" "$helper" "$1" --lock "$LOCK" --live-lock "$live" \
-        --agents "$agents" --claude "$claude" --codex "$codex" --receipts "$receipts"
+find_live() {
+    live=${LIVE_SKILLS_LOCK:-}
+    if [ -z "$live" ]; then
+        live=$state/skills/.skill-lock.json
+        [ -f "$live" ] || live=$HOME/.agents/.skill-lock.json
+    fi
 }
-# Even an unchanged lock must have every agent's installed files and receipts.
-if [ "${FORCE:-0}" != 1 ] && [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$sum" ] && verify verify; then
-    log "lock and installed content unchanged -- nothing to do"
+find_live
+helper_run() {
+    command=$1; shift
+    "$PYTHON" "$helper" "$command" --lock "$LOCK" --live-lock "$live" \
+        --agents "$agents" --claude "$claude" --codex "$codex" "$@"
+}
+todo_args=()
+[ "${FORCE:-0}" != 1 ] || todo_args+=(--all)
+pending=$(helper_run todo ${todo_args[@]+"${todo_args[@]}"})
+if [ -z "$pending" ]; then
+    log "all third-party skills are installed -- nothing to do"
     exit 0
 fi
+command -v npx >/dev/null 2>&1 || fail_or_skip "npx is required"
 # Validate the lock before interpolating any of its names into installation paths.
-"$PYTHON" "$helper" plan --lock "$LOCK" --agents "$agents" --claude "$claude" --codex "$codex"
+helper_run plan
 rc=0
-for name in $(jq -r '.skills | keys[]' "$LOCK"); do
-    src=$(jq -r --arg n "$name" '.skills[$n].source' "$LOCK")
-    for agent in $agents; do
-        if npx -y skills add "$src" -s "$name" -a "$agent" -g -y --copy; then
-            log "OK $agent/$name"
-        else
-            log "FAIL $agent/$name" >&2
-            rc=1
-        fi
-    done
-done
+while IFS=$'\t' read -r agent name src; do
+    [ -n "$agent" ] || continue
+    # npx must not read the loop's stdin; it also exits 0 when it cancels, so check the result.
+    if npx -y skills add "$src" -s "$name" -a "$agent" -g -y </dev/null &&
+        "$PYTHON" "$helper" installed --agents "$agent" --name "$name" \
+            --claude "$claude" --codex "$codex"; then
+        log "OK $agent/$name"
+    else
+        log "FAIL $agent/$name" >&2
+        rc=1
+    fi
+done <<< "$pending"
 [ "$rc" -eq 0 ] || exit "$rc"
 # The CLI writes its live lock during install; locate it again on a fresh machine.
-if [ -z "${LIVE_SKILLS_LOCK:-}" ]; then
-    live=$state/skills/.skill-lock.json
-    [ -f "$live" ] || live=$HOME/.agents/.skill-lock.json
-fi
-verify record
-verify verify
-{ mkdir -p "$(dirname "$STAMP")" && printf '%s\n' "$sum" > "$STAMP"; } 2>/dev/null ||
-    log "WARNING cannot write stamp; replay will repeat" >&2
+[ -n "${LIVE_SKILLS_LOCK:-}" ] || find_live
+helper_run verify
