@@ -23,6 +23,10 @@ CLAUDE.md imports this file so all agents share the same rules and architecture 
   release-branch actions. **If an approval prompt times out, STOP** — silence is not consent; say
   "prompt me again" is the user's call, not yours.
 
+## Config requests change the repo, never the machine (MANDATORY)
+
+"Disable X in settings", "set Y in my config", "add this to my shell/editor" means edit the
+
 ## Commands
 
 | Command                       | Purpose                                                                                   |

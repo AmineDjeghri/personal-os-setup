@@ -18,11 +18,11 @@ v1 ships **one source**: the weekly GitHub-trending list on trendshift.io. Addin
 
 ## Layout — three roles, deliberately split
 
-| Role | Lives in | Why |
-|---|---|---|
-| Code + example configs | this directory (committed, public) | reviewable, versioned |
-| Live config (`sources.yaml`, `interests.yaml`) | `~/.hermes/watchtower/` | the interest profile is personal data |
-| State (`state.json`, `ledger/`) | `~/.hermes/watchtower/` | "already told you" memory + star snapshots |
+| Role                                           | Lives in                           | Why                                        |
+|------------------------------------------------|------------------------------------|--------------------------------------------|
+| Code + example configs                         | this directory (committed, public) | reviewable, versioned                      |
+| Live config (`sources.yaml`, `interests.yaml`) | `~/.hermes/watchtower/`            | the interest profile is personal data      |
+| State (`state.json`, `ledger/`)                | `~/.hermes/watchtower/`            | "already told you" memory + star snapshots |
 
 ```text
 docs/home-server/watchtower/
@@ -102,8 +102,8 @@ The wrapper pins `WATCHTOWER_HOME` because cron can run with a different `$HOME`
 ## Adding a source
 
 1. Add an entry to `sources.yaml` with a `kind` that exists (`--doctor` proves it).
-2. If the kind is new: write `fetch_<name>(source) -> list[dict]` returning the normalised item shape
-   (`id`, `title`, `description`, `url`, `lang`, `rank`, …), register it in `FETCHERS`, and treat
+2. If the kind is new: write `fetch_<name>(source) -> list[dict]` returning the normalised item shape (`id`, `title`,
+   `description`, `url`, `lang`, `rank`, …), register it in `FETCHERS`, and treat
    "page loaded but parsed 0 items" as a `FetchError` — that is a broken extractor, not "no news".
 3. Run it twice: the second run on unchanged input must print nothing. If it re-sends, the `id` (dedupe
    key) is wrong — fix that before adding the next source.
