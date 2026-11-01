@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-11-01)
+
+### Features
+
+- **watchtower**: Weekly trending-repo digest with a shared interest profile (#153)
+  ([#153](https://github.com/AmineDjeghri/personal-os-setup/pull/153),
+  [`8575348`](https://github.com/AmineDjeghri/personal-os-setup/commit/8575348d0b9d1e739f4df519cf26fe70c4cdb9e8))
+
+
 ## v1.0.2 (2026-11-01)
 
 ### Bug Fixes
