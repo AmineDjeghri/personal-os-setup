@@ -6,7 +6,7 @@
 # (`make skills-status` flags it). Codex gets per-skill links in ~/.agents/skills.
 # The list of deliberately saved skills is skills.keep.
 
-.PHONY: skills-link skills-check skills-repo-to-live skills-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
+.PHONY: skills-link skills-check skills-personal-repo-to-live skills-personal-live-to-repo skills-all-repo-to-live skills-all-live-to-repo skills-status _skills-scan skills-thirdparty-live-to-repo skills-thirdparty-repo-to-live
 
 CLAUDE_SKILLS := .claude/skills
 AGENTS_SKILLS := .agents/skills
@@ -22,6 +22,12 @@ SKILLS_LINK = $(SKILLS_PYTHON) $(SKILLS_SUPPORT) link --source "$(SKILLS_SRC)" -
 # Never deploy here: Hermes already reads SKILLS_DST; skills-status flags duplicates.
 HERMES_SKILLS_LIVE := $(HOME)/.hermes/skills
 SKILLS_KEEP := skills.keep
+
+# FORCE=1 overrides the drift gates of BOTH classes (and so of the skills-all-* targets, since
+# command-line variables reach sub-makes).
+
+# "repo <time>  live <time>  -> <which is newer>" from the newest file mtime under each dir (args: repo live).
+SKILLS_NEWER = $(SKILLS_PYTHON) -c 'import os,sys,time; m=lambda d: max((os.path.getmtime(os.path.join(r,f)) for r,_,fs in os.walk(d) for f in fs if f!=".DS_Store"),default=0); a,b=m(sys.argv[1]),m(sys.argv[2]); g,y,n=sys.argv[3:6]; t=lambda x: time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(x)); c=lambda x,o: (g if x>o else y if x<o else n); print("repo "+c(a,b)+t(a)+n+"  live "+c(b,a)+t(b)+n+"  -> "+(g+"live is NEWER" if b>a else g+"repo is NEWER" if a>b else "same time")+n)'
 
 
 skills-link: ## Create/refresh .agents/skills symlinks -> .claude/skills
@@ -52,11 +58,11 @@ skills-check: ## Verify every .claude/skills skill has a working .agents/skills 
 		printf "$(RED)STALE$(NC) $$l  (run: make skills-link)\n"; rc=1; \
 	done; exit $$rc
 
-skills-repo-to-live: ## Deploy authored skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
-ifeq ($(SKILLS_FORCE),1)
-	@printf "$(YELLOW)skills-repo-to-live: drift check SKIPPED (SKILLS_FORCE=1)$(NC)\n"
+skills-personal-repo-to-live: ## Deploy personal (authored/modified) skills repo -> ~/.claude/skills (Claude/Hermes) and link each one for Codex
+ifeq ($(FORCE),1)
+	@printf "$(YELLOW)skills-personal-repo-to-live: drift check SKIPPED (FORCE=1)$(NC)\n"
 else
-	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with SKILLS_FORCE=1 to overwrite them."; exit 1; }
+	@$(MAKE) --no-print-directory _skills-scan SKILLS_SCAN_MODE=drift || { echo; printf "$(RED)skills-personal-repo-to-live: ABORTED$(NC) -- the live copies above differ from git.\n"; echo "Reconcile the live version into git first, or re-run with FORCE=1 to overwrite them."; exit 1; }
 endif
 	@$(SKILLS_LINK) --preflight
 	@mkdir -p "$(SKILLS_DST)"
@@ -65,7 +71,7 @@ endif
 	@printf "$(GREEN)deployed$(NC) skills to $(SKILLS_DST)\n"
 
 # Internal scan behind skills-status (mode "all": MISSING or DIFFERS -> exit 1, full OK/DIFFERS/MISSING
-# report + Codex link check) and the skills-repo-to-live gate (mode "drift": DIFFERS only -> exit 1;
+# report + Codex link check) and the skills-personal-repo-to-live gate (mode "drift": DIFFERS only -> exit 1;
 # MISSING is fine, i.e. never deployed yet).
 _skills-scan:
 	@rc=0; \
@@ -75,7 +81,7 @@ _skills-scan:
 		if [ ! -e "$(SKILLS_DST)/$$name" ]; then \
 			[ "$$SKILLS_SCAN_MODE" = "all" ] && { printf "  $(YELLOW)MISSING$(NC)  $$name\n"; rc=1; }; \
 		elif ! diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" >/dev/null 2>&1; then \
-			printf "  $(RED)DIFFERS$(NC)  $$name\n"; diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" | sed 's/^/           /'; rc=1; \
+			printf "  $(RED)DIFFERS$(NC)  $$name  ($$($(SKILLS_NEWER) "$$d" "$(SKILLS_DST)/$$name" "$(GREEN)" "$(YELLOW)" "$(NC)"))\n"; diff -rq --exclude=.DS_Store "$$d" "$(SKILLS_DST)/$$name" | sed 's/^/           /'; rc=1; \
 		elif [ "$$SKILLS_SCAN_MODE" = "all" ]; then printf "  $(GREEN)OK$(NC)       $$name\n"; fi; \
 	done; \
 	if [ "$$SKILLS_SCAN_MODE" = "drift" ]; then \
@@ -101,28 +107,61 @@ skills-status: ## One read-only report: repo vs live copies, Codex links, Hermes
 	done; [ $$m -gt 0 ] && rc=1 || printf "  $(GREEN)(none)$(NC)\n"; \
 	printf "$(CYAN)== third-party skills ($(TARGET_AGENTS))$(NC)\n"; \
 	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then \
-		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" --receipts "$(SKILLS_RECEIPTS)" || rc=1; \
+		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) verify --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || rc=1; \
+		$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || rc=1; \
 	else echo "  (no live lock at $(LIVE_SKILLS_LOCK) -- nothing installed via npx here)"; fi; \
 	exit $$rc
 
-skills-live-to-repo: ## Save a live skill into the repo: make skills-live-to-repo NAME=<name> (copies ~/.claude/skills/<name>, lists it in skills.keep)
-	@test -n "$(NAME)" || { printf "$(RED)usage:$(NC) make skills-live-to-repo NAME=<name>\n"; exit 1; }
-	@test -d "$(SKILLS_DST)/$(NAME)" || { printf "$(RED)skills-live-to-repo: no live skill$(NC) at $(SKILLS_DST)/$(NAME)\n"; exit 1; }
-	@mkdir -p "$(SKILLS_SRC)/$(NAME)"
-	@cp -R "$(SKILLS_DST)/$(NAME)/." "$(SKILLS_SRC)/$(NAME)/"
-	@touch $(SKILLS_KEEP)
-	@grep -qxF "$(NAME)" $(SKILLS_KEEP) || echo "$(NAME)" >> $(SKILLS_KEEP)
-	@printf "$(GREEN)kept$(NC) $(NAME): $(SKILLS_SRC)/$(NAME) + $(SKILLS_KEEP)\n"
+skills-personal-live-to-repo: ## Save live personal skills into the repo: NAME=<name> for one, ALL=1 for every unlisted one
+	@if [ -n "$(NAME)" ]; then names="$(NAME)"; \
+	elif [ "$(ALL)" = "1" ]; then \
+		names=$$(for d in "$(SKILLS_DST)"/*/; do \
+			[ -d "$$d" ] || continue; n=$$(basename "$$d"); \
+			grep -v '^[[:space:]]*#' $(SKILLS_KEEP) 2>/dev/null | grep -qxF "$$n" && continue; \
+			grep -qE "^[[:space:]]+\"$$n\": \{" $(THIRD_PARTY_LOCK) 2>/dev/null && continue; \
+			echo "$$n"; \
+		done); \
+		[ -n "$$names" ] || { printf "$(YELLOW)skills-personal-live-to-repo:$(NC) no unlisted live skill to capture\n"; exit 0; }; \
+	else printf "$(RED)usage:$(NC) make skills-personal-live-to-repo NAME=<name> | ALL=1\n"; exit 1; fi; \
+	for NAME in $$names; do \
+		[ -d "$(SKILLS_DST)/$$NAME" ] || { printf "$(RED)skip$(NC) %s: not live at %s\n" "$$NAME" "$(SKILLS_DST)/$$NAME"; continue; }; \
+		mkdir -p "$(SKILLS_SRC)/$$NAME"; \
+		cp -R "$(SKILLS_DST)/$$NAME/." "$(SKILLS_SRC)/$$NAME/"; \
+		touch $(SKILLS_KEEP); \
+		grep -qxF "$$NAME" $(SKILLS_KEEP) || echo "$$NAME" >> $(SKILLS_KEEP); \
+		printf "$(GREEN)kept$(NC) %s\n" "$$NAME"; \
+	done
+
+# ── Aggregate: both classes, both directions ──────────────────────────────────────────────────
+# Shell helpers for the aggregates: run() prints a numbered banner then the step, skip() records a
+# skipped one; both feed the summary table printed last. Needs rc, n, total and summary set first.
+SKILLS_STEPS = run() { n=$$((n+1)); printf "\n$(CYAN)━━━━━━━━ [%s/%s] %s ━━━━━━━━$(NC)\n" "$$n" "$$total" "$$1"; label=$$1; shift; \
+	if "$$@"; then summary="$$summary  $(GREEN)OK$(NC)       $$label\n"; \
+	else summary="$$summary  $(RED)FAILED$(NC)   $$label\n"; rc=1; fi; }; \
+	skip() { n=$$((n+1)); summary="$$summary  $(YELLOW)SKIPPED$(NC)  $$1 ($$2)\n"; }; \
+	finish() { printf "\n$(CYAN)━━━━━━━━ summary ━━━━━━━━$(NC)\n$$summary"; exit $$rc; }
+
+skills-all-repo-to-live: ## Deploy EVERYTHING out: personal tree + third-party replay + Codex links, then verify (FORCE=1 overrides both drift gates)
+	@rc=0; n=0; total=5; summary=""; $(SKILLS_STEPS); \
+	run "personal skills: repo -> live" $(MAKE) --no-print-directory skills-personal-repo-to-live; \
+	run "personal skills: Codex links" $(MAKE) --no-print-directory skills-link; \
+	run "third-party skills: install (npx)" $(MAKE) --no-print-directory skills-thirdparty-repo-to-live; \
+	run "check: .agents/skills links" $(MAKE) --no-print-directory skills-check; \
+	run "status: repo vs live, third-party, clashes" $(MAKE) --no-print-directory skills-status; \
+	finish
+
+skills-all-live-to-repo: ## Capture EVERYTHING back: unlisted live skills + the npx lock, then verify
+	@rc=0; n=0; total=3; summary=""; $(SKILLS_STEPS); \
+	run "personal skills: live -> repo" $(MAKE) --no-print-directory skills-personal-live-to-repo ALL=1; \
+	if [ -f "$(LIVE_SKILLS_LOCK)" ]; then run "third-party skills: live lock -> repo" $(MAKE) --no-print-directory skills-thirdparty-live-to-repo; \
+	else skip "third-party skills: live lock -> repo" "no live npx lock"; fi; \
+	run "status: repo vs live, third-party, clashes" $(MAKE) --no-print-directory skills-status; \
+	finish
 
 # ── Third-party skills (npx skills) ────────────────────────────────────────────────────────────
 # `npx skills` is the mechanism for third-party SKILLS-ONLY packs. Its lock lives OUTSIDE any repo
 # (a global install: $(XDG_STATE_HOME)/skills/.skill-lock.json on current CLIs, $(HOME)/.agents/.skill-lock.json
-# on older ones), so the committed COPY below is what
-# makes a new machine rebuildable. The copy deliberately does NOT sit in the chezmoi source: a
-# `chezmoi apply` must never overwrite the tool's live lock with a stale record.
-#
-# Lock identities and installed content are checked by src/personal_os_setup/config/chezmoi/dot_claude/skills_support.py.
-# Local content receipts are separate from the CLI lock and never committed.
+# on older ones)
 THIRD_PARTY_LOCK := third-party-skills.lock.json
 XDG_STATE := $(or $(XDG_STATE_HOME),$(HOME)/.local/state)
 # First existing wins (XDG first); if neither exists, point at the XDG path so the error names where it should be.
@@ -132,7 +171,6 @@ JQ_TP_NAMES := .skills | keys[]
 AGENTS ?= claude-code codex
 # AGENT remains a compatible single-agent override.
 TARGET_AGENTS = $(if $(strip $(AGENT)),$(AGENT),$(AGENTS))
-SKILLS_RECEIPTS ?= $(XDG_STATE)/personal-os-setup/skills-installed.json
 
 skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the record we ship)
 	@test -f "$(LIVE_SKILLS_LOCK)" || { printf '$(RED)no live lock$(NC) at %s\n' "$(LIVE_SKILLS_LOCK)"; exit 1; }
@@ -142,5 +180,8 @@ skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the rec
 # The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
 THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
-skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex)
-	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" SKILLS_RECEIPTS="$(SKILLS_RECEIPTS)" FORCE=1 STRICT=1 bash $(THIRD_PARTY_REPLAY)
+skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex); no-op when unchanged, FORCE=1 reinstalls and skips the drift gate
+ifneq ($(FORCE),1)
+	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || { echo; printf "$(RED)skills-thirdparty-repo-to-live: ABORTED$(NC) -- the installed copies above were edited after install.\n"; echo "Port the edit somewhere safe first, or re-run with FORCE=1 to overwrite them."; exit 1; }
+endif
+	@AGENTS="$(TARGET_AGENTS)" LOCK="$(abspath $(THIRD_PARTY_LOCK))" SKILLS_DST="$(SKILLS_DST)" SKILLS_CODEX_DST="$(SKILLS_CODEX_DST)" SKILLS_PYTHON="$(SKILLS_PYTHON)" LIVE_SKILLS_LOCK="$(LIVE_SKILLS_LOCK)" FORCE=$(if $(filter 1,$(FORCE)),1,0) STRICT=1 bash $(THIRD_PARTY_REPLAY)

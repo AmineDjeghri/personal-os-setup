@@ -1123,6 +1123,8 @@
       
         
       
+        
+      
     
     
     
@@ -1372,6 +1374,74 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../home-server/watchtower/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Watchtower
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Watchtower
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
             
           </ul>
@@ -3878,11 +3948,6 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <td>Using, configuring and extending Hermes Agent</td>
 </tr>
 <tr>
-<td><code>hermes-agent-skill-authoring</code></td>
-<td><code>NousResearch/hermes-agent</code></td>
-<td>Writing in-repo <code>SKILL.md</code> files</td>
-</tr>
-<tr>
 <td><code>home-assistant-best-practices</code></td>
 <td><code>homeassistant-ai/skills</code></td>
 <td>Home Assistant configuration practices</td>
@@ -3990,32 +4055,35 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <ul>
 <li><strong>Select the folder.</strong> The authored link script (<code>run_after_zz-link-authored-skills.sh</code>) and replay script
   (<code>run_after_replay-third-party-skills.sh</code>) only run when their own entries are selected. Selecting a
-  single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node
-  (<code>npx</code>) and <code>jq</code>. Optional replay logs <code>SKIPPED</code> if tooling is missing and records no successful install.</li>
+  single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node (<code>npx</code>) and <code>jq</code>.
+  Optional replay logs <code>SKIPPED</code> if tooling is missing and records no successful install.</li>
 <li><strong>It never deletes.</strong> A skill removed from the repo stays in <code>~/.claude/skills</code> until you delete it by hand.</li>
 <li><strong>Each apply leaves backups.</strong> Before overwriting, it copies every selected file to
-  <code>&lt;name&gt;_&lt;timestamp&gt;_backup&lt;ext&gt;</code> in the same folder, and <code>make skills-status</code> then reports <code>DIFFERS</code>. Use
-  <strong>chezmoi: clean backups</strong> to remove them.</li>
+  <code>&lt;name&gt;_&lt;timestamp&gt;_backup&lt;ext&gt;</code> in the same folder, and <code>make skills-status</code> then reports <code>DIFFERS</code>. Use <strong>chezmoi:
+  clean backups</strong> to remove them.</li>
 <li><strong>It does not check for drift.</strong> Apply overwrites a live skill that was edited and not yet pulled back with
   re-add. Run <code>make skills-status</code> first if an agent may have edited a live skill.</li>
-<li><strong>Re-add only handles files already tracked.</strong> For a brand-new live-only skill, use <code>make skills-live-to-repo</code>.</li>
+<li><strong>Re-add only handles files already tracked.</strong> For a brand-new live-only skill, use
+  <code>make skills-personal-live-to-repo</code>.</li>
 </ul>
 <h3 id="setting-up-a-new-machine">Setting up a new machine<a class="headerlink" href="#setting-up-a-new-machine" title="Permanent link">&para;</a></h3>
 <p>Clone the repo, then apply <code>.claude</code> from the TUI. The third-party lock is replayed for you. Without the TUI:
-<code>make skills-repo-to-live</code> (authored skills) and <code>make skills-thirdparty-repo-to-live</code> (third-party skills).</p>
+<code>make skills-personal-repo-to-live</code> (authored skills) and <code>make skills-thirdparty-repo-to-live</code> (third-party skills).</p>
 <h2 id="adding-skills">Adding skills<a class="headerlink" href="#adding-skills" title="Permanent link">&para;</a></h2>
 <h3 id="your-own-authored">Your own (authored)<a class="headerlink" href="#your-own-authored" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Create <code>src/personal_os_setup/config/chezmoi/dot_claude/skills/&lt;name&gt;/SKILL.md</code>.</li>
 <li>Add <code>&lt;name&gt;</code> to <code>skills.keep</code>.</li>
-<li>Deploy from the TUI or with <code>make skills-repo-to-live</code>, then run <code>make skills-status</code> to confirm every skill reports <code>OK</code>.</li>
+<li>Deploy from the TUI or with <code>make skills-personal-repo-to-live</code>, then run <code>make skills-status</code> to confirm every skill
+   reports <code>OK</code>.</li>
 </ol>
-<p>To keep a skill that already exists live (for example one an agent created), run <code>make skills-live-to-repo NAME=&lt;name&gt;</code>.</p>
+<p>To keep a skill that already exists live (for example one an agent created), run
+<code>make skills-personal-live-to-repo NAME=&lt;name&gt;</code>.</p>
 <h3 id="from-another-repo-third-party">From another repo (third-party)<a class="headerlink" href="#from-another-repo-third-party" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npx<span class="w"> </span>skills<span class="w"> </span>add<span class="w"> </span>&lt;owner&gt;/&lt;repo&gt;<span class="w"> </span>-s<span class="w"> </span>&lt;skill&gt;<span class="w"> </span>-a<span class="w"> </span>claude-code<span class="w"> </span>-a<span class="w"> </span>codex<span class="w"> </span>-g<span class="w"> </span>-y<span class="w"> </span>--copy
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npx<span class="w"> </span>skills<span class="w"> </span>add<span class="w"> </span>&lt;owner&gt;/&lt;repo&gt;<span class="w"> </span>-s<span class="w"> </span>&lt;skill&gt;<span class="w"> </span>-a<span class="w"> </span>claude-code<span class="w"> </span>-a<span class="w"> </span>codex<span class="w"> </span>-g<span class="w"> </span>-y
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span>skills-thirdparty-live-to-repo<span class="w">     </span><span class="c1"># copy the live lock into third-party-skills.lock.json</span>
 </span></code></pre></div>
-<p>Then run <code>make skills-thirdparty-repo-to-live</code> to verify both agents and record local content receipts.
+<p>Then run <code>make skills-thirdparty-repo-to-live</code> to verify both agents.
 Commit the updated lock after review. Rules:</p>
 <ul>
 <li><strong>Use <code>-a claude-code -a codex</code>.</strong> Hermes already reads the Claude directory, so adding
@@ -4049,12 +4117,12 @@ not.</p>
 <td>One read-only report: repo vs live copy per skill (<code>OK</code> / <code>DIFFERS</code> / <code>MISSING</code>), Codex links, names present in both <code>~/.claude/skills</code> and <code>~/.hermes/skills</code>, repo skills missing from <code>skills.keep</code>, third-party lock and content</td>
 </tr>
 <tr>
-<td><code>make skills-repo-to-live</code></td>
-<td>Copy authored skills repo → <code>~/.claude/skills</code> and link them into <code>~/.agents/skills</code>; refuses drift or link conflicts (<code>SKILLS_FORCE=1</code> overrides)</td>
+<td><code>make skills-personal-repo-to-live</code></td>
+<td>Copy the personal (authored/modified) skills repo → <code>~/.claude/skills</code> and link them into <code>~/.agents/skills</code>; refuses drift or link conflicts (<code>FORCE=1</code> overrides)</td>
 </tr>
 <tr>
-<td><code>make skills-live-to-repo NAME=&lt;name&gt;</code></td>
-<td>Save a live skill into the repo and add it to <code>skills.keep</code></td>
+<td><code>make skills-personal-live-to-repo</code></td>
+<td>Save live personal skills into the repo and add them to <code>skills.keep</code>: <code>NAME=&lt;name&gt;</code> for one, <code>ALL=1</code> for every live skill not yet listed (third-party names are skipped)</td>
 </tr>
 <tr>
 <td><code>make skills-thirdparty-live-to-repo</code></td>
@@ -4062,7 +4130,15 @@ not.</p>
 </tr>
 <tr>
 <td><code>make skills-thirdparty-repo-to-live</code></td>
-<td>Reinstall and verify for Claude Code and Codex (<code>AGENT=codex</code> selects only Codex)</td>
+<td>Install and verify third-party skills for Claude Code and Codex (<code>AGENT=codex</code> selects only Codex); no-op when unchanged, refuses hand-edited installs (<code>FORCE=1</code> reinstalls anyway)</td>
+</tr>
+<tr>
+<td><code>make skills-all-repo-to-live</code></td>
+<td>Both classes outward, in one shot: personal tree + Codex links + third-party replay, then <code>skills-check</code> and <code>skills-status</code>. Keeps going after a failed step and exits non-zero at the end</td>
+</tr>
+<tr>
+<td><code>make skills-all-live-to-repo</code></td>
+<td>Both classes inward, in one shot: every unlisted live skill into the repo (<code>ALL=1</code>) + the npx lock when one exists, then <code>skills-status</code></td>
 </tr>
 <tr>
 <td><code>make skills-link</code> / <code>make skills-check</code></td>
@@ -4070,25 +4146,29 @@ not.</p>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>Target names carry the skill class: <code>personal-*</code> = the authored/modified tree in this repo, <code>thirdparty-*</code> = the
+<code>npx skills</code> lock. Each class has both directions (<code>-repo-to-live</code>, <code>-live-to-repo</code>).</p>
+</blockquote>
 <h3 id="what-skills-thirdparty-repo-to-live-does">What <code>skills-thirdparty-repo-to-live</code> does<a class="headerlink" href="#what-skills-thirdparty-repo-to-live-does" title="Permanent link">&para;</a></h3>
-<p>The replay installs each locked skill for <code>claude-code</code> and <code>codex</code> using <code>npx skills add … --copy</code>.
+<p>The replay installs each locked skill for <code>claude-code</code> and <code>codex</code> using <code>npx skills add …</code>. npx keeps one canonical copy in <code>~/.agents/skills</code> (read by Codex) and links it into <code>~/.claude/skills</code> (read by Claude Code and Hermes); this setup targets Linux and macOS.
 Use <code>AGENT=codex</code> or <code>AGENTS="claude-code codex"</code> to select the agents explicitly. Hermes is never a
-separate target. Python 3, Node (<code>npx</code>) and <code>jq</code> are required; explicit Make replay fails when a tool
+separate target. Python 3 and Node (<code>npx</code>) are required; explicit Make replay fails when a tool
 is missing. A packaged chezmoi source without the repository lock still links authored skills,
 and optional third-party replay reports <code>SKIPPED</code>; set <code>LOCK</code> to a reviewed lock to enable replay.
 Windows Git Bash follows the same path and reports failures instead of silently succeeding.</p>
-<p>Verification checks both the live lock identities and each agent's actual <code>SKILL.md</code> and supporting files.
-A successful replay writes SHA-256 content receipts into
-<code>$XDG_STATE_HOME/personal-os-setup/skills-installed.json</code> (<code>~/.local/state</code> by default). These local
-receipts are separate from the upstream Git tree IDs in the npx lock. Missing receipts, missing files,
-local edits, broken links and lock drift fail verification. Existing installations need one explicit
-replay to establish receipts; the checker never creates a baseline from unverified existing files.</p>
-<p>A plain chezmoi apply checks the lock, selected agents and installed content before skipping an
-unchanged replay. A deleted or edited skill is replayed. A stamp is written only after installation
-and verification succeed. Optional replay reports <code>SKIPPED</code> when tooling is unavailable; this is not
-installation success. The Make target always replays and treats missing tooling as an error.</p>
+<p>The replay is idempotent. It installs only the skills that are missing, broken (dangling link, no valid
+<code>SKILL.md</code>) or whose live-lock entry differs from the committed one; <code>FORCE=1</code> reinstalls everything.
+After each install it checks the result, because <code>npx</code> exits 0 even when it cancels. Verification
+(<code>make skills-status</code>) checks the lock identities and that each agent has a usable <code>SKILL.md</code>.</p>
+<p>Hand edits are detected without any extra state file: the npx lock records when each skill was installed
+(<code>updatedAt</code>), so installed files that are newer than that are reported as <code>DIFFERS</code>, with both dates.
+<code>make skills-thirdparty-repo-to-live</code> refuses to run over such edits unless <code>FORCE=1</code> is given, like the
+personal gate. <code>FORCE=1</code> applies to both classes, including <code>skills-all-repo-to-live</code>.</p>
+<p>Optional chezmoi replay reports <code>SKIPPED</code> when tooling is unavailable; this is not installation success.
+The Make target treats missing tooling as an error.</p>
 <p>Replay fetches current upstream versions. If an upstream folder ID changed, verification fails:
-review the update, run <code>make skills-thirdparty-live-to-repo</code>, then replay again to establish matching receipts.
+review the update, run <code>make skills-thirdparty-live-to-repo</code>, then replay again.
 The committed lock remains an inventory and drift reference, not an immutable source pin.</p>
 <h3 id="where-the-npx-skills-lock-lives">Where the <code>npx skills</code> lock lives<a class="headerlink" href="#where-the-npx-skills-lock-lives" title="Permanent link">&para;</a></h3>
 <p>The CLI keeps its own live lock outside the repo: <code>$XDG_STATE_HOME/skills/.skill-lock.json</code> on current versions
@@ -4096,7 +4176,7 @@ The committed lock remains an inventory and drift reference, not an immutable so
 repo never shares that file with chezmoi, so a sync can't overwrite the CLI's live lock with a stale one.</p>
 <h3 id="deployment-regression-tests">Deployment regression tests<a class="headerlink" href="#deployment-regression-tests" title="Permanent link">&para;</a></h3>
 <p><code>make test-local</code> includes <code>tests/skills/</code>: isolated Make and chezmoi applies with a fixture <code>npx</code>,
-plus the unit checks for links, manifests, conflicts and content receipts. These never install
+plus the unit checks for links, manifests, conflicts and edit detection. These never install
 real skills or packages. The chezmoi case skips if chezmoi is unavailable.</p>
 <h3 id="governance">Governance<a class="headerlink" href="#governance" title="Permanent link">&para;</a></h3>
 <p>The full rules (private skills, never vendoring third-party packs, bundled skills being read-only) are in
