@@ -4,7 +4,7 @@
 
 # Avoid nodeenv's floating "latest", which can select unsupported alpha releases.
 default_language_version:
-  node: '24.22.2'
+  node: '26.13.0'
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
