@@ -107,7 +107,6 @@
     "enabled": true
   },
   "platformAutomerge": false,
-  "baseBranchPatterns": ["dev"],
   "customManagers": [
     {
       "customType": "regex",
