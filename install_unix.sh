@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e  # Exit on error
 
-echo "📦 Setting up Personal OS Setup..."
+echo "📦 Setting up Personal OS Setup... (test)"
 
 if [ "$(uname -s 2>/dev/null)" = "Linux" ]; then
     if ! command -v make >/dev/null 2>&1; then
