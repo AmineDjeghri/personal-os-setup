@@ -125,6 +125,7 @@
       groupSlug: "python",
       minimumReleaseAge: "7 days",
       semanticCommitType: "fix",
+      rangeStrategy: "pin",
     },
     // pyproject.toml: `[dependency-groups]`
     {
@@ -157,12 +158,5 @@
     },
 
     // ---- Repo-specific rules (keep last) ----
-    // pyproject.toml: runtime dependencies, extras
-    {
-      description: "Pin exact versions of runtime Python dependencies and extras",
-      matchManagers: ["pep621"],
-      matchDepTypes: ["dependencies", "project.dependencies", "project.optional-dependencies"],
-      rangeStrategy: "pin",
-    },
   ],
 }
