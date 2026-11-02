@@ -52,6 +52,7 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 - [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu&hl=en&pli=1):  an alternative app launcher for Android TV devices that provides users with a different home screen and method for navigation and opening apps.
     - Remember to export your settings: <https://www.reddit.com/r/Projectivy_Launcher/comments/1cdt00f/tell_me_about_exporting_these_launcher_settings/>
     - You can create channels in the menu and add stremio, smartube, spotify to the home screen.
+    - To keep Projectivy (or any custom launcher) as the persistent default `HOME` app across reboots without needing an Accessibility Service, you can use [TV Box Tools (Launcher Manager TV ADB Tools)](https://play.google.com/store/apps/details?id=com.tv.launcher.manager.adb.tvboxtools&gl=us) ([website](https://tvboxtools.com) | [GitHub](https://github.com/smartago/tvboxtools)), an open-source tool that sets the default launcher over ADB (`cmd package set-home-activity`).
 - [Stremio](https://www.stremio.com/) / [Nuvio](https://nuvioapp.space/)
 
 #### What is Stremio and Nuvio ?
