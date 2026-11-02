@@ -2,6 +2,10 @@
 # See https://pre-commit.com/hooks.html for more hooks
 # ruff is for python files and is used with ruff.toml
 
+# Avoid nodeenv's floating "latest", which can select unsupported alpha releases.
+default_language_version:
+  node: '24.22.2'
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -46,7 +50,6 @@ repos:
     rev: v0.24.0
     hooks:
       - id: markdownlint-cli2
-        language_version: '24.22.1'
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.3
@@ -92,6 +95,6 @@ repos:
       - id: actionlint
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.2
+    rev: v1.31.1
     hooks:
       - id: zizmor

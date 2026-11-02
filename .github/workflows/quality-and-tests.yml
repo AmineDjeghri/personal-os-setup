@@ -6,16 +6,16 @@ permissions:
 jobs:
   pre-commit:
     name: "🧹 Pre-commit"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: ./.github/actions/install-python-deps
+      - uses: $/.github/actions/install-python-deps
       - run: make pre-commit
-      - uses: ./.github/actions/cleanup-artifacts
+      - uses: $/.github/actions/cleanup-artifacts
         if: always()
 
   tests:
@@ -35,7 +35,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: ./.github/actions/install-python-deps
+      - uses: $/.github/actions/install-python-deps
       - name: Safe software checks with separate coverage reporting
         if: runner.os == 'Linux'
         run: make test-coverage
@@ -49,7 +49,7 @@ jobs:
           name: self-contained-coverage
           path: reports/coverage.xml
           if-no-files-found: warn
-      - uses: ./.github/actions/cleanup-artifacts
+      - uses: $/.github/actions/cleanup-artifacts
         if: always()
 
   integration:
@@ -66,19 +66,21 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: ./.github/actions/install-python-deps
+      - uses: $/.github/actions/install-python-deps
+        with:
+          save-cache: 'false' # the self-contained job saves the same cache key in parallel
       # Linux/macOS mutate only these disposable runners. Windows tests are read-only.
       - name: Run platform integration and require executed passing tests
         shell: bash
         run: make test-integration
-      - uses: ./.github/actions/cleanup-artifacts
+      - uses: $/.github/actions/cleanup-artifacts
         if: always()
 
   validation:
     name: Required platform validation
     needs: [pre-commit, tests, integration]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Report validation boundary
         shell: bash
