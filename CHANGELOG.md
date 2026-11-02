@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.1.1 (2026-11-02)
+
+### Bug Fixes
+
+- **deps**: Update python to >=3.14.0, <=3.15.2 (#161)
+  ([#161](https://github.com/AmineDjeghri/personal-os-setup/pull/161),
+  [`c2d59d7`](https://github.com/AmineDjeghri/personal-os-setup/commit/c2d59d77ca670644d1ce27771071907cf1a5c597))
+
+
 ## v1.1.0 (2026-11-01)
 
 ### Features
