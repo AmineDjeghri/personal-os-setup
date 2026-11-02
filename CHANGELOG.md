@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.1-rc.1 (2026-11-02)
+
+### Bug Fixes
+
+- Update setup message in install_unix.sh for clarity
+  ([`34dae41`](https://github.com/AmineDjeghri/personal-os-setup/commit/34dae411501500d7f3840cc9f840b5415b1c017f))
+
+
 ## v1.1.0 (2026-11-01)
 
 ### Features
