@@ -3548,20 +3548,21 @@ release was <code>1.0.0</code>).</p>
 needs it.
   Update the <a href="../5.release/#credentials">release credentials</a> if a release target reads it.</p>
 <h2 id="dependencies-renovate">Dependencies (Renovate)<a class="headerlink" href="#dependencies-renovate" title="Permanent link">&para;</a></h2>
-<p>Renovate (<code>.github/renovate.json</code>) opens pull requests to <code>dev</code> with the <code>renovate</code> and <code>dependencies</code> labels;
+<p>Renovate (<code>.github/renovate.json5</code>) opens pull requests to <code>dev</code> with the <code>renovate</code> and <code>dependencies</code> labels;
 most routine updates have a 7-day cooldown; security fixes are not grouped and open at once. Runtime
 dependencies include exact pins and ranges; <code>uv.lock</code> makes builds reproducible. Review every Renovate
 pull request; a dependency dashboard issue lists the pending ones.</p>
 <ol>
-<li>Renovate does not widen the Python range. The supported interpreter moves by hand, together with
-   the CI action and this document.</li>
+<li>Renovate widens the Python range only after dependency dashboard approval. The exact CI Python
+   (<code>UV_PYTHON</code> in the install action), the README and this document are not tracked: update them by
+   hand in that pull request.</li>
 <li>PyPI updates use strict Python compatibility filtering. Weekly lockfile maintenance refreshes
    versions already permitted by dependency ranges; review the lockfile and CI results too.</li>
 <li>Renovate updates dependency files, GitHub Actions and pre-commit revisions; update README
    and developer documentation when the supported Python range changes. Docs are not rewritten
    automatically.</li>
 <li>Renovate tracks the Node pin used by pre-commit. Stable updates wait seven days and use
-   <code>chore</code>; major upgrades require dependency dashboard approval.</li>
+   <code>chore</code>; major upgrades open as normal pull requests labelled <code>needs-compatibility-review</code>.</li>
 </ol>
 
 
