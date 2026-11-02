@@ -1,5 +1,9 @@
 name: Install Python Dependencies
 description: Prepare uv, Make and the locked development environment on each platform
+inputs:
+  save-cache:
+    description: Save the uv cache after the job. Set to false when a parallel job on the same OS already saves the same key.
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -8,6 +12,7 @@ runs:
       with:
         version: '0.13.5'
         enable-cache: true
+        save-cache: ${{ inputs.save-cache }}
 
     - name: Install Make (Windows)
       if: runner.os == 'Windows'

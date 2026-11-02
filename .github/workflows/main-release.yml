@@ -13,14 +13,14 @@ jobs:
       contents: read
     name: "👷 Quality Check & Tests"
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && (github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]'))
-    uses: ./.github/workflows/quality-and-tests.yml
+    uses: $/.github/workflows/quality-and-tests.yml
 
   release:
     permissions:
       contents: write
     name: Verified release publication
     needs: quality-checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     outputs:
       released: ${{ steps.release.outputs.released }}
@@ -33,7 +33,7 @@ jobs:
           # untested tip; the exact metadata-only release commit is allowed on retries.
           ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ./.github/actions/install-python-deps
+      - uses: $/.github/actions/install-python-deps
       - name: Configure Git Bot Identity
         run: |
           git config user.name "github-actions[bot]"
@@ -45,7 +45,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_COMMIT_AUTHOR: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
         run: make release
-      - uses: ./.github/actions/cleanup-artifacts
+      - uses: $/.github/actions/cleanup-artifacts
         if: always()
 
   docs:
@@ -54,23 +54,23 @@ jobs:
     name: "📚 Deploy released documentation"
     needs: release
     if: github.ref == 'refs/heads/main' && needs.release.outputs.released == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           ref: v${{ needs.release.outputs.version }}
-      - uses: ./.github/actions/install-python-deps
+      - uses: $/.github/actions/install-python-deps
       - run: make deploy-doc-gh
-      - uses: ./.github/actions/cleanup-artifacts
+      - uses: $/.github/actions/cleanup-artifacts
         if: always()
 
   summary:
     name: "📋 Summary"
     needs: [quality-checks, release, docs]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Report publication outcome
         shell: bash
