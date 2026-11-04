@@ -12,7 +12,8 @@ output() { [[ -z "${GITHUB_OUTPUT:-}" ]] || echo "$1" >>"$GITHUB_OUTPUT"; }
 clean_tree() {
   local status
   status="$(git status --porcelain)" || die "could not check working tree status"
-  [[ -z "$status" ]] || die "uncommitted changes: commit or stash them first"
+  [[ -z "$status" ]] || die "uncommitted changes (a release commit would carry them): commit or stash them first:
+$status"
 }
 
 github_token() {
@@ -84,7 +85,8 @@ cmd_version() {
   head="$(git rev-parse HEAD)" || die "could not resolve HEAD"
   remote_head="$(git rev-parse "origin/$branch")" || die "could not resolve origin/$branch"
   [[ "$head" == "$remote_head" ]] ||
-    die "$branch is not in sync with origin/$branch"
+    die "$branch is not in sync with origin/$branch (ahead/behind: $(git rev-list --left-right --count "$branch...origin/$branch")):
+pull or push first"
   if [[ "${GITHUB_ACTIONS:-}" == true ]]; then
     release_sha="${GITHUB_SHA:-}"
     [[ -n "$release_sha" ]] || die "GitHub Actions requires GITHUB_SHA"
