@@ -33,10 +33,16 @@ def main() -> None:
     project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
     tag = f"v{project['version']}"
     branch = git("rev-parse", "--abbrev-ref", "HEAD") or "detached"
-    changed = [line[3:] for line in run("git", "status", "--porcelain").stdout.splitlines() if line.strip()]
+    changed = [
+        line[3:] for line in run("git", "status", "--porcelain").stdout.splitlines() if line.strip()
+    ]
     counts = git("rev-list", "--left-right", "--count", f"{branch}...origin/{branch}").split()
     in_sync = counts == ["0", "0"]
-    sync = "in sync" if in_sync else (f"ahead {counts[0]}, behind {counts[1]}" if counts else f"no origin/{branch}")
+    sync = (
+        "in sync"
+        if in_sync
+        else (f"ahead {counts[0]}, behind {counts[1]}" if counts else f"no origin/{branch}")
+    )
     tagged = git("rev-parse", "-q", "--verify", f"refs/tags/{tag}^{{commit}}")
     tag_at_head = bool(tagged) and tagged == git("rev-parse", "HEAD")
 
