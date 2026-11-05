@@ -55,8 +55,10 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
 - **PRs:** target `dev`; promote `dev` to `main` for stable releases. Squash-merge, title must be conventional (= the release commit message).
 - **Secrets:** inline `# pragma: allowlist secret`, never whole-file excludes.
 - **Renovate:** 7-day cooldown on dependency PRs; `uv.lock` regenerated, not pinned.
-- **Releases:** `make release-version` / `release-assets` / `release` (`scripts/release.sh`) are what
-  the main release workflow runs too. Guards: `main`/`dev`, clean tree, in sync with origin; CI binds to
+- **Releases:** `make release-status` reports branch, tree, origin sync, tag and GitHub release state
+  without touching anything — run it first when a release refuses. `make release-version` /
+  `release-assets` / `release` (`scripts/release.sh`) are what the main release workflow runs too.
+  Guards: `main`/`dev`, clean tree, in sync with origin; CI binds to
   tested `GITHUB_SHA`, while local releases default to `HEAD`. The
   token is `GH_TOKEN`, else the `gh auth login` session, else a hidden prompt. Never run them, nor
   `make deploy-doc-gh`, without per-action approval: they push, tag and publish.
