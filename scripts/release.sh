@@ -133,46 +133,22 @@ cmd_assets() (
   clean_tree
   version_tag
   check_tag
-  local paths file name names asset_tmp draft
-  local files=() missing=()
-  paths="$("$UV" run --no-sync python scripts/check_artifacts.py)"
+  local paths file
+  local files=()
+  paths="$("$UV" run --no-sync python scripts/check_artifacts.py)" || die "artifact check failed"
   while IFS= read -r file; do files+=("$file"); done <<< "$paths"
   if [[ "$ARTIFACTS_CHECKED" != true ]]; then make --no-print-directory test-wheel; fi
   github_token
-  if ! names="$(gh release view "$TAG" --json assets --jq '.assets[].name')"; then
-    local flags=(--draft --verify-tag --title "$TAG" --generate-notes)
+  if ! gh release view "$TAG" >/dev/null 2>&1; then
+    local flags=(--verify-tag --title "$TAG" --generate-notes)
     if [[ "$("$UV" run --no-sync python scripts/check_artifacts.py --prerelease)" == true ]]; then
       flags+=(--prerelease)
     fi
-    gh release create "$TAG" "${flags[@]}"
-    names="$(gh release view "$TAG" --json assets --jq '.assets[].name')"
+    gh release create "$TAG" "${flags[@]}" || die "could not create release $TAG"
   fi
-  draft="$(gh release view "$TAG" --json isDraft --jq '.isDraft')"
-  asset_tmp="$(mktemp -d)"
-  trap 'rm -rf -- "$asset_tmp"' EXIT
-  # Compare all existing assets first. Never replace a different published artifact.
-  for file in "${files[@]}"; do
-    name="${file##*/}"
-    if printf '%s\n' "$names" | grep -Fxq "$name"; then
-      gh release download "$TAG" --pattern "$name" --dir "$asset_tmp"
-      cmp -s "$file" "$asset_tmp/$name" || die "existing release asset differs: $name"
-    else
-      missing+=("$file")
-    fi
-  done
-  if [[ ${#missing[@]} -gt 0 ]]; then
-    gh release upload "$TAG" "${missing[@]}"
-  fi
-  # Download and compare the complete remote pair before publishing a draft.
-  for file in "${files[@]}"; do
-    name="${file##*/}"
-    if [[ ! -f "$asset_tmp/$name" ]]; then
-      gh release download "$TAG" --pattern "$name" --dir "$asset_tmp"
-    fi
-    cmp -s "$file" "$asset_tmp/$name" || die "uploaded release asset differs: $name"
-  done
-  if [[ "$draft" == true ]]; then gh release edit "$TAG" --draft=false; fi
-  echo "Verified release $TAG: ${files[*]}"
+  # Same source, same bytes: replacing a same-named attachment is a retry, not a new artifact.
+  gh release upload "$TAG" "${files[@]}" --clobber
+  echo "Published release $TAG: ${files[*]}"
 )
 
 cmd_release() {
