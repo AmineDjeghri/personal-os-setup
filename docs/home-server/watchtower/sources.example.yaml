@@ -1,22 +1,80 @@
 # watchtower sources — the live copy of this file lives OUTSIDE the repo
-# (default: ~/.hermes/watchtower/sources.yaml). This example is the schema.
+# (default: ~/.hermes/watchtower/sources.yaml, or ~/.config/watchtower on a new install).
 #
-# Adding a source is a YAML edit, never a code change — as long as its `kind`
-# is one watchtower already implements (`uv run watchtower.py --doctor` prints
-# OK/FAIL for every entry). A new kind = one small fetch_* function.
+# Adding a source is a YAML edit, never a code change — as long as its `kind` is one
+# watchtower implements (`watchtower.py --doctor` prints OK/FAIL for every entry).
+# A new kind = one `fetch_*` function plus a KINDS entry.
+#
+# Scheduling keys (all optional; without `every:` a source is "legacy" and only a plain run
+# picks it up — that is how an existing weekly cron keeps working untouched):
+#   every: 15m | 1h | 1d | 1w        minimum 5m, maximum 4w; d/w take no multiplier
+#   at: "07:30"                      required for 1d/1w, quoted, interpreted in `tz`
+#   on: mon                          weekly alignment (mon..sun, default mon)
+#   tz: Europe/Paris                 top level; only at:/quiet: use it (state stays UTC)
+#
+# Mode keys:
+#   mode: list                       the whole ranked digest, silent when the signature is unchanged
+#   mode: new                        only unseen items; take: N caps a run, remember: 90d expires ids
+#   mode: alert                      corroborated-news gate with event state (see `gate:` below)
+
+tz: Europe/Paris
 
 sources:
-  - id: trendshift-weekly          # short slug; used in state, ledger and health lines
-    kind: trendshift_jsonld        # which extractor to use
-    label: Trendshift weekly       # human name shown in the digest header
+  # --- legacy shape: no `every:`, its own weekly cron, byte-identical output ---------------------
+  - id: trendshift-weekly
+    kind: trendshift_jsonld
+    label: Trendshift weekly
     url: https://trendshift.io/weekly
-    limit: 25                      # cap items per run (code-enforced)
+    limit: 25                      # cap items per run
     min_items: 20                  # fewer than this = broken extractor, not "no news"
     enabled: true
 
-  # - id: some-blog
+  # --- important news: checked every 15 minutes, but silent unless several outlets carry it -------
+  - id: critical-news
+    kind: rss
+    label: Critical news
+    mode: alert
+    every: 15m
+    min_feeds_ok: 4                # fewer healthy feeds than this FAILS the source (never "no news")
+    feeds:                         # tier 1 = agenda-setting, tier 2 = corroboration only
+      - {id: lemonde,    tier: 1, url: "https://www.lemonde.fr/rss/une.xml"}
+      - {id: franceinfo, tier: 1, url: "https://www.francetvinfo.fr/titres.rss"}
+      - {id: bbc,        tier: 1, url: "https://feeds.bbci.co.uk/news/world/rss.xml"}
+      - {id: figaro,     tier: 2, url: "https://www.lefigaro.fr/rss/figaro_actualites.xml"}
+      - {id: guardian,   tier: 2, url: "https://www.theguardian.com/world/rss"}
+      - {id: france24,   tier: 2, url: "https://www.france24.com/fr/rss"}
+    gate:
+      window: 6h                   # ignore older items; also the clustering horizon
+      min_outlets: 3               # lane A: corroboration + a tier-1 + a lexicon hit
+      strong_outlets: 5            # lane B: everyone is running it, no lexicon needed
+      steps: [3, 6, 10]            # re-alert only when the outlet count first reaches a step
+      sim: 0.45                    # IDF-weighted title containment needed to join a cluster
+      close_after: 6h              # no new member for this long => the event closes
+    limits:
+      max_per_day: 5
+      min_gap: 20m
+      quiet: "23:00-07:00"         # hold + batch, never drop: released at 07:00 from a snapshot
+
+  # --- sports: once a day, a plain "new" list, no gate -------------------------------------------
+  - id: sports
+    kind: rss
+    label: Sports
+    mode: new
+    every: 1d
+    at: "07:30"
+    take: 12                       # unprinted items stay queued for the next run
+    min_items: 3
+    feeds:
+      # L'Equipe's own feed returns 403 and Eurosport's is gone, so this goes through Google News.
+      - {id: gnews-sport, tier: 2, url: "https://news.google.com/rss/search?q=sport&hl=fr&gl=FR&ceid=FR:fr"}
+
+  # --- a catalog / backlog: daily, drains a static list, forgets ids after 90 days ----------------
+  # - id: hn-best
   #   kind: rss
-  #   label: Some blog
-  #   url: https://example.com/feed.xml
-  #   limit: 10
-  #   enabled: false               # keep it here, turned off, until its extractor exists
+  #   label: HN best
+  #   mode: new
+  #   every: 1d
+  #   at: "18:30"
+  #   take: 10
+  #   remember: 90d
+  #   feeds: [{id: hn, tier: 2, url: "https://hnrss.org/best"}]
