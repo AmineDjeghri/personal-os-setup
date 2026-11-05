@@ -111,24 +111,16 @@ elif name == 'gh':
     action = args[1]
     if action == 'view':
         if not remote.exists(): sys.exit(1)
-        if args[args.index('--json')+1] == 'assets':
-            print('\n'.join(p.name for p in remote.iterdir() if p.name != '.draft'))
-        else:
-            print(str((remote / '.draft').exists()).lower())
+        if '--json' in args and args[args.index('--json')+1] == 'assets':
+            print('\n'.join(p.name for p in remote.iterdir()))
     elif action == 'create':
-        assert '--draft' in args and '--verify-tag' in args, args
+        assert '--verify-tag' in args and '--draft' not in args, args
         remote.mkdir()
-        (remote / '.draft').touch()
-    elif action == 'download':
-        asset = remote / args[args.index('--pattern')+1]
-        shutil.copyfile(asset, pathlib.Path(args[args.index('--dir')+1]) / asset.name)
     elif action == 'upload':
-        assert '--clobber' not in args
+        assert '--clobber' in args, args
         if os.environ.get('STUB_UPLOAD_FAILURE'): sys.exit(1)
-        for file in args[3:]: shutil.copyfile(file, remote / pathlib.Path(file).name)
-    elif action == 'edit':
-        assert '--draft=false' in args, args
-        (remote / '.draft').unlink()
+        for file in (a for a in args[3:] if a != '--clobber'):
+            shutil.copyfile(file, remote / pathlib.Path(file).name)
     else: raise AssertionError(args)
 else: raise AssertionError((name,args))
 """
@@ -309,7 +301,6 @@ def test_branch_only_publication_can_finish_the_verified_asset_pair(release_shel
     assert [args for name, args in calls if name == "make"] == [
         ["--no-print-directory", "test-installation"]
     ]
-    assert not (release_shell.remote / ".draft").exists()
     for archive in (wheel, sdist):
         assert (release_shell.remote / archive.name).read_bytes() == archive.read_bytes()
 
@@ -369,46 +360,51 @@ def test_no_releasable_commits_remains_successful(release_shell):
     assert not any(name == "gh" for name, _ in calls)
 
 
-def test_complete_pair_is_verified_before_draft_publication(release_shell):
+def test_both_assets_are_uploaded_after_validation(release_shell):
     result, calls = release_shell.run("assets")
     assert result.returncode == 0, result.stdout + result.stderr
-    actions = [args[1] for name, args in calls if name == "gh"]
-    assert actions.index("upload") < actions.index("download") < actions.index("edit")
-    assert not (release_shell.remote / ".draft").exists()
+    uploads = [args[3:] for name, args in calls if name == "gh" and args[1] == "upload"]
+    assert uploads == [
+        [f"dist/{release_shell.wheel.name}", f"dist/{release_shell.sdist.name}", "--clobber"]
+    ]
     assert (
         release_shell.remote / release_shell.wheel.name
     ).read_bytes() == release_shell.wheel.read_bytes()
+    assert (
+        release_shell.remote / release_shell.sdist.name
+    ).read_bytes() == release_shell.sdist.read_bytes()
 
 
-def test_partial_upload_retry_only_uploads_missing_asset(release_shell):
+def test_retry_reuploads_the_pair_with_clobber(release_shell):
     release_shell.remote.mkdir()
-    (release_shell.remote / ".draft").touch()
     shutil.copyfile(release_shell.wheel, release_shell.remote / release_shell.wheel.name)
     result, calls = release_shell.run("release")
     assert result.returncode == 0, result.stdout + result.stderr
-    uploads = [args[3:] for name, args in calls if name == "gh" and args[1] == "upload"]
-    assert uploads == [[f"dist/{release_shell.sdist.name}"]]
     assert any(name == "make" for name, _ in calls), "retry must rerun artifact/runtime validation"
-    result, calls = release_shell.run("assets")
-    assert result.returncode == 0, result.stderr
-    assert not any(name == "gh" and args[1] in ("upload", "edit") for name, args in calls)
+    assert not any(name == "gh" and args[1] == "create" for name, args in calls)
+    uploads = [args[3:] for name, args in calls if name == "gh" and args[1] == "upload"]
+    assert len(uploads) == 1 and "--clobber" in uploads[0]
+    assert (release_shell.remote / release_shell.sdist.name).exists()
 
 
-def test_different_existing_asset_is_never_overwritten(release_shell):
+def test_retry_replaces_a_same_named_asset(release_shell):
     release_shell.remote.mkdir()
-    (release_shell.remote / release_shell.wheel.name).write_bytes(b"different published artifact")
+    target = release_shell.remote / release_shell.wheel.name
+    target.write_bytes(b"different published artifact")
     result, calls = release_shell.run("assets")
-    assert result.returncode != 0 and "existing release asset differs" in result.stderr
-    assert not any(name == "gh" and args[1] in ("upload", "edit") for name, args in calls)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert target.read_bytes() == release_shell.wheel.read_bytes()
+    assert any(name == "gh" and args[1] == "upload" and "--clobber" in args for name, args in calls)
 
 
-def test_failed_upload_leaves_draft_and_retry_finishes(release_shell):
+def test_failed_upload_can_be_retried(release_shell):
     result, _ = release_shell.run("assets", STUB_UPLOAD_FAILURE="1")
     assert result.returncode != 0
-    assert (release_shell.remote / ".draft").exists()
+    assert release_shell.remote.exists()
     result, _ = release_shell.run("assets")
     assert result.returncode == 0, result.stderr
-    assert not (release_shell.remote / ".draft").exists()
+    assert (release_shell.remote / release_shell.wheel.name).exists()
+    assert (release_shell.remote / release_shell.sdist.name).exists()
 
 
 @pytest.mark.parametrize("damage", ["missing-sdist", "dirty-tree", "remote-tag"])
