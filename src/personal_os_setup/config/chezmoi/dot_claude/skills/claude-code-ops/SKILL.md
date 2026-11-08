@@ -150,6 +150,11 @@ The loop that works for handing an in-repo change (code, workflows, docs, skills
 
 7. **Never pipe a gate through `head`/`tail` inside an `&&` chain** — the pager's exit status (0) hides a gate that never ran. Run the gate as its own command and check its status; if the worktree env lacks the tool: `uv run --with pre-commit pre-commit run --files <paths>`.
 
+8. **Two parallel `-p` runs: give each its own plain COPY of the inputs, not two git worktrees.** Peer detection can pause a
+    run when another session touches the same checkout; `cp`-ing just the files each brief needs into separate scratch dirs
+    (`<scratch>/a`, `<scratch>/b`, no `.git`) ran two 11-12 turn reviews concurrently with zero interaction and no stall.
+    Analysis-only briefs never need the real worktree.
+
 ## Verification checklist
 
 - [ ] `/config/.local/bin/claude --version` → 2.x

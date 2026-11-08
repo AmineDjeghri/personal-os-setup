@@ -59,6 +59,19 @@ chezmoi --source "$S" apply -v --force --parent-dirs --refresh-externals=never \
 
 Pin the deployed names against the Curator per machine after each deploy: `hermes curator pin <skill>` (`unpin`/`status`/`run`/`pause`/`list-unmanaged` also exist).
 
+Then make running sessions see the edit **without `/new`**: `hermes sessions refresh-prompts` (all continuing
+sessions) or `--session <id> --json` for one. Each refreshed session pays one prompt-cache miss; history and
+session ids are kept.
+
+⚠️ **A `hermes curator lock`ed skill cannot be deployed by the agent.** Lock refuses `skill_manage`,
+`write_file`, `patch` *and* terminal writes, so `make skills-personal-repo-to-live` aborts on that file — and
+`hermes curator unlock` is also refused to the agent ("Only the user can unlock a skill"). Ask the user to run
+the unlock, then deploy. Lock is the right tool for a skill he curates by hand; pin (above) only keeps the
+curator away and still allows edits.
+
+Prefer `lock` over `pin` when the goal is "the agent must not rewrite this skill": pin is curator-only,
+lock is enforced against every writer including a deploy run from a session.
+
 **Sync direction — repo → live, one way.** The repo copy is the truth; `make skills-personal-repo-to-live` is
 copy-only: it overwrites whatever is live and deletes nothing.
 

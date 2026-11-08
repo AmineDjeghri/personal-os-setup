@@ -12,6 +12,7 @@ github-pr-workflow
 github-repo-management
 hermes-cron-automations
 hermes-instance-audit
+hermes-release-upgrades
 hermes-session-recall
 report-pdf
 skill-deployment
