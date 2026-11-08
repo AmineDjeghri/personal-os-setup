@@ -103,8 +103,8 @@
       "sourceUrl": "https://github.com/homeassistant-ai/skills.git",
       "skillPath": "skills/home-assistant-best-practices/SKILL.md",
       "skillFolderHash": "011e934cff024c4efde1742c2e474cd25bdb02ab",
-      "installedAt": "2026-10-26T23:40:02.103Z",
-      "updatedAt": "2026-11-01T19:29:21.097Z"
+      "installedAt": "2026-11-07T10:49:11.777Z",
+      "updatedAt": "2026-11-07T10:49:11.777Z"
     },
     "modern-python": {
       "source": "trailofbits/skills",
@@ -151,6 +151,25 @@
       "pluginName": "example-skills",
       "installedAt": "2026-11-01T17:16:17.544Z",
       "updatedAt": "2026-11-01T19:29:29.476Z"
+    },
+    "supply-chain-risk-auditor": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/trailofbits/skills.git",
+      "skillPath": "plugins/supply-chain-risk-auditor/skills/supply-chain-risk-auditor/SKILL.md",
+      "skillFolderHash": "954cc68e05e24a2a14447b60d1e8946b53323b1b",
+      "installedAt": "2026-11-07T10:49:14.522Z",
+      "updatedAt": "2026-11-07T10:49:14.522Z"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "skillFolderHash": "5ffb7dc66b9fd4c25c3e400a4c00da99a349b714",
+      "pluginName": "example-skills",
+      "installedAt": "2026-11-07T10:49:17.165Z",
+      "updatedAt": "2026-11-07T10:49:17.165Z"
     }
   },
   "dismissed": {}
