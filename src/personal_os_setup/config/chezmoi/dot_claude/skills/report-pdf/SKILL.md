@@ -75,6 +75,13 @@ uv run --no-project scripts/report_pdf.py spec.json --out /config/<task>-<date>.
 
 Rows may be plain lists instead of dicts when you pass `columns` as a header-only list.
 
+## Format and viewer choice
+
+PDF stays the default sign-off artefact because Telegram previews it inline. Which viewer to use (PDF,
+PNG slices, Webapp preview, hosted URL) is decided in `artifact-delivery`. For the Hermes Webapp the same
+spec renders a screen layout with `--html` — procedure in the `report-html` skill. Do not fork a second
+report template.
+
 ## Verification
 
 - The script prints `wrote <path> · N page(s) · X KB` and fails loudly on a zero-page render.

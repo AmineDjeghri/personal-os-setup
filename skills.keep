@@ -14,6 +14,7 @@ hermes-cron-automations
 hermes-instance-audit
 hermes-release-upgrades
 hermes-session-recall
+report-html
 report-pdf
 skill-deployment
 template-adoption
