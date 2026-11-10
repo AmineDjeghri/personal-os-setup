@@ -40,7 +40,7 @@ flowchart LR
     Client["📺 Nuvio<br/><sub>TV · phone · desktop</sub>"]
 
     subgraph ConfigGroup["🧩 AIOStreams — your saved configuration"]
-        Addons["Addons<br/>Torrentio · Comet · MediaFusion<br/>Streamfusion · Lumio · …"]
+        Addons["Addons<br/>Torrentio · Comet · MediaFusion<br/>StreamFusionReborn · …"]
     end
 
     Debrid["⚡ Debrid service<br/><sub>AllDebrid · Real-Debrid · TorBox</sub>"]
@@ -54,7 +54,7 @@ flowchart LR
 
 Five words are enough to follow the rest of this page:
 
-- **Addon** — a source of streams or catalogs. Torrentio, Comet, MediaFusion, Streamfusion and Lumio are addons.
+- **Addon** — a source of streams or catalogs. Torrentio, Comet, MediaFusion and StreamFusionReborn are addons.
 - **Debrid service** — the paid account that turns torrent sources into instant, high-speed playback (AllDebrid, Real-Debrid, TorBox…). You need one account, whatever you do next.
 - **Configuration (config)** — the AIOStreams page where you pick your addons, filters, sorting and formatting. It is saved online and reached with a **UUID** plus a **password**.
 - **Template** — a JSON file that fills a configuration. That is how this guide hands you a ready-made setup.
@@ -88,7 +88,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 2. Go to **Our Configuration → Browse ready-made setups → the import button** and paste one of these links:
     - (Recommended) **Amine's default config (essentials)** — nothing to fill in beyond your debrid service:
       `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json`
-    - (Advanced) **Amine's default config (full)** — the same, plus custom addons (Lumio, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
+    - (Advanced) **Amine's default config (full)** — the same, plus custom addons (StreamFusionReborn, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
       `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-full.json`
 3. Click **Use this template now**.
 4. Click again on **Our Configuration → Browse ready-made setups**, choose the imported template and click **Use this setup**. The addons, filters, sorting and the stream formatter load automatically; AllDebrid is already wired into the stream addons.
@@ -104,7 +104,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 ### Step 6 — Install the addon in Nuvio
 
 1. Go to the **Save and Install** section.
-2. Click **Save**. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (Streamfusion and OpenSubtitles V3+ are the usual suspects).
+2. Click **Save**. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (StreamFusionReborn and OpenSubtitles V3+ are the usual suspects).
 3. Click **Install**, then copy the manifest link.
 4. Paste it in Nuvio: [nuvioapp.space/account?tab=addons](https://nuvioapp.space/account?tab=addons) (or through the app).
 5. Nuvio shows what the addon provides, as a count of resources and catalogs (for example `5 resources / 45 catalogs`): a populated count means the addon was added properly.
@@ -176,19 +176,19 @@ Two things worth knowing:
 A variant is a short script that changes your own configuration for one device — no second configuration, no second link to share.
 
 1. Open the configuration and go to **Miscellaneous → Variants** (Advanced mode).
-2. Add a variant: give it an **Id** (`no-streamfusion` — lowercase letters, digits, `-` and `_` only) and a **Name** (`No Streamfusion`).
-3. In the script box, write the change. To deactivate for example Streamfusion, that is `disable presets[options.name*="Streamfusion"]`.
+2. Add a variant: give it an **Id** (`no-streamfusionreborn` — lowercase letters, digits, `-` and `_` only) and a **Name** (`No StreamFusionReborn`).
+3. In the script box, write the change. To deactivate for example StreamFusionReborn, that is `disable presets[options.name*="StreamFusionReborn"]`.
 4. Save the configuration.
 
-Example — deactivate Streamfusion on a single device:
+Example — deactivate StreamFusionReborn on a single device:
 
-| Field  | Value                                           |
-|--------|-------------------------------------------------|
-| Id     | `no-streamfusion`                               |
-| Name   | `No Streamfusion`                               |
-| Script | `disable presets[options.name*="Streamfusion"]` |
+| Field  | Value                                                 |
+|--------|-------------------------------------------------------|
+| Id     | `no-streamfusionreborn`                               |
+| Name   | `No StreamFusionReborn`                               |
+| Script | `disable presets[options.name*="StreamFusionReborn"]` |
 
-Then go to **Save & Install**, select **No Streamfusion** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusion/manifest.json`. Install that URL as the addon on the device that should lose Streamfusion (remove the old one if you replaced it).
+Then go to **Save & Install**, select **No StreamFusionReborn** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusionreborn/manifest.json`. Install that URL as the addon on the device that should lose StreamFusionReborn (remove the old one if you replaced it).
 
 The same variant also disables an addon in a **child configuration** that inherited it from a **parent configuration** — the preview may report that the instruction matched nothing, and it still takes effect when you play.
 
@@ -213,17 +213,16 @@ The streams display clean, readable, emoji-enhanced information instead of raw f
 
 The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
 
-| Addon                        | What it adds                                                                                                      | Configure it at                                                                 | Resources        | Format Passthrough | Result Passthrough | Stremio Addons page                                                      |
-|------------------------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------|--------------------|--------------------|--------------------------------------------------------------------------|
-| *Cinemeta (custom)*          | Base metadata + Popular / New / Featured catalogs — **enabled by default**                                        | —                                                                               | `meta` `catalog` | —                  | —                  | —                                                                        |
-| *Top-Streaming (custom)*     | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US)                                               | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)         |
-| *Top-streaming FR (custom)*  | The same lists for France (Canal+, Netflix FR, Prime FR…)                                                         | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)         |
-| *Trakt lists (custom)*       | Your Trakt lists, trending and genre lists                                                                        | <https://trakt.dexter21767.com> — log in with Trakt                             | `catalog`        | —                  | —                  | —                                                                        |
-| *Nuvio Live Sports (custom)* | Live football, NBA, NFL, NHL, F1                                                                                  | <https://nuvio.moaqeel6679.my.id>                                               | —                | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports) |
-| *Statusio (custom)*          | Debrid account health card — provider, username, expiry, days left                                                | <https://statusio.elfhosted.com/configure>                                      | —                | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                   |
-| *Lumio (custom)*             | French VOD, torrent + direct download                                                                             | <https://mylumio.tv>                                                            | `stream`         | —                  | —                  | [lumio](https://stremio-addons.net/addons/lumio)                         |
-| *Streamfusion (custom)*      | Extra French streaming sources                                                                                    | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusion](https://stremio-addons.net/addons/streamfusion)           |
-| *AI Search (custom)*         | Recommendations from natural-language queries (needs an OpenAI-Compatible API Key + TMDB keys; better with Trakt) | <https://stremio.tomz.dev/aisearch/configure>                                   | —                | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                 |
+| Addon                         | What it adds                                                                                                      | Configure it at                                                                 | Resources        | Format Passthrough | Result Passthrough | Stremio Addons page                                                          |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------|--------------------|--------------------|------------------------------------------------------------------------------|
+| *Cinemeta (custom)*           | Base metadata + Popular / New / Featured catalogs — **enabled by default**                                        | —                                                                               | `meta` `catalog` | —                  | —                  | —                                                                            |
+| *Top-Streaming (custom)*      | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US)                                               | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)             |
+| *Top-streaming FR (custom)*   | The same lists for France (Canal+, Netflix FR, Prime FR…)                                                         | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)             |
+| *Trakt lists (custom)*        | Your Trakt lists, trending and genre lists                                                                        | <https://trakt.dexter21767.com> — log in with Trakt                             | `catalog`        | —                  | —                  | —                                                                            |
+| *Nuvio Live Sports (custom)*  | Live football, NBA, NFL, NHL, F1                                                                                  | <https://nuvio.moaqeel6679.my.id>                                               | —                | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports)     |
+| *Statusio (custom)*           | Debrid account health card — provider, username, expiry, days left                                                | <https://statusio.elfhosted.com/configure>                                      | —                | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                       |
+| *StreamFusionReborn (custom)* | **Best addon for French 4K programs.** Not in the AIOStreams marketplace, so it is added as a custom addon        | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusionstremio](https://stremio-addons.net/addons/streamfusionstremio) |
+| *AI Search (custom)*          | Recommendations from natural-language queries (needs an OpenAI-Compatible API Key + TMDB keys; better with Trakt) | <https://stremio.tomz.dev/aisearch/configure>                                   | —                | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                     |
 
 **Resources** — leave blank unless you want to restrict what AIOStreams takes from the addon: `stream` = streams only, `catalog` = catalogs only.
 **Format Passthrough** — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
