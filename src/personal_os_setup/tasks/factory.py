@@ -23,6 +23,7 @@ from personal_os_setup.tasks.system.chezmoi import (
 )
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
 from personal_os_setup.tasks.system.font import install_jetbrainsmono_nerd_font
+from personal_os_setup.tasks.system.git_credentials import setup_gh_git_credentials
 from personal_os_setup.tasks.system.help import (
     show_apps_config_link,
     show_documentation_link,
@@ -185,6 +186,24 @@ def _start_section(system: str) -> Section:
             SystemAction(label="open 'testing this project in a VM' doc", run=show_vm_testing_link)
         )
     return ("🚀 Start", actions)
+
+
+# Section: "git" — git configuration that applies on every OS.
+def _git_section() -> Section:
+    return (
+        "git",
+        [
+            SystemAction(
+                label="use gh login for GitHub HTTPS",
+                run=setup_gh_git_credentials,
+                confirm=True,
+                confirm_message=(
+                    "Configure git (~/.gitconfig) to use your `gh auth login` session for "
+                    "https://github.com? Stops git GUIs like Obsidian Git from asking for a password."
+                ),
+            ),
+        ],
+    )
 
 
 # Section: "Sync dotfiles" — installs zsh setup prerequisites/fonts and applies chezmoi-managed dotfiles (zsh, p10k, etc).
@@ -530,6 +549,7 @@ def get_system_action_sections(
 
     # Start section (onboarding walkthrough + documentation link) applies to every OS.
     sections.append(_start_section(system))
+    sections.append(_git_section())
 
     #################
     ## Linux & Darwin

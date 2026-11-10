@@ -306,3 +306,13 @@ class TestGetPackageManager:
 
     def test_unknown_manager_for_known_distro_returns_none(self):
         assert get_package_manager(distro="ubuntu", manager="brew") is None
+
+
+class TestGitCredentialsAction:
+    """The gh credential-helper action is cross-platform, so it has its own "git" section."""
+
+    def test_present_on_every_os(self):
+        for system, distro in [("linux", "ubuntu"), ("darwin", "darwin"), ("windows", "windows")]:
+            action = _action_in(system, distro, "git", "use gh login for GitHub HTTPS")
+            assert action.confirm is True
+            assert action.run.__name__ == "setup_gh_git_credentials"
