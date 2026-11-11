@@ -262,8 +262,8 @@ be removed without affecting them.
 
 ## Gaming
 
-`packages.yaml` currently only installs `steam` under `cachyos.pacman.Gaming` — the pieces
-below are not yet in the catalog and need to be added/installed later in the next update.
+* `packages.yaml` lists `steam` and `protonplus` under `cachyos.pacman.Gaming`. Only `steam` and `protonplus` are needed for HDR games
+* The other pieces below (`cachyos-gaming-meta`, GameMode, MangoHud) are not yet in the catalog.
 
 ### Base packages
 
@@ -273,6 +273,35 @@ below are not yet in the catalog and need to be added/installed later in the nex
 * CachyOS already ships a gaming-optimized kernel (`linux-cachyos`, BORE/EEVDF scheduler)
   and repo-level `-O3`/`x86-64-v3` optimized packages by default — nothing to configure here,
   it's the baseline the whole distro is built on.
+
+### Proton
+
+Prefer **Proton-CachyOS** (CachyOS's own Proton fork, tracks Proton's bleeding-edge branch)
+over stock Steam Proton for anything demanding — it merges fixes faster and ships newer
+DXVK/HDR support. Install/manage versions via **ProtonPlus** . Set the version per-game in Steam: right-click → Properties → Compatibility →
+"Force the use of a specific Steam Play compatibility tool".
+
+Install the build through ProtonPlus (e.g. `Proton-CachyOS Latest-x86_64_v3`, fine on any
+x86-64-v3 CPU).
+
+#### HDR in games (Proton)
+
+Games run through XWayland by default, which has no HDR path, so the in-game HDR option stays
+hidden. Verified working on (UE4, DX11) with an RTX 5070 Ti (NVIDIA 620.x), Hyprland `cm = "hdr"` and the Proton-CachyOS build above. Per game:
+
+1. Turn desktop HDR on first (Noctalia toggle or `cm = "hdr"`, see below).
+2. Force the Proton-CachyOS build in Steam → Properties → Compatibility.
+3. Set Launch Options:
+
+   ```text
+   PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 DXVK_HDR=1 %command%
+   ```
+
+   * `PROTON_ENABLE_WAYLAND=1` — use Proton's native Wayland driver instead of XWayland.
+   * `PROTON_ENABLE_HDR=1` — let Proton expose an HDR surface to the game.
+   * `DXVK_HDR=1` — makes DXVK (DX9/10/11 → Vulkan, bundled in Proton) offer an HDR10 output
+     format. Not a package; skip it for DX12-only games if it causes trouble.
+4. Start the game and look for the HDR option in its display/graphics settings.
 
 ### GameMode
 
@@ -288,14 +317,6 @@ it before relying on GameMode, or expect fights over process priority.
 FPS/frametime/CPU/GPU overlay. `mangohud %command%` as a Steam launch option (combine with
 GameMode: `gamemode mangohud %command%`), or `mangohud --dlsym` for OpenGL titles that need
 the dlsym hook. Config: `~/.config/MangoHud/MangoHud.conf`.
-
-### Proton
-
-Prefer **Proton-CachyOS** (CachyOS's own Proton fork, tracks Proton's bleeding-edge branch)
-over stock Steam Proton for anything demanding — it merges fixes faster and, as of the
-mid-2026 update, **auto-detects and enables HDR per-game** with no launch options needed.
-Install/manage versions via **ProtonUp-Qt** (also handles GE-Proton if a specific game needs
-it instead). Set the version per-game in Steam: right-click → Properties → Compatibility.
 
 ### HDR and 10-bit desktop
 
