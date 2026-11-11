@@ -1,17 +1,7 @@
----
-name: hermes-release-upgrades
-description: "Use when Hermes was just upgraded or a new release is checked out."
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
-    tags: [hermes, upgrade, release, verification, features, testing]
-    related_skills: [hermes-instance-audit, skill-deployment, hermes-cron-automations]
----
-
 # Verifying a new Hermes release on this box
 
 The user upgrades Hermes often and then asks "what can we use from this release / test it".
-This skill is the procedure and the accumulated per-feature evidence. Feature inventory lives in
+This file is the procedure and the accumulated per-feature evidence. Feature inventory lives in
 the release notes; this file holds what this box actually proved.
 
 ## 1. First: is the new code even running?
@@ -67,13 +57,7 @@ columns and the ranking puts unrelated entries first, so never judge a search by
   `patch` **and** `terminal` — and `hermes curator unlock` is itself refused ("Only the user can
   unlock a skill"). So a locked skill also blocks the deploy pipeline (`make skills-…-to-live`
   runs as the agent). Test lock on a scratch skill and ask the user to run the `unlock` themselves.
-- **`hermes cron cancel` does not cover a manual `hermes cron run`.** The scheduler-dispatched run
-  is cancellable; a run started by `cron run` is booked `source=direct`, the CLI answers "Nothing
-  to cancel", the row stays `running` after the script exits, and the job stops firing on schedule
-  (the next tick is skipped because the run looks in flight). Fix = `hermes cron remove <id>`.
-  Prove the state with `hermes cron runs <id>` before and after.
-- **`hermes cron run` blocks the calling shell** until the run finishes — never call it foreground
-  with a long job; it eats the whole `terminal` timeout.
+- **Cron cancel / `cron run` behaviour:** see `hermes-cron-automations` pitfall 8.
 - **The Webapp bundle does build in the agent container** (`hermes webapp --build-only`, a few minutes,
   no flags needed) → `~/.hermes/hermes-agent/apps/desktop/dist-webapp`. So enabling it is only
   `webapp.enabled: true` + a gateway restart; build failures are not the reason to skip it. Run it in the
@@ -96,7 +80,7 @@ Hand these over as a short numbered list with the exact action, and say what a p
 
 Split the report: **verified here** (command + observed output), **yours to test** (the table above),
 **defects** (with the repro). Then write the durable part — the commands that worked and the
-contradictions — into this skill; the release notes go stale, this file is the memory. Don't paste
+contradictions — into this file; the release notes go stale, this file is the memory. Don't paste
 the changelog back to him.
 
 Only after the findings are recorded: deploy edited skills (`skill-deployment`), and tell any

@@ -69,7 +69,7 @@ Run BEFORE every push.
 Never assume a repo follows another repo's flow. Before committing/pushing/opening a PR in a repo:
 
 1. Read `AGENTS.md` / `CLAUDE.md` / `CONTRIBUTING.md` at the repo root
-2. Read its project skills: `.claude/skills/` (e.g. ship-feature, repo-gotchas) and `.agents/skills/`
+2. Read its project skills: `.claude/skills/` (e.g. ship-feature, run-tests) and `.agents/skills/`
 3. If conventions files are **missing** → flag it and offer to create them; do NOT silently apply defaults from memory
 4. Fallbacks when docs are silent: branch from the default branch; conventional PR title; check whether CI is path-scoped (some repos only test a subdirectory)
 

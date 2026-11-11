@@ -19,15 +19,60 @@ script = (
 )
 
 
+FAKE_NPX = """import os, pathlib, shutil, sys
+args = sys.argv
+agents = [args[i + 1] for i, arg in enumerate(args) if arg == "-a"]
+name = args[args.index("-s") + 1]
+with open(os.environ.get("SMOKE_CALLS", os.devnull), "a") as calls:
+    calls.write(",".join(agents) + "\\n")
+if os.environ.get("SMOKE_FAIL") in agents:
+    sys.exit(1)
+roots = {
+    "claude-code": pathlib.Path(os.environ["SKILLS_DST"]),
+    "codex": pathlib.Path(os.environ["SKILLS_CODEX_DST"]),
+}
+
+
+def write(directory):
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "SKILL.md").write_text(
+        f"---\\nname: {name}\\ndescription: Fixture\\n---\\nInstructions.\\n"
+    )
+
+
+def clear(path):
+    if path.is_symlink():
+        path.unlink()
+    elif path.exists():
+        shutil.rmtree(path)
+
+
+if {"claude-code", "codex"} <= set(agents):
+    canonical = roots["codex"] / name
+    write(canonical)
+    link = roots["claude-code"] / name
+    clear(link)
+    link.parent.mkdir(parents=True, exist_ok=True)
+    link.symlink_to(os.path.relpath(canonical, link.parent), target_is_directory=True)
+else:
+    for agent in agents:
+        clear(roots[agent] / name)
+        write(roots[agent] / name)
+shutil.copyfile(os.environ["LOCK"], os.environ["LIVE_SKILLS_LOCK"])
+"""
+
+
+def install_fake_npx(bins):
+    bins.mkdir()
+    npx = bins / "npx"
+    npx.write_text("#!" + sys.executable + "\n" + FAKE_NPX)
+    npx.chmod(0o755)
+
+
 def test_replay_and_authored_deployment(tmp_path):
     tmp = tmp_path
     bins = tmp / "bin"
-    bins.mkdir()
-    fixture = tmp / "fixture"
-    fixture.mkdir()
-    (fixture / "SKILL.md").write_text(
-        "---\nname: example\ndescription: Fixture\n---\nInstructions.\n"
-    )
+    install_fake_npx(bins)
     lock = tmp / "lock.json"
     lock.write_text(
         json.dumps(
@@ -39,28 +84,6 @@ def test_replay_and_authored_deployment(tmp_path):
             }
         )
     )
-    npx = bins / "npx"
-    npx.write_text(
-        "#!"
-        + sys.executable
-        + "\n"
-        + """import json,os,pathlib,shutil,sys
-args=sys.argv
-agent=args[args.index('-a')+1]
-with open(os.environ['SMOKE_CALLS'],'a') as f: f.write(agent+'\\n')
-if os.environ.get('SMOKE_FAIL')==agent: sys.exit(1)
-root=os.environ['SKILLS_DST'] if agent=='claude-code' else os.environ['SKILLS_CODEX_DST']
-canonical=pathlib.Path(os.environ['SKILLS_CODEX_DST'])/'example'
-shutil.copytree(os.environ['SMOKE_FIXTURE'],canonical,dirs_exist_ok=True)
-link=pathlib.Path(root)/'example'
-if agent=='claude-code' and not link.is_symlink():
-    shutil.rmtree(link,ignore_errors=True)
-    link.parent.mkdir(parents=True,exist_ok=True)
-    link.symlink_to(canonical,target_is_directory=True)
-shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
-"""
-    )
-    npx.chmod(0o755)
     env = dict(
         os.environ,
         PATH=str(bins) + ":" + os.environ["PATH"],
@@ -71,7 +94,6 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
         LIVE_SKILLS_LOCK=str(tmp / "live.json"),
         STRICT="1",
         SMOKE_CALLS=str(tmp / "calls"),
-        SMOKE_FIXTURE=str(fixture),
     )
     env.pop("AGENT", None)
     env.pop("AGENTS", None)
@@ -85,22 +107,36 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
             capture_output=True,
         )
 
+    claude_entry, canonical = tmp / "claude/example", tmp / "codex/example"
+
+    def calls():
+        return (tmp / "calls").read_text().splitlines()
+
+    # One call names both agents, so the Claude entry is a link to the canonical copy.
     result = replay()
     assert result.returncode == 0, (result.stdout, result.stderr)
-    assert (tmp / "calls").read_text().splitlines() == ["claude-code", "codex"]
+    assert calls() == ["claude-code,codex"]
+    assert claude_entry.is_symlink() and claude_entry.resolve() == canonical.resolve()
     result = replay()
     assert result.returncode == 0 and "nothing to do" in result.stdout, result
-    assert len((tmp / "calls").read_text().splitlines()) == 2
-    (tmp / "codex/example/SKILL.md").unlink()
+    assert len(calls()) == 1
+    # A broken canonical copy is repaired, again with one call.
+    (canonical / "SKILL.md").unlink()
     result = replay()
     assert result.returncode == 0, (result.stdout, result.stderr)
-    assert (tmp / "codex/example/SKILL.md").is_file()
-    assert len((tmp / "calls").read_text().splitlines()) == 4
+    assert (canonical / "SKILL.md").is_file() and len(calls()) == 2
+    # An independent copy (what single-agent installs leave behind) is turned back into a link.
+    claude_entry.unlink()
+    shutil.copytree(canonical, claude_entry)
+    result = replay()
+    assert result.returncode == 0, (result.stdout, result.stderr)
+    assert claude_entry.is_symlink() and len(calls()) == 3
+    # Selecting one agent installs only it and leaves the other agent's link alone.
     result = replay(AGENT="codex", FORCE="1")
     assert result.returncode == 0, (result.stdout, result.stderr)
-    assert (tmp / "calls").read_text().splitlines()[-1] == "codex"
+    assert calls()[-1] == "codex" and claude_entry.is_symlink()
     result = replay(FORCE="1", SMOKE_FAIL="codex")
-    assert result.returncode != 0 and "FAIL codex/example" in result.stderr
+    assert result.returncode != 0 and "FAIL example (claude-code codex)" in result.stderr
     no_tools = tmp / "no-tools"
     no_tools.mkdir()
     (no_tools / "dirname").symlink_to(shutil.which("dirname"))
@@ -113,10 +149,10 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
     # A Windows uname used to skip all work. It must now still reach the installer.
     (bins / "uname").write_text("#!/bin/sh\necho MINGW64_NT\n")
     (bins / "uname").chmod(0o755)
-    count = len((tmp / "calls").read_text().splitlines())
+    count = len(calls())
     result = replay(FORCE="1")
     assert result.returncode == 0, (result.stdout, result.stderr)
-    assert len((tmp / "calls").read_text().splitlines()) == count + 2
+    assert len(calls()) == count + 1
     args = [
         "make",
         f"SKILLS_DST={tmp}/authored",
@@ -156,22 +192,7 @@ def test_fresh_chezmoi_folder_apply(tmp_path):
     config = tmp / "config.toml"
     config.write_text("")
     bins = tmp / "bin"
-    bins.mkdir()
-    npx = bins / "npx"
-    npx.write_text(
-        "#!"
-        + sys.executable
-        + "\n"
-        + """import os,pathlib,shutil,sys
-args=sys.argv
-agent=args[args.index('-a')+1]; name=args[args.index('-s')+1]
-root=os.environ['SKILLS_DST'] if agent=='claude-code' else os.environ['SKILLS_CODEX_DST']
-skill=pathlib.Path(root)/name;skill.mkdir(parents=True,exist_ok=True)
-(skill/'SKILL.md').write_text(f'---\\nname: {name}\\ndescription: Fixture\\n---\\nInstructions.\\n')
-shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
-"""
-    )
-    npx.chmod(0o755)
+    install_fake_npx(bins)
     env = dict(
         os.environ,
         PATH=str(bins) + ":" + os.environ["PATH"],
@@ -214,6 +235,9 @@ shutil.copyfile(os.environ['LOCK'],os.environ['LIVE_SKILLS_LOCK'])
     assert {p.name for p in (dest / ".agents/skills").iterdir() if p.is_symlink()} == authored
     for name in authored:
         assert (dest / ".agents/skills" / name).resolve() == dest / ".claude/skills" / name
+    for name in third_party:
+        entry = dest / ".claude/skills" / name
+        assert entry.is_symlink() and entry.resolve() == dest / ".agents/skills" / name
 
 
 @pytest.mark.skipif(not shutil.which("chezmoi"), reason="chezmoi is not installed")

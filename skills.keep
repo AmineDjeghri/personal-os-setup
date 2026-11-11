@@ -3,7 +3,6 @@
 agent-skills-architecture
 claude-code-ops
 coding-workflow
-debugging-hermes-tui-commands
 git-line-endings
 github-actions-trigger-gotchas
 github-auth
@@ -12,7 +11,6 @@ github-pr-workflow
 github-repo-management
 hermes-cron-automations
 hermes-instance-audit
-hermes-release-upgrades
 hermes-session-recall
 report-html
 report-pdf

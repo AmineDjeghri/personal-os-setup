@@ -78,7 +78,7 @@ Rows may be plain lists instead of dicts when you pass `columns` as a header-onl
 ## Format and viewer choice
 
 PDF stays the default sign-off artefact because Telegram previews it inline. Which viewer to use (PDF,
-PNG slices, Webapp preview, hosted URL) is decided in `artifact-delivery`. For the Hermes Webapp the same
+PNG slices, Webapp preview, hosted URL) is the user's call per report. For the Hermes Webapp the same
 spec renders a screen layout with `--html` — procedure in the `report-html` skill. Do not fork a second
 report template.
 

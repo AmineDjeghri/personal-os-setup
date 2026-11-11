@@ -73,4 +73,4 @@ That's the way to toggle a loaded plugin's live behaviour (e.g. hide/show hyprba
 
 ## Adding a new script
 
-Follow the shape of the existing ones (`vicinae`/`coolercontrol`/`noctalia`): `set -eu`, a `notify()` helper using `notify-send` if present, an early exit if the required binary is missing, then the idempotent check-then-act body. See [[add-system-action]] for the surrounding `SystemAction`/dotfiles machinery, and keep [[repo-gotchas]]'s and `AGENTS.md`'s "confirm before running" rule in mind — a script committed here really executes on the next apply.
+Follow the shape of the existing ones (`vicinae`/`coolercontrol`/`noctalia`): `set -eu`, a `notify()` helper using `notify-send` if present, an early exit if the required binary is missing, then the idempotent check-then-act body. See [[add-system-action]] for the surrounding `SystemAction`/dotfiles machinery, and keep [[run-tests]]'s and `AGENTS.md`'s "confirm before running" rule in mind — a script committed here really executes on the next apply.

@@ -35,7 +35,7 @@ Full type/emoji table and scopes: `docs/developer/3.conventions.md`, “Commit c
 
 **Never manually bump the version in `pyproject.toml`** — semantic-release does it on merge. **Never create tags manually.**
 
-⚠️ `commitizen`'s commit-message check only runs at git's `commit-msg` hook stage — `make pre-commit` does **not** exercise it, so a passing `make pre-commit` says nothing about whether your commit message is well-formed; only a real `git commit` does. See [[repo-gotchas]].
+⚠️ `commitizen`'s commit-message check only runs at git's `commit-msg` hook stage — `make pre-commit` does **not** exercise it, so a passing `make pre-commit` says nothing about whether your commit message is well-formed; only a real `git commit` does. See [[run-tests]].
 
 ## Before opening a PR
 

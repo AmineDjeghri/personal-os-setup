@@ -3,7 +3,7 @@
 ## skills_sync.py — manifest-based bundling (from tools/skills_sync.py docstring)
 
 Manifest: `~/.hermes/skills/.bundled_manifest`, format `skill_name:origin_hash` (MD5 of the
-bundled skill at last sync). v1 manifests (plain names) auto-migrate to v2.
+bundled skill at last sync).
 
 Update logic:
 - **NEW** (not in manifest): copied to user dir, hash recorded.
@@ -54,3 +54,32 @@ MISSING = user-deleted (respected). DIFFERS = stale stock OR user-modified → `
   sure.
 - The curator already auto-prunes stale bundled skills (idle past `stale_after_days`) with backups
   in `.curator_backups/<ts>/` — manual deletion is only needed for "definitely never" calls.
+
+
+## Bundled skills are read-only
+
+Bundled skills sync from the addon with a per-directory hash manifest, so a copy we edited is skipped
+forever and upstream improvements never reach us. Never edit one. When we want a local addition:
+
+1. `hermes skills diff <name>` — see exactly what our copy adds.
+2. Move that content into a skill we own (a `*-ops` addendum, e.g. `claude-code-ops` for the container
+   facts about the `claude-code` skill).
+3. `hermes skills reset <name>` — clears the "user-modified" flag so updates work again; it does not
+   touch the content. `hermes skills reset <name> --restore` also reverts to stock.
+4. Confirm with `hermes skills list-modified`; the next addon update brings the stock version.
+
+⚠️ **`hermes skills repair-official <name> --restore` writes its backup INSIDE the skills tree** —
+to `~/.hermes/skills/.restore-backups/<ts>/<category>/<name>/`. That directory is *not* in Hermes'
+excluded-scan list, so the backup is a second copy of the same name and the skill becomes
+**unloadable**: `Ambiguous skill name … Refusing to guess`. Move the backup out of the
+scanned root straight after any restore:
+`mv ~/.hermes/skills/.restore-backups ~/.hermes/backups/restore-backups-<date>`.
+
+⚠️ **`hermes skills reset` blocks on an interactive prompt — never call it from a non-interactive
+surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out and **changes nothing**, because the prompt is never answered. Drive it from a
+PTY, or skip it: to de-fork, refresh the live copy from the stock tree with a plain copy —
+`cp -R /config/skills/<category>/<name>/. ~/.hermes/skills/<category>/<name>/` — which leaves the live
+copy byte-identical to stock with no prompt. **Refresh, don't delete**: deleting the own-store copy
+drops that name out of Hermes' index (the add-on's shipped tree is not indexed on its own, and a name
+absent from `.bundled_manifest` has no reseed path) — so a skill with real usage disappears.
+`hermes skills diff <name>` is the read-only way to see what a reset would change.

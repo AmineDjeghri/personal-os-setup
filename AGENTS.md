@@ -72,10 +72,9 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
 | Deep architecture (frontend, tasks, managers)            | [Architecture](#architecture)         |
 | Developer guide (setup, conventions, testing, release)   | `docs/developer/`                     |
 | PR flow / ship process                                   | `.claude/skills/ship-feature`         |
-| Documented-vs-reality drift                              | `.claude/skills/repo-gotchas`         |
-| Tests & coverage                                         | `.claude/skills/run-tests`            |
+| Tests, coverage, gate/tooling gotchas                    | `.claude/skills/run-tests`            |
 | Docs site gotchas                                        | `.claude/skills/docs-site`            |
-| Repo skill layout / adding skills                        | `.claude/skills/skill-layout`         |
+| Repo skill layout / adding skills                        | skill `agent-skills-architecture`     |
 | New TUI action / package-manager backend                 | `.claude/skills/add-system-action`    |
 | Chezmoi dotfiles source scripts                          | `.claude/skills/chezmoi-scripts`      |
 | VM test lab (CachyOS host)                               | `.claude/skills/vm-lab`               |
@@ -92,12 +91,13 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
 - **Private content stays out:** an `exposure: private` skill is live only (`hermes curator pin`) —
   **this repo is PUBLIC**.
 - **Third-party, skills-only:** `npx skills add <owner>/<repo> -s <skill> -a <agent> -g -y`;
-  npx keeps one canonical copy in `~/.agents/skills` and **symlinks** it into `~/.claude/skills`
+  npx keeps one canonical copy in `~/.agents/skills`; the `~/.claude/skills` entry is a **symlink** to it (`make skills-status` checks both)
   (Linux/macOS only; Windows is not a target for third-party skills); the
   lock (`$XDG_STATE_HOME/skills/.skill-lock.json`, older CLIs `~/.agents/.skill-lock.json`) is copied into the repo (`make skills-thirdparty-live-to-repo`;
-  `make skills-thirdparty-repo-to-live` installs only what is missing or out of step, `FORCE=1` reinstalls everything). Use `AGENT=codex` for Codex only.
+  `make skills-thirdparty-repo-to-live` installs only what is missing, unlinked or out of step, `FORCE=1` reinstalls everything). Use `AGENT=codex` for Codex only.
 - **Never vendored:** agent-shipped (bundled / official optional) skills, plugin packs (that harness's
-  own channel, one install per harness), and the Claude account sync (`~/.claude/skills/synced/`).
+  own channel, one install per harness), and the Claude account sync — disabled by `syncClaudeAiSkills: false`
+  in `dot_claude/settings.json`, so `~/.claude/skills/synced/` must not exist.
   Agent-created (Curator) skills are live only until triaged: promote, pin-private, or delete.
 
 - **Corollaries:** no third-party pack vendored as a copy; no upstream-shipped skill forked into
@@ -111,12 +111,9 @@ Full validation targets reject `ARGS` and `PYTEST_ADDOPTS`; use `test-local ARGS
   (disjoint readers); **never `-a '*'`**, which expands to that bad pair. Keep third-party names
   disjoint from shipped/deployed ones, and check before installing (the lock's two
   `NousResearch/hermes-agent` names are a documented exception — see `skill-deployment`).
-- **Three former entries are no longer in this repo:** `skill-creator` was vendored from
-  `anthropics/skills` and is now served only by the Claude account sync — a second copy of that name
-  collides with it and makes the name **unloadable in Hermes**. `hermes-s6-container-supervision` was
-  a stale fork of the agent's official optional skill and is now installed from there instead
-  (`hermes skills repair-official <name> --restore --yes`), not from this repo.
-  `nicegui-frontend-testing` was removed as unused.
+- **Not authored here:** `skill-creator` is third-party (`anthropics/skills`, in the npx lock — the account sync
+  is off, so this is its only copy). `hermes-s6-container-supervision` is the agent's official optional skill
+  (`hermes skills repair-official <name> --restore --yes`).
 - **Bundled (addon-shipped) skills are read-only:** an edited copy is skipped by the sync forever;
   put local additions in a skill we own instead and run `hermes skills reset <name>` to unfreeze —
   see the shared [skill-deployment skill](src/personal_os_setup/config/chezmoi/dot_claude/skills/skill-deployment/SKILL.md).

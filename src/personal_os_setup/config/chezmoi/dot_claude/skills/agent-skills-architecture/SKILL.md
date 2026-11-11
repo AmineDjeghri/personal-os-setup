@@ -9,7 +9,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [skills, plugins, architecture, deployment, chezmoi, claude-code, vendor, mcp, external-dirs]
-    related_skills: [hermes-instance-audit, skill-deployment, skill-layout]
+    related_skills: [hermes-instance-audit, skill-deployment]
 ---
 
 # Agent skills & plugins — architecture, deployment, installation, audit, port, retire
@@ -24,7 +24,7 @@ what a configured dir actually LOADS → `hermes-instance-audit`.
 - "Too many skills — which can I delete?" · porting a live-only skill into git · reviewing a rewrite the user pushed
 - Repo-local runbooks, AGENTS.md vs CLAUDE.md layout questions
 - Not for: auditing an install's config/plugins/curator behaviour, or a repo's own `skills-link`/`skills-check`
-  flow (`hermes-instance-audit`, `skill-layout`).
+  flow (`hermes-instance-audit`).
 
 ## The zones
 | Zone                                           | Path                                                                        | Read by                                                                                   |
@@ -88,6 +88,10 @@ don't restate them here. The container-specific debugging trail (a nested `.chez
   tooling yet gets that layout by hand — relative symlink, modes normalized (a copy out of the own store arrives
   `700`, git wants `644`), plus a `## Skills` section in its `AGENTS.md` naming the skills and the placement rule,
   else the next session invents a second layout.
+- This repo itself: canonical `.claude/skills/<name>/SKILL.md`; `.agents/skills/<name>` are git symlinks to it (Hermes, Codex,
+  OpenCode and the skills CLI read `.agents/skills`). Add a skill → create it, then `make skills-link`; verify with
+  `make skills-check`. Never edit through a symlink. Native Windows checkouts need `core.symlinks=true`.
+  A repo-bound runbook (a procedure, not reader-facing reference) is a skill, not a `docs/` page.
 - Keep repo-bound runbooks OUT of `docs/`: `properdocs.yml` uses `docs_dir: .` and excludes only what its glob
   lists, so a new `docs/<topic>/` page is PUBLISHED publicly. Skills sit outside `docs/`.
 - `AGENTS.md` = canonical rules for ALL agents, sent with EVERY prompt → <150 lines, index-shaped (orientation
@@ -97,10 +101,10 @@ don't restate them here. The container-specific debugging trail (a nested `.chez
   `dot_claude/skills` source + deploy; fast-moving upstream → plugin pack or `npx`, never hand-copied into the authored tree.
 
 ## What actually loads (summary — probes and internals in the audit skill)
-Resolution order: own store → `external_dirs` → project skills. Project skills need a candidate dir at the repo root
+Precedence: project → local own store → `skills.create_dir` → `external_dirs`; a project skill shadows a same-named local/external one. Project skills need a candidate dir at the repo root
 AND that root in `skills.trusted_project_dirs` (exact resolved path, no globs, no parent rules) — and the session
 must resolve that root at all, which a global `terminal.cwd` (HOME, no `.git` above it) prevents, so trust stays
-silently inert for chat sessions (upstream defect, fix in review). For a repo runbook both agents must see from a
+silently inert for chat sessions. For a repo runbook both agents must see from a
 `/config`-rooted session, list its `.agents/skills` in `external_dirs` or promote it to the authored tree. `config.yaml`
 refuses file-tool writes ("use 'hermes config' instead") → `hermes config set skills.external_dirs '["/config/.claude/skills","<repo>/.agents/skills"]'`
 (read it back with `hermes config get`; effective only in the NEXT session), or hand the user the fenced block when
@@ -161,40 +165,11 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
 - [ ] a community recommendation names installs + audit verdict + the overlap check, and says plainly if nothing was installed
 
 ## Pitfalls
-- Approval gates: `AGENTS.md`/`CLAUDE.md` and `config.yaml` writes come back BLOCKED on timeout → STOP, report, and
-  let the user say "prompt me again" to re-fire the exact patch; never retry it and never route the same edit
-  through terminal or another file. Name any blocked call instead of quietly substituting.
-- `git commit`/`git push` need per-action approval every time (also in `AGENTS.md`); commit email must match existing commits, never invented.
-- Keep shell calls single-purpose — no `$(…)`, `for`, `;`/`&&` chains or `python3 -c …` bundles: one gated link takes the
-  whole sequence down, so split a verification bundle into separate calls UP FRONT. Run multi-source research as direct
-  `web_extract`/`terminal` calls, not a batch through `execute_code`.
-- Destructive cleanup (`rm -rf`, `git clean -f`, a `tar` into a protected path) raises its OWN approval prompt, and a
-  timed-out prompt is not consent either → stop, report, re-fire only when the user says so. Keep the backup and the
-  delete in ONE command with the backup first, so a timeout leaves nothing half-applied, and state the exact
-  file/dir list before each step — deletions are approved per step, not per plan.
-- **Ambiguity window breaks loads.** While a live copy and the repo copy co-exist, name-based loading FAILS
-  (`Ambiguous skill name '<n>': 2 skills match across your local skills dir and external_dirs`) and the listing
-  hides it — verify with `find -L <every root> -path "*<name>/SKILL.md"` (exactly one hit; plain `find` misses a
-  skill reached through a `.agents/skills` symlink, so an empty result is not "the skill vanished").
-- **Copied scripts and templates must pass the target repo's hooks before the commit** — a verbatim copy routinely
-  fails lint/format/YAML hooks (`references/repo-hook-gate.md`), and the staged copy is a SNAPSHOT, and live moves while you port: an edit after staging is not in the port,
-  so re-copy if the live file moved on and re-run `make skills-status` immediately before committing.
-- **Check BOTH path bases before calling a supporting-file reference broken.** `references/…`/`scripts/…` written
-  with a slash are skill-relative; a bare `scripts/<name>.py` in prose is usually the REPO root's own directory —
-  test `<skill-dir>/<rel>` and `<repo-root>/<rel>` before calling one broken.
-- The webui container has NO Node.js by design — `npx skills` and node CLIs do not exist there (the AGENT container
-  does). Deploy authored skills via chezmoi/`make skills-personal-repo-to-live` or install plugin packs with `claude plugin`; do not install Node for this.
-- Python/npx-style third-party skill managers were evaluated and REJECTED (Sep 2026): `agent-skill-manager` (PyPI, 2
-  stars, beta) and `xingkongliang/skills-manager` (Tauri app with its own library + SQLite + git sync). Both add a
-  second source of truth parallel to the repo → `.claude/skills` flow; that duplication is rejected here.
-- **A lesson such a pass produces for a deployed skill is SOURCE work.** Repo-deployed names carry `created_by:
-  agent`, so its write to the live copy goes through — and then the next deploy either ABORTS on the fresh
-  `DIFFERS` or a `FORCE=1` run overwrites the lesson. Write it in the source tree instead, name any drift you
-  caused with its file, and if every relevant skill is genuinely protected, report "Nothing to save" PLUS the exact
-  edits the repo still needs — never a new overlapping curator skill.
-- **A file the source tree no longer has is not automatically stale live content to port back.** Compare size and
-  mtime per FILE and ask whether the source-side edit was deliberate: a deleted install snapshot or context dump must
-  be dropped (force-deploy), while a live-only reference the source never had is the one to port in.
+
+- Approval gates: a timed-out prompt is not consent → STOP and report; never retry or re-route the same edit. `git commit`/`git push` need per-action approval every time.
+- **Name collisions:** keep every skill name in exactly one root. Check with `find -L <every root> -path "*<name>/SKILL.md"` (exactly one hit).
+- Copied scripts/templates must pass the target repo's hooks before commit; a staged copy is a snapshot — re-copy if live moved.
+- Everything else (shell-call hygiene, destructive cleanup, container facts, source-vs-live lessons): `references/pitfalls.md`.
 
 ## References
 - `references/store-writers-curator-and-pins.md` — own-store writers, curator, pins
@@ -204,4 +179,5 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
 - `references/repo-hook-gate.md` — running target repo hooks on copies
 - `references/platform-lifecycle-and-gates.md` — Hermes library lifecycle, gates, knobs
 - `references/reviewing-a-rewrite.md` — diff-first review of pushed rewrites
+- `references/pitfalls.md` — shell hygiene, destructive cleanup, container facts
 - `scripts/review-drift.py` — source-vs-live drift review

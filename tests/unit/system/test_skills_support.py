@@ -116,24 +116,58 @@ def npx_style_install(roots, tmp_path):
     return link
 
 
-def test_symlinked_claude_copy_is_a_valid_installation(support, installation, tmp_path):
+def test_linked_claude_entry_is_a_valid_installation(support, installation, tmp_path):
     npx_style_install(installation[-1], tmp_path)
     support.verify_installations(*installation)
 
 
-def test_pending_lists_only_what_is_missing_or_stale(support, installation):
+def test_independent_copies_are_not_a_valid_pair_installation(support, installation):
+    with pytest.raises(ValueError, match="UNLINKED"):
+        support.verify_installations(*installation)
+
+
+def test_link_to_another_directory_is_not_the_canonical_link(support, installation, tmp_path):
     lock, live, agents, roots = installation
+    other = write_skill(tmp_path / "other")
+    link = roots["claude-code"] / "example"
+    shutil.rmtree(link)
+    link.symlink_to(other, target_is_directory=True)
+    with pytest.raises(ValueError, match="UNLINKED"):
+        support.verify_installations(lock, live, agents, roots)
+
+
+@pytest.mark.parametrize("selected", [["codex"], ["claude-code"]])
+def test_single_agent_selection_accepts_a_plain_copy(support, installation, selected):
+    lock, live, _, roots = installation
+    support.verify_installations(lock, live, selected, roots)
+
+
+def test_pending_lists_one_entry_per_skill_that_needs_work(support, installation, tmp_path):
+    lock, live, agents, roots = installation
+    npx_style_install(roots, tmp_path)
     assert support.pending_installs(lock, live, agents, roots) == []
-    shutil.rmtree(roots["codex"] / "example")
-    assert support.pending_installs(lock, live, agents, roots) == [
-        ("codex", "example", "example/repo")
-    ]
+    shutil.rmtree(roots["codex"] / "example")  # the Claude link now dangles too
+    assert support.pending_installs(lock, live, agents, roots) == [("example", "example/repo")]
     write_skill(roots["codex"])
+    assert support.pending_installs(lock, live, agents, roots) == []
     data = json.loads(live.read_text())
     data["skills"]["example"]["skillFolderHash"] = "changed-tree"
     live.write_text(json.dumps(data))
-    assert len(support.pending_installs(lock, live, agents, roots)) == 2
-    assert len(support.pending_installs(lock, live, agents, roots, everything=True)) == 2
+    assert support.pending_installs(lock, live, agents, roots) == [("example", "example/repo")]
+
+
+def test_pending_repairs_a_copy_by_relinking_it(support, installation):
+    lock, live, agents, roots = installation
+    assert support.pending_installs(lock, live, agents, roots) == [("example", "example/repo")]
+    assert support.pending_installs(lock, live, ["codex"], roots) == []
+
+
+def test_pending_everything_reinstalls_each_skill_once(support, installation, tmp_path):
+    lock, live, agents, roots = installation
+    npx_style_install(roots, tmp_path)
+    assert support.pending_installs(lock, live, agents, roots, everything=True) == [
+        ("example", "example/repo")
+    ]
 
 
 def stamp_lock(live, moment):

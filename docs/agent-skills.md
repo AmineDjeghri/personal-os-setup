@@ -53,7 +53,6 @@ Skills and the Hermes box:
 | `hermes-instance-audit`         | Auditing a live Hermes install: skills, plugins, config                    |
 | `hermes-session-recall`         | Recalling past or continued Hermes sessions                                |
 | `hermes-cron-automations`       | Building a recurring automation on the Hermes box                          |
-| `debugging-hermes-tui-commands` | Debugging Hermes TUI slash commands (Python, gateway, Ink UI)              |
 
 Media:
 
@@ -93,12 +92,10 @@ Runbooks for working on this repo. They are not deployed to `~/.claude/skills`.
 | `add-system-action`  | Adding a TUI button or action, or a new package-manager backend                 |
 | `chezmoi-scripts`    | Writing and debugging chezmoi `run_` scripts, and why they sometimes don't fire |
 | `docs-site`          | Adding doc pages and building, previewing or deploying the properdocs site      |
-| `run-tests`          | Running and writing tests; why integration tests must not run locally           |
+| `run-tests`          | Running and writing tests, gate gotchas; no local integration runs              |
 | `ship-feature`       | Branching, conventional commits and the PR / squash-merge flow                  |
 | `vm-lab`             | The local KVM/QEMU VM lab (`make vm-*`): CachyOS, Ubuntu, Windows, macOS guests |
 | `fork-and-customize` | Forking and rebranding this repo for your own setup                             |
-| `repo-gotchas`       | Known drift between the docs and what the repo really does                      |
-| `skill-layout`       | How skills are organized in this repo                                           |
 
 ## How skills are installed
 
@@ -193,7 +190,7 @@ not.
 
 ### What `skills-thirdparty-repo-to-live` does
 
-The replay installs each locked skill for `claude-code` and `codex` using `npx skills add …`. npx keeps one canonical copy in `~/.agents/skills` (read by Codex) and links it into `~/.claude/skills` (read by Claude Code and Hermes); this setup targets Linux and macOS.
+The replay installs each locked skill with ONE `npx skills add … -a claude-code -a codex` call. Naming both agents in a single call is what makes npx keep one canonical copy in `~/.agents/skills` (read by Codex) and link `~/.claude/skills/<name>` (read by Claude Code and Hermes) to it; a call naming one agent writes an independent copy and replaces an existing link. This setup targets Linux and macOS.
 Use `AGENT=codex` or `AGENTS="claude-code codex"` to select the agents explicitly. Hermes is never a
 separate target. Python 3 and Node (`npx`) are required; explicit Make replay fails when a tool
 is missing. A packaged chezmoi source without the repository lock still links authored skills,
@@ -201,9 +198,12 @@ and optional third-party replay reports `SKIPPED`; set `LOCK` to a reviewed lock
 Windows Git Bash follows the same path and reports failures instead of silently succeeding.
 
 The replay is idempotent. It installs only the skills that are missing, broken (dangling link, no valid
-`SKILL.md`) or whose live-lock entry differs from the committed one; `FORCE=1` reinstalls everything.
+`SKILL.md`), unlinked (an independent copy where the Claude link should be, which it turns back into a link) or
+whose live-lock entry differs from the committed one; `FORCE=1` reinstalls everything.
 After each install it checks the result, because `npx` exits 0 even when it cancels. Verification
-(`make skills-status`) checks the lock identities and that each agent has a usable `SKILL.md`.
+(`make skills-status`) checks the lock identities, that each agent has a usable `SKILL.md` and, when both agents
+are selected, that the Claude entry links to the Codex-side copy (`UNLINKED` otherwise). With `AGENT=codex` or
+`AGENT=claude-code` only that agent is installed and no link is expected.
 
 Hand edits are detected without any extra state file: the npx lock records when each skill was installed
 (`updatedAt`), so installed files that are newer than that are reported as `DIFFERS`, with both dates.
@@ -232,5 +232,5 @@ real skills or packages. The chezmoi case skips if chezmoi is unavailable.
 ### Governance
 
 The full rules (private skills, never vendoring third-party packs, bundled skills being read-only) are in
-`AGENTS.md` under "Skills & plugins". Deeper material lives in the `agent-skills-architecture`, `skill-deployment`
-and `skill-layout` skills.
+`AGENTS.md` under "Skills & plugins". Deeper material lives in the `agent-skills-architecture` and `skill-deployment`
+skills.

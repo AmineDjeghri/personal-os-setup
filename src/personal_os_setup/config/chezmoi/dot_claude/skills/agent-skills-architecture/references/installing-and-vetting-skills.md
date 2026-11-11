@@ -112,3 +112,51 @@ it, say plainly that nothing was installed and the install path is unverified.
   of a cross-platform framework is worth having only for its vendor-exclusive hooks. State the overlap (and which
   agent the thing actually reaches — plugins are Claude-only, hub installs are Hermes-only, the deployed shared dir
   is the one surface both read) rather than listing it as new capability.
+
+
+## npx skills recipe
+
+For a third-party repo that ships **only** a `skills/` tree (no plugin manifest per harness). Packs
+that ship their own per-harness plugins (hooks, slash commands) are a different case — see the end
+of this section.
+
+```bash
+npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y   # one skill
+npx skills add <owner>/<repo> -a claude-code -a codex -g -y                             # whole pack
+```
+
+- **Target `-a claude-code -a codex` — the Claude copy already reaches Hermes.** Hermes reads `~/.claude/skills` via
+  `skills.external_dirs`, so the Claude installation serves Hermes too. Adding `-a hermes-agent` puts the same
+  name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
+  that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
+- **Lands as one canonical copy plus a symlink** (Linux/macOS) — only when ONE call names both agents (`-a claude-code -a codex`); a call naming one agent writes a copy and replaces an existing link: `~/.agents/skills/<name>` is real, `~/.claude/skills/<name>` links to it; check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
+- **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
+  `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
+  the live lock is never the record we ship. Replay/drift: `make skills-thirdparty-repo-to-live` / `make skills-status` in
+  `makefiles/skills.mk`.
+- **Updating:** `npx skills update` is broken (vercel-labs/skills#484 — reports "up to date" while
+  upstream moved). Re-add is the update path: `-s <name> -y` refetches and bumps the hash; diff the
+  lock to see what moved. Renovate has no skills.sh manager yet (discussion #41841), so automation =
+  a scheduled workflow that re-adds and opens a lock-bump PR.
+- **Before installing, check the names.** Hermes has no namespacing, so a third-party name that
+  collides with a shipped or deployed skill breaks that name for both. Compare against
+  `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
+- **Symlink regressions exist** → verify the entry actually resolves in
+  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy` (not the default here). A symlink that exists is not
+  proof the agent listed it.
+- **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
+  a replay cannot re-prove it.
+- **Node is only in the agent container.** The webui container ships no Node by design, so `npx`
+  does not exist there.
+
+**Packs that ship their own per-harness plugins are NOT this flow.** Install them per harness through
+that harness's native channel, one canal per agent — never plugin *and* npx for the same agent.
+Worked example, `obra/superpowers` (ships `.claude-plugin/`, `.codex-plugin/`, `.hermes-plugin/`,
+`.cursor-plugin/`, … plus a SessionStart hook and a `pre_llm_call` bootstrap):
+
+- Claude Code: `/plugin install superpowers@claude-plugins-official`
+- Hermes: `hermes plugins install obra/superpowers` — registers every skill namespaced as
+  `superpowers:<name>` (so no collision with shipped names) and injects the first-turn bootstrap
+- Codex: its own plugin marketplace, `/plugins`
+- `npx skills add obra/superpowers` on a harness that has the plugin = the same 15 skills twice, and
+  it silently drops the bootstrap hook. Don't.

@@ -1,9 +1,12 @@
 """Link authored skills and verify agent-specific third-party installations.
 
-Third-party skills are installed by `npx skills` as symlinks: one canonical copy in
-~/.agents/skills (read by Codex) and a link in ~/.claude/skills (read by Claude Code and
-Hermes). The npx lock is the only record: it holds the upstream Git tree ID and the
-install time of each skill, so a hand edit is detected as files newer than that time.
+Third-party skills are installed by `npx skills` with ONE call per skill that names every
+selected agent. Only then does the CLI keep a single canonical copy in ~/.agents/skills (read
+by Codex) and link ~/.claude/skills/<name> (read by Claude Code and Hermes) to it; a call that
+names one agent writes an independent copy and replaces an existing link with it. When both
+agents are selected a copy is therefore treated as "not installed". The npx lock is the only
+record: it holds the upstream Git tree ID and the install time of each skill, so a hand edit is
+detected as files newer than that time.
 This module uses only the standard library so chezmoi can run it without uv sync.
 """
 
@@ -17,6 +20,8 @@ import sys
 
 # Files may land a moment before npx stamps the lock; only later mtimes count as edits.
 EDIT_SLACK_SECONDS = 2
+# The agents whose entries npx links together (Claude's entry points at the Codex-side copy).
+LINKED_AGENTS = {"claude-code", "codex"}
 
 
 def selected_agents(value):
@@ -93,26 +98,45 @@ def check_installed(directory, name):
         raise ValueError(f"INVALID {manifest}: name/description mismatch")
 
 
+def check_linked(roots, name):
+    """Require the Claude entry to be a link to the canonical Codex-side copy."""
+    link, canonical = roots["claude-code"] / name, roots["codex"] / name
+    if not (link.is_symlink() and link.resolve() == canonical.resolve()):
+        raise ValueError(
+            f"UNLINKED {link}: expected a link to {canonical}; "
+            "run make skills-thirdparty-repo-to-live"
+        )
+
+
+def check_installation(roots, agents, name):
+    """Require a usable skill for every selected agent, linked when npx should have linked it."""
+    for agent in agents:
+        check_installed(roots[agent] / name, name)
+    if LINKED_AGENTS <= set(agents):
+        check_linked(roots, name)
+
+
 def read_live_lock(live_lock):
     """Read the npx lock, or an empty record when nothing was installed yet."""
     return load_skills(live_lock) if live_lock and live_lock.is_file() else {}
 
 
 def pending_installs(lock, live_lock, agents, roots, *, everything=False):
-    """List (agent, name, source) still to install: missing, broken or out of step with the lock."""
+    """List (name, source) still to install: missing, broken, unlinked or out of step with the lock.
+
+    One entry per skill, because a skill is installed for all selected agents in one npx call.
+    """
     live = read_live_lock(live_lock)
     pending = []
-    for agent in agents:
-        for name, entry in load_skills(lock).items():
-            have = live.get(name, {})
-            stale = any(have.get(key) != entry[key] for key in ("source", "skillFolderHash"))
-            try:
-                check_installed(roots[agent] / name, name)
-                broken = False
-            except ValueError:
-                broken = True
-            if everything or stale or broken:
-                pending.append((agent, name, entry["source"]))
+    for name, entry in load_skills(lock).items():
+        have = live.get(name, {})
+        if everything or any(have.get(key) != entry[key] for key in ("source", "skillFolderHash")):
+            pending.append((name, entry["source"]))
+            continue
+        try:
+            check_installation(roots, agents, name)
+        except ValueError:
+            pending.append((name, entry["source"]))
     return pending
 
 
@@ -147,7 +171,9 @@ def newer_note(repo_entry, live_entry):
     """Describe which lock entry was updated last (ISO timestamps sort as text)."""
     repo_at = repo_entry.get("updatedAt") or repo_entry.get("installedAt") or "unknown"
     live_at = live_entry.get("updatedAt") or live_entry.get("installedAt") or "unknown"
-    green, yellow, reset = ("\033[0;32m", "\033[0;33m", "\033[0m") if sys.stderr.isatty() else ("",) * 3
+    green, yellow, reset = (
+        ("\033[0;32m", "\033[0;33m", "\033[0m") if sys.stderr.isatty() else ("",) * 3
+    )
     if "unknown" in (repo_at, live_at) or repo_at == live_at:
         return f"repo {repo_at}, live {live_at}"
     repo_color, live_color = (yellow, green) if live_at > repo_at else (green, yellow)
@@ -170,9 +196,8 @@ def verify_installations(lock, live_lock, agents, roots):
         raise ValueError(
             "EXTRA skills in live lock: review and run make skills-thirdparty-live-to-repo"
         )
-    for agent in agents:
-        for name in expected:
-            check_installed(roots[agent] / name, name)
+    for name in expected:
+        check_installation(roots, agents, name)
     print(f"OK installed skills for {', '.join(agents)} ({len(expected)} skills each)")
 
 
@@ -216,8 +241,7 @@ def main():
             if args.command == "installed":
                 if args.name is None:
                     raise ValueError("--name is required")
-                for agent in agents:
-                    check_installed(roots[agent] / args.name, args.name)
+                check_installation(roots, agents, args.name)
                 return 0
             if args.lock is None:
                 raise ValueError("--lock is required")

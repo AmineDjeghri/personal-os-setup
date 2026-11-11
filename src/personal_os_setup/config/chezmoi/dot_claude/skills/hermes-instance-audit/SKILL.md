@@ -51,8 +51,8 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 ## Version & release comparison
 - Local first: `.update_check` (`behind`) + `<install>/pyproject.toml` `version =` — the install is often already current.
 - git install (cheapest "latest vs mine"): `git fetch origin && git rev-list --count HEAD..origin/main` (`0` = the checkout IS main tip), `git tag --sort=-creatordate | head -5`, `git rev-list --count <tag>..HEAD`. HEAD can be AHEAD of the newest tag (main tip) — report both.
-- Tag ↔ version: tags are calendar `v2026.M.D` while the package version is `0.x.y` (`v2026.8.3` = 0.20.0). Patch tags' notes are rolled into the next minor's body.
-- **A new version in `pyproject.toml`/`--version` does NOT mean the new code is live.** `hermes update` never restarts the gateway or dashboard: `hermes status` prints "manual restart still pending" for the stale owner and that process keeps serving pre-update code. Compare `ps -o lstart` of the gateway pid against the install mtime before explaining any post-upgrade behaviour. Procedure + per-feature evidence: `hermes-release-upgrades`.
+- Tag ↔ version: check `git tag --sort=-creatordate | head` rather than assuming a scheme; patch notes may be rolled into the next minor.
+- **A new version in `pyproject.toml`/`--version` does NOT mean the new code is live.** `hermes update` never restarts the gateway or dashboard: `hermes status` prints "manual restart still pending" for the stale owner and that process keeps serving pre-update code. Compare `ps -o lstart` of the gateway pid against the install mtime before explaining any post-upgrade behaviour. Procedure + per-feature evidence: `references/release-verification.md`.
 - Manifest vs repo: `.bundled_manifest` should equal `<install>/skills/**/SKILL.md` 1:1.
 
 ## Commands to advise, never run unasked
@@ -60,10 +60,10 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - Restore a deleted bundled skill: `hermes skills reset <name>` + `hermes update`, or copy the dir from `<install>/skills/`. Optional skills: `hermes skills repair-official <name> --restore` (backs up first). Nothing blocks re-seeding unless `.curator_suppressed` exists.
 
 ## Skills: what's on disk vs what actually loads
-- Tiers: builtin + local (`~/.hermes/skills/**`) + hub + **external** (`external_dirs`, e.g. `~/.claude/skills`). Since v0.23 the external ones ARE listed (`source` column = `external`, `origin` = `local`) and the footer counts them (`N local`); the older "external is never listed" rule is obsolete. `trusted_project_dirs` skills still only appear in a session rooted at that repo.
-- Probe accordingly: `hermes skills list | grep -i <name>` is now the reliable check (the table truncates names, so match a prefix and ignore the ellipsis). **`hermes skills inspect <name>` does not resolve `external_dirs` at all in v0.23** — it answers "No skill named 'x' found in any source" for a skill that is loaded and listed, so never read that error as absence for an external skill. `hermes config check` validates NOTHING about skill dirs (a non-existent entry is skipped SILENTLY): `ls -d <every entry>`.
+- Tiers: builtin + local (`~/.hermes/skills/**`) + hub + **external** (`external_dirs`, e.g. `~/.claude/skills`). The external ones ARE listed (`source` column = `external`, `origin` = `local`) and the footer counts them (`N local`). `trusted_project_dirs` skills still only appear in a session rooted at that repo.
+- Probe accordingly: `hermes skills list | grep -i <name>` is the reliable check (the table truncates names, so match a prefix and ignore the ellipsis). **`hermes skills inspect <name>` does not resolve `external_dirs`** — it answers "No skill named 'x' found in any source" for a skill that is loaded and listed, so never read that error as absence for an external skill. `hermes config check` validates NOTHING about skill dirs (a non-existent entry is skipped SILENTLY): `ls -d <every entry>`.
 
-- A trusted repo that still loads nothing is ROOT RESOLUTION, not trust: root = nearest `.git` ancestor of the *surface* cwd (`TERMINAL_CWD` / `terminal.cwd` — a global value overrides the session's own cwd: upstream defect, fix in review), one root per session, fixed at session start, exact-path match, no globs.
+- A trusted repo that still loads nothing is ROOT RESOLUTION, not trust: root = nearest `.git` ancestor of the *surface* cwd (`TERMINAL_CWD` / `terminal.cwd` — a global value overrides the session's own cwd), one root per session, fixed at session start, exact-path match, no globs.
 - **The agent cannot write `config.yaml`** (the write tool refuses: "use 'hermes config'") and `hermes config set` takes ONE key + value with unverified list semantics → hand the user the exact copy-paste block: **only the fenced YAML, no preamble and no per-line explanation** (the user interrogates the reasoning afterwards if they want it), plus the post-edit proof (`hermes skills list --source local | grep -c '<known-shared-skill>'`, `hermes skills inspect <name>` from the repo). Skills load at session start — a corrected dir takes effect in the NEXT session; never claim immediate effect.
 - Full chain, root-resolution internals, upstream issue/PR handles, probes and the working config block: `references/skill-loading-resolution.md`.
 
@@ -73,8 +73,8 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - **DIFFERS ≠ user-modified**: read the direction (`hermes skills diff <name>`) — STALE stock (older baked copy, no custom content → `reset --restore`) vs USER-MODIFIED (keep; sync protects it).
 - NEW/EXISTING/DELETED/REMOVED matrix, content sweep one-liner, delete vs disable: `references/skills-sync-and-bundling.md`.
 
-## Curator behaviour (changed by version!)
-- v0.16+: prunes stale skills by default (`stale_after_days`, `archive_after_days`), weekly (`interval_hours: 168`); LLM consolidation OFF unless `curator.consolidate: true` (= no aux-model spend).
+## Curator behaviour
+- Prunes stale skills by default (`stale_after_days`, `archive_after_days`), weekly (`interval_hours: 168`); LLM consolidation OFF unless `curator.consolidate: true` (= no aux-model spend).
 - Bundled + hub-installed skills are OFF-LIMITS to the LLM pass (`tools/skill_usage.py`: `off_limits = bundled | hub_installed`) — it only marks them stale/reactivates; only agent-created skills get consolidated.
 - **Pinned = off-limits to BOTH writers.** `hermes curator pin <name>` skips lifecycle transitions and the autonomous background-review pass; only a foreground user edit can change a pinned skill. Details: `agent-skills-architecture/references/store-writers-curator-and-pins.md`.
 
@@ -92,8 +92,8 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - Code quotes, plugin kinds, per-platform toolset internals, web backends, the bundled-vs-catalog boundary, the three statuses, removal rules and the documented way to digest the docs catalog page: `references/plugins-platforms-channels.md`.
 
 ## Config audit checklist (what goes stale across upgrades)
-- `agent.max_turns`: an explicit old value silently caps runs (default moved 90 → 500 in v0.20.0) — compare against `hermes_cli/config_defaults.py`, the source of truth for current defaults.
-- `approvals.mode: manual` = the user opted OUT of v0.19+'s smart-approvals default.
+- `agent.max_turns`: an explicit old value silently caps runs — compare against `hermes_cli/config_defaults.py`, the source of truth for current defaults.
+- `approvals.mode: manual` = the user opted OUT of the smart-approvals default.
 - `dashboard.basic_auth` / `oauth` empty = dashboard open if exposed (fine behind HA Supervisor).
 - `config.yaml.bak.*` / `config.yaml.corrupt.*.bak` = historical corruption events; report, no action.
 
@@ -115,6 +115,7 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 
 ## References
 - `references/storage-and-cache-map.md` — where add-on space goes, probe recipe
+- `references/release-verification.md` — after-upgrade checklist, probe recipes, per-feature evidence
 - `references/update-lifecycle.md` — `hermes update` phases, markers, checks
 - `references/addon-boot-log-triage.md` — boot-log attribution and failure signatures
 - `references/skill-loading-resolution.md` — loading chain, root resolution, probes

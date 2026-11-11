@@ -1,6 +1,6 @@
 ---
 name: run-tests
-description: Use when writing/running tests or interpreting coverage and integration completeness in personal-os-setup.
+description: Use when writing/running tests, interpreting coverage, or checking documented behavior against Make targets, quality gates and validation claims in personal-os-setup.
 metadata:
   hermes:
     origin: repo:personal-os-setup
@@ -53,3 +53,24 @@ Other operating systems' skips are expected, but zero passing integration tests,
 collection-only runs fail through `scripts/integration_results.py`.
 CachyOS integration is not exercised by hosted CI; the Arch container is an interactive sandbox.
 A local `make check` pass does not establish that required CI passed.
+
+## Tooling boundaries and gate gotchas
+
+- Bare `make` shows help. `make install-uv` installs only when missing; `make update-uv` updates. `make install-prod`
+  = runtime deps only; `make install-dev` = tools + Git hooks (`pre-commit-install` repeats, `pre-commit-status` checks).
+- `make pre-commit` runs prepared tools without sync or hook install. New untracked files need
+  `make pre-commit FILES="<paths>"`; `--all-files` sees only tracked files.
+- The strict docs hook calls `make docs-build`. Installation smoke checks a real isolated wheel and loads the
+  `personal-os-setup` callable without starting the app; artifact checks also need matching sdist metadata/resources.
+- actionlint **and zizmor** are enabled; pip-audit, bandit and markdown-link-check remain commented out in
+  `.pre-commit-config.yaml`.
+- commitizen runs only at the `commit-msg` stage — a green pre-commit says nothing about message format.
+- detect-secrets is stateless: allowlist false positives inline, never whole-file. Existing exclusions cover only
+  generated payload/lock content and binary artifacts.
+- Formatting hooks can rewrite files and fail the first run — recheck final content.
+- `properdocs.yml` uses `docs_dir: .` — new top-level output dirs need an exclude entry (see [[docs-site]]).
+- `packages.yaml` manager registrations are checked by `tests/unit/test_detect_os.py::TestPackagesYaml`.
+- CI releases from `main` (stable) and `dev` (rc) bind to the tested revision; local `make release` uses `HEAD`;
+  interrupted tag/version publication can resume verified asset uploads (see the release guide).
+- `make act` may mutate its execution environment — not a `test-local` replacement. `tests/archlinux` is a manual
+  interactive sandbox, not CachyOS validation.

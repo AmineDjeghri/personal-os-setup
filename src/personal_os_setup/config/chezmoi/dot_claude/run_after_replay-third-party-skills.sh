@@ -1,8 +1,10 @@
 #!/bin/bash
 # Shared by chezmoi and make. Authored files remain ordinary chezmoi-managed files.
-# Installs only what is missing, broken or out of step with the lock (FORCE=1: everything);
-# npx links the Claude copy to a canonical one under ~/.agents/skills. STRICT=1 (make) fails on
-# missing tooling, the optional chezmoi replay SKIPs instead. Every install is checked afterwards.
+# Installs only what is missing, broken, unlinked or out of step with the lock (FORCE=1: everything).
+# Each skill is installed with ONE npx call naming every selected agent: only then does npx keep a
+# canonical copy under ~/.agents/skills and link ~/.claude/skills/<name> to it (a single-agent call
+# writes an independent copy and replaces an existing link). STRICT=1 (make) fails on missing
+# tooling, the optional chezmoi replay SKIPs instead. Every install is checked afterwards.
 set -eu
 set -o pipefail
 
@@ -63,16 +65,18 @@ fi
 command -v npx >/dev/null 2>&1 || fail_or_skip "npx is required"
 # Validate the lock before interpolating any of its names into installation paths.
 helper_run plan
+agent_args=()
+for agent in $agents; do agent_args+=(-a "$agent"); done
 rc=0
-while IFS=$'\t' read -r agent name src; do
-    [ -n "$agent" ] || continue
+while IFS=$'\t' read -r name src; do
+    [ -n "$name" ] || continue
     # npx must not read the loop's stdin; it also exits 0 when it cancels, so check the result.
-    if npx -y skills add "$src" -s "$name" -a "$agent" -g -y </dev/null &&
-        "$PYTHON" "$helper" installed --agents "$agent" --name "$name" \
+    if npx -y skills add "$src" -s "$name" "${agent_args[@]}" -g -y </dev/null &&
+        "$PYTHON" "$helper" installed --agents "$agents" --name "$name" \
             --claude "$claude" --codex "$codex"; then
-        log "OK $agent/$name"
+        log "OK $name ($agents)"
     else
-        log "FAIL $agent/$name" >&2
+        log "FAIL $name ($agents)" >&2
         rc=1
     fi
 done <<< "$pending"

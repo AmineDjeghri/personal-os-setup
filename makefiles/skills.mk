@@ -180,7 +180,7 @@ skills-thirdparty-live-to-repo: ## Copy the live npx lock into the repo (the rec
 # The replay logic lives in ONE script shared with chezmoi (run_after_ in the same dir).
 THIRD_PARTY_REPLAY := src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh
 
-skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex); no-op when unchanged, FORCE=1 reinstalls and skips the drift gate
+skills-thirdparty-repo-to-live: ## Install and verify third-party skills for AGENTS (default Claude + Codex, Claude entry linked to the Codex-side copy); no-op when unchanged, FORCE=1 reinstalls and skips the drift gate
 ifneq ($(FORCE),1)
 	@$(SKILLS_PYTHON) $(SKILLS_SUPPORT) drift --lock "$(THIRD_PARTY_LOCK)" --live-lock "$(LIVE_SKILLS_LOCK)" --agents "$(TARGET_AGENTS)" --claude "$(SKILLS_DST)" --codex "$(SKILLS_CODEX_DST)" || { echo; printf "$(RED)skills-thirdparty-repo-to-live: ABORTED$(NC) -- the installed copies above were edited after install.\n"; echo "Port the edit somewhere safe first, or re-run with FORCE=1 to overwrite them."; exit 1; }
 endif

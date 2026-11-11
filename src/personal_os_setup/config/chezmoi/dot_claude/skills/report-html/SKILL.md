@@ -5,7 +5,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [report, html, webapp, preview, delivery]
-    related_skills: [report-pdf, artifact-delivery]
+    related_skills: [report-pdf]
 ---
 
 # HTML reports for the Hermes Webapp
@@ -46,8 +46,8 @@ uv run --no-project ~/.claude/skills/report-pdf/scripts/report_pdf.py spec.json 
 | Cleanup | none, it is a local file | must delete afterwards |
 | Write path | plain file write | `ha_write_file`, needs a ha-mcp *Tool Security Policies* approval that expires in ~4 min |
 
-Use `www/` only when the reader has no Hermes login (a guest, a family member), and then follow the hosting
-rules in `artifact-delivery`.
+Use `www/` only when the reader has no Hermes login (a guest, a family member), and then host it on a
+guest-reachable path and say so explicitly.
 
 ## Verify before you hand it over
 

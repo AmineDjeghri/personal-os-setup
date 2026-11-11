@@ -17,12 +17,11 @@ REPO=/config/workspace/personal-os-setup
 cd ~ && chezmoi apply -v --force --source "$REPO" .claude    # deploy ONLY the skills
 ```
 
-> Scope: repo-specific skills are NOT deployed here — they live in `.claude/skills/` + `.agents/skills/` (`make skills-link` / `make skills-check`; see the `skill-layout` skill).
+> Scope: repo-specific skills are NOT deployed here — they live in `.claude/skills/` + `.agents/skills/` (`make skills-link` / `make skills-check`; see `agent-skills-architecture` → "Repo-local skills").
 
 Repo-scoped skills (`<repo>/.hermes/skills` + `.agents/skills`) load *only* when the session's
 working dir resolves to the repo's git root **and** that root is in `skills.trusted_project_dirs`.
-A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads — upstream
-Hermes bug #103423, fix in review as PR #103424. Never park repo skills in `external_dirs`
+A session rooted at HOME (global `terminal.cwd`) resolves no repo, so nothing loads. Never park repo skills in `external_dirs`
 (N repos × M skills doesn't scale): promote a repo's skills to the global tree if they must be
 always-on, otherwise they're read on demand.
 
@@ -91,13 +90,13 @@ copy-only: it overwrites whatever is live and deletes nothing.
 - **npx replay** → the one thing chezmoi cannot do. Script:
   `src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh`
   (plain shell, no template vars). It replays every entry of `third-party-skills.lock.json` with
-  `npx -y skills add <source> -s <name> -a <agent> -g -y` for Claude Code and Codex by default, only for entries that are missing, broken or stale.
+  `npx -y skills add <source> -s <name> -a claude-code -a codex -g -y` (ONE call per skill naming every selected agent — that is what makes npx link the Claude entry to the canonical copy; a single-agent call writes a copy and replaces a link), only for entries that are missing, broken, unlinked or stale.
 - **make** → `make skills-thirdparty-repo-to-live` installs for both agents. `AGENT=codex` selects only
   Codex; `AGENTS="claude-code codex"` selects both explicitly. It sets `STRICT=1` (`FORCE=1` reinstalls
   everything and skips the edit gate) and fails if Python 3 or npx is missing. Optional chezmoi replay logs `SKIPPED` and writes no success stamp.
 - **Verification** → `make skills-status` checks lock identities and each agent's manifest, and reports `DIFFERS` for installed files
   newer than the lock's `updatedAt` (a hand edit). No receipts or stamp files exist.
-- **Idempotent** → a plain apply or make run installs only what is missing, broken or stale, and
+- **Idempotent** → a plain apply or make run installs only what is missing, broken, unlinked or stale, and
   checks each result (`npx` exits 0 on cancel).
 - **Updates** → replay fetches current upstream. If a folder ID changed, review it, save the new live
   lock with `make skills-thirdparty-live-to-repo`, and replay again. The lock is a drift reference, not a pin.
@@ -111,75 +110,11 @@ copy-only: it overwrites whatever is live and deletes nothing.
 if Hermes also has a bundled copy under `~/.hermes/skills`, run `make skills-status` and reconcile the
 duplicate. Never add Hermes as a separate npx target.
 
-For a third-party repo that ships **only** a `skills/` tree (no plugin manifest per harness). Packs
-that ship their own per-harness plugins (hooks, slash commands) are a different case — see the end
-of this section.
-
-```bash
-npx skills add <owner>/<repo> -s <skill> -a claude-code -a codex -g -y   # one skill
-npx skills add <owner>/<repo> -a claude-code -a codex -g -y                             # whole pack
-```
-
-- **Target `-a claude-code -a codex` — the Claude copy already reaches Hermes.** Hermes reads `~/.claude/skills` via
-  `skills.external_dirs`, so the Claude installation serves Hermes too. Adding `-a hermes-agent` puts the same
-  name in `~/.hermes/skills` AND under `~/.claude/skills` → two roots, one name, and Hermes refuses
-  that name (`Ambiguous skill name … across your local skills dir and external_dirs`).
-- **Lands as one canonical copy plus a symlink** (Linux/macOS): `~/.agents/skills/<name>` is real, `~/.claude/skills/<name>` links to it; check the filesystem, not the CLI's success message. Flat placement, so the entry shows a blank category in `hermes skills list`.
-- **The lock is OUTSIDE any repo:** `$XDG_STATE_HOME/skills/.skill-lock.json` (older CLIs: `~/.agents/.skill-lock.json`; the Makefile checks both) (v3: `source`, `sourceType`,
-  `sourceUrl`, `skillPath`, `skillFolderHash`). Portability = commit a COPY plus a replay command;
-  the live lock is never the record we ship. Replay/drift: `make skills-thirdparty-repo-to-live` / `make skills-status` in
-  `makefiles/skills.mk`.
-- **Updating:** `npx skills update` is broken (vercel-labs/skills#484 — reports "up to date" while
-  upstream moved). Re-add is the update path: `-s <name> -y` refetches and bumps the hash; diff the
-  lock to see what moved. Renovate has no skills.sh manager yet (discussion #41841), so automation =
-  a scheduled workflow that re-adds and opens a lock-bump PR.
-- **Before installing, check the names.** Hermes has no namespacing, so a third-party name that
-  collides with a shipped or deployed skill breaks that name for both. Compare against
-  `<install>/skills/`, `optional-skills/` and the deployed sets; install a `-s` subset if needed.
-- **Symlink regressions exist** → verify the entry actually resolves in
-  each agent dir (`find -L … -name SKILL.md`), or fall back to `--copy` (not the default here). A symlink that exists is not
-  proof the agent listed it.
-- **Supply-chain panel runs pre-install** (Gen / Socket / Snyk). Record the verdict with the lock —
-  a replay cannot re-prove it.
-- **Node is only in the agent container.** The webui container ships no Node by design, so `npx`
-  does not exist there.
-
-**Packs that ship their own per-harness plugins are NOT this flow.** Install them per harness through
-that harness's native channel, one canal per agent — never plugin *and* npx for the same agent.
-Worked example, `obra/superpowers` (ships `.claude-plugin/`, `.codex-plugin/`, `.hermes-plugin/`,
-`.cursor-plugin/`, … plus a SessionStart hook and a `pre_llm_call` bootstrap):
-
-- Claude Code: `/plugin install superpowers@claude-plugins-official`
-- Hermes: `hermes plugins install obra/superpowers` — registers every skill namespaced as
-  `superpowers:<name>` (so no collision with shipped names) and injects the first-turn bootstrap
-- Codex: its own plugin marketplace, `/plugins`
-- `npx skills add obra/superpowers` on a harness that has the plugin = the same 15 skills twice, and
-  it silently drops the bootstrap hook. Don't.
+For the `npx skills` install recipe (targeting, symlink layout, lock location, updating, name checks, plugin-pack
+exception) see `agent-skills-architecture` → `references/installing-and-vetting-skills.md` § "npx skills recipe".
 
 ## Bundled (addon-shipped) skills are read-only
 
-Bundled skills sync from the addon with a per-directory hash manifest, so a copy we edited is skipped
-forever and upstream improvements never reach us. Never edit one. When we want a local addition:
-
-1. `hermes skills diff <name>` — see exactly what our copy adds.
-2. Move that content into a skill we own (a `*-ops` addendum, e.g. `claude-code-ops` for the container
-   facts about the `claude-code` skill).
-3. `hermes skills reset <name>` — clears the "user-modified" flag so updates work again; it does not
-   touch the content. `hermes skills reset <name> --restore` also reverts to stock.
-4. Confirm with `hermes skills list-modified`; the next addon update brings the stock version.
-
-⚠️ **`hermes skills repair-official <name> --restore` writes its backup INSIDE the skills tree** —
-to `~/.hermes/skills/.restore-backups/<ts>/<category>/<name>/`. That directory is *not* in Hermes'
-excluded-scan list, so the backup is a second copy of the same name and the skill becomes
-**unloadable**: `Ambiguous skill name … Refusing to guess`. Move the backup out of the
-scanned root straight after any restore:
-`mv ~/.hermes/skills/.restore-backups ~/.hermes/backups/restore-backups-<date>`.
-
-⚠️ **`hermes skills reset` blocks on an interactive prompt — never call it from a non-interactive
-surface.** A plain terminal call, `execute_code` or a delegated run hangs until the caller times out and **changes nothing**, because the prompt is never answered. Drive it from a
-PTY, or skip it: to de-fork, refresh the live copy from the stock tree with a plain copy —
-`cp -R /config/skills/<category>/<name>/. ~/.hermes/skills/<category>/<name>/` — which leaves the live
-copy byte-identical to stock with no prompt. **Refresh, don't delete**: deleting the own-store copy
-drops that name out of Hermes' index (the add-on's shipped tree is not indexed on its own, and a name
-absent from `.bundled_manifest` has no reseed path) — so a skill with real usage disappears.
-`hermes skills diff <name>` is the read-only way to see what a reset would change.
+Never edit a bundled skill (a modified copy is skipped by the sync forever). Local additions go in a skill we own; the
+`hermes skills diff/reset/repair-official` workflow and its two traps (backup dir inside the scanned tree, interactive
+prompt) are in `hermes-instance-audit` → `references/skills-sync-and-bundling.md` § "Bundled skills are read-only".

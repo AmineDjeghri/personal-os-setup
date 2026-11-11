@@ -31,30 +31,14 @@ byte-stable) — moving around with `cd` mid-session adds no skills.
 
 ## Consequences to check BEFORE promising anything
 - **A global `terminal.cwd` overrides the session's own cwd**, so the root resolves outside every repo and
-  project skills never load — trusted or not. That is a known UPSTREAM DEFECT (project-local discovery
-  ignoring the effective session cwd), not user misconfiguration: search upstream for the symptom before
-  proposing config churn, then report "known bug, fix in review" + the no-edit workarounds.
+  project skills never load — trusted or not. This is not user misconfiguration: report it
+  with the no-edit workaround (put always-on skills in the shared deployed dir).
 - **A trust list of N repos costs nothing until you are in one.** Only the current root's skills are
   enumerated; every other entry is an inert permission.
 - **Cost model**: the prompt carries the skill INDEX (name + description, ~1 line each); a body enters
   context only when the skill is opened. Keep `external_dirs` small, and put always-on skills in the shared
   deployed dir — never accumulate per-repo `external_dirs` lines.
 - **Path entries resolve literally.** `skills.external_dirs` must hold CONTAINER paths (`/config/.claude/skills`, plus `/config/workspace/personal-os-setup/.agents/skills` when the repo tier must load); `/addon_configs/...` does not exist inside the agent container and a dead entry is skipped with no warning. Audit form: `ls -d <each entry>`; keep both spellings only when the same `config.yaml` is read from the webui add-on (its HOME *is* `/addon_configs/...`).
-
-## Upstream tracking (re-check, don't design around it)
-The root-resolution behavior above is an open upstream defect — the effective session cwd is supposed to win,
-but `find_project_root()` reads only the scoped/global `TERMINAL_CWD`.
-
-Re-check after each `hermes update`:
-
-```bash
-gh issue view 103423 -R NousResearch/hermes-agent --json state,comments -q '.state'
-gh search prs "session cwd project discovery" --repo NousResearch/hermes-agent -L 5
-```
-
-…or test the installed loader directly: grep `find_project_root` in `agent/skill_utils.py` — a start dir
-taken from `scope_terminal_cwd()` alone means the bug is still present. Until it is fixed, the always-on
-route stays the shared deployed dir, never a per-repo `external_dirs` line.
 
 ## Decisive probes (read-only)
 Run from the repo under test with the install's own interpreter; a heredoc may hit the approval gate, so
