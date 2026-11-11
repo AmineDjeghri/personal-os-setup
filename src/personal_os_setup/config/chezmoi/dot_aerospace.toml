@@ -209,6 +209,13 @@ run = 'move-node-to-workspace 1'
 if.app-id = 'com.jetbrains.pycharm'
 run = 'move-node-to-workspace 2'
 
+[[on-window-detected]]
+if.app-id = 'com.comfy.ComfyUI'
+run = 'move-node-to-workspace 2'
+[[on-window-detected]]
+if.app-id = 'com.docker.docker'
+run = 'move-node-to-workspace 2'
+
 # workspace 3 apps : finder
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
@@ -227,6 +234,9 @@ run = 'move-node-to-workspace 4'
 if.app-id = 'com.microsoft.Word'
 run = 'move-node-to-workspace 4'
 
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = 'move-node-to-workspace 4'
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Powerpoint'
 run = 'move-node-to-workspace 4'
@@ -258,6 +268,21 @@ if.app-id = 'com.brave.Browser.app.mdpkiolbdkhdjpekfbkbmhigcaggjagi'
 run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
+run = 'move-node-to-workspace 5'
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace 5'
+[[on-window-detected]]
+if.app-id = 'com.viber.osx'
+run = 'move-node-to-workspace 5'
+[[on-window-detected]]
+if.app-id = 'com.electron.ollama'
+run = 'move-node-to-workspace 5'
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+run = 'move-node-to-workspace 5'
+[[on-window-detected]]
 if.app-id = 'com.apple.mail'
 run = 'move-node-to-workspace 5'
 
@@ -274,6 +299,17 @@ run = 'move-node-to-workspace 5'
 [[on-window-detected]]
 if.app-id = 'com.valvesoftware.steam.helper'
 run = ['layout tiling', 'move-node-to-workspace 6']
+
+[[on-window-detected]]
+if.app-id = 'com.stremio.Stremio'
+run = 'move-node-to-workspace 6'
+[[on-window-detected]]
+if.app-id = 'org.videolan.vlc'
+run = 'move-node-to-workspace 6'
+[[on-window-detected]]
+if.app-id = 'com.nuvio.desktop'
+run = 'move-node-to-workspace 6'
+
 
 
 # floating apps

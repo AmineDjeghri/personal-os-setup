@@ -17,9 +17,16 @@ what skills this repo provides, how they get onto a machine, and how to add or c
 | **Third-party** | Skills from other repos, installed with `npx skills` | `third-party-skills.lock.json` (repo root)                                          | `~/.claude/skills` + `~/.agents/skills` | Claude Code, Codex and Hermes |
 | **Repo-local**  | Runbooks for working on this repo only               | `.claude/skills/` (+ `.agents/skills/` symlinks)                                    | read in place                           | whoever opens this repo       |
 
-Authored skills deploy once into `~/.claude/skills`; per-skill links in `~/.agents/skills` expose
-them to Codex. Hermes reads `~/.claude/skills` too, so no extra Hermes copy is needed. Never put the same skill name in
-`~/.hermes/skills` as well: the name becomes ambiguous and Hermes refuses to load it (`make skills-status` flags it).
+Each skill exists once on disk, and the other agent sees it through a symlink. Claude Code reads
+`~/.claude/skills`; Codex reads `~/.agents/skills`.
+
+| Layer                        | Real copy                 | Link                                                      |
+|------------------------------|---------------------------|-----------------------------------------------------------|
+| **Authored (written by me)** | `~/.claude/skills/<name>` | `~/.agents/skills/<name>` → `~/.claude/skills/<name>`     |
+| **Third-party (npx skills)** | `~/.agents/skills/<name>` | `~/.claude/skills/<name>` → `../../.agents/skills/<name>` |
+
+The Claude account skill sync is turned off: `dot_claude/settings.json` sets `syncClaudeAiSkills: false`, so
+`~/.claude/skills/synced/` must not exist.
 
 ## Skill catalog
 
@@ -59,9 +66,10 @@ Media:
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `report-pdf`                  | Creating PDF reports with the shared report workflow                                                                                                |
+| `report-html`                 | Opening a report in the Hermes Webapp as HTML (same spec as `report-pdf`)                                                                           |
 | `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
-### Third-party skills (16)
+### Third-party skills (18)
 
 Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 
@@ -82,8 +90,11 @@ Installed with `npx skills`, tracked in `third-party-skills.lock.json`.
 | `bash-script-validator`         | `akin-ozer/cc-devops-skills` | Validating Bash scripts                                                          |
 | `github-actions-validator`      | `akin-ozer/cc-devops-skills` | Validating GitHub Actions workflows                                              |
 | `makefile-validator`            | `akin-ozer/cc-devops-skills` | Validating Makefiles                                                             |
+| `skill-creator`                 | `anthropics/skills`          | Creating, improving and evaluating skills                                        |
+| `webapp-testing`                | `anthropics/skills`          | Testing local web apps with Playwright                                           |
+| `supply-chain-risk-auditor`     | `trailofbits/skills`         | Auditing dependencies for supply-chain risk                                      |
 
-### Repo-local skills (9)
+### Repo-local skills (7)
 
 Runbooks for working on this repo. They are not deployed to `~/.claude/skills`.
 
@@ -106,7 +117,7 @@ Open the **Sync dotfiles** tab, expand `.claude`, and select the **whole `.claud
 | Button                 | What it does                                                                                                                                                         |
 |------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | diff selected          | Shows what would change in `~/.claude`                                                                                                                               |
-| apply selected         | Copies authored skills, links them for Codex, and replays third-party skills for Claude Code and Codex                                                               |
+| apply selected         | Copies authored skills, links them for Codex, replays third-party skills (one `npx` call per skill, both agents)                                                     |
 | re-add selected        | Pulls a skill you edited live back into the repo's source tree                                                                                                       |
 | chezmoi: clean backups | (action button above the list) Deletes the `<name>_<timestamp>_backup` copies that earlier applies left next to managed files, including those in `~/.claude/skills` |
 
@@ -116,6 +127,7 @@ Things to know:
   (`run_after_replay-third-party-skills.sh`) only run when their own entries are selected. Selecting a
   single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node (`npx`) and `jq`.
   Optional replay logs `SKIPPED` if tooling is missing and records no successful install.
+- **Settings come along.** The `.claude` folder also carries `settings.json` (theme, `syncClaudeAiSkills`); applying it overwrites the live file, so keep any local-only key (such as `model`) in the repo source first.
 - **It never deletes.** A skill removed from the repo stays in `~/.claude/skills` until you delete it by hand.
 - **Each apply leaves backups.** Before overwriting, it copies every selected file to
   `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-status` then reports `DIFFERS`. Use **chezmoi:

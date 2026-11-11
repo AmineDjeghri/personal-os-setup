@@ -38,7 +38,9 @@ hl.window_rule({ match = { class = "^(helium|brave-browser)$" }, workspace = "1"
 hl.window_rule({ match = { class = "^(jetbrains-pycharm)$" }, workspace = "2" }) -- IDE
 hl.window_rule({ match = { class = "^(org\\.kde\\.dolphin|org\\.gnome\\.Nautilus)$" }, workspace = "3" }) -- file manager
 hl.window_rule({ match = { class = "^(dev\\.zed\\.Zed|md\\.Obsidian)$" }, workspace = "4" }) -- editors/notes
-hl.window_rule({ match = { class = "^(vesktop|org\\.telegram\\.desktop|signal)$" }, workspace = "5" }) -- chat
+hl.window_rule({ match = { class = "^(vesktop|org\\.telegram\\.desktop|[Ss]ignal|zoom)$" }, workspace = "5" }) -- chat/meetings
+
+hl.window_rule({ match = { class = "^(mpv|org\\.kde\\.gwenview|nuvio.*|Nuvio.*)$" }, workspace = "6" }) -- media
 
 -- Gaming
 local gamingApps = "^(steam_app.*|gamescope|cs2)$"
@@ -87,6 +89,8 @@ hl.window_rule({ match = { class = "^(mpv|org.kde.haruna|.*plex.*|org\\.kde\\.gw
 -- Float Utility Windows
 local floatApps = {
     { class = "^(kvantummanager|qt[56]ct|nwg-look|nwg-displays)$" },
+    { class = "^(coolercontrol|openrgb|[Oo]pen[Rr][Gg][Bb])$" },
+    { class = "^([Pp]inentry.*|gcr-prompter|org\\.gnome\\.keyring.*|.*polkit.*|[Kk]ee[Pp]ass.*)$" }, -- passphrase / auth prompts
     { class = "^(org.pulseaudio.pavucontrol|blueman-manager|nm-applet|nm-connection-editor)$" },
     { title = "^(Winetricks.*|Protontricks.*)$" },
 }
