@@ -6,6 +6,7 @@
 """Render a PDF report from a JSON spec with headless chromium.
 
     uv run --no-project report_pdf.py spec.json --out /config/report-2026-10-27.pdf [--shot page1.png]
+    uv run --no-project report_pdf.py spec.json --html /config/report-2026-10-27.html   # screen layout, Webapp preview
 
 Spec (all keys optional except title/sections):
 
@@ -60,6 +61,31 @@ li { margin: .8mm 0; }
 code { background: #f2f2f2; padding: 0 1mm; border-radius: 2px; font-size: 8.4pt; }
 """
 
+# Screen layout for a browser tab (Webapp preview): fluid width, real pixel sizes, scrolling tables.
+# The print CSS above is A4-in-points and reads tiny on a monitor.
+SCREEN_CSS = """
+body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.5;
+  color: #1a1a1a; max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; background: #fff; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 18px; margin: 30px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+.sub { color: #666; margin: 0 0 18px; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+.card { border: 1px solid #ddd; border-radius: 6px; padding: 10px 14px; flex: 1 1 140px; }
+.card .n { font-size: 24px; font-weight: 600; color: #175c2a; }
+.card .l { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .04em; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td, th { padding: 6px 8px; text-align: left; vertical-align: top; border-bottom: 1px solid #eee; }
+th { font-size: 11px; text-transform: uppercase; color: #666; border-bottom: 1px solid #bbb; }
+tr.grp td { background: #f5f6f8; }
+.p { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+.o { color: #b02020; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+.n { color: #175c2a; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+.meta { color: #666; font-size: 12px; }
+ul { margin: 4px 0 0 20px; padding: 0; }
+li { margin: 5px 0; }
+code { background: #f2f2f2; padding: 0 4px; border-radius: 3px; font-size: 12px; }
+"""
+
 
 def esc(v):
     return html.escape("" if v is None else str(v))
@@ -109,15 +135,15 @@ def render_section(sec):
     return title + body
 
 
-def build_html(spec):
+def build_html(spec, css=CSS):
     stats = "".join(
         f'<div class="card"><div class="n">{esc(s.get("n"))}</div>'
         f'<div class="l">{esc(s.get("l"))}</div></div>'
         for s in spec.get("stats", [])
     )
     blocks = "".join(render_section(s) for s in spec.get("sections", []))
-    return f"""<!doctype html><html><head><meta charset="utf-8">
-<title>{esc(spec.get("title", "Report"))}</title><style>{CSS}</style></head><body>
+    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(spec.get("title", "Report"))}</title><style>{css}</style></head><body>
 <h1>{esc(spec.get("title", "Report"))}</h1>
 <p class="sub">{esc(spec.get("subtitle", ""))}</p>
 {('<div class="stats">' + stats + "</div>") if stats else ""}
@@ -136,12 +162,22 @@ def chromium():
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("spec", help="JSON spec path")
-    ap.add_argument("--out", required=True, help="output PDF path")
+    ap.add_argument("--out", help="output PDF path (omit with --html for a screen-only report)")
+    ap.add_argument("--html", help="write a self-contained responsive SCREEN html here (for the Webapp preview)")
     ap.add_argument("--shot", help="also render page 1 to this PNG (for a vision check)")
     ap.add_argument("--keep-html", help="write the intermediate HTML here instead of a temp file")
     args = ap.parse_args()
+    if not args.out and not args.html:
+        ap.error("give --out (PDF), --html (screen) or both")
 
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    if args.html:
+        screen = Path(args.html)
+        screen.parent.mkdir(parents=True, exist_ok=True)
+        screen.write_text(build_html(spec, SCREEN_CSS), encoding="utf-8")
+        print(f"wrote {screen} · screen html · {screen.stat().st_size // 1024 or 1} KB")
+        if not args.out:
+            return
     html_doc = build_html(spec)
     html_path = (
         Path(args.keep_html)

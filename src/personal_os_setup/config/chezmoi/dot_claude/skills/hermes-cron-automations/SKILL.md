@@ -224,6 +224,14 @@ Relay it with what you verified yourself on this box alongside; recipe (stdin br
 7. **A YAML keyword list containing `*arr` fails to parse** (`found undefined alias 'arr'`) — quote any
    glob-looking keyword. Validate the live profile with one real run, not just `--doctor` (doctor only
    probes sources, so a broken `interests.yaml` surfaces only in the digest run).
+8. **`hermes cron cancel` only stops a scheduler-dispatched run.** A run started by `hermes cron run`
+   is booked `source=direct`; cancel answers "Nothing to cancel", the row stays `running` after the
+   script exits, and the job then silently stops firing (the tick is skipped while it looks in flight).
+   Prove it with `hermes cron runs <id>`; the fix is `hermes cron remove <id>`. `cron run` also blocks
+   the calling shell until the run ends — never foreground it on a long job.
+9. **Missed runs are a per-job decision now:** `--catch-up on|off` (default `cron.catch_up_missed`,
+   one-shots always skip). `--failure-deliver local` silences failure notices only; `hermes cron
+   incidents` lists unacknowledged durable failures, `hermes cron notepad <id>` is the per-job KV store.
 
 ## 6. Reference
 
