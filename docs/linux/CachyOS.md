@@ -303,6 +303,10 @@ hidden. Verified working on (UE4, DX11) with an RTX 5070 Ti (NVIDIA 620.x), Hypr
      format. Not a package; skip it for DX12-only games if it causes trouble.
 4. Start the game and look for the HDR option in its display/graphics settings.
 
+   Some games like Red Dead Redemption 2 shows its HDR options only with the **DirectX 12** API; with Vulkan the
+   option stays hidden even though HDR is active on the desktop. Also force Proton-CachyOS for
+   it, since Steam can leave a game on Proton Experimental.
+
 ### GameMode
 
 `gamemode` temporarily applies CPU governor/scheduler/GPU tweaks while a game runs. Add
