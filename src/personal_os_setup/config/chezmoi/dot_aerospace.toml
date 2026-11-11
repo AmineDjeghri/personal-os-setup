@@ -197,6 +197,9 @@ alt-shift-l = ['join-with right', 'mode main']
 if.app-id = 'com.brave.Browser'
 run = 'move-node-to-workspace 1'
 [[on-window-detected]]
+if.app-id = 'net.imput.helium'
+run = 'move-node-to-workspace 1'
+[[on-window-detected]]
 if.app-id = 'com.apple.Safari'
 run = 'move-node-to-workspace 1'
 

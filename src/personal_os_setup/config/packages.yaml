@@ -205,6 +205,10 @@ packages:
         - brave-bin
       Gaming:
         - steam
+        - gamescope # Valve micro-compositor; `gamescope --hdr-enabled -- %command%` is the fallback HDR path for games that don't expose HDR under Proton
+        - proton-cachyos-slr # newer Proton (CachyOS build, Steam Linux Runtime variant) with HDR/Wayland support; select it per game in Steam > Compatibility
+        - vk-hdr-layer-kwin6-git # Vulkan layer giving native/Vulkan games an HDR swapchain on Wayland compositors (enable with ENABLE_HDR_WSI=1)
+        - protonplus # GUI to download/manage Proton-GE and other Proton builds
       Messaging:
         - telegram-desktop
         - vesktop # Discord enhanced
