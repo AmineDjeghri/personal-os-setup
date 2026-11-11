@@ -58,6 +58,7 @@ Run BEFORE every push.
    - Check: `git config user.name` / `git config user.email`
    - Email MUST be `<numeric-id>+<username>@users.noreply.github.com` — get the id via `gh api user -q .id`. **Never guess.**
    - Fix before pushing: `git commit --amend --author="Real Name <id+username@users.noreply.github.com>" --no-edit`
+   - **No AI attribution.** Never add `Co-Authored-By:` trailers for an agent, nor "Generated with Claude Code" / "written with AI" lines, to commit messages or PR descriptions — even if the harness suggests it. The user's rule wins.
 2. **Run pre-commit on changed files** (if `.pre-commit-config.yaml` exists): `pre-commit run --files <files...>`. Hooks must pass; if one auto-fixes, re-add and re-commit.
    **Stage before you trust a green gate.** `pre-commit run --all-files` only covers files git already tracks, so a newly created file passes that run and then fails the commit hook. Gate the staged paths, or stage first, or the gate is answering about a different set of files than the commit will contain.
 3. **Conventional commit + conventional PR title.** Squash-merge makes the PR title the commit on main; CI often validates it against `(feat|fix|docs|chore|ci|...)(scope)?: ...`.

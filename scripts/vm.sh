@@ -37,7 +37,7 @@ WIN_ISO_SHA256="${WIN_ISO_SHA256:-}"
 WIN_VERSION="${WIN_VERSION:-11}"
 WIN_DISK_GB="${WIN_DISK_GB:-80}"
 
-# `make vm-macos`: the default release tracks what `macos-latest` currently runs in CI (macOS 26 = tahoe).
+# `make vm-macos`: the default release tracks what `macos-26` runs in CI (macOS 26 = tahoe).
 MACOS_VERSION="${MACOS_VERSION:-tahoe}"
 MACOS_DIR="$VM_DIR/macos"
 

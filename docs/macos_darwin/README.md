@@ -144,7 +144,7 @@ Caveats:
   `.vm/macos/macos-<release>/` and `quickemu` runs a plain QEMU process under your user. `make vm-list` and virt-manager
   don't show it, and upstream has no libvirt import ([quickemu#437](https://github.com/quickemu-project/quickemu/issues/437)).
   `make vm-clean` wipes it (but leaves a still-running guest alone and tells you to shut it down first).
-- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; default `tahoe` (macOS 26, what `macos-latest`
+- Releases: `mojave catalina big-sur monterey ventura sonoma sequoia tahoe`; default `tahoe` (macOS 26, what `macos-26`
   runs in CI), override with `MACOS_VERSION`.
 - CPU: SSE4.1 for Sierra+, **AVX2 for Ventura+** (the script checks `/proc/cpuinfo`). Some AMD Ryzen mobile CPUs
   (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
@@ -156,5 +156,5 @@ Caveats:
   `mds`/`mdworker`). On the host try `cd .vm/macos && quickemu --vm macos-tahoe.conf --display sdl` (or `spice`), a smaller
   `--width/--height`, and `powerprofilesctl set performance`.
 
-The automated half of this lives in CI: the `integration-macos` job runs the integration tests on a hosted `macos-latest`
+The automated half of this lives in CI: the `integration-macos` job runs the integration tests on a hosted `macos-26`
 runner. The VM is for the click-through parts CI doesn't cover.

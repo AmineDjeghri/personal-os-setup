@@ -1,5 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "theme": "dark",
-  "syncClaudeAiSkills": false
+  "syncClaudeAiSkills": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
 }
