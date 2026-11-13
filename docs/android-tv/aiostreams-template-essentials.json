@@ -86,7 +86,7 @@
       3,
       1000
     ],
-    "seederRangeTypes": [],
+    "seederRangeTypes": ["p2p", "uncached"],
     "ageRangeTypes": [
       "usenet"
     ],
