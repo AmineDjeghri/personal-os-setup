@@ -13,8 +13,10 @@ The Freebox asks for a physical button press on the box. Each app id gets its ow
 registers once and keeps its own config file. The file gets ``freebox_url``, ``app_id`` and
 ``app_token``; other keys already in it are kept.
 
-Usage (``--url`` defaults to http://mafreebox.freebox.fr, use the LAN address to avoid DNS):
-    freebox_auth.py fr.homeassistant.adguard_sync ~/.config/adguard-sync/config.yaml
+Use the router's LAN address as ``--url``, so the jobs do not depend on DNS (AdGuard Home is the DNS).
+
+Usage:
+    freebox_auth.py fr.homeassistant.adguard_sync ~/.config/adguard-sync/config.yaml --url URL
     freebox_auth.py fr.homeassistant.stale_devices ~/.config/stale-devices/config.yaml --url URL
 """
 
@@ -120,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("app_id", help="unique id of the app, e.g. fr.homeassistant.stale_devices")
     parser.add_argument("config", type=Path, help="YAML config file that receives the token")
-    parser.add_argument("--url", default="http://mafreebox.freebox.fr", help="Freebox URL")
+    parser.add_argument("--url", required=True, help="Freebox LAN URL, e.g. http://192.168.1.254")
     parser.add_argument("--app-name", help="name in the Freebox app list (default: the app id)")
     parser.add_argument("--device-name", default=socket.gethostname())
     args = parser.parse_args(argv)

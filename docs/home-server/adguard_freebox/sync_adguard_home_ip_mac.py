@@ -37,11 +37,14 @@ import requests
 import yaml
 
 DEFAULT_CONFIG = Path.home() / ".config" / "adguard-sync" / "config.yaml"
-DEFAULTS = {
-    "freebox_url": "http://mafreebox.freebox.fr",
-    "app_id": "fr.homeassistant.adguard_sync",
-}
-REQUIRED = ("adguard_url", "adguard_user", "adguard_password", "app_token")
+REQUIRED = (
+    "adguard_url",
+    "adguard_user",
+    "adguard_password",
+    "freebox_url",
+    "app_id",
+    "app_token",
+)
 REQUEST_TIMEOUT = 5  # seconds
 MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
 
@@ -52,7 +55,7 @@ def log(message: str) -> None:
 
 
 def load_config(path: Path) -> dict:
-    """Read the YAML config, fill in the defaults and check the required keys.
+    """Read the YAML config and check the required keys.
 
     Args:
         path: Location of the config file.
@@ -61,13 +64,18 @@ def load_config(path: Path) -> dict:
         The configuration.
 
     Raises:
-        RuntimeError: If the file is missing or a required key is empty.
+        RuntimeError: If the file is missing, unreadable, or a required key is empty.
     """
     if not path.exists():
         raise RuntimeError(
             f"config file not found: {path} (see sync_adguard_home_ip_mac.example.yaml)"
         )
-    cfg = {**DEFAULTS, **(yaml.safe_load(path.read_text()) or {})}
+    try:
+        cfg = yaml.safe_load(path.read_text()) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        raise RuntimeError(f"cannot read {path}: {exc}") from exc
+    if not isinstance(cfg, dict):
+        raise RuntimeError(f"{path} must contain key: value lines")
     missing = [key for key in REQUIRED if not cfg.get(key)]
     if missing:
         raise RuntimeError(f"missing in {path}: {', '.join(missing)}")

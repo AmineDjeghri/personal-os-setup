@@ -54,11 +54,18 @@ def load_config(path: Path) -> dict:
         The configuration with ``ignore_macs`` as a set of lower-cased MACs.
 
     Raises:
-        RuntimeError: If the file or a required key is missing, or a value has the wrong type.
+        RuntimeError: If the file is missing or unreadable, a required key is missing, or a value has
+            the wrong type.
     """
     if not path.exists():
         raise RuntimeError(f"config file not found: {path} (create it with freebox_auth.py)")
-    cfg = {**DEFAULTS, **(yaml.safe_load(path.read_text()) or {})}
+    try:
+        loaded = yaml.safe_load(path.read_text()) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        raise RuntimeError(f"cannot read {path}: {exc}") from exc
+    if not isinstance(loaded, dict):
+        raise RuntimeError(f"{path} must contain key: value lines")
+    cfg = {**DEFAULTS, **loaded}
     missing = [key for key in REQUIRED if not cfg.get(key)]
     if missing:
         raise RuntimeError(f"missing in {path}: {', '.join(missing)} (run freebox_auth.py)")

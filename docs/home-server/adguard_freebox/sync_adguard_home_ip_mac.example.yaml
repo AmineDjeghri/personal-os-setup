@@ -7,6 +7,6 @@
 adguard_url: http://<HAOS_IP>:8082
 adguard_user: adguard
 adguard_password: "PASSWORD"  # pragma: allowlist secret
-freebox_url: http://mafreebox.freebox.fr
+freebox_url: http://192.168.1.254
 app_id: fr.homeassistant.adguard_sync
 app_token: "TOKEN_SAVED_BY_freebox_auth.py"  # pragma: allowlist secret
