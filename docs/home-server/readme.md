@@ -803,20 +803,22 @@ Who hands out the addresses, and who publishes the names:
 * We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.
 * Steps:
     * In the addon configuration in HA: open the port 8082, you should access the dashboard without authentication on ``HA-IP:8082``. the username and password are your Home assistant username and password (you can create a user named 'adguard' for it).
-    * Put the following scripts in the server:
+    * Put the following files in the server:
         * [freebox_auth.py](adguard_freebox/freebox_auth.py)
         * [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py)
-    * I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token ``uv run freebox_auth.py``
-    * then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. ``uv run sync_adguard_home_ip_mac.py``
-    * Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the path of uv and the script)
+        * [sync_adguard_home_ip_mac.example.yaml](adguard_freebox/sync_adguard_home_ip_mac.example.yaml), copied to `~/.config/adguard-sync/config.yaml` (secrets stay in this file, outside git)
+    * I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token: ``uv run freebox_auth.py`` (press the right-arrow button on the Freebox server). Put the token in `app_token`. To register another app, pass `--app-id` and `--app-name`.
+    * then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. Try it first with ``uv run sync_adguard_home_ip_mac.py --dry-run``, which shows the changes and applies none.
+    * Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the paths of uv and the script). ``flock`` stops a slow run from overlapping the next one:
 
 ````sh
 # For example
-* * * * * /home/amine/.local/bin/uv run sync_adguard_home_ip_mac.py
+* * * * * flock -n /tmp/adguard-sync.lock /home/amine/.local/bin/uv run /path/to/sync_adguard_home_ip_mac.py >> $HOME/sync_agh.log 2>&1
 ````
 
 * Check Settings -> Client settings -> **Persistent clients settings** .
-* This script will run every minute. If it discovers a new device, it will update the log file ``sync_agh.log`` with the latest sync information.
+* This script runs every minute and is silent when nothing changed. When it creates or updates a client it logs one line (``sync_agh.log``), and it exits with an error code when AdGuard Home or the Freebox cannot be read or a change is refused. ``--verbose`` adds a summary line to every run.
+* Only the address list of a client is replaced: the settings you made on it (blocked services, upstreams, ...) and ids you added by hand (a ClientID, a CIDR range) are kept. When two devices claim the same address (an old lease handed out again), it goes to the device that is reachable on it, because AdGuard refuses the same id on two clients.
 * ⚠️ The name it takes from the Freebox (``primary_name``, i.e. the name you set on the device's page) is used **only when it creates a client**. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).
 
 ### Warn about devices unreachable for 2 weeks (script + Hermes cron)
