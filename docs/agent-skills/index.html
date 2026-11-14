@@ -644,10 +644,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#third-party-skills-16" class="md-nav__link">
+  <a href="#third-party-skills-18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Third-party skills (16)
+        Third-party skills (18)
       
     </span>
   </a>
@@ -655,10 +655,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#repo-local-skills-9" class="md-nav__link">
+  <a href="#repo-local-skills-7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Repo-local skills (9)
+        Repo-local skills (7)
       
     </span>
   </a>
@@ -3028,6 +3028,8 @@
       
         
       
+        
+      
     
     
     
@@ -3142,6 +3144,34 @@
     
   
     font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../package/personal_os_setup/tasks/system/git_credentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    git_credentials
   
 
     
@@ -3469,10 +3499,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#third-party-skills-16" class="md-nav__link">
+  <a href="#third-party-skills-18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Third-party skills (16)
+        Third-party skills (18)
       
     </span>
   </a>
@@ -3480,10 +3510,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#repo-local-skills-9" class="md-nav__link">
+  <a href="#repo-local-skills-7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Repo-local skills (9)
+        Repo-local skills (7)
       
     </span>
   </a>
@@ -3769,9 +3799,31 @@ what skills this repo provides, how they get onto a machine, and how to add or c
 </tr>
 </tbody>
 </table>
-<p>Authored skills deploy once into <code>~/.claude/skills</code>; per-skill links in <code>~/.agents/skills</code> expose
-them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Hermes copy is needed. Never put the same skill name in
-<code>~/.hermes/skills</code> as well: the name becomes ambiguous and Hermes refuses to load it (<code>make skills-status</code> flags it).</p>
+<p>Each skill exists once on disk, and the other agent sees it through a symlink. Claude Code reads
+<code>~/.claude/skills</code>; Codex reads <code>~/.agents/skills</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Real copy</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authored (written by me)</strong></td>
+<td><code>~/.claude/skills/&lt;name&gt;</code></td>
+<td><code>~/.agents/skills/&lt;name&gt;</code> → <code>~/.claude/skills/&lt;name&gt;</code></td>
+</tr>
+<tr>
+<td><strong>Third-party (npx skills)</strong></td>
+<td><code>~/.agents/skills/&lt;name&gt;</code></td>
+<td><code>~/.claude/skills/&lt;name&gt;</code> → <code>../../.agents/skills/&lt;name&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>The Claude account skill sync is turned off: <code>dot_claude/settings.json</code> sets <code>syncClaudeAiSkills: false</code>, so
+<code>~/.claude/skills/synced/</code> must not exist.</p>
 <h2 id="skill-catalog">Skill catalog<a class="headerlink" href="#skill-catalog" title="Permanent link">&para;</a></h2>
 <h3 id="authored-skills-17">Authored skills (17)<a class="headerlink" href="#authored-skills-17" title="Permanent link">&para;</a></h3>
 <p>General workflow:</p>
@@ -3861,10 +3913,6 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <td><code>hermes-cron-automations</code></td>
 <td>Building a recurring automation on the Hermes box</td>
 </tr>
-<tr>
-<td><code>debugging-hermes-tui-commands</code></td>
-<td>Debugging Hermes TUI slash commands (Python, gateway, Ink UI)</td>
-</tr>
 </tbody>
 </table>
 <p>Media:</p>
@@ -3881,12 +3929,16 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <td>Creating PDF reports with the shared report workflow</td>
 </tr>
 <tr>
+<td><code>report-html</code></td>
+<td>Opening a report in the Hermes Webapp as HTML (same spec as <code>report-pdf</code>)</td>
+</tr>
+<tr>
 <td><code>youtube-download-automation</code></td>
 <td>Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading</td>
 </tr>
 </tbody>
 </table>
-<h3 id="third-party-skills-16">Third-party skills (16)<a class="headerlink" href="#third-party-skills-16" title="Permanent link">&para;</a></h3>
+<h3 id="third-party-skills-18">Third-party skills (18)<a class="headerlink" href="#third-party-skills-18" title="Permanent link">&para;</a></h3>
 <p>Installed with <code>npx skills</code>, tracked in <code>third-party-skills.lock.json</code>.</p>
 <table>
 <thead>
@@ -3972,9 +4024,24 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <td><code>akin-ozer/cc-devops-skills</code></td>
 <td>Validating Makefiles</td>
 </tr>
+<tr>
+<td><code>skill-creator</code></td>
+<td><code>anthropics/skills</code></td>
+<td>Creating, improving and evaluating skills</td>
+</tr>
+<tr>
+<td><code>webapp-testing</code></td>
+<td><code>anthropics/skills</code></td>
+<td>Testing local web apps with Playwright</td>
+</tr>
+<tr>
+<td><code>supply-chain-risk-auditor</code></td>
+<td><code>trailofbits/skills</code></td>
+<td>Auditing dependencies for supply-chain risk</td>
+</tr>
 </tbody>
 </table>
-<h3 id="repo-local-skills-9">Repo-local skills (9)<a class="headerlink" href="#repo-local-skills-9" title="Permanent link">&para;</a></h3>
+<h3 id="repo-local-skills-7">Repo-local skills (7)<a class="headerlink" href="#repo-local-skills-7" title="Permanent link">&para;</a></h3>
 <p>Runbooks for working on this repo. They are not deployed to <code>~/.claude/skills</code>.</p>
 <table>
 <thead>
@@ -3998,7 +4065,7 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 </tr>
 <tr>
 <td><code>run-tests</code></td>
-<td>Running and writing tests; why integration tests must not run locally</td>
+<td>Running and writing tests, gate gotchas; no local integration runs</td>
 </tr>
 <tr>
 <td><code>ship-feature</code></td>
@@ -4011,14 +4078,6 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 <tr>
 <td><code>fork-and-customize</code></td>
 <td>Forking and rebranding this repo for your own setup</td>
-</tr>
-<tr>
-<td><code>repo-gotchas</code></td>
-<td>Known drift between the docs and what the repo really does</td>
-</tr>
-<tr>
-<td><code>skill-layout</code></td>
-<td>How skills are organized in this repo</td>
 </tr>
 </tbody>
 </table>
@@ -4039,7 +4098,7 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
 </tr>
 <tr>
 <td>apply selected</td>
-<td>Copies authored skills, links them for Codex, and replays third-party skills for Claude Code and Codex</td>
+<td>Copies authored skills, links them for Codex, replays third-party skills (one <code>npx</code> call per skill, both agents)</td>
 </tr>
 <tr>
 <td>re-add selected</td>
@@ -4057,6 +4116,7 @@ them to Codex. Hermes reads <code>~/.claude/skills</code> too, so no extra Herme
   (<code>run_after_replay-third-party-skills.sh</code>) only run when their own entries are selected. Selecting a
   single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node (<code>npx</code>) and <code>jq</code>.
   Optional replay logs <code>SKIPPED</code> if tooling is missing and records no successful install.</li>
+<li><strong>Settings come along.</strong> The <code>.claude</code> folder also carries <code>settings.json</code> (theme, <code>syncClaudeAiSkills</code>); applying it overwrites the live file, so keep any local-only key (such as <code>model</code>) in the repo source first.</li>
 <li><strong>It never deletes.</strong> A skill removed from the repo stays in <code>~/.claude/skills</code> until you delete it by hand.</li>
 <li><strong>Each apply leaves backups.</strong> Before overwriting, it copies every selected file to
   <code>&lt;name&gt;_&lt;timestamp&gt;_backup&lt;ext&gt;</code> in the same folder, and <code>make skills-status</code> then reports <code>DIFFERS</code>. Use <strong>chezmoi:
@@ -4151,16 +4211,19 @@ not.</p>
 <code>npx skills</code> lock. Each class has both directions (<code>-repo-to-live</code>, <code>-live-to-repo</code>).</p>
 </blockquote>
 <h3 id="what-skills-thirdparty-repo-to-live-does">What <code>skills-thirdparty-repo-to-live</code> does<a class="headerlink" href="#what-skills-thirdparty-repo-to-live-does" title="Permanent link">&para;</a></h3>
-<p>The replay installs each locked skill for <code>claude-code</code> and <code>codex</code> using <code>npx skills add …</code>. npx keeps one canonical copy in <code>~/.agents/skills</code> (read by Codex) and links it into <code>~/.claude/skills</code> (read by Claude Code and Hermes); this setup targets Linux and macOS.
+<p>The replay installs each locked skill with ONE <code>npx skills add … -a claude-code -a codex</code> call. Naming both agents in a single call is what makes npx keep one canonical copy in <code>~/.agents/skills</code> (read by Codex) and link <code>~/.claude/skills/&lt;name&gt;</code> (read by Claude Code and Hermes) to it; a call naming one agent writes an independent copy and replaces an existing link. This setup targets Linux and macOS.
 Use <code>AGENT=codex</code> or <code>AGENTS="claude-code codex"</code> to select the agents explicitly. Hermes is never a
 separate target. Python 3 and Node (<code>npx</code>) are required; explicit Make replay fails when a tool
 is missing. A packaged chezmoi source without the repository lock still links authored skills,
 and optional third-party replay reports <code>SKIPPED</code>; set <code>LOCK</code> to a reviewed lock to enable replay.
 Windows Git Bash follows the same path and reports failures instead of silently succeeding.</p>
 <p>The replay is idempotent. It installs only the skills that are missing, broken (dangling link, no valid
-<code>SKILL.md</code>) or whose live-lock entry differs from the committed one; <code>FORCE=1</code> reinstalls everything.
+<code>SKILL.md</code>), unlinked (an independent copy where the Claude link should be, which it turns back into a link) or
+whose live-lock entry differs from the committed one; <code>FORCE=1</code> reinstalls everything.
 After each install it checks the result, because <code>npx</code> exits 0 even when it cancels. Verification
-(<code>make skills-status</code>) checks the lock identities and that each agent has a usable <code>SKILL.md</code>.</p>
+(<code>make skills-status</code>) checks the lock identities, that each agent has a usable <code>SKILL.md</code> and, when both agents
+are selected, that the Claude entry links to the Codex-side copy (<code>UNLINKED</code> otherwise). With <code>AGENT=codex</code> or
+<code>AGENT=claude-code</code> only that agent is installed and no link is expected.</p>
 <p>Hand edits are detected without any extra state file: the npx lock records when each skill was installed
 (<code>updatedAt</code>), so installed files that are newer than that are reported as <code>DIFFERS</code>, with both dates.
 <code>make skills-thirdparty-repo-to-live</code> refuses to run over such edits unless <code>FORCE=1</code> is given, like the
@@ -4180,8 +4243,8 @@ plus the unit checks for links, manifests, conflicts and edit detection. These n
 real skills or packages. The chezmoi case skips if chezmoi is unavailable.</p>
 <h3 id="governance">Governance<a class="headerlink" href="#governance" title="Permanent link">&para;</a></h3>
 <p>The full rules (private skills, never vendoring third-party packs, bundled skills being read-only) are in
-<code>AGENTS.md</code> under "Skills &amp; plugins". Deeper material lives in the <code>agent-skills-architecture</code>, <code>skill-deployment</code>
-and <code>skill-layout</code> skills.</p>
+<code>AGENTS.md</code> under "Skills &amp; plugins". Deeper material lives in the <code>agent-skills-architecture</code> and <code>skill-deployment</code>
+skills.</p>
 
 
 

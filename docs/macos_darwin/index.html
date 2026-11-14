@@ -2761,6 +2761,8 @@
       
         
       
+        
+      
     
     
     
@@ -2875,6 +2877,34 @@
     
   
     font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../package/personal_os_setup/tasks/system/git_credentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    git_credentials
   
 
     
@@ -3505,7 +3535,7 @@ with <a href="https://github.com/quickemu-project/quickemu">Quickemu</a> — <st
   <code>.vm/macos/macos-&lt;release&gt;/</code> and <code>quickemu</code> runs a plain QEMU process under your user. <code>make vm-list</code> and virt-manager
   don't show it, and upstream has no libvirt import (<a href="https://github.com/quickemu-project/quickemu/issues/437">quickemu#437</a>).
   <code>make vm-clean</code> wipes it (but leaves a still-running guest alone and tells you to shut it down first).</li>
-<li>Releases: <code>mojave catalina big-sur monterey ventura sonoma sequoia tahoe</code>; default <code>tahoe</code> (macOS 26, what <code>macos-latest</code>
+<li>Releases: <code>mojave catalina big-sur monterey ventura sonoma sequoia tahoe</code>; default <code>tahoe</code> (macOS 26, what <code>macos-26</code>
   runs in CI), override with <code>MACOS_VERSION</code>.</li>
 <li>CPU: SSE4.1 for Sierra+, <strong>AVX2 for Ventura+</strong> (the script checks <code>/proc/cpuinfo</code>). Some AMD Ryzen mobile CPUs
   (Renoir/Cezanne, some Zen4 mobile) have an unstable TSC that hangs Ventura+; the Quickemu wiki's macOS page documents a
@@ -3517,7 +3547,7 @@ with <a href="https://github.com/quickemu-project/quickemu">Quickemu</a> — <st
   <code>mds</code>/<code>mdworker</code>). On the host try <code>cd .vm/macos &amp;&amp; quickemu --vm macos-tahoe.conf --display sdl</code> (or <code>spice</code>), a smaller
   <code>--width/--height</code>, and <code>powerprofilesctl set performance</code>.</li>
 </ul>
-<p>The automated half of this lives in CI: the <code>integration-macos</code> job runs the integration tests on a hosted <code>macos-latest</code>
+<p>The automated half of this lives in CI: the <code>integration-macos</code> job runs the integration tests on a hosted <code>macos-26</code>
 runner. The VM is for the click-through parts CI doesn't cover.</p>
 
 

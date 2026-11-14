@@ -2763,6 +2763,8 @@
       
         
       
+        
+      
     
     
     
@@ -2877,6 +2879,34 @@
     
   
     font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/git_credentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    git_credentials
   
 
     
@@ -3203,6 +3233,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#scheduling-every" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduling (every:)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-scoring-works-no-llm" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3214,10 +3266,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#source-trendshiftio-verified-2026-10" class="md-nav__link">
+  <a href="#the-alert-gate-what-counts-as-important" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Source: trendshift.io (verified 2026-10)
+        The alert gate: what counts as "important"
       
     </span>
   </a>
@@ -3225,10 +3277,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dedupe-and-state" class="md-nav__link">
+  <a href="#sources" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dedupe and state
+        Sources
       
     </span>
   </a>
@@ -3236,10 +3288,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#scheduled-delivery" class="md-nav__link">
+  <a href="#dedupe-state-and-health" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scheduled delivery
+        Dedupe, state and health
       
     </span>
   </a>
@@ -3251,6 +3303,17 @@
     <span class="md-ellipsis">
       
         Adding a source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scheduled-delivery-hermes-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduled delivery (Hermes example)
       
     </span>
   </a>
@@ -3363,18 +3426,23 @@
 
 <h1 id="watchtower">watchtower<a class="headerlink" href="#watchtower" title="Permanent link">&para;</a></h1>
 <p>One deterministic collector behind every "what's new on the internet" digest: it fetches each configured
-source, scores every item against one shared interest profile, and prints a finished two-list digest —
-"⭐ might interest you" and "everything else". No LLM call, no daemon, no add-on.</p>
-<p>v1 ships <strong>one source</strong>: the weekly GitHub-trending list on trendshift.io. Adding a source is a YAML edit
-(<code>sources.yaml</code>) once its <code>kind</code> exists; a new kind is one small <code>fetch_*</code> function.</p>
+source, scores every item against one shared interest profile, and prints only what is worth printing.
+No LLM call in the hot path, no daemon, no web UI, no add-on — one script, one source list, one state file.</p>
+<p>Three delivery shapes come out of the same pipeline:</p>
+<ul>
+<li><strong><code>list</code></strong> — a whole ranked list, silent when the list has not changed (weekly GitHub trending).</li>
+<li><strong><code>new</code></strong> — only items it has not shown you yet, capped per run (feeds, a backlog, deals).</li>
+<li><strong><code>alert</code></strong> — only stories several outlets independently carried, with escalation and caps
+  (important news: tell me once, not every tick).</li>
+</ul>
+<p>Scheduling is data, not crontab lines: each source carries its own <code>every:</code> and the host runs one tick.</p>
 <h2 id="why-not-an-add-on-not-a-third-party-aggregator">Why not an add-on / not a third-party aggregator<a class="headerlink" href="#why-not-an-add-on-not-a-third-party-aggregator" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The digest is a scheduled fetch+filter+print. Hermes cron runs that directly (<code>--no-agent</code>), so a
+<li>The digest is a scheduled fetch + filter + print. A tick cron runs that directly (<code>--no-agent</code>), so a
   NiceGUI app or an RSS server would only add a service to maintain.</li>
-<li>Third-party "agent internet access" CLIs (e.g. Agent-Reach) are routers over upstream tools whose real
-  value is the logged-in browser route — useless in a headless container, and cookie/session scraping
-  risks bans. The two ideas worth borrowing are already here: an ordered backend per source class, and a
-  <code>--doctor</code> probe.</li>
+<li>Third-party "agent internet access" CLIs are routers over upstream tools whose real value is the
+  logged-in browser route — useless in a headless container, and cookie/session scraping risks bans.
+  The two ideas worth borrowing are already here: an ordered backend per source class, and <code>--doctor</code>.</li>
 </ul>
 <h2 id="layout-three-roles-deliberately-split">Layout — three roles, deliberately split<a class="headerlink" href="#layout-three-roles-deliberately-split" title="Permanent link">&para;</a></h2>
 <table>
@@ -3388,18 +3456,18 @@ source, scores every item against one shared interest profile, and prints a fini
 <tbody>
 <tr>
 <td>Code + example configs</td>
-<td>this directory (committed, public)</td>
+<td>this directory (committed)</td>
 <td>reviewable, versioned</td>
 </tr>
 <tr>
 <td>Live config (<code>sources.yaml</code>, <code>interests.yaml</code>)</td>
-<td><code>~/.hermes/watchtower/</code></td>
+<td>the watchtower home</td>
 <td>the interest profile is personal data</td>
 </tr>
 <tr>
-<td>State (<code>state.json</code>, <code>ledger/</code>)</td>
-<td><code>~/.hermes/watchtower/</code></td>
-<td>"already told you" memory + star snapshots</td>
+<td>State (<code>state.json</code>, <code>ledger/</code>, <code>.lock</code>)</td>
+<td>the watchtower home</td>
+<td>"already told you" memory + event history</td>
 </tr>
 </tbody>
 </table>
@@ -3407,73 +3475,125 @@ source, scores every item against one shared interest profile, and prints a fini
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  watchtower.py            PEP 723 script — uv run --no-project watchtower.py
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  sources.example.yaml     schema for the live source list
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  interests.example.yaml   schema for the live interest profile
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>~/.hermes/watchtower/      WATCHTOWER_HOME (override with --home or env)
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  sources.yaml  interests.yaml  state.json  ledger/YYYY-MM.jsonl
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>~/.hermes/scripts/watchtower_weekly.sh   thin wrapper cron points at (outside git)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>&lt;home&gt;/                    resolved first-match-wins:
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  sources.yaml             --home → $WATCHTOWER_HOME → $XDG_CONFIG_HOME/watchtower
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  interests.yaml           → ~/.config/watchtower → legacy ~/.hermes/watchtower
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  state.json  ledger/      (the legacy path is only used when it already holds sources.yaml)
 </span></code></pre></div>
+<p>Any host can run it — Hermes cron, a plain crontab, Claude Code, Codex, a laptop — because the script
+never asks who is calling. The digest goes to <strong>stdout</strong> and the host decides where that lands.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--doctor<span class="w">   </span><span class="c1"># probe every source + the GitHub API, print OK/FAIL</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w">            </span><span class="c1"># print the digest (silent when nothing changed)</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--force<span class="w">    </span><span class="c1"># print even if the source content is identical</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w">                  </span><span class="c1"># every enabled, non-scheduled source</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--due<span class="w">            </span><span class="c1"># only sources whose `every:` slot elapsed (the tick)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--source<span class="w"> </span>sports<span class="w">  </span><span class="c1"># one source, ignore the clock</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--doctor<span class="w">         </span><span class="c1"># probe every source + schedule health</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--json<span class="w">           </span><span class="c1"># machine-readable items (read-only)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--explain<span class="w"> </span>jellyfin<span class="w">   </span><span class="c1"># why one item scored what it scored</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>watchtower.py<span class="w"> </span>--dry-run<span class="w">        </span><span class="c1"># read only: no state, no ledger</span>
 </span></code></pre></div>
-<p>Exit codes: <code>0</code> ok (including "nothing changed, printed nothing"), <code>1</code> at least one source failed —
-the failure text is printed too, so a cron delivery still reaches the chat with the reason in it.</p>
+<p>Exit codes: <code>0</code> ok <strong>or</strong> silent (nothing to say), <code>1</code> something failed and was printed, <code>2</code> config error,
+<code>3</code> watchdog timeout. Silence is a feature: no output means nothing changed, nothing important, or
+nothing new — never "the collector broke" (that prints).</p>
+<h2 id="scheduling-every">Scheduling (<code>every:</code>)<a class="headerlink" href="#scheduling-every" title="Permanent link">&para;</a></h2>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">tz</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Europe/Paris</span><span class="w">          </span><span class="c1"># only at:/quiet: use it; state, ledger and lock always stay UTC</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">sources</span><span class="p">:</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-news</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15m</span><span class="w">            </span><span class="c1"># 15m · 1h · 1d · 1w ("every day" also parses); min 5m, max 4w</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sports</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1d</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">at</span><span class="p">:</span><span class="w"> </span><span class="s">"07:30"</span><span class="w">           </span><span class="c1"># required for 1d/1w, quoted; local to tz</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weekly</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1w</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mon</span><span class="w">               </span><span class="c1"># weekly alignment, default mon</span>
+</span></code></pre></div>
+<ul>
+<li><strong>One tick cron</strong> (<code>*/5</code>) calls <code>--due</code>; the script decides which sources are eligible. Cron expressions
+  are rejected on purpose: a second grammar plus cron's "a missed run is gone" rule is how schedules rot.</li>
+<li><strong>Slots, not elapsed time.</strong> Due means "the last attempt predates the current slot" — <code>now - last_run &gt;=
+  15m</code> silently halves the cadence whenever a run starts a few seconds late.</li>
+<li><strong>Catch-up.</strong> A weekly source three days late fires once on the next tick, then waits for its next slot.
+  Missed slots are never replayed.</li>
+<li><strong>Backoff.</strong> A failing source retries at 15/30/60/120/240/360 min, then every 6 h, and speaks once per
+  24 h. A source that is skipped writes nothing and spawns no subprocess.</li>
+<li><strong>No <code>every:</code></strong> means legacy: only a plain run (no <code>--due</code>) picks it up, which is how an existing weekly
+  cron keeps working untouched.</li>
+</ul>
+<h2 id="modes">Modes<a class="headerlink" href="#modes" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>list</code></strong> (default) prints the ranked two-list digest and stays silent while the semantic signature is
+  unchanged. Keeps item ids and star snapshots.</li>
+<li><strong><code>new</code></strong> prints up to <code>take:</code> unseen items, newest first; silent when nothing is unseen. Keeps only what
+  it printed, so the rest stays queued for the next run.</li>
+<li><strong><code>alert</code></strong> prints one message per event with escalation capped; silent when the event is already known
+  at that level. Keeps events, the daily budget and any quiet-hours hold.</li>
+</ul>
+<p><code>list</code> silence keys on a <strong>semantic signature</strong> — item ids + summaries + scores + the two-list split,
+mixed with <code>interests.yaml</code> — never on rendered text (stars move every minute) and never on ids alone
+(that would ignore a profile edit or a rewritten description).</p>
 <h2 id="how-scoring-works-no-llm">How scoring works (no LLM)<a class="headerlink" href="#how-scoring-works-no-llm" title="Permanent link">&para;</a></h2>
-<p>Every <code>like</code> rule that matches adds its <code>weight</code> (its <em>priority</em>, 1–5) once; every <code>dislike</code> rule
-subtracts its weight. An item is promoted to ⭐ when it matched at least one <code>like</code> rule <strong>and</strong> its score
-reaches <code>thresholds.highlight</code> (optionally overridden per source, with a <code>max_highlight</code> cap).
-Excluded/demoted items are <strong>never hidden</strong> — they drop into the rest list. The matched rule ids are
-printed on each promoted line, so the ranking is auditable and tuneable without reading the code.</p>
-<p>The match text is <code>slug + description + language + GitHub topics</code>, so the same file will serve blog
-headlines and catalog product names later; only the text fields fed to it change per source.</p>
-<h2 id="source-trendshiftio-verified-2026-10">Source: trendshift.io (verified 2026-10)<a class="headerlink" href="#source-trendshiftio-verified-2026-10" title="Permanent link">&para;</a></h2>
+<p>Every matching <code>like</code> rule adds its <code>weight</code> once; every matching <code>dislike</code> rule subtracts its weight. An
+item is promoted to ⭐ when it matched at least one <code>like</code> rule <strong>and</strong> reaches <code>thresholds.highlight</code>
+(optionally overridden per source, with a <code>max_highlight</code> cap). Demoted items are <strong>never hidden</strong> — they
+drop into the rest list, and the rendered line names every rule that matched or demoted the item, so the
+ranking is auditable and tuneable without reading the code. Matching is accent-insensitive ("seisme"
+matches "séisme") over title + summary + tags + topics.</p>
+<h2 id="the-alert-gate-what-counts-as-important">The <code>alert</code> gate: what counts as "important"<a class="headerlink" href="#the-alert-gate-what-counts-as-important" title="Permanent link">&para;</a></h2>
+<p>Corroboration alone is not importance; three outlets can all run a celebrity story. Two lanes:</p>
 <ul>
-<li>No RSS, no free API, no MCP. There is a paid "Signal" API; <code>robots.txt</code> disallows <code>/api/</code> and
-  <code>/apikeys/</code>, so it is off-limits.</li>
-<li>Public listing pages (<code>/weekly</code>, <code>/monthly</code>, <code>/yearly</code>, <code>/</code>, <code>/live-mentions</code>) are SSR and embed one
-  schema.org <code>ItemList</code> in <code>application/ld+json</code>: 25 <code>ListItem</code>s with <code>position</code>, <code>url</code> and an <code>item</code>
-  (<code>name</code> = owner/repo, <code>description</code>, <code>codeRepository</code>, <code>programmingLanguage</code>, <code>dateCreated</code>,
-  <code>dateModified</code>). That payload is the sanctioned, cheap route — parse it, never scrape the cards.</li>
-<li><code>/github-trending-repositories</code> carries <strong>no</strong> JSON-LD: expect <code>FAIL ... no application/ld+json block</code>
-  if it is ever wired as a source.</li>
-<li>Stars are not in the JSON-LD. They come from the GitHub REST API (<code>/repos/{slug}</code>), with a token from
-  <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> or the <code>gh</code> CLI (5000/h instead of 60/h). Weekly momentum = stars now minus
-  the stars stored by the previous run — no scraping of the "gained this week" markup needed.</li>
+<li><strong>A</strong> — <code>min_outlets</code> (3) distinct feeds <strong>and</strong> at least one tier-1 feed <strong>and</strong> a hit on your own
+  <code>alert_terms.critical</code> lexicon, with no dislike rule matching.</li>
+<li><strong>B</strong> — <code>strong_outlets</code> (5): everyone is running it, no lexicon needed.</li>
 </ul>
-<h2 id="dedupe-and-state">Dedupe and state<a class="headerlink" href="#dedupe-and-state" title="Permanent link">&para;</a></h2>
+<p>Stories are clustered by IDF-weighted title overlap against the cluster's <strong>shortest</strong> headline (the
+containment metric is asymmetric, so anchoring on the first-seen item made clustering depend on feed
+order). Events then escalate 3 → 6 → 10 outlets, at most 2 re-alerts, close after <code>close_after</code> of silence
+and stay tombstoned for <code>remember:</code> so a late outlet cannot reopen them. Caps: <code>max_per_day</code>, <code>min_gap</code>,
+and <code>quiet:</code> hours that <strong>hold and batch</strong> — a held alert keeps its own snapshot, so it is still delivered
+at 07:00 even though the story has aged out of the window by then.</p>
+<p><strong>Partial blindness is a failure.</strong> If fewer than <code>min_feeds_ok</code> feeds answer, the source fails instead of
+reporting silence: with two of six feeds up, "3 outlets" can never be reached and silence would be a lie.</p>
+<h2 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">&para;</a></h2>
+<p><code>kind: trendshift_jsonld</code> (GitHub trending) and <code>kind: rss</code> (RSS 2.0 / Atom, either one <code>url:</code> or a
+<code>feeds:</code> list with <code>id</code>/<code>tier</code>). Adding one is a YAML edit; a new kind is one <code>fetch_*</code> function plus a
+<code>KINDS</code> entry and a <code>line()</code> renderer.</p>
+<p><strong>trendshift.io (verified 2026-10):</strong> the public listing pages are SSR and embed one schema.org <code>ItemList</code>
+in <code>application/ld+json</code> — parse that payload, never the cards. <code>robots.txt</code> disallows <code>/api/</code>, so the paid
+Signal API is off-limits. Stars come from the GitHub REST API (<code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> or the <code>gh</code> CLI:
+5000/h instead of 60/h), and weekly momentum is stars now minus the stars stored by the previous run.</p>
+<p><strong>Feeds (verified 2026-11, all 200):</strong> Le Monde <em>une</em>, franceinfo, BBC World, Le Figaro, Guardian World,
+France 24, hnrss.org/best, plus Google News RSS per query and locale for sports. <strong>L'Équipe returns 403</strong>
+(bot protection) and Eurosport's feed is gone — do not build a sports source on either.</p>
+<h2 id="dedupe-state-and-health">Dedupe, state and health<a class="headerlink" href="#dedupe-state-and-health" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>state.json</code> keeps, per repo: last star count, first/last seen date, and how many runs it has appeared in.</li>
-<li>Silence is keyed on a <strong>semantic signature</strong> — item ids + descriptions + scores + the two-list split, mixed
-  with a hash of <code>interests.yaml</code> — never on the rendered text (stars move every minute, so a text hash would
-  re-send forever) and never on slugs alone (that would ignore both a profile edit and a rewritten description).
-  Identical signature ⇒ the run prints nothing and cron sends nothing.</li>
-<li>Weekly momentum is only trusted against a sighting <strong>within 14 days</strong>; a repo returning after a long absence
-  shows no delta instead of a fake spike.</li>
-<li><code>🆕</code> marks a repo that was not in the previous run.</li>
-<li><code>last_ok</code> is a heartbeat; a run that finds it more than 10 days old says so in the health footer (a cron that
-  stopped firing cannot report its own absence, so this only surfaces on the run after the gap).</li>
+<li><code>state.json</code> keeps, per source: <code>last_attempt</code>, <code>last_ok</code>, <code>failures</code>, item ids with their star
+  snapshot, <code>digest_hash</code>, and (alert mode) events with their level and daily budget.</li>
+<li><code>--doctor</code> prints, per source: fetch OK/FAIL with timing, <code>every</code>/<code>at</code>/<code>on</code>/<code>tz</code>, <code>last_attempt</code>,
+  <code>failures</code>, <code>next_due</code>, <code>OVERDUE</code> at 3× the period, plus GitHub headroom and whether the lock is free.</li>
 <li><code>min_items</code> per source: fewer items than that count is a <strong>failure</strong> (schema drift), not "no news".</li>
-<li>The ledger (<code>ledger/YYYY-MM.jsonl</code>) gets one line per run: count + promoted slugs — enough to audit what
-  was sent without keeping the rendered text.</li>
-<li>State is written only after the digest text is built, so a crash mid-run re-sends next time instead of
-  silently dropping a week.</li>
+<li>Weekly momentum is only trusted against a sighting <strong>within 14 days</strong>, so a repo returning after a long
+  absence shows no fake spike.</li>
+<li>The ledger (<code>ledger/YYYY-MM.jsonl</code>) gets one line per run and per alert — including failures that were
+  throttled, so silence is still auditable.</li>
+<li>A tick that never runs cannot report its own absence; that is what an external heartbeat is for.</li>
 </ul>
-<h2 id="scheduled-delivery">Scheduled delivery<a class="headerlink" href="#scheduled-delivery" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hermes<span class="w"> </span>cron<span class="w"> </span>create<span class="w"> </span><span class="s2">"0 8 * * 1"</span><span class="w"> </span>--name<span class="w"> </span>watchtower-weekly<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--script<span class="w"> </span>watchtower_weekly.sh<span class="w"> </span>--no-agent<span class="w"> </span>--deliver<span class="w"> </span>telegram
-</span></code></pre></div>
-<p>Weekly on purpose: trendshift's weekly list changes weekly; a daily run would re-report the same repos.
-The wrapper pins <code>WATCHTOWER_HOME</code> because cron can run with a different <code>$HOME</code> (the webui container has
-<code>HOME=/root</code>, where no config or state exists).</p>
 <h2 id="adding-a-source">Adding a source<a class="headerlink" href="#adding-a-source" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Add an entry to <code>sources.yaml</code> with a <code>kind</code> that exists (<code>--doctor</code> proves it).</li>
-<li>If the kind is new: write <code>fetch_&lt;name&gt;(source) -&gt; list[dict]</code> returning the normalised item shape (<code>id</code>, <code>title</code>,
-   <code>description</code>, <code>url</code>, <code>lang</code>, <code>rank</code>, …), register it in <code>FETCHERS</code>, and treat
-   "page loaded but parsed 0 items" as a <code>FetchError</code> — that is a broken extractor, not "no news".</li>
+<li>If the kind is new: write <code>fetch_&lt;name&gt;(source) -&gt; list[dict]</code> returning the normalised item (<code>id</code>,
+   <code>title</code>, <code>url</code>, <code>summary</code>, <code>published</code>, <code>rank</code>, <code>tags</code>, with per-kind fields under <code>extra</code>), register it
+   in <code>KINDS</code> with a <code>line()</code> renderer, and treat "page loaded but parsed 0 items" as a <code>FetchError</code> — that
+   is a broken extractor, not "no news".</li>
 <li>Run it twice: the second run on unchanged input must print nothing. If it re-sends, the <code>id</code> (dedupe
    key) is wrong — fix that before adding the next source.</li>
 </ol>
+<h2 id="scheduled-delivery-hermes-example">Scheduled delivery (Hermes example)<a class="headerlink" href="#scheduled-delivery-hermes-example" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>hermes<span class="w"> </span>cron<span class="w"> </span>create<span class="w"> </span><span class="s2">"*/5 * * * *"</span><span class="w"> </span>--name<span class="w"> </span>watchtower-tick<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--script<span class="w"> </span>watchtower_tick.sh<span class="w"> </span>--no-agent<span class="w"> </span>--deliver<span class="w"> </span>telegram
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>hermes<span class="w"> </span>cron<span class="w"> </span>create<span class="w"> </span><span class="s2">"0 8 * * 1"</span><span class="w"> </span>--name<span class="w"> </span>watchtower-weekly<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--script<span class="w"> </span>watchtower_weekly.sh<span class="w"> </span>--no-agent<span class="w"> </span>--deliver<span class="w"> </span>telegram
+</span></code></pre></div>
+<p>Both wrappers live outside git and only pin <code>WATCHTOWER_HOME</code> (cron may run with a different <code>$HOME</code>): the
+tick calls <code>watchtower.py --due</code>, the weekly one calls it plain so the legacy source behaves as before.</p>
 
 
 

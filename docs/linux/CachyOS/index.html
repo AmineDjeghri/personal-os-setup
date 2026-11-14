@@ -1527,6 +1527,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#proton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proton
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proton">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hdr-in-games-proton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HDR in games (Proton)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#gamemode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1542,17 +1570,6 @@
     <span class="md-ellipsis">
       
         MangoHud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#proton" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Proton
       
     </span>
   </a>
@@ -3096,6 +3113,8 @@
       
         
       
+        
+      
     
     
     
@@ -3210,6 +3229,34 @@
     
   
     font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/git_credentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    git_credentials
   
 
     
@@ -3703,6 +3750,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#proton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proton
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proton">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hdr-in-games-proton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HDR in games (Proton)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#gamemode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3718,17 +3793,6 @@
     <span class="md-ellipsis">
       
         MangoHud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#proton" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Proton
       
     </span>
   </a>
@@ -4124,8 +4188,10 @@ Personal themes are kept rather than using the bundled ones.</p>
 <p>Do not remove the Qt5/Qt6 theme packages — the Noctalia theme cannot currently
 be removed without affecting them.</p>
 <h2 id="gaming">Gaming<a class="headerlink" href="#gaming" title="Permanent link">&para;</a></h2>
-<p><code>packages.yaml</code> currently only installs <code>steam</code> under <code>cachyos.pacman.Gaming</code> — the pieces
-below are not yet in the catalog and need to be added/installed later in the next update.</p>
+<ul>
+<li><code>packages.yaml</code> lists <code>steam</code> and <code>protonplus</code> under <code>cachyos.pacman.Gaming</code>. Only <code>steam</code> and <code>protonplus</code> are needed for HDR games</li>
+<li>The other pieces below (<code>cachyos-gaming-meta</code>, GameMode, MangoHud) are not yet in the catalog.</li>
+</ul>
 <h3 id="base-packages">Base packages<a class="headerlink" href="#base-packages" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>cachyos-gaming-meta</code> — CachyOS's own meta-package, pulls in <code>gamemode</code>, <code>mangohud</code>,
@@ -4135,6 +4201,33 @@ below are not yet in the catalog and need to be added/installed later in the nex
   and repo-level <code>-O3</code>/<code>x86-64-v3</code> optimized packages by default — nothing to configure here,
   it's the baseline the whole distro is built on.</li>
 </ul>
+<h3 id="proton">Proton<a class="headerlink" href="#proton" title="Permanent link">&para;</a></h3>
+<p>Prefer <strong>Proton-CachyOS</strong> (CachyOS's own Proton fork, tracks Proton's bleeding-edge branch)
+over stock Steam Proton for anything demanding — it merges fixes faster and ships newer
+DXVK/HDR support. Install/manage versions via <strong>ProtonPlus</strong> . Set the version per-game in Steam: right-click → Properties → Compatibility →
+"Force the use of a specific Steam Play compatibility tool".</p>
+<p>Install the build through ProtonPlus (e.g. <code>Proton-CachyOS Latest-x86_64_v3</code>, fine on any
+x86-64-v3 CPU).</p>
+<h4 id="hdr-in-games-proton">HDR in games (Proton)<a class="headerlink" href="#hdr-in-games-proton" title="Permanent link">&para;</a></h4>
+<p>Games run through XWayland by default, which has no HDR path, so the in-game HDR option stays
+hidden. Verified working on (UE4, DX11) with an RTX 5070 Ti (NVIDIA 620.x), Hyprland <code>cm = "hdr"</code> and the Proton-CachyOS build above. Per game:</p>
+<ol>
+<li>Turn desktop HDR on first (Noctalia toggle or <code>cm = "hdr"</code>, see below).</li>
+<li>Force the Proton-CachyOS build in Steam → Properties → Compatibility.</li>
+<li>Set Launch Options:</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 DXVK_HDR=1 %command%
+</span></code></pre></div>
+<ul>
+<li><code>PROTON_ENABLE_WAYLAND=1</code> — use Proton's native Wayland driver instead of XWayland.</li>
+<li><code>PROTON_ENABLE_HDR=1</code> — let Proton expose an HDR surface to the game.</li>
+<li><code>DXVK_HDR=1</code> — makes DXVK (DX9/10/11 → Vulkan, bundled in Proton) offer an HDR10 output
+     format. Not a package; skip it for DX12-only games if it causes trouble.</li>
+<li>Start the game and look for the HDR option in its display/graphics settings.</li>
+</ul>
+<p>Some games like Red Dead Redemption 2 shows its HDR options only with the <strong>DirectX 12</strong> API; with Vulkan the
+   option stays hidden even though HDR is active on the desktop. Also force Proton-CachyOS for
+   it, since Steam can leave a game on Proton Experimental.</p>
 <h3 id="gamemode">GameMode<a class="headerlink" href="#gamemode" title="Permanent link">&para;</a></h3>
 <p><code>gamemode</code> temporarily applies CPU governor/scheduler/GPU tweaks while a game runs. Add
 <code>gamemoderun %command%</code> as a Steam launch option per game, or <code>gamemode --dlsym</code>.</p>
@@ -4145,12 +4238,6 @@ it before relying on GameMode, or expect fights over process priority.</p>
 <p>FPS/frametime/CPU/GPU overlay. <code>mangohud %command%</code> as a Steam launch option (combine with
 GameMode: <code>gamemode mangohud %command%</code>), or <code>mangohud --dlsym</code> for OpenGL titles that need
 the dlsym hook. Config: <code>~/.config/MangoHud/MangoHud.conf</code>.</p>
-<h3 id="proton">Proton<a class="headerlink" href="#proton" title="Permanent link">&para;</a></h3>
-<p>Prefer <strong>Proton-CachyOS</strong> (CachyOS's own Proton fork, tracks Proton's bleeding-edge branch)
-over stock Steam Proton for anything demanding — it merges fixes faster and, as of the
-mid-2026 update, <strong>auto-detects and enables HDR per-game</strong> with no launch options needed.
-Install/manage versions via <strong>ProtonUp-Qt</strong> (also handles GE-Proton if a specific game needs
-it instead). Set the version per-game in Steam: right-click → Properties → Compatibility.</p>
 <h3 id="hdr-and-10-bit-desktop">HDR and 10-bit desktop<a class="headerlink" href="#hdr-and-10-bit-desktop" title="Permanent link">&para;</a></h3>
 <p><strong>Quick visual check (two monitors, one HDR + one non-HDR):</strong> Play the same HDR YouTube video
 (e.g. <a href="https://youtu.be/MV5hhbqDNLs?t=145">https://youtu.be/MV5hhbqDNLs?t=145</a>) at 2Min25 in a browser window on each display — one on
@@ -4196,15 +4283,15 @@ querying mpv's live negotiated state over its JSON IPC socket rather than trusti
 <ol>
 <li>Launch mpv with an IPC socket so its internal state can be queried while playing:</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mpv<span class="w"> </span>--input-ipc-server<span class="o">=</span>/tmp/mpvsocket<span class="w"> </span>--fullscreen<span class="w"> </span><span class="s2">"https://www.youtube.com/watch?v=njX2bu-_Vw4"</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mpv<span class="w"> </span>--input-ipc-server<span class="o">=</span>/tmp/mpvsocket<span class="w"> </span>--fullscreen<span class="w"> </span><span class="s2">"https://www.youtube.com/watch?v=njX2bu-_Vw4"</span>
 </span></code></pre></div>
 <ol>
 <li>From another terminal, query the three relevant properties via <code>socat</code> (or <code>echo</code> piped to
    <code>nc -U</code>):</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-out-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-target-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-out-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'{"command":["get_property","video-target-params"]}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>socat<span class="w"> </span>-<span class="w"> </span>/tmp/mpvsocket
 </span></code></pre></div>
 <ol>
 <li>

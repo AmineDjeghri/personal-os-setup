@@ -11,8 +11,8 @@
 #   * `weight` IS the priority: 5 = core interest, 2 = mild curiosity, negative = demote.
 #   * a demoted item is never hidden — it moves to the "rest" list.
 #
-# Matching text = repo slug + description + language + GitHub topics
-# (later: headline + snippet for blogs, product names for catalogs).
+# Matching text = title + summary + tags (+ GitHub topics/language for that kind).
+# Matching is accent-insensitive, so "seisme" also hits "séisme".
 # A token of <=5 chars must match as a whole word ("mcp" != "mcpx"), longer tokens
 # match as substrings ("home assistant" also hits "home-assistant").
 
@@ -24,7 +24,14 @@ thresholds:
       max_highlight: 8          # never show more than N promoted items from this source
 
 language:
-  block: []                     # e.g. [zh, ja] would demote repos whose language tag matches
+  block: []                     # e.g. [php] demotes items whose LANGUAGE tag matches (programming
+                                # language for GitHub repos, not natural language)
+
+# Used only by `mode: alert` sources. A story needs a hit here AND corroboration (lane A), unless
+# enough outlets carry it that it is obviously important (lane B, strong_outlets).
+alert_terms:
+  critical: [attentat, seisme, tsunami, guerre, invasion, otage, krach, faillite, demission,
+             dissolution, coup d-etat, catastrophe, incendie, greve generale, penurie]
 
 like:
   - id: agents-mcp

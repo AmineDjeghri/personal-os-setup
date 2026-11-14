@@ -3073,6 +3073,8 @@
       
         
       
+        
+      
     
     
     
@@ -3187,6 +3189,34 @@
     
   
     font
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package/personal_os_setup/tasks/system/git_credentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    git_credentials
   
 
     
@@ -3877,7 +3907,7 @@
     Client["📺 Nuvio&lt;br/&gt;&lt;sub&gt;TV · phone · desktop&lt;/sub&gt;"]
 
     subgraph ConfigGroup["🧩 AIOStreams — your saved configuration"]
-        Addons["Addons&lt;br/&gt;Torrentio · Comet · MediaFusion&lt;br/&gt;Streamfusion · Lumio · …"]
+        Addons["Addons&lt;br/&gt;Torrentio · Comet · MediaFusion&lt;br/&gt;StreamFusionReborn · Lumio · …"]
     end
 
     Debrid["⚡ Debrid service&lt;br/&gt;&lt;sub&gt;AllDebrid · Real-Debrid · TorBox&lt;/sub&gt;"]
@@ -3889,7 +3919,7 @@
     Debrid --&gt;|cached file, served straight from their servers| List</code></pre>
 <p>Five words are enough to follow the rest of this page:</p>
 <ul>
-<li><strong>Addon</strong> — a source of streams or catalogs. Torrentio, Comet, MediaFusion, Streamfusion and Lumio are addons.</li>
+<li><strong>Addon</strong> — a source of streams or catalogs. Torrentio, Comet, MediaFusion, StreamFusionReborn and Lumio are addons.</li>
 <li><strong>Debrid service</strong> — the paid account that turns torrent sources into instant, high-speed playback (AllDebrid, Real-Debrid, TorBox…). You need one account, whatever you do next.</li>
 <li><strong>Configuration (config)</strong> — the AIOStreams page where you pick your addons, filters, sorting and formatting. It is saved online and reached with a <strong>UUID</strong> plus a <strong>password</strong>.</li>
 <li><strong>Template</strong> — a JSON file that fills a configuration. That is how this guide hands you a ready-made setup.</li>
@@ -3921,7 +3951,7 @@
 <li>Go to <strong>Our Configuration → Browse ready-made setups → the import button</strong> and paste one of these links:<ul>
 <li>(Recommended) <strong>Amine's default config (essentials)</strong> — nothing to fill in beyond your debrid service:
   <code>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json</code></li>
-<li>(Advanced) <strong>Amine's default config (full)</strong> — the same, plus custom addons (Lumio, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
+<li>(Advanced) <strong>Amine's default config (full)</strong> — the same, plus custom addons (Lumio, StreamFusionReborn, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
   <code>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-full.json</code></li>
 </ul>
 </li>
@@ -3939,7 +3969,7 @@
 <h3 id="step-6-install-the-addon-in-nuvio">Step 6 — Install the addon in Nuvio<a class="headerlink" href="#step-6-install-the-addon-in-nuvio" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Go to the <strong>Save and Install</strong> section.</li>
-<li>Click <strong>Save</strong>. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (Streamfusion and OpenSubtitles V3+ are the usual suspects).</li>
+<li>Click <strong>Save</strong>. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (StreamFusionReborn, Lumio and OpenSubtitles V3+ are the usual suspects).</li>
 <li>Click <strong>Install</strong>, then copy the manifest link.</li>
 <li>Paste it in Nuvio: <a href="https://nuvioapp.space/account?tab=addons">nuvioapp.space/account?tab=addons</a> (or through the app).</li>
 <li>Nuvio shows what the addon provides, as a count of resources and catalogs (for example <code>5 resources / 45 catalogs</code>): a populated count means the addon was added properly.</li>
@@ -4004,11 +4034,11 @@
 <p>A variant is a short script that changes your own configuration for one device — no second configuration, no second link to share.</p>
 <ol>
 <li>Open the configuration and go to <strong>Miscellaneous → Variants</strong> (Advanced mode).</li>
-<li>Add a variant: give it an <strong>Id</strong> (<code>no-streamfusion</code> — lowercase letters, digits, <code>-</code> and <code>_</code> only) and a <strong>Name</strong> (<code>No Streamfusion</code>).</li>
-<li>In the script box, write the change. To deactivate for example Streamfusion, that is <code>disable presets[options.name*="Streamfusion"]</code>.</li>
+<li>Add a variant: give it an <strong>Id</strong> (<code>no-streamfusionreborn</code> — lowercase letters, digits, <code>-</code> and <code>_</code> only) and a <strong>Name</strong> (<code>No StreamFusionReborn</code>).</li>
+<li>In the script box, write the change. To deactivate for example StreamFusionReborn, that is <code>disable presets[options.name*="StreamFusionReborn"]</code>.</li>
 <li>Save the configuration.</li>
 </ol>
-<p>Example — deactivate Streamfusion on a single device:</p>
+<p>Example — deactivate StreamFusionReborn on a single device:</p>
 <table>
 <thead>
 <tr>
@@ -4019,19 +4049,24 @@
 <tbody>
 <tr>
 <td>Id</td>
-<td><code>no-streamfusion</code></td>
+<td><code>no-streamfusionreborn</code></td>
 </tr>
 <tr>
 <td>Name</td>
-<td><code>No Streamfusion</code></td>
+<td><code>No StreamFusionReborn</code></td>
 </tr>
 <tr>
 <td>Script</td>
-<td><code>disable presets[options.name*="Streamfusion"]</code></td>
+<td><code>disable presets[options.name*="StreamFusionReborn"]</code></td>
 </tr>
 </tbody>
 </table>
-<p>Then go to <strong>Save &amp; Install</strong>, select <strong>No Streamfusion</strong> in the variant list and choose the <strong>path</strong> form. When you copy the manifest URL it must show the selection, as in <code>…/stremio/&lt;uuid&gt;/&lt;password&gt;/v/no-streamfusion/manifest.json</code>. Install that URL as the addon on the device that should lose Streamfusion (remove the old one if you replaced it).</p>
+<p>To hide every custom addon that needs your own debrid account or key (Lumio, StreamFusionReborn) in one go, use a single variant (Id <code>no-personal-addons</code>) with one <code>disable</code> line per addon. These addons are tied to your own account, so a child configuration or another person cannot reuse them:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>disable presets[options.name="Lumio (custom)"]
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>disable presets[options.name="StreamFusionReborn (custom)"]
+</span></code></pre></div>
+<p><code>=</code> is an exact, case-sensitive match on the addon name, so it disables only the template's addons. If a child configuration adds its own copy of one of these addons, give it a different name (for example <code>Lumio (mine)</code>): the short form <code>*="Lumio"</code> is a substring match and would disable that copy too. Addons are merged by their internal <code>instanceId</code>, not by name, so a hand-added addon never replaces the inherited one and both stay in the list.</p>
+<p>Then go to <strong>Save &amp; Install</strong>, select <strong>No StreamFusionReborn</strong> in the variant list and choose the <strong>path</strong> form. When you copy the manifest URL it must show the selection, as in <code>…/stremio/&lt;uuid&gt;/&lt;password&gt;/v/no-streamfusionreborn/manifest.json</code>. Install that URL as the addon on the device that should lose StreamFusionReborn (remove the old one if you replaced it).</p>
 <p>The same variant also disables an addon in a <strong>child configuration</strong> that inherited it from a <strong>parent configuration</strong> — the preview may report that the instruction matched nothing, and it still takes effect when you play.</p>
 <p>Notes</p>
 <ul>
@@ -4109,6 +4144,15 @@
 <td><a href="https://stremio-addons.net/addons/nuvio-live-sports">nuvio-live-sports</a></td>
 </tr>
 <tr>
+<td><em>Sports Streams (custom)</em></td>
+<td>Live and upcoming matches — football, basketball, cricket, UFC, tennis…</td>
+<td>Your own manifest URL from the addon's site (private key — don't share)</td>
+<td>—</td>
+<td>✅</td>
+<td>✅</td>
+<td>—</td>
+</tr>
+<tr>
 <td><em>Statusio (custom)</em></td>
 <td>Debrid account health card — provider, username, expiry, days left</td>
 <td><a href="https://statusio.elfhosted.com/configure">https://statusio.elfhosted.com/configure</a></td>
@@ -4119,21 +4163,21 @@
 </tr>
 <tr>
 <td><em>Lumio (custom)</em></td>
-<td>French VOD, torrent + direct download</td>
-<td><a href="https://mylumio.tv">https://mylumio.tv</a></td>
+<td><strong>Best for French content, with StreamFusionReborn</strong> — French VOD, torrent + direct download</td>
+<td><a href="https://mylumio.tv">https://mylumio.tv</a> — manifest URL has a private key, keep it secret</td>
 <td><code>stream</code></td>
 <td>—</td>
 <td>—</td>
 <td><a href="https://stremio-addons.net/addons/lumio">lumio</a></td>
 </tr>
 <tr>
-<td><em>Streamfusion (custom)</em></td>
-<td>Extra French streaming sources</td>
+<td><em>StreamFusionReborn (custom)</em></td>
+<td><strong>Best for French content, with Lumio</strong> — 4K programs. Not in the AIOStreams marketplace (custom addon)</td>
 <td><a href="https://streamfusion.stremio-epsilon.ca">https://streamfusion.stremio-epsilon.ca</a> — needs a key from their Telegram bot</td>
 <td><code>stream</code></td>
 <td>—</td>
 <td>—</td>
-<td><a href="https://stremio-addons.net/addons/streamfusion">streamfusion</a></td>
+<td><a href="https://stremio-addons.net/addons/streamfusionstremio">streamfusionstremio</a></td>
 </tr>
 <tr>
 <td><em>AI Search (custom)</em></td>
@@ -4146,6 +4190,7 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Seeders filter</strong> — the template only applies the seeder minimum (≥3) to P2P and uncached torrents. Cached debrid, usenet, and live/HTTP addons (like the sports ones) report no seeders and would otherwise be counted as 0 and filtered out entirely.</p>
 <p><strong>Resources</strong> — leave blank unless you want to restrict what AIOStreams takes from the addon: <code>stream</code> = streams only, <code>catalog</code> = catalogs only.
 <strong>Format Passthrough</strong> — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
 <strong>Result Passthrough</strong> — results from this addon are never filtered out; its streams always appear in the list.
