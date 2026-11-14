@@ -825,7 +825,8 @@ The Freebox keeps every device it has ever seen, and so do the AdGuard clients a
 
 * **Same rule every run, no memory:** every run lists all devices that are currently unreachable for at least `threshold_days` (14 by default) and not in `ignore_macs`. There is no first-run special case and no state file; a device that is still listed next week is listed again.
 * **Nothing to report = no message.** A broken check does say so (`stale-devices check FAILED: ...`, exit code 1), so silence always means "all clean".
-* **Config** (keeps the token out of git): copy [stale_devices.example.yaml](adguard_freebox/stale_devices.example.yaml) to `~/.config/stale-devices/config.yaml`. It reuses the Freebox app token from `freebox_auth.py` and talks to the LAN address `192.168.1.254`, so it does not depend on DNS. `ignore_macs` starts empty; put a MAC there for a device that is off on purpose.
+* **Token, once:** `uv run stale_devices.py --auth`, then press the right-arrow button on the Freebox server. The script registers its own app (`fr.homeassistant.stale_devices`) and saves the token in `~/.config/stale-devices/config.yaml` (mode 600, outside git), so `freebox_auth.py` is not needed and the AdGuard sync script keeps its own token. It talks to the LAN address `192.168.1.254`, so it does not depend on DNS.
+* **Config** ([stale_devices.example.yaml](adguard_freebox/stale_devices.example.yaml) shows every key): `ignore_macs` starts empty; put a MAC there for a device that is off on purpose.
 * **Check it first:** `uv run stale_devices.py --doctor` tests the login, shows how many devices have an activity timestamp and what would be reported. `--list` prints everything without the message length cap.
 * **Weekly Hermes job** (no LLM, the script output is sent as is): a three-line wrapper in `~/.hermes/scripts/stale_devices_collect.py` that runs the script, then
 

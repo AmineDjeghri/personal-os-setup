@@ -1,6 +1,7 @@
-# Copy to ~/.config/stale-devices/config.yaml (or pass --config) and keep the real file OUT of git: it holds the token.
+# Optional: `stale_devices.py --auth` creates ~/.config/stale-devices/config.yaml and saves the token for you.
+# Keep the real file OUT of git: it holds the token.
 freebox_url: http://192.168.1.254   # the LAN address, so the job does not depend on DNS
-app_id: fr.homeassistant.adguard_sync
-app_token: "TOKEN_FROM_freebox_auth.py"  # pragma: allowlist secret
+app_id: fr.homeassistant.stale_devices   # its own app: the AdGuard sync script keeps its own token
+app_token: "TOKEN_SAVED_BY_--auth"  # pragma: allowlist secret
 threshold_days: 14
 ignore_macs: []   # devices that are off on purpose, e.g. ["aa:bb:cc:dd:ee:ff"]

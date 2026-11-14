@@ -13,6 +13,7 @@ Meant for a weekly Hermes cron job with ``--no-agent``: stdout is the message, a
 run. It never changes anything on the Freebox or in Home Assistant, it only tells you what to clean up.
 
 Usage:
+    stale_devices.py --auth          # once: press the Freebox button, the token is saved in the config
     stale_devices.py                 # print the message (nothing when no device is stale)
     stale_devices.py --doctor        # check login, API fields and show what would be reported
     stale_devices.py --list          # like the default, without the message length cap
@@ -22,6 +23,7 @@ import argparse
 import hashlib
 import hmac
 import json
+import socket
 import sys
 import time
 from pathlib import Path
@@ -32,12 +34,13 @@ import yaml
 DEFAULT_CONFIG = Path.home() / ".config" / "stale-devices" / "config.yaml"
 DEFAULTS = {
     "freebox_url": "http://192.168.1.254",
-    "app_id": "fr.homeassistant.adguard_sync",
+    "app_id": "fr.homeassistant.stale_devices",
     "app_token": "",
     "threshold_days": 14,
     "ignore_macs": [],
 }
 REQUEST_TIMEOUT = 5  # seconds
+AUTH_MAX_WAIT = 120  # seconds to wait for the button press
 MAX_MESSAGE_CHARS = 3500  # stays under Telegram's 4096-character limit
 DAY = 86400
 
@@ -96,6 +99,63 @@ def fbx_login(cfg: dict) -> str:
     if not resp.get("success"):
         raise RuntimeError(f"Freebox login refused: {resp.get('msg', resp)}")
     return resp["result"]["session_token"]
+
+
+def authorize(cfg: dict, path: Path) -> int:
+    """Register this script as a Freebox app and save its token in the config file.
+
+    The Freebox asks for a physical button press on the box. A new ``app_id`` gets its own token, so the
+    token used by the AdGuard sync script is left untouched.
+
+    Args:
+        cfg: Configuration with ``freebox_url`` and ``app_id``.
+        path: Config file to create or update (written with mode 600).
+
+    Returns:
+        Exit code: 0 when the token was saved, 1 otherwise.
+    """
+    base = cfg["freebox_url"].rstrip("/")
+    payload = {
+        "app_id": cfg["app_id"],
+        "app_name": "Stale devices",
+        "app_version": "1.0.0",
+        "device_name": socket.gethostname(),
+    }
+    try:
+        resp = requests.post(
+            f"{base}/api/v4/login/authorize/", json=payload, timeout=REQUEST_TIMEOUT
+        ).json()
+        token, track_id = resp["result"]["app_token"], resp["result"]["track_id"]
+    except (requests.RequestException, ValueError, KeyError) as exc:
+        print(f"Cannot register with the Freebox at {base}: {exc}")
+        return 1
+    print(
+        ">>> Press the RIGHT ARROW button on the Freebox server now (waiting up to 2 minutes) <<<"
+    )
+    status = "pending"
+    for _ in range(AUTH_MAX_WAIT):
+        time.sleep(1)
+        try:
+            status = requests.get(
+                f"{base}/api/v4/login/authorize/{track_id}", timeout=REQUEST_TIMEOUT
+            ).json()["result"]["status"]
+        except (requests.RequestException, ValueError, KeyError) as exc:
+            print(f"Lost the Freebox while waiting for the button: {exc}")
+            return 1
+        if status != "pending":
+            break
+    if status != "granted":
+        print(
+            f"Not authorized (status: {status}). Run --auth again when ready to press the button."
+        )
+        return 1
+    saved = yaml.safe_load(path.read_text()) if path.exists() else {}
+    saved = {**(saved or {}), "app_id": cfg["app_id"], "app_token": token}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(saved, sort_keys=False))
+    path.chmod(0o600)
+    print(f"Token saved in {path} (mode 600). Next: stale_devices.py --doctor")
+    return 0
 
 
 def get_hosts(cfg: dict, token: str) -> list[dict]:
@@ -271,6 +331,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--list", action="store_true", help="print every stale device, no length cap"
     )
+    parser.add_argument(
+        "--auth",
+        action="store_true",
+        help="get a Freebox token (button press) and save it in the config",
+    )
     parser.add_argument("--threshold-days", type=int, help="override the configured threshold")
     parser.add_argument(
         "--devices-json", type=Path, help="read the host list from a file instead of the Freebox"
@@ -278,6 +343,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     cfg = load_config(args.config)
+    if args.auth:
+        return authorize(cfg, args.config)
     if args.threshold_days:
         cfg["threshold_days"] = args.threshold_days
     try:
