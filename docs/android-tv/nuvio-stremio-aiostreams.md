@@ -191,11 +191,11 @@ Example — deactivate StreamFusionReborn on a single device:
 To hide every custom addon that needs your own debrid account or key (Lumio, StreamFusionReborn) in one go, use a single variant (Id `no-personal-addons`) with one `disable` line per addon. These addons are tied to your own account, so a child configuration or another person cannot reuse them:
 
 ```text
-disable presets[options.name*="Lumio"]
-disable presets[options.name*="StreamFusionReborn"]
+disable presets[options.name="Lumio (custom)"]
+disable presets[options.name="StreamFusionReborn (custom)"]
 ```
 
-`*=` is a case-insensitive substring match, so a short name is enough.
+`=` is an exact, case-sensitive match on the addon name, so it disables only the template's addons. If a child configuration adds its own copy of one of these addons, give it a different name (for example `Lumio (mine)`): the short form `*="Lumio"` is a substring match and would disable that copy too. Addons are merged by their internal `instanceId`, not by name, so a hand-added addon never replaces the inherited one and both stay in the list.
 
 Then go to **Save & Install**, select **No StreamFusionReborn** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusionreborn/manifest.json`. Install that URL as the addon on the device that should lose StreamFusionReborn (remove the old one if you replaced it).
 
