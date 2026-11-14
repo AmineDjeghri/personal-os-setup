@@ -800,24 +800,19 @@ Who hands out the addresses, and who publishes the names:
 
 * The following will show you how to get the names of the devices in AdGuard Home using your router (this example uses the Freebox API).
 * You will notice that your AdGuard Home (AGH) logs contains anonymous entries like "FREE SAS" or raw IPv6 addresses (e.g., fe80::...).
-* We create a Python script on Ubuntu that will get all the information from the Freebox API and send it to the AdGuard Home API.
+* We use a Python script that gets all the information from the Freebox API and sends it to the AdGuard Home API. It runs anywhere that reaches the Freebox and AdGuard Home on the LAN: **inside Hermes** (cron job, no LLM) or from a plain `crontab` on the host. The AdGuard sync only matters while AdGuard Home runs, and AdGuard lives in the same Home Assistant VM as Hermes, so Hermes is a natural place for it.
 * Steps:
     * In the addon configuration in HA: open the port 8082, you should access the dashboard without authentication on ``HA-IP:8082``. the username and password are your Home assistant username and password (you can create a user named 'adguard' for it).
-    * Put the following files in the server:
+    * Put the following files on the machine that runs the job (the Hermes box, or the host):
         * [freebox_auth.py](adguard_freebox/freebox_auth.py)
         * [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py)
         * [sync_adguard_home_ip_mac.example.yaml](adguard_freebox/sync_adguard_home_ip_mac.example.yaml), copied to `~/.config/adguard-sync/config.yaml` (secrets stay in this file, outside git)
-    * I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token: ``uv run freebox_auth.py`` (press the right-arrow button on the Freebox server). Put the token in `app_token`. To register another app, pass `--app-id` and `--app-name`.
+    * I am using Freebox pop as a router, so I use the script [freebox_auth.py](adguard_freebox/freebox_auth.py) to get the token. It takes the app id and the config file, asks the Freebox for a token (press the right-arrow button on the Freebox server) and saves `freebox_url`, `app_id` and `app_token` in that file (mode 600): ``uv run freebox_auth.py fr.homeassistant.adguard_sync ~/.config/adguard-sync/config.yaml --url http://192.168.1.254``. Then add the AdGuard keys of the example file to it.
     * then I use this script in the server to automatically update Adguard home: [sync_adguard_home_ip_mac.py](adguard_freebox/sync_adguard_home_ip_mac.py) to resolve the IPv6 addresses of each device and to name the devices AdGuard does not know yet. Try it first with ``uv run sync_adguard_home_ip_mac.py --dry-run``, which shows the changes and applies none.
-    * Make a cronjob for it by adding this line at the end of ``crontab -e`` (change the paths of uv and the script). ``flock`` stops a slow run from overlapping the next one:
-
-````sh
-# For example
-* * * * * flock -n /tmp/adguard-sync.lock /home/amine/.local/bin/uv run /path/to/sync_adguard_home_ip_mac.py >> $HOME/sync_agh.log 2>&1
-````
+    * Schedule it with a **Hermes cron job** (no LLM, the script output is the message).
 
 * Check Settings -> Client settings -> **Persistent clients settings** .
-* This script runs every minute and is silent when nothing changed. When it creates or updates a client it logs one line (``sync_agh.log``), and it exits with an error code when AdGuard Home or the Freebox cannot be read or a change is refused. ``--verbose`` adds a summary line to every run.
+* This script runs every minute and is silent when nothing changed. When it creates or updates a client it prints one line (the Hermes run output, or ``sync_agh.log`` with crontab), and it exits with an error code when AdGuard Home or the Freebox cannot be read or a change is refused. ``--verbose`` adds a summary line to every run.
 * Only the address list of a client is replaced: the settings you made on it (blocked services, upstreams, ...) and ids you added by hand (a ClientID, a CIDR range) are kept. When two devices claim the same address (an old lease handed out again), it goes to the device that is reachable on it, because AdGuard refuses the same id on two clients.
 * ⚠️ The name it takes from the Freebox (``primary_name``, i.e. the name you set on the device's page) is used **only when it creates a client**. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).
 
@@ -827,15 +822,10 @@ The Freebox keeps every device it has ever seen, and so do the AdGuard clients a
 
 * **Same rule every run, no memory:** every run lists all devices that are currently unreachable for at least `threshold_days` (14 by default) and not in `ignore_macs`. There is no first-run special case and no state file; a device that is still listed next week is listed again.
 * **Nothing to report = no message.** A broken check does say so (`stale-devices check FAILED: ...`, exit code 1), so silence always means "all clean".
-* **Token, once:** `uv run stale_devices.py --auth`, then press the right-arrow button on the Freebox server. The script registers its own app (`fr.homeassistant.stale_devices`) and saves the token in `~/.config/stale-devices/config.yaml` (mode 600, outside git), so `freebox_auth.py` is not needed and the AdGuard sync script keeps its own token. It talks to the LAN address `192.168.1.254`, so it does not depend on DNS.
+* **Token, once:** `uv run freebox_auth.py fr.homeassistant.stale_devices ~/.config/stale-devices/config.yaml --url http://192.168.1.254`, then press the right-arrow button on the Freebox server. [freebox_auth.py](adguard_freebox/freebox_auth.py) writes `freebox_url`, `app_id` and `app_token` into the config (mode 600, outside git). Each job has its own app id and token, and the LAN address means the job does not depend on DNS.
 * **Config** ([stale_devices.example.yaml](adguard_freebox/stale_devices.example.yaml) shows every key): `ignore_macs` starts empty; put a MAC there for a device that is off on purpose.
 * **Check it first:** `uv run stale_devices.py --doctor` tests the login, shows how many devices have an activity timestamp and what would be reported. `--list` prints everything without the message length cap.
-* **Weekly Hermes job** (no LLM, the script output is sent as is): a three-line wrapper in `~/.hermes/scripts/stale_devices_collect.py` that runs the script, then
-
-````sh
-hermes cron create "every monday at 09:00" --name stale-devices \
-  --script stale_devices_collect.py --no-agent --deliver telegram
-````
+* **Weekly Hermes job** (no LLM, the script output is sent as is): a wrapper in `~/.hermes/scripts/stale_devices_collect.py` (same as the sync wrapper above, with `stale_devices.py` as the script), then
 
 * **What the message tells you to do, in order:** forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then remove the leftover entities (Settings -> Devices & services -> Entities -> select -> Remove selected). Skipping the first step brings the entities back on the next reload.
 
