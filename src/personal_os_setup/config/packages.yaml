@@ -164,6 +164,7 @@ packages:
         - docker
         - docker-compose
         - meson # build system used by GNOME/many C/C++ projects
+        - android-tools # adb + fastboot for Android devices
         - zed
         - ghostty
         - neovim # modernized vim
