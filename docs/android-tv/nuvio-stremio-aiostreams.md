@@ -40,7 +40,7 @@ flowchart LR
     Client["📺 Nuvio<br/><sub>TV · phone · desktop</sub>"]
 
     subgraph ConfigGroup["🧩 AIOStreams — your saved configuration"]
-        Addons["Addons<br/>Torrentio · Comet · MediaFusion<br/>StreamFusionReborn · …"]
+        Addons["Addons<br/>Torrentio · Comet · MediaFusion<br/>StreamFusionReborn · Lumio · …"]
     end
 
     Debrid["⚡ Debrid service<br/><sub>AllDebrid · Real-Debrid · TorBox</sub>"]
@@ -54,7 +54,7 @@ flowchart LR
 
 Five words are enough to follow the rest of this page:
 
-- **Addon** — a source of streams or catalogs. Torrentio, Comet, MediaFusion and StreamFusionReborn are addons.
+- **Addon** — a source of streams or catalogs. Torrentio, Comet, MediaFusion, StreamFusionReborn and Lumio are addons.
 - **Debrid service** — the paid account that turns torrent sources into instant, high-speed playback (AllDebrid, Real-Debrid, TorBox…). You need one account, whatever you do next.
 - **Configuration (config)** — the AIOStreams page where you pick your addons, filters, sorting and formatting. It is saved online and reached with a **UUID** plus a **password**.
 - **Template** — a JSON file that fills a configuration. That is how this guide hands you a ready-made setup.
@@ -88,7 +88,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 2. Go to **Our Configuration → Browse ready-made setups → the import button** and paste one of these links:
     - (Recommended) **Amine's default config (essentials)** — nothing to fill in beyond your debrid service:
       `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json`
-    - (Advanced) **Amine's default config (full)** — the same, plus custom addons (StreamFusionReborn, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
+    - (Advanced) **Amine's default config (full)** — the same, plus custom addons (Lumio, StreamFusionReborn, Live TV Sports, more catalogs…) that need a URL of your own (see the custom addons section in Part 2):
       `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-full.json`
 3. Click **Use this template now**.
 4. Click again on **Our Configuration → Browse ready-made setups**, choose the imported template and click **Use this setup**. The addons, filters, sorting and the stream formatter load automatically; AllDebrid is already wired into the stream addons.
@@ -104,7 +104,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 ### Step 6 — Install the addon in Nuvio
 
 1. Go to the **Save and Install** section.
-2. Click **Save**. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (StreamFusionReborn and OpenSubtitles V3+ are the usual suspects).
+2. Click **Save**. If you see a timeout error naming an addon, that addon is down at that moment — disable it and save again (StreamFusionReborn, Lumio and OpenSubtitles V3+ are the usual suspects).
 3. Click **Install**, then copy the manifest link.
 4. Paste it in Nuvio: [nuvioapp.space/account?tab=addons](https://nuvioapp.space/account?tab=addons) (or through the app).
 5. Nuvio shows what the addon provides, as a count of resources and catalogs (for example `5 resources / 45 catalogs`): a populated count means the addon was added properly.
@@ -188,6 +188,15 @@ Example — deactivate StreamFusionReborn on a single device:
 | Name   | `No StreamFusionReborn`                               |
 | Script | `disable presets[options.name*="StreamFusionReborn"]` |
 
+To hide every custom addon that needs your own debrid account or key (Lumio, StreamFusionReborn) in one go, use a single variant (Id `no-personal-addons`) with one `disable` line per addon. These addons are tied to your own account, so a child configuration or another person cannot reuse them:
+
+```text
+disable presets[options.name*="Lumio"]
+disable presets[options.name*="StreamFusionReborn"]
+```
+
+`*=` is a case-insensitive substring match, so a short name is enough.
+
 Then go to **Save & Install**, select **No StreamFusionReborn** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusionreborn/manifest.json`. Install that URL as the addon on the device that should lose StreamFusionReborn (remove the old one if you replaced it).
 
 The same variant also disables an addon in a **child configuration** that inherited it from a **parent configuration** — the preview may report that the instruction matched nothing, and it still takes effect when you play.
@@ -222,7 +231,8 @@ The addons below are in the **full** template and need **your own account or man
 | *Nuvio Live Sports (custom)*  | Live football, NBA, NFL, NHL, F1                                                                                  | <https://nuvio.moaqeel6679.my.id>                                               | —                | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports)     |
 | *Sports Streams (custom)*     | Live and upcoming matches — football, basketball, cricket, UFC, tennis…                                           | Your own manifest URL from the addon's site (private key — don't share)         | —                | ✅                 | ✅                 | —                                                                            |
 | *Statusio (custom)*           | Debrid account health card — provider, username, expiry, days left                                                | <https://statusio.elfhosted.com/configure>                                      | —                | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                       |
-| *StreamFusionReborn (custom)* | **Best addon for French 4K programs.** Not in the AIOStreams marketplace, so it is added as a custom addon        | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusionstremio](https://stremio-addons.net/addons/streamfusionstremio) |
+| *Lumio (custom)*              | **Best for French content, with StreamFusionReborn** — French VOD, torrent + direct download                      | <https://mylumio.tv> — manifest URL has a private key, keep it secret           | `stream`         | —                  | —                  | [lumio](https://stremio-addons.net/addons/lumio)                             |
+| *StreamFusionReborn (custom)* | **Best for French content, with Lumio** — 4K programs. Not in the AIOStreams marketplace (custom addon)           | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusionstremio](https://stremio-addons.net/addons/streamfusionstremio) |
 | *AI Search (custom)*          | Recommendations from natural-language queries (needs an OpenAI-Compatible API Key + TMDB keys; better with Trakt) | <https://stremio.tomz.dev/aisearch/configure>                                   | —                | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                     |
 
 **Seeders filter** — the template only applies the seeder minimum (≥3) to P2P and uncached torrents. Cached debrid, usenet, and live/HTTP addons (like the sports ones) report no seeders and would otherwise be counted as 0 and filtered out entirely.

@@ -398,6 +398,22 @@
       },
       {
         "type": "custom",
+        "instanceId": "bc3",
+        "enabled": true,
+        "options": {
+          "name": "Lumio (custom)",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 5000,
+          "resources": [
+            "stream"
+          ],
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "resultPassthrough": false
+        }
+      },
+      {
+        "type": "custom",
         "instanceId": "645",
         "enabled": true,
         "options": {
