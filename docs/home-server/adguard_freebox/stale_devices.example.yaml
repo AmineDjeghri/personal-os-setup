@@ -1,0 +1,6 @@
+# Copy to ~/.config/stale-devices/config.yaml (or pass --config) and keep the real file OUT of git: it holds the token.
+freebox_url: http://192.168.1.254   # the LAN address, so the job does not depend on DNS
+app_id: fr.homeassistant.adguard_sync
+app_token: "TOKEN_FROM_freebox_auth.py"  # pragma: allowlist secret
+threshold_days: 14
+ignore_macs: []   # devices that are off on purpose, e.g. ["aa:bb:cc:dd:ee:ff"]
