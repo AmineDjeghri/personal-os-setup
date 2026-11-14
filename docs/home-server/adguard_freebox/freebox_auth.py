@@ -3,40 +3,66 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #   "requests",
+#   "pyyaml",
 # ]
 # ///
 
-"""Register an app on the Freebox and print its token.
+"""Register an app on the Freebox and save its token in a config file.
 
-The Freebox asks for a physical button press on the box. Run it once per app: an app id gets one token.
+The Freebox asks for a physical button press on the box. Each app id gets its own token, so each job
+registers once and keeps its own config file. The file gets ``freebox_url``, ``app_id`` and
+``app_token``; other keys already in it are kept.
 
-Usage:
-    freebox_auth.py                                  # the AdGuard sync app
-    freebox_auth.py --app-id fr.me.other --app-name "Other app"
+Usage (``--url`` defaults to http://mafreebox.freebox.fr, use the LAN address to avoid DNS):
+    freebox_auth.py fr.homeassistant.adguard_sync ~/.config/adguard-sync/config.yaml
+    freebox_auth.py fr.homeassistant.stale_devices ~/.config/stale-devices/config.yaml --url URL
 """
 
 import argparse
+import os
 import socket
 import sys
 import time
+from pathlib import Path
 
 import requests
+import yaml
 
 REQUEST_TIMEOUT = 5  # seconds
 MAX_WAIT_ATTEMPTS = 120  # ~2 minutes of polling for the physical button press
 
 
-def register(base: str, app_id: str, app_name: str, device_name: str) -> int:
-    """Ask the Freebox for a token, wait for the button press and print the token.
+def save_config(path: Path, values: dict) -> None:
+    """Merge ``values`` into the YAML config file, readable by the owner only.
+
+    The file is created with mode 600 from the start, so the token is never world-readable, and the
+    other keys already in the file are kept.
 
     Args:
-        base: Freebox URL, for example ``http://mafreebox.freebox.fr``.
+        path: Config file to create or update.
+        values: Keys to set.
+    """
+    saved = (yaml.safe_load(path.read_text()) or {}) if path.exists() else {}
+    saved.update(values)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as handle:
+        handle.write(yaml.safe_dump(saved, sort_keys=False))
+    path.chmod(0o600)
+
+
+def register(base: str, app_id: str, app_name: str, device_name: str, config: Path) -> int:
+    """Ask the Freebox for a token, wait for the button press and save the token.
+
+    Args:
+        base: Freebox URL, for example ``http://192.168.1.254``.
         app_id: Unique id of the app.
         app_name: Name shown in the Freebox app list.
         device_name: Name of the machine the app runs on, shown in the same list.
+        config: Config file that receives ``freebox_url``, ``app_id`` and ``app_token``.
 
     Returns:
-        Exit code: 0 when the token was granted, 1 otherwise.
+        Exit code: 0 when the token was granted and saved, 1 otherwise.
     """
     payload = {
         "app_id": app_id,
@@ -57,10 +83,9 @@ def register(base: str, app_id: str, app_name: str, device_name: str) -> int:
     app_token = resp["result"]["app_token"]
     track_id = resp["result"]["track_id"]
 
-    print("\n" + "=" * 50)
-    print(">>> GO PRESS THE 'RIGHT ARROW' BUTTON ON YOUR FREEBOX SERVER NOW! <<<")
-    print("=" * 50 + "\n")
-
+    print(
+        ">>> Press the RIGHT ARROW button on the Freebox server now (waiting up to 2 minutes) <<<"
+    )
     status = "pending"
     for _ in range(MAX_WAIT_ATTEMPTS):
         time.sleep(1)
@@ -68,30 +93,19 @@ def register(base: str, app_id: str, app_name: str, device_name: str) -> int:
             status = requests.get(
                 f"{base}/api/v4/login/authorize/{track_id}", timeout=REQUEST_TIMEOUT
             ).json()["result"]["status"]
-        except requests.RequestException as exc:
-            print(f"Connection failed while waiting for authorization: {exc}")
-            return 1
-        except (ValueError, KeyError) as exc:
-            print(f"Unexpected reply while waiting for authorization: {exc}")
+        except (requests.RequestException, ValueError, KeyError) as exc:
+            print(f"Lost the Freebox while waiting for the button: {exc}")
             return 1
         if status != "pending":
             break
 
-    if status == "granted":
-        print("SUCCESS! Here is the app token. KEEP IT SAFE:")
-        print("-" * 60)
-        print(app_token)
-        print("-" * 60)
-        print("Put it in the app_token key of the script's config file.")
-        return 0
-    if status == "pending":
-        print(
-            f"Timed out after {MAX_WAIT_ATTEMPTS}s: no button press detected. "
-            "Run the script again when you are ready to press it."
-        )
-    else:
-        print(f"Authorization denied. Status: {status}")
-    return 1
+    if status != "granted":
+        reason = "no button press detected" if status == "pending" else f"status {status}"
+        print(f"Not authorized ({reason}). Run it again when you are ready to press the button.")
+        return 1
+    save_config(config, {"freebox_url": base, "app_id": app_id, "app_token": app_token})
+    print(f"Token saved in {config} (mode 600).")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -104,12 +118,19 @@ def main(argv: list[str] | None = None) -> int:
         Exit code from :func:`register`.
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("app_id", help="unique id of the app, e.g. fr.homeassistant.stale_devices")
+    parser.add_argument("config", type=Path, help="YAML config file that receives the token")
     parser.add_argument("--url", default="http://mafreebox.freebox.fr", help="Freebox URL")
-    parser.add_argument("--app-id", default="fr.homeassistant.adguard_sync")
-    parser.add_argument("--app-name", default="AdGuard Sync")
+    parser.add_argument("--app-name", help="name in the Freebox app list (default: the app id)")
     parser.add_argument("--device-name", default=socket.gethostname())
     args = parser.parse_args(argv)
-    return register(args.url.rstrip("/"), args.app_id, args.app_name, args.device_name)
+    return register(
+        args.url.rstrip("/"),
+        args.app_id,
+        args.app_name or args.app_id,
+        args.device_name,
+        args.config,
+    )
 
 
 if __name__ == "__main__":
