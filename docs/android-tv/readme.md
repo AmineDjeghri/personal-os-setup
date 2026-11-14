@@ -15,6 +15,7 @@ Table of contents
     - [Google TV OS:](#google-tv-os)
         - [Best google TV apps:](#best-google-tv-apps)
             - [What is Stremio and Nuvio ?](#what-is-stremio-and-nuvio)
+        - [Clean your TV (remove ads and bloatware)](#clean-your-tv-remove-ads-and-bloatware)
 <!-- TOC -->
 
 ## All TV types
@@ -53,6 +54,7 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
     - Remember to export your settings: <https://www.reddit.com/r/Projectivy_Launcher/comments/1cdt00f/tell_me_about_exporting_these_launcher_settings/>
     - You can create channels in the menu and add stremio, smartube, spotify to the home screen.
 - [Stremio](https://www.stremio.com/) / [Nuvio](https://nuvioapp.space/)
+- [CleanYourTV](https://cleanyour.tv/): removes the ads, telemetry and preinstalled apps from your TV (see [below](#clean-your-tv-remove-ads-and-bloatware)).
 
 #### What is Stremio and Nuvio ?
 
@@ -67,3 +69,22 @@ the Projectivy and add Stremio and Nuvio there. Also make it the default launche
 - For the streams themselves you will use a **debrid service** (AllDebrid, Real-Debrid, TorBox…), which is what makes playback instant and means you never need a VPN. The [streaming page](nuvio-stremio-aiostreams.md) explains it and sets it all up.
 
 Keep going with the streaming setup: **[Nuvio and Stremio + AIOStreams](nuvio-stremio-aiostreams.md)** — create a Nuvio account, subscribe to a debrid service, load a ready-made AIOStreams configuration and you are watching.
+
+### Clean your TV (remove ads and bloatware)
+
+[CleanYourTV](https://cleanyour.tv/) ([GitHub](https://github.com/Gathin23/cleanyourtv), MIT) is an open-source toolkit
+that strips sponsored rows, ad and telemetry services and unwanted preinstalled apps from Android TV / Google TV. It is
+**not an app from a store**: it is a set of scripts you run from your computer (Linux, macOS, Windows), plus an optional
+lightweight launcher you build and install yourself.
+
+#### How it works
+
+1. On the TV, enable *Developer options* and *USB debugging* (network ADB). The computer and the TV must be on the same Wi-Fi.
+2. The scripts connect to the TV over ADB, **back up its current state**, and sort installed packages into telemetry,
+   ad/content services, background services and preloaded apps.
+3. Unwanted packages are **disabled** (`pm disable-user`), not uninstalled, using a per-model list from `examples/`
+   (472 models listed): `tools/disable.sh examples/<model>/debloat.txt`.
+4. Optional: build and install a small launcher (about 570 KB) as the default Home app, plus themes and a privacy audit.
+5. Undo anything with `tools/restore.sh <list>`. `tools/check.py` detects what a firmware update re-enabled.
+
+You can also hand the repo's `PROMPT.md` to a coding assistant (e.g. Claude Code) and let it drive the steps (about 15 minutes).
