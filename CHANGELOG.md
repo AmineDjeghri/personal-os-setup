@@ -2,6 +2,41 @@
 
 <!-- version list -->
 
+## v1.2.0 (2026-11-14)
+
+### Bug Fixes
+
+- Pin CI runners and attribution settings
+  ([`d11932c`](https://github.com/AmineDjeghri/personal-os-setup/commit/d11932c6b0ee62e4e975fd850bbf37331bb4eb81))
+
+- **aiostreams**: Scope seeder filter to torrents, add Sports Streams addon (#168)
+  ([#168](https://github.com/AmineDjeghri/personal-os-setup/pull/168),
+  [`548359e`](https://github.com/AmineDjeghri/personal-os-setup/commit/548359e36cb46a3ba78a179bd222580b899f6763))
+
+### Documentation
+
+- **cachyos**: Rewrite gaming and Proton guidance
+  ([`3aa3b40`](https://github.com/AmineDjeghri/personal-os-setup/commit/3aa3b4030441813104e45cc84a25bf50751de4ea))
+
+- **cachyos**: Rewrite gaming and Proton guidance
+  ([`fbe0ea5`](https://github.com/AmineDjeghri/personal-os-setup/commit/fbe0ea512229a9ceb538e6147abb643725be182d))
+
+### Features
+
+- **gaming**: Add new gaming applications and update window rules for ProtonPlus
+  ([`f00abcf`](https://github.com/AmineDjeghri/personal-os-setup/commit/f00abcfbca0a6403204402ea05aa6f16afaa0d4b))
+
+- **git**: Add setup for GitHub CLI credentials management
+  ([`a043fb2`](https://github.com/AmineDjeghri/personal-os-setup/commit/a043fb2f8f642266f234728aa89eed2741b6cce3))
+
+- **release**: Add make release-status and rewrite the release page (#166)
+  ([#166](https://github.com/AmineDjeghri/personal-os-setup/pull/166),
+  [`5d130c6`](https://github.com/AmineDjeghri/personal-os-setup/commit/5d130c61528ff81c696b8c438952a06f5992ce56))
+
+- **windowrules**: Update workspace rules for chat and media applications
+  ([`4d7598d`](https://github.com/AmineDjeghri/personal-os-setup/commit/4d7598d9de6b5cc3d577c7ed0bc4236d65a2ae39))
+
+
 ## v1.1.1 (2026-11-02)
 
 ### Bug Fixes
