@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "category": "debrid",
     "tags": [
       "debrid",
@@ -16,7 +16,7 @@
     ],
     "serviceRequired": false,
     "setToSaveInstallMenu": true,
-    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template.json"
+    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-full.json"
   },
   "config": {
     "addonName": "AIOStreams",
@@ -84,7 +84,7 @@
       1000
     ],
     "requiredSeederRange": [
-      3,
+      1,
       1000
     ],
     "seederRangeTypes": [
@@ -140,6 +140,10 @@
         {
           "key": "cached",
           "direction": "desc"
+        },
+        {
+          "key": "size",
+          "direction": "desc"
         }
       ],
       "movies": [],
@@ -154,9 +158,8 @@
       "cachedAnime": [],
       "uncachedAnime": []
     },
-    "rpdbApiKey": "<template_placeholder>",
-    "posterService": "rpdb",
-    "usePosterRedirectApi": true,
+    "posterService": "custom",
+    "usePosterRedirectApi": false,
     "usePosterServiceForMeta": true,
     "formatter": {
       "id": "custom",
@@ -168,7 +171,6 @@
       }
     },
     "proxy": {
-      "enabled": false,
       "id": "mediaflow",
       "proxiedAddons": [],
       "proxiedServices": []
@@ -247,7 +249,7 @@
         "instanceId": "4a0",
         "enabled": true,
         "options": {
-          "name": "Cinemeta (custom)",
+          "name": "Cinemeta",
           "manifestUrl": "https://v3-cinemeta.strem.io/manifest.json",
           "timeout": 5000,
           "resources": [
@@ -266,7 +268,7 @@
         "instanceId": "127",
         "enabled": true,
         "options": {
-          "name": "statusio (custom)",
+          "name": "statusio (Amine)",
           "manifestUrl": "<optional_template_placeholder>",
           "libraryAddon": false,
           "formatPassthrough": true,
@@ -367,7 +369,7 @@
         "instanceId": "c9a",
         "enabled": true,
         "options": {
-          "name": "Top-Streaming (custom)",
+          "name": "Top-Streaming",
           "manifestUrl": "<optional_template_placeholder>",
           "timeout": 5000,
           "resources": [
@@ -384,7 +386,7 @@
         "instanceId": "2e0",
         "enabled": true,
         "options": {
-          "name": "Top-streaming FR (custom)",
+          "name": "Top-streaming (FR)",
           "manifestUrl": "<optional_template_placeholder>",
           "timeout": 5000,
           "resources": [
@@ -398,26 +400,10 @@
       },
       {
         "type": "custom",
-        "instanceId": "bc3",
-        "enabled": true,
-        "options": {
-          "name": "Lumio (custom)",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "stream"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false
-        }
-      },
-      {
-        "type": "custom",
         "instanceId": "645",
         "enabled": true,
         "options": {
-          "name": "StreamFusionReborn (custom)",
+          "name": "Streamfusion (Amine)",
           "manifestUrl": "<optional_template_placeholder>",
           "timeout": 5000,
           "resources": [
@@ -447,30 +433,11 @@
         }
       },
       {
-        "type": "meteor",
-        "instanceId": "68c",
-        "enabled": true,
-        "options": {
-          "name": "Meteor",
-          "timeout": 5000,
-          "resources": [
-            "stream"
-          ],
-          "mediaTypes": [],
-          "includeP2P": false,
-          "removeTrash": false,
-          "useMultipleInstances": false,
-          "services": [
-            "alldebrid"
-          ]
-        }
-      },
-      {
         "type": "custom",
         "instanceId": "84a",
         "enabled": true,
         "options": {
-          "name": "Trakt lists (custom)",
+          "name": "Trakt lists",
           "manifestUrl": "<optional_template_placeholder>",
           "timeout": 15000,
           "resources": [
@@ -482,14 +449,59 @@
         }
       },
       {
-        "type": "custom",
-        "instanceId": "389",
+        "type": "meteor",
+        "instanceId": "81b",
         "enabled": true,
         "options": {
-          "name": "Nuvio Live Sports (custom)",
+          "name": "Meteor",
+          "timeout": 5000,
+          "resources": [
+            "stream",
+            "meta"
+          ],
+          "services": [
+            "alldebrid"
+          ],
+          "mediaTypes": [],
+          "includeP2P": false,
+          "removeTrash": false,
+          "useMultipleInstances": false
+        }
+      },
+      {
+        "type": "custom",
+        "instanceId": "0d1",
+        "enabled": true,
+        "options": {
+          "name": "Sports Streams",
           "manifestUrl": "<optional_template_placeholder>",
           "timeout": 5000,
-          "resources": [],
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "resultPassthrough": false
+        }
+      },
+      {
+        "type": "custom",
+        "instanceId": "10d",
+        "enabled": true,
+        "options": {
+          "name": "Lumio (Amine)",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 30000,
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "resultPassthrough": false
+        }
+      },
+      {
+        "type": "custom",
+        "instanceId": "bc0",
+        "enabled": true,
+        "options": {
+          "name": "🏆 Nuvio Live Sports",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 10000,
           "mediaTypes": [],
           "libraryAddon": false,
           "formatPassthrough": true,
@@ -498,17 +510,28 @@
       },
       {
         "type": "custom",
-        "instanceId": "7f1",
+        "instanceId": "803",
         "enabled": true,
         "options": {
-          "name": "Sports Streams (custom)",
+          "name": "CNCVerse Bridge · Main",
           "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [],
+          "timeout": 30000,
           "mediaTypes": [],
           "libraryAddon": false,
-          "formatPassthrough": true,
-          "resultPassthrough": true
+          "resultPassthrough": false
+        }
+      },
+      {
+        "type": "custom",
+        "instanceId": "b74",
+        "enabled": true,
+        "options": {
+          "name": "PenguPlay",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 30000,
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "resultPassthrough": false
         }
       }
     ],
@@ -521,8 +544,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": true,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.top",
@@ -532,74 +556,56 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": true,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
-        "id": "4a0e3b0.imdbRating",
-        "type": "movie",
-        "name": "Featured",
+        "id": "bc0e3b0.nuvio_sports_live",
+        "type": "tv",
+        "name": "🔴 Live Now",
         "shuffle": false,
-        "enabled": false,
+        "enabled": true,
         "usePosterService": true,
         "hideable": true,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "🏆 Nuvio Live Sports"
       },
       {
-        "id": "4a0e3b0.imdbRating",
-        "type": "series",
-        "name": "Featured",
+        "id": "0d1e3b0.sports_football",
+        "type": "sport",
+        "name": "Football",
         "shuffle": false,
-        "enabled": false,
+        "enabled": true,
         "usePosterService": true,
         "hideable": true,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "Sports Streams"
       },
       {
-        "id": "4a0e3b0.calendar-videos",
-        "type": "series",
-        "name": "Calendar videos",
+        "id": "aiostreams.merged.1794747251786",
+        "type": "tv",
+        "name": "CNCVerse",
         "shuffle": false,
-        "enabled": false,
+        "enabled": true,
         "usePosterService": true,
-        "hideable": false,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true
       },
       {
-        "id": "4a0e3b0.last-videos",
-        "type": "series",
-        "name": "Last videos",
+        "id": "b74e3b0.pp-live-football",
+        "type": "tv",
+        "name": "Soccer - TV",
         "shuffle": false,
-        "enabled": false,
+        "enabled": true,
         "usePosterService": true,
-        "hideable": false,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
-      },
-      {
-        "id": "4a0e3b0.year",
-        "type": "series",
-        "name": "New",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
-      },
-      {
-        "id": "4a0e3b0.year",
-        "type": "movie",
-        "name": "New",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "PenguPlay"
       },
       {
         "id": "c9ae3b0.netflix-movie-united-states",
@@ -609,8 +615,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.netflix-movie-france",
@@ -620,8 +627,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "c9ae3b0.netflix-series-united-states",
@@ -631,8 +639,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.netflix-series-france",
@@ -642,8 +651,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "c9ae3b0.amazon-prime-movie-united-states",
@@ -653,8 +663,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.amazon-prime-movie-france",
@@ -664,8 +675,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "c9ae3b0.amazon-prime-series-united-states",
@@ -675,8 +687,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.amazon-prime-series-france",
@@ -686,8 +699,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "c9ae3b0.apple-tv-movie-united-states",
@@ -697,8 +711,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.apple-tv-series-united-states",
@@ -708,8 +723,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.hbo-max-movie-united-states",
@@ -719,8 +735,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.hbo-max-series-united-states",
@@ -730,8 +747,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.paramount-plus-movie-united-states",
@@ -741,8 +759,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.paramount-plus-series-united-states",
@@ -752,8 +771,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.canal-movie-france",
@@ -763,8 +783,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "2e0e3b0.canal-series-france",
@@ -774,8 +795,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-streaming FR (custom)"
+        "addonName": "Top-streaming (FR)"
       },
       {
         "id": "c9ae3b0.disney-overall-united-states",
@@ -785,8 +807,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.popular-movie-global",
@@ -796,8 +819,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
       },
       {
         "id": "c9ae3b0.popular-series-global",
@@ -807,11 +831,258 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Top-Streaming (custom)"
+        "addonName": "Top-Streaming"
+      },
+      {
+        "id": "4a0e3b0.imdbRating",
+        "type": "movie",
+        "name": "Featured",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "4a0e3b0.imdbRating",
+        "type": "series",
+        "name": "Featured",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "4a0e3b0.calendar-videos",
+        "type": "series",
+        "name": "Calendar videos",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "4a0e3b0.last-videos",
+        "type": "series",
+        "name": "Last videos",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "4a0e3b0.year",
+        "type": "series",
+        "name": "New",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": true,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "4a0e3b0.year",
+        "type": "movie",
+        "name": "New",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": true,
+        "searchable": false,
+        "addonName": "Cinemeta"
+      },
+      {
+        "id": "0d1e3b0.sports_today",
+        "type": "sport",
+        "name": "Today",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "Sports Streams"
+      },
+      {
+        "id": "0d1e3b0.sports_live",
+        "type": "sport",
+        "name": "Live Now",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "Sports Streams"
+      },
+      {
+        "id": "bc0e3b0.nuvio_sports_networks",
+        "type": "tv",
+        "name": "📺 24/7 Live TV",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "🏆 Nuvio Live Sports"
+      },
+      {
+        "id": "803e3b0.cnc_SportzXLiveEvents_tv",
+        "type": "tv",
+        "name": "⚡SportzX Live Events (tv)",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "CNCVerse Bridge · Main"
+      },
+      {
+        "id": "803e3b0.cnc_PlayZTVLiveEvents_tv",
+        "type": "tv",
+        "name": "⚡PlayZTV Live Events (tv)",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "CNCVerse Bridge · Main"
+      },
+      {
+        "id": "803e3b0.cnc_LivXowLiveEvents_tv",
+        "type": "tv",
+        "name": "⚡LivXow Live Events (tv)",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "CNCVerse Bridge · Main"
+      },
+      {
+        "id": "803e3b0.cnc_SKTechLiveEvents_tv",
+        "type": "tv",
+        "name": "⚡SKTech Live Events (tv)",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "CNCVerse Bridge · Main"
+      },
+      {
+        "id": "803e3b0.cnc_PlayFyLiveEvents_tv",
+        "type": "tv",
+        "name": "⚡ PlayFy Live Events (tv)",
+        "shuffle": false,
+        "enabled": true,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "CNCVerse Bridge · Main"
+      },
+      {
+        "id": "b74e3b0.pp-live-now",
+        "type": "tv",
+        "name": "Live Now - TV",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "PenguPlay"
+      },
+      {
+        "id": "b74e3b0.pp-live-upcoming",
+        "type": "tv",
+        "name": "Upcoming - TV",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "PenguPlay"
+      },
+      {
+        "id": "b74e3b0.pp-live-channels",
+        "type": "tv",
+        "name": "Channels - TV",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "PenguPlay"
+      },
+      {
+        "id": "bc0e3b0.nuvio_sports_upcoming",
+        "type": "tv",
+        "name": "⏱️ Upcoming",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "🏆 Nuvio Live Sports"
+      },
+      {
+        "id": "bc0e3b0.nuvio_sports_football",
+        "type": "tv",
+        "name": "⚽ Soccer",
+        "shuffle": false,
+        "enabled": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": true,
+        "addonName": "🏆 Nuvio Live Sports"
       }
     ],
-    "mergedCatalogs": [],
+    "mergedCatalogs": [
+      {
+        "id": "aiostreams.merged.1794747251786",
+        "name": "CNCVerse",
+        "type": "tv",
+        "catalogIds": [
+          "id=803e3b0.cnc_SportzXLiveEvents_tv&type=tv",
+          "id=803e3b0.cnc_PlayZTVLiveEvents_tv&type=tv",
+          "id=803e3b0.cnc_LivXowLiveEvents_tv&type=tv",
+          "id=803e3b0.cnc_SKTechLiveEvents_tv&type=tv",
+          "id=803e3b0.cnc_PlayFyLiveEvents_tv&type=tv"
+        ],
+        "enabled": true,
+        "deduplicationMethods": [
+          "id"
+        ],
+        "mergeMethod": "sequential"
+      }
+    ],
     "externalDownloads": false,
     "cacheAndPlay": {
       "streamTypes": [
@@ -915,6 +1186,7 @@
         "enabled": false,
         "credentials": {}
       }
-    ]
+    ],
+    "customPosterUrl": "https://postersplus.slokker.cc/poster?tmdb_id={tmdb_id?}&imdb_id={imdb_id?}&stremio_id={id}&type={type}&shape={shape}&pc=stremio_tv_nuvio&tg=off&bgr=off&tst=ribbon&tsc=0.85&tsi=right&ts=opposite&trst=gold&tla=1&bp=top_left&_fr=0&fti=1&irs=fallback&trs=fallback&rdm=4&fr=1&bs=pure_black&bsoo10=1&bhr=0.075&bfsr=0.37&bfo=0.00&rb=imdb,metacriticuser,popcorn&mw=lb:.99,tk:.01&tw=tk:.8,rt:.2&fbs=photoreal&lmhr=0.20&lbr=0.23&lba=1&cg=0&rsco=1&ard=0&stc=FFFFFF&slr=1.26&shr=0.135&sp=default2,-trending_broad,-new_release,-just_added,-new_season,-season_finale,-studio,-director,-cast,-blockbuster,-cult,-foreign,-true_story,-short_film,-mini_series,-binge_ready,-returning,-airing,-premiere,-cancelled,-ended,-physical,-streaming,-production,-renewed,gg_wins%401,gg_noms%405&_sp=watchlist,wins,gg_wins,festival,pic_noms,metacritic,gg_noms,trending,trending_broad,new_release,just_added,new_season,season_finale,studio,director,cast,blockbuster,cult,foreign,true_story,short_film,mini_series,binge_ready,returning,airing,premiere,cancelled,ended,physical,streaming,cinema,production,renewed&bdm=7&bg1=br:4:video,res,audio,cert&bms=3"
   }
 }
