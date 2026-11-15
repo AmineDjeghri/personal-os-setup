@@ -32,6 +32,7 @@
     * [AdGuard Home address naming resolution using the router (Freebox)](#adguard-home-address-naming-resolution-using-the-router-freebox)
         * [Sync the names from the Freebox (script + cron)](#sync-the-names-from-the-freebox-script-cron)
         * [Warn about devices unreachable for 2 weeks (script + Hermes cron)](#warn-about-devices-unreachable-for-2-weeks-script-hermes-cron)
+        * [Check that AdGuard Home and the Freebox agree (script + Hermes cron)](#check-that-adguard-home-and-the-freebox-agree-script-hermes-cron)
         * [Network topology and DNS flows](#network-topology-and-dns-flows)
 * [todo:](#todo)
 <!-- TOC -->
@@ -814,6 +815,7 @@ Who hands out the addresses, and who publishes the names:
 * Check Settings -> Client settings -> **Persistent clients settings** .
 * This script runs every minute and is silent when nothing changed. When it creates or updates a client it prints one line (the Hermes run output, or ``sync_agh.log`` with crontab), and it exits with an error code when AdGuard Home or the Freebox cannot be read or a change is refused. ``--verbose`` adds a summary line to every run.
 * Only the address list of a client is replaced: the settings you made on it (blocked services, upstreams, ...) and ids you added by hand (a ClientID, a CIDR range) are kept. When two devices claim the same address (an old lease handed out again), it goes to the device that is reachable on it, because AdGuard refuses the same id on two clients.
+* Name each device in the Freebox (Périphériques réseau → the device's page) **before** the first sync. A device with no name there becomes an AdGuard client named by its MAC, and a later Freebox rename does not rename it.
 * ⚠️ The name it takes from the Freebox (``primary_name``, i.e. the name you set on the device's page) is used **only when it creates a client**. For a device it already knows, the script matches the MAC address and refreshes the addresses only, so the AdGuard client keeps its old name: renaming a device in the Freebox does not rename it in AdGuard. To catch up, rename the client in AdGuard Home, or delete it and let the next run recreate it (deleting also drops the per-client settings you had on it).
 
 ### Warn about devices unreachable for 2 weeks (script + Hermes cron)
@@ -827,7 +829,31 @@ The Freebox keeps every device it has ever seen, and so do the AdGuard clients a
 * **Check it first:** `uv run stale_devices.py --doctor` tests the login, shows how many devices have an activity timestamp and what would be reported. `--list` prints everything without the message length cap.
 * **Weekly Hermes job** (no LLM, the script output is sent as is): a wrapper in `~/.hermes/scripts/stale_devices_collect.py` (same as the sync wrapper above, with `stale_devices.py` as the script), then
 
+  ```sh
+  hermes cron create "every monday at 09:00" --name stale-devices --script stale_devices_collect.py --no-agent --deliver telegram
+  ```
+
 * **What the message tells you to do, in order:** forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then remove the leftover entities (Settings -> Devices & services -> Entities -> select -> Remove selected). Skipping the first step brings the entities back on the next reload.
+
+### Check that AdGuard Home and the Freebox agree (script + Hermes cron)
+
+The sync only touches clients that match a Freebox device, and the DHCP static leases are never synced at all, so the two sides drift: a device with no name in the Freebox becomes a client named by its MAC, a static lease keeps an old MAC after a bridge reset, a client outlives the device it was made for. [network_audit.py](adguard_freebox/network_audit.py) compares both and reports what needs a decision. It never changes anything.
+
+* **What it reports (a message only when there is something):**
+    * AdGuard clients named by a MAC (the device had no name in the Freebox when the sync created the client).
+    * DHCP static leases whose MAC the Freebox does not know, or whose device is up on another address.
+    * AdGuard clients whose MAC the Freebox does not know any more (leftovers the sync never touches).
+    * Clients whose names differ only by case, spaces or punctuation (probably one device twice).
+    * Devices that are up on a dynamic lease: their IPv4 can change. Add a static lease, or put the MAC in `audit_ignore_macs` for a device that is meant to stay dynamic or sets its own address.
+* **Harmless findings, only with `--list`:** names that differ between the Freebox and AdGuard (the sync names a client only when it creates it) and old unreachable addresses still attached to a device that is up (the Freebox keeps them and the sync copies them).
+* **No config of its own:** it reads the sync config (`~/.config/adguard-sync/config.yaml`: same AdGuard login and Freebox token, used read-only). Two optional keys in that file: `audit_ignore_macs` and `old_address_days` ([sync_adguard_home_ip_mac.example.yaml](adguard_freebox/sync_adguard_home_ip_mac.example.yaml) shows both).
+* **Nothing to report = no message.** A broken check does say so (`network-audit FAILED: ...`, exit code 1), so silence always means "all lines up".
+* **Check it first:** `uv run network_audit.py --doctor` tests both logins and shows the counts; `uv run network_audit.py --list` prints everything without the message length cap.
+* **Weekly Hermes job** (no LLM, the script output is sent as is): a wrapper in `~/.hermes/scripts/network_audit_run.py` (same as the sync wrapper above, with `network_audit.py` as the script), then
+
+  ```sh
+  hermes cron create "every monday at 09:30" --name network-audit --script network_audit_run.py --no-agent --deliver telegram
+  ```
 
 ### Network topology and DNS flows
 
