@@ -1,6 +1,6 @@
 # AdGuard Home + Freebox scripts
 
-Three standalone `uv run` scripts (no install, dependencies are declared in each file). Context and the
+Four standalone `uv run` scripts (no install, dependencies are declared in each file). Context and the
 reasoning behind them: [Home server](../readme.md) (AdGuard Home, DHCP and DNS notes).
 
 | File                                                       | What it does                                                                                                   | Writes anything?                       |
@@ -8,6 +8,7 @@ reasoning behind them: [Home server](../readme.md) (AdGuard Home, DHCP and DNS n
 | [freebox_auth.py](freebox_auth.py)                         | Registers an app on the Freebox (button press) and saves `freebox_url`, `app_id`, `app_token` in a config file | the config file only                   |
 | [sync_adguard_home_ip_mac.py](sync_adguard_home_ip_mac.py) | Gives each AdGuard client the MAC and all the addresses the Freebox lists for it                               | AdGuard clients (not with `--dry-run`) |
 | [stale_devices.py](stale_devices.py)                       | Lists devices unreachable for 14+ days and how to clean them up                                                | nothing, read-only                     |
+| [network_audit.py](network_audit.py)                       | Compares AdGuard clients and DHCP leases with the Freebox and lists what does not line up                      | nothing, read-only                     |
 
 Run everything from this folder: `cd docs/home-server/adguard_freebox`.
 
@@ -23,6 +24,10 @@ One file per job, outside git, mode 600. The examples show every key:
 | Stale devices | `~/.config/stale-devices/config.yaml` | `fr.homeassistant.stale_devices` |
 
 Each job has its own app id and token. Pass `--config <file>` to use another path.
+
+The network audit has no config of its own: it reads the AdGuard sync config (same AdGuard login and Freebox
+token, used read-only). Two optional keys in that file tune it: `audit_ignore_macs` (devices to leave out of
+every check, for example one that sets its own address) and `old_address_days` (default 90).
 
 ## Setup
 
@@ -48,6 +53,9 @@ uv run stale_devices.py --doctor                 # login, API fields, what would
 uv run stale_devices.py                          # the message (nothing when no device is stale)
 uv run stale_devices.py --list                   # everything, without the message length cap
 uv run stale_devices.py --threshold-days 7       # try another threshold without editing the config
+uv run network_audit.py --doctor                 # both logins and the counts
+uv run network_audit.py                          # what needs a decision (nothing when all lines up)
+uv run network_audit.py --list                   # also the harmless findings, no length cap
 ```
 
 ### 3. Schedule
@@ -57,7 +65,7 @@ empty output is a silent run). The cron `--script` must be a file in `~/.hermes/
 small wrapper that runs the script:
 
 ```python
-# ~/.hermes/scripts/adguard_sync_run.py  (stale_devices_collect.py is the same with stale_devices.py)
+# ~/.hermes/scripts/adguard_sync_run.py  (stale_devices_collect.py and network_audit_run.py are the same with their script)
 import subprocess
 import sys
 
@@ -108,6 +116,7 @@ the Hermes box and update it when the scripts change.
 ```sh
 hermes cron create "every 1m" --name adguard-sync --script adguard_sync_run.py --no-agent --deliver local --failure-deliver local
 hermes cron create "every monday at 09:00" --name stale-devices --script stale_devices_collect.py --no-agent --deliver telegram
+hermes cron create "every monday at 09:30" --name network-audit --script network_audit_run.py --no-agent --deliver telegram
 hermes cron list                # schedule and next run
 hermes cron runs <id>           # what each run printed
 ```
@@ -118,6 +127,12 @@ hermes cron runs <id>           # what each run printed
   removed, and an AdGuard outage would produce one failure message per minute. Only consider Telegram for
   failures after a few days of clean runs. The weekly stale job sends one message a week, so it uses Telegram.
   Check `hermes cron create --help` for the interval syntax and the shortest interval allowed.
+- **What the network audit reports** (read-only, one Telegram message a week, nothing when all lines up):
+  AdGuard clients named by a MAC, DHCP static leases whose MAC the Freebox does not know or whose device is
+  on another address, AdGuard clients the Freebox does not know any more, clients whose names differ only
+  by case or punctuation, and devices that are up on a dynamic lease (their IPv4 can change). Add a MAC to
+  `audit_ignore_macs` for a device that is meant to stay dynamic or sets its own address. `--list` also
+  prints the harmless findings (names that differ, old unreachable addresses).
 - Config files (secrets) must sit in a persistent directory of the Hermes box, not one lost on a rebuild.
 - Without Hermes, the sync also runs from a user `crontab -e` on any machine that reaches the LAN. `flock`
   stops a slow run from overlapping the next one:

@@ -32,6 +32,7 @@
     * [AdGuard Home address naming resolution using the router (Freebox)](#adguard-home-address-naming-resolution-using-the-router-freebox)
         * [Sync the names from the Freebox (script + cron)](#sync-the-names-from-the-freebox-script-cron)
         * [Warn about devices unreachable for 2 weeks (script + Hermes cron)](#warn-about-devices-unreachable-for-2-weeks-script-hermes-cron)
+        * [Check that AdGuard Home and the Freebox agree (script + Hermes cron)](#check-that-adguard-home-and-the-freebox-agree-script-hermes-cron)
         * [Network topology and DNS flows](#network-topology-and-dns-flows)
 * [todo:](#todo)
 <!-- TOC -->
@@ -828,7 +829,31 @@ The Freebox keeps every device it has ever seen, and so do the AdGuard clients a
 * **Check it first:** `uv run stale_devices.py --doctor` tests the login, shows how many devices have an activity timestamp and what would be reported. `--list` prints everything without the message length cap.
 * **Weekly Hermes job** (no LLM, the script output is sent as is): a wrapper in `~/.hermes/scripts/stale_devices_collect.py` (same as the sync wrapper above, with `stale_devices.py` as the script), then
 
+  ```sh
+  hermes cron create "every monday at 09:00" --name stale-devices --script stale_devices_collect.py --no-agent --deliver telegram
+  ```
+
 * **What the message tells you to do, in order:** forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then remove the leftover entities (Settings -> Devices & services -> Entities -> select -> Remove selected). Skipping the first step brings the entities back on the next reload.
+
+### Check that AdGuard Home and the Freebox agree (script + Hermes cron)
+
+The sync only touches clients that match a Freebox device, and the DHCP static leases are never synced at all, so the two sides drift: a device with no name in the Freebox becomes a client named by its MAC, a static lease keeps an old MAC after a bridge reset, a client outlives the device it was made for. [network_audit.py](adguard_freebox/network_audit.py) compares both and reports what needs a decision. It never changes anything.
+
+* **What it reports (a message only when there is something):**
+    * AdGuard clients named by a MAC (the device had no name in the Freebox when the sync created the client).
+    * DHCP static leases whose MAC the Freebox does not know, or whose device is up on another address.
+    * AdGuard clients whose MAC the Freebox does not know any more (leftovers the sync never touches).
+    * Clients whose names differ only by case, spaces or punctuation (probably one device twice).
+    * Devices that are up on a dynamic lease: their IPv4 can change. Add a static lease, or put the MAC in `audit_ignore_macs` for a device that is meant to stay dynamic or sets its own address.
+* **Harmless findings, only with `--list`:** names that differ between the Freebox and AdGuard (the sync names a client only when it creates it) and old unreachable addresses still attached to a device that is up (the Freebox keeps them and the sync copies them).
+* **No config of its own:** it reads the sync config (`~/.config/adguard-sync/config.yaml`: same AdGuard login and Freebox token, used read-only). Two optional keys in that file: `audit_ignore_macs` and `old_address_days` ([sync_adguard_home_ip_mac.example.yaml](adguard_freebox/sync_adguard_home_ip_mac.example.yaml) shows both).
+* **Nothing to report = no message.** A broken check does say so (`network-audit FAILED: ...`, exit code 1), so silence always means "all lines up".
+* **Check it first:** `uv run network_audit.py --doctor` tests both logins and shows the counts; `uv run network_audit.py --list` prints everything without the message length cap.
+* **Weekly Hermes job** (no LLM, the script output is sent as is): a wrapper in `~/.hermes/scripts/network_audit_run.py` (same as the sync wrapper above, with `network_audit.py` as the script), then
+
+  ```sh
+  hermes cron create "every monday at 09:30" --name network-audit --script network_audit_run.py --no-agent --deliver telegram
+  ```
 
 ### Network topology and DNS flows
 

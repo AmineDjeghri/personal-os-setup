@@ -10,3 +10,6 @@ adguard_password: "PASSWORD"  # pragma: allowlist secret
 freebox_url: http://192.168.1.254
 app_id: fr.homeassistant.adguard_sync
 app_token: "TOKEN_SAVED_BY_freebox_auth.py"  # pragma: allowlist secret
+# Optional, used only by network_audit.py (the defaults are shown):
+audit_ignore_macs: []   # devices to leave out of every check, e.g. one that sets its own address
+old_address_days: 90
