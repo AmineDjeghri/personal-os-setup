@@ -1,242 +1,368 @@
-#!/home/amine/.local/bin/uv run
+#!/usr/bin/env -S uv run --script
 # /// script
+# requires-python = ">=3.11"
 # dependencies = [
 #   "requests",
+#   "pyyaml",
 # ]
 # ///
 
-"""Sync AdGuard Home clients with Freebox devices."""
+"""Keep the AdGuard Home clients in step with the Freebox device list.
 
-from datetime import datetime
+For every Freebox device that has a MAC address, the matching AdGuard client gets the MAC plus every
+address the Freebox lists for it (IPv4, global IPv6, link-local, even unreachable ones), so AdGuard's
+query log follows a device through IPv6 changes. A client is matched by MAC first, then by name; a
+device AdGuard does not know yet is created. Settings you made on a client (blocked services, upstreams,
+...) are kept, only its address list is replaced.
+
+Meant for a cron job every minute: it prints nothing when nothing changed, one line per change, and exits
+1 when something failed, so a log file only grows when there is something to read.
+
+Usage:
+    sync_adguard_home_ip_mac.py                  # sync
+    sync_adguard_home_ip_mac.py --dry-run        # show what would change, change nothing
+    sync_adguard_home_ip_mac.py --verbose        # also print a summary on every run
+"""
+
+import argparse
+import hashlib
+import hmac
+import ipaddress
+import re
+import sys
+import time
+from pathlib import Path
 
 import requests
-import hmac
-import hashlib
+import yaml
 
-# --- CONFIGURATION ---
-# AdGuard Home Config
-# Try first the creds in the browser before using them here.
-AGH_URL = "http://<HAOS_IP>:8082"  # Direct AdGuard port, not through Ingress
-AGH_USER = "adguard"  # C (if adguard is in home assistant create a user , you need to uncheck 'local access' only in Home Assistant
-AGH_PASS = "PASSWORD"
-
-# Freebox Config
-FBX_URL = "http://mafreebox.freebox.fr"
-FBX_APP_ID = "fr.homeassistant.adguard_sync"
-# The token you just generated with freebox_auth.py
-FBX_APP_TOKEN = "AUTH_TOKEN"
+DEFAULT_CONFIG = Path.home() / ".config" / "adguard-sync" / "config.yaml"
+REQUIRED = (
+    "adguard_url",
+    "adguard_user",
+    "adguard_password",
+    "freebox_url",
+    "app_id",
+    "app_token",
+)
+REQUEST_TIMEOUT = 5  # seconds
+MAC_RE = re.compile(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$")
 
 
-# ---------------------
+def log(message: str) -> None:
+    """Print a message with a timestamp, so a cron log can be read later."""
+    print(f"{time.strftime('%Y-%m-%d %H:%M:%S')} {message}")
 
 
-def fbx_login():
-    """Authenticates with Freebox using the Challenge-Response mechanism.
+def load_config(path: Path) -> dict:
+    """Read the YAML config and check the required keys.
 
-    Returns: session_token (str) or None
+    Args:
+        path: Location of the config file.
+
+    Returns:
+        The configuration.
+
+    Raises:
+        RuntimeError: If the file is missing, unreadable, or a required key is empty.
     """
+    if not path.exists():
+        raise RuntimeError(
+            f"config file not found: {path} (see sync_adguard_home_ip_mac.example.yaml)"
+        )
     try:
-        # 1. Get the Challenge
-        r = requests.get(f"{FBX_URL}/api/v4/login/", timeout=5)
-        if r.status_code != 200:
-            print(f"Failed to reach Freebox login: {r.status_code}")
-            return None
-
-        challenge = r.json()["result"]["challenge"]
-
-        # 2. specific HMAC-SHA1 encryption of the challenge using your Token
-        password = hmac.new(
-            FBX_APP_TOKEN.encode("utf-8"), challenge.encode("utf-8"), hashlib.sha1
-        ).hexdigest()
-
-        # 3. Open the Session
-        payload = {"app_id": FBX_APP_ID, "password": password}
-        r = requests.post(f"{FBX_URL}/api/v4/login/session/", json=payload, timeout=5)
-        resp = r.json()
-
-        if resp.get("success"):
-            return resp["result"]["session_token"]
-        else:
-            print(f"Freebox Login Failed: {resp}")
-            return None
-    except Exception as e:
-        print(f"Freebox connection error: {e}")
-        return None
+        cfg = yaml.safe_load(path.read_text()) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        raise RuntimeError(f"cannot read {path}: {exc}") from exc
+    if not isinstance(cfg, dict):
+        raise RuntimeError(f"{path} must contain key: value lines")
+    missing = [key for key in REQUIRED if not cfg.get(key)]
+    if missing:
+        raise RuntimeError(f"missing in {path}: {', '.join(missing)}")
+    return cfg
 
 
-def get_fbx_devices(session_token):
-    """Fetch all devices from Freebox LAN Browser."""
-    headers = {"X-Fbx-App-Auth": session_token}
+def fbx_login(cfg: dict) -> str:
+    """Open a Freebox session with the challenge-response login.
+
+    Args:
+        cfg: Configuration with ``freebox_url``, ``app_id`` and ``app_token``.
+
+    Returns:
+        The session token.
+
+    Raises:
+        RuntimeError: If the Freebox is unreachable or refuses the login.
+    """
+    base = cfg["freebox_url"].rstrip("/")
     try:
-        # 'lan/browser/pub' is the endpoint that lists all networked devices
-        r = requests.get(f"{FBX_URL}/api/v4/lan/browser/pub", headers=headers, timeout=5)
-        if not r.json().get("success"):
-            print("Failed to get LAN list")
-            return []
-        return r.json()["result"]
-    except Exception as e:
-        print(f"Error fetching devices: {e}")
-        return []
+        challenge = requests.get(f"{base}/api/v4/login/", timeout=REQUEST_TIMEOUT).json()["result"][
+            "challenge"
+        ]
+        password = hmac.new(cfg["app_token"].encode(), challenge.encode(), hashlib.sha1).hexdigest()
+        resp = requests.post(
+            f"{base}/api/v4/login/session/",
+            json={"app_id": cfg["app_id"], "password": password},
+            timeout=REQUEST_TIMEOUT,
+        ).json()
+    except (requests.RequestException, ValueError, KeyError) as exc:
+        raise RuntimeError(f"cannot reach the Freebox at {base}: {exc}") from exc
+    if not resp.get("success"):
+        raise RuntimeError(f"Freebox login refused: {resp.get('msg', resp)}")
+    return resp["result"]["session_token"]
 
 
-def test_agh_connection():
-    """Test connection to AdGuard Home before syncing."""
+def fbx_hosts(cfg: dict, token: str) -> list[dict]:
+    """Fetch every device known to the Freebox LAN browser.
+
+    Args:
+        cfg: Configuration with ``freebox_url``.
+        token: Session token from :func:`fbx_login`.
+
+    Returns:
+        The raw host records.
+
+    Raises:
+        RuntimeError: If the Freebox does not return the device list.
+    """
+    base = cfg["freebox_url"].rstrip("/")
     try:
-        print("Testing AdGuard Home connection...")
-        r = requests.get(f"{AGH_URL}/control/status", auth=(AGH_USER, AGH_PASS), timeout=5)
-        if r.status_code == 200:
-            print(f"✓ AdGuard Home connected successfully")
-            return True
-        else:
-            print(f"✗ AdGuard Home returned status {r.status_code}")
-            print(f"  Response: {r.text[:200]}")
-            return False
-    except requests.exceptions.ConnectionError as e:
-        print(f"✗ Cannot connect to AdGuard Home at {AGH_URL}")
-        print(f"  Error: {e}")
-        return False
-    except requests.exceptions.Timeout:
-        print(f"✗ AdGuard Home connection timed out at {AGH_URL}")
-        return False
-    except Exception as e:
-        print(f"✗ Unexpected error testing AdGuard connection: {e}")
-        return False
+        resp = requests.get(
+            f"{base}/api/v4/lan/browser/pub",
+            headers={"X-Fbx-App-Auth": token},
+            timeout=REQUEST_TIMEOUT,
+        ).json()
+    except (requests.RequestException, ValueError) as exc:
+        raise RuntimeError(f"cannot read the Freebox device list: {exc}") from exc
+    if not resp.get("success"):
+        raise RuntimeError(f"Freebox refused the device list: {resp.get('msg', resp)}")
+    return resp["result"]
 
 
-def get_agh_clients():
-    """Fetch existing AdGuard clients to preserve settings."""
-    try:
-        r = requests.get(f"{AGH_URL}/control/clients", auth=(AGH_USER, AGH_PASS), timeout=5)
-        if r.status_code != 200:
-            print(f"Warning: Failed to fetch clients from AdGuard (status {r.status_code})")
-            return {}
-        # Map existing clients by MAC address and by name
-        client_map_by_mac = {}
-        client_map_by_name = {}
-        clients = r.json().get("clients", [])
-        for c in clients:
-            # Map by MAC address
-            for ident in c["ids"]:
-                if ":" in ident and len(ident) == 17:  # Simple MAC check
-                    client_map_by_mac[ident.lower()] = c
-            # Map by client name
-            client_map_by_name[c.get("name", "").lower()] = c
-        return {"by_mac": client_map_by_mac, "by_name": client_map_by_name}
-    except Exception as e:
-        print(f"Error fetching AdGuard clients: {e}")
-        return {"by_mac": {}, "by_name": {}}
+class AdGuard:
+    """Minimal AdGuard Home client: list, add and update persistent clients."""
+
+    def __init__(self, cfg: dict) -> None:
+        """Prepare a session that sends the basic-auth credentials with every call."""
+        self.base = cfg["adguard_url"].rstrip("/")
+        self.session = requests.Session()
+        self.session.auth = (cfg["adguard_user"], cfg["adguard_password"])
+
+    def _call(self, method: str, path: str, **kwargs) -> requests.Response:
+        try:
+            resp = self.session.request(
+                method, f"{self.base}/control/{path}", timeout=REQUEST_TIMEOUT, **kwargs
+            )
+        except requests.RequestException as exc:
+            raise RuntimeError(f"cannot reach AdGuard Home at {self.base}: {exc}") from exc
+        if not resp.ok:
+            raise RuntimeError(
+                f"AdGuard Home {path} answered {resp.status_code}: {resp.text[:200]}"
+            )
+        return resp
+
+    def clients(self) -> list[dict]:
+        """Return the persistent clients (an empty list when there are none)."""
+        try:
+            return self._call("GET", "clients").json().get("clients") or []
+        except ValueError as exc:
+            raise RuntimeError(f"AdGuard Home sent an unreadable client list: {exc}") from exc
+
+    def add(self, client: dict) -> None:
+        """Create a client."""
+        self._call("POST", "clients/add", json=client)
+
+    def update(self, old_name: str, client: dict) -> None:
+        """Replace the client currently called ``old_name`` with ``client``."""
+        self._call("POST", "clients/update", json={"name": old_name, "data": client})
 
 
-def sync():
-    print("--- Starting Sync via Freebox API ---")
+def mac_of(host: dict) -> str | None:
+    """Return the MAC address of a host, lower-cased, or None when it has none."""
+    ident = host.get("l2ident") or {}
+    return ident["id"].lower() if ident.get("type") == "mac_address" and ident.get("id") else None
 
-    # 0. Test AdGuard connection first
-    if not test_agh_connection():
-        print("ERROR: Cannot proceed without AdGuard connection. Check configuration:")
-        print(f"  AGH_URL: {AGH_URL}")
-        print(f"  AGH_USER: {AGH_USER}")
-        print("  Make sure credentials are correct and AdGuard is accessible.")
-        return
 
-    # 1. Login to Freebox
-    token = fbx_login()
-    if not token:
-        return
+def host_name(host: dict, mac: str) -> str:
+    """Return the best name of a host: the name set on the Freebox, then its hostname, then the MAC."""
+    return host.get("primary_name") or host.get("default_name") or mac
 
-    # 2. Get Data
-    print("Fetching devices from Freebox...")
-    fbx_devices = get_fbx_devices(token)
 
-    # 3. Get Current AdGuard State
-    agh_clients = get_agh_clients()
-    agh_by_mac = agh_clients.get("by_mac", {})
-    agh_by_name = agh_clients.get("by_name", {})
+def collect_devices(hosts: list[dict]) -> tuple[list[dict], int]:
+    """Turn raw Freebox hosts into one record per MAC, with the addresses each one owns.
 
-    synced_count = 0
-    skipped_count = 0
+    The Freebox keeps old addresses of devices that are off. When two devices claim the same address
+    (an old lease handed out again), AdGuard refuses the second one, so each address goes to the device
+    that is reachable on it, or else to the one that used it last.
 
-    for dev in fbx_devices:
-        # We only care about devices with a MAC address
-        if "l2ident" not in dev or dev["l2ident"]["type"] != "mac_address":
-            dev_name = dev.get("primary_name") or dev.get("default_name") or "Unknown"
-            l2_info = dev.get("l2ident", {})
-            print(f"Skipping '{dev_name}' - No MAC address (l2ident: {l2_info})")
-            skipped_count += 1
+    Args:
+        hosts: Raw Freebox host records.
+
+    Returns:
+        The devices as dicts (``name``, ``mac``, ``ids``), and the number of hosts skipped for having
+        no MAC address.
+    """
+    by_mac: dict[str, dict] = {}
+    skipped = 0
+    for host in hosts:
+        mac = mac_of(host)
+        if mac is None:
+            skipped += 1
             continue
+        dev = by_mac.setdefault(mac, {"name": host_name(host, mac), "mac": mac, "claims": {}})
+        for conn in host.get("l3connectivities") or []:
+            addr = conn.get("addr")
+            if addr:
+                rank = (bool(conn.get("reachable")), conn.get("last_activity") or 0)
+                dev["claims"][addr] = max(rank, dev["claims"].get(addr, rank))
 
-        mac = dev["l2ident"]["id"].lower()
+    owner: dict[str, tuple] = {}
+    for dev in by_mac.values():
+        for addr, rank in dev["claims"].items():
+            owner[addr] = max((rank, dev["mac"]), owner.get(addr, (rank, dev["mac"])))
+    for dev in by_mac.values():
+        dev["ids"] = {dev["mac"]} | {a for a in dev["claims"] if owner[a][1] == dev["mac"]}
+    return list(by_mac.values()), skipped
 
-        # Determine the best name: User-set name > Hostname > MAC
-        name = dev.get("primary_name") or dev.get("default_name") or mac
 
-        # Try to find existing client by MAC first, then by name
-        existing_client = agh_by_mac.get(mac) or agh_by_name.get(name.lower())
+def is_managed(ident: str) -> bool:
+    """Return True for a MAC or IP address: the ids this script owns.
 
-        # --- Collect IPs ---
-        # The Freebox 'l3connectivities' list contains ALL IPs (IPv4, IPv6 Global, IPv6 Link-Local)
-        ip_list = set()
-        ip_list.add(mac)  # Always add MAC as an ID
+    Anything else on a client (a ClientID, a CIDR range) was added by hand and is left alone.
+    """
+    if MAC_RE.match(ident.lower()):
+        return True
+    try:
+        ipaddress.ip_address(ident)
+    except ValueError:
+        return False
+    return True
 
-        if "l3connectivities" in dev:
-            for conn in dev["l3connectivities"]:
-                # We specifically want IPv6 global (2a01...) and link-local (fe80...)
-                # We add all addresses including unreachable ones to track offline devices
-                ip_list.add(conn["addr"])
 
-        final_ids = list(ip_list)
+def plan_changes(clients: list[dict], devices: list[dict]) -> tuple[list[dict], list[str]]:
+    """Compare the Freebox devices with the AdGuard clients and list what must change.
 
-        # --- Sync to AdGuard ---
-        if existing_client:
-            # UPDATE EXISTING
-            current_ids = set(existing_client["ids"])
+    Args:
+        clients: AdGuard persistent clients.
+        devices: Result of :func:`collect_devices`.
 
-            # Replace IPs with current list from Freebox (removes stale IPs)
-            if set(final_ids) != current_ids:
-                print(f"Updating '{name}' - Syncing IPs")
-                new_ids = final_ids
+    Returns:
+        The changes (``action`` add or update, ``name``, ``added``, ``removed``, ``client``) and
+        the warnings about devices that were skipped.
+    """
+    by_mac, by_name = {}, {}
+    for client in clients:
+        for ident in client.get("ids", []):
+            if MAC_RE.match(ident.lower()):
+                by_mac[ident.lower()] = client
+        by_name[client.get("name", "").lower()] = client
 
-                payload = {
-                    "name": existing_client["name"],  # Identifying name
-                    "data": {
-                        "name": existing_client["name"],  # Required field
-                        "ids": new_ids,
-                        "use_global_settings": True,
-                        "filtering_enabled": existing_client.get("filtering_enabled", True),
-                        "parental_enabled": existing_client.get("parental_enabled", False),
-                        "safesearch_enabled": existing_client.get("safesearch_enabled", False),
-                        "safebrowsing_enabled": existing_client.get("safebrowsing_enabled", False),
-                        "tags": existing_client.get("tags", []),
-                    },
+    changes, warnings, claimed = [], [], set()
+    for dev in devices:
+        existing = by_mac.get(dev["mac"]) or by_name.get(dev["name"].lower())
+        name = existing["name"] if existing else dev["name"]
+        if name.lower() in claimed:
+            warnings.append(
+                f"skipped {dev['mac']}: the AdGuard client '{name}' already follows another device"
+            )
+            continue
+        claimed.add(name.lower())
+
+        if existing is None:
+            client = {"name": name, "ids": sorted(dev["ids"]), "use_global_settings": True}
+            changes.append(
+                {
+                    "action": "add",
+                    "name": name,
+                    "added": client["ids"],
+                    "removed": [],
+                    "client": client,
                 }
-                try:
-                    requests.post(
-                        f"{AGH_URL}/control/clients/update",
-                        auth=(AGH_USER, AGH_PASS),
-                        json=payload,
-                        timeout=5,
-                    )
-                    synced_count += 1
-                except Exception as e:
-                    print(f"Failed to update {name}: {e}")
-        else:
-            # CREATE NEW
-            print(f"Creating new client: '{name}'")
-            payload = {"name": name, "ids": final_ids, "use_global_settings": True}
-            try:
-                r = requests.post(
-                    f"{AGH_URL}/control/clients/add",
-                    auth=(AGH_USER, AGH_PASS),
-                    json=payload,
-                    timeout=5,
-                )
-                synced_count += 1
-            except Exception as e:
-                print(f"Failed to create {name}: {e}")
+            )
+            continue
+        current = existing.get("ids", [])
+        new_ids = sorted(dev["ids"]) + [i for i in current if not is_managed(i)]
+        if set(new_ids) != set(current):
+            changes.append(
+                {
+                    "action": "update",
+                    "name": name,
+                    "added": sorted(set(new_ids) - set(current)),
+                    "removed": sorted(set(current) - set(new_ids)),
+                    "client": {**existing, "ids": new_ids},
+                }
+            )
+    return changes, warnings
 
-    print(
-        f"Sync Complete. Updated/Created {synced_count} devices, Skipped {skipped_count} devices. Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-    )
+
+def apply_changes(agh: AdGuard, changes: list[dict], dry_run: bool) -> int:
+    """Send the changes to AdGuard Home, one by one, and report each one.
+
+    Args:
+        agh: AdGuard Home client.
+        changes: Result of :func:`plan_changes`.
+        dry_run: Only print what would be done.
+
+    Returns:
+        The number of changes that failed.
+    """
+    failures = 0
+    for change in changes:
+        diff = " ".join([f"+{a}" for a in change["added"]] + [f"-{r}" for r in change["removed"]])
+        if dry_run:
+            log(f"would {change['action']} '{change['name']}': {diff}")
+            continue
+        try:
+            if change["action"] == "add":
+                agh.add(change["client"])
+            else:
+                agh.update(change["name"], change["client"])
+        except RuntimeError as exc:
+            failures += 1
+            log(f"FAILED to {change['action']} '{change['name']}': {exc}")
+        else:
+            log(f"{change['action']} '{change['name']}': {diff}")
+    return failures
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run one sync.
+
+    Args:
+        argv: Command-line arguments, defaults to ``sys.argv``.
+
+    Returns:
+        Exit code: 0 when everything is in step, 1 when AdGuard or the Freebox could not be read or a
+        change failed.
+    """
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--dry-run", action="store_true", help="show the changes, apply none")
+    parser.add_argument("--verbose", action="store_true", help="print a summary on every run")
+    args = parser.parse_args(argv)
+
+    try:
+        cfg = load_config(args.config)
+        agh = AdGuard(cfg)
+        # AdGuard first: if it is down, nothing is read from the Freebox and nothing is created blindly.
+        clients = agh.clients()
+        hosts = fbx_hosts(cfg, fbx_login(cfg))
+    except RuntimeError as exc:
+        log(f"adguard-sync FAILED: {exc}")
+        return 1
+
+    devices, skipped = collect_devices(hosts)
+    changes, warnings = plan_changes(clients, devices)
+    for warning in warnings:
+        log(f"warning: {warning}")
+    failures = apply_changes(agh, changes, args.dry_run)
+    if args.verbose:
+        log(
+            f"{len(devices)} devices, {len(changes)} change(s), {failures} failed, "
+            f"{skipped} host(s) without a MAC skipped"
+        )
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    sync()
+    sys.exit(main())
