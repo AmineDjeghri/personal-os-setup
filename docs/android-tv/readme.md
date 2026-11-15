@@ -1,4 +1,4 @@
-# TV Setup (googletv or android tv)
+# 1 — TV setup (Google TV or Android TV)
 
 One of the best TV OS is Google TV. Here are some reasons why you should consider using Google TV:
 
