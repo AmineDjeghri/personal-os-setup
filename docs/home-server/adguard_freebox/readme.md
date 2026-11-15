@@ -59,6 +59,7 @@ small wrapper that runs the script:
 ```python
 # ~/.hermes/scripts/adguard_sync_run.py  (stale_devices_collect.py is the same with stale_devices.py)
 import subprocess
+import sys
 
 run = subprocess.run(
     [
@@ -73,17 +74,50 @@ run = subprocess.run(
 print(run.stdout, end="")
 if run.returncode:
     print(run.stderr, end="")
+sys.exit(run.returncode)
 ```
 
+#### Why a wrapper and not a copy of the script
+
+Hermes only runs a script that sits in `~/.hermes/scripts/`, and it runs a `.py` there with **its own
+Python**: the `uv run --script` shebang and the inline `# /// script` dependency block are ignored. The
+wrapper is a Hermes-only shim that calls `uv run --script` on the real script. The scripts stay as they are
+in the repo, and the same files still run from a `crontab` or a laptop.
+
+What happens on each tick:
+
+1. Hermes runs the wrapper with its own Python.
+2. The wrapper starts `uv run --script <real script>` as a subprocess. `uv` installs `requests` and `pyyaml`
+   in an isolated, cached environment, so nothing depends on what Hermes' Python ships.
+3. The wrapper prints the script's stdout. An empty stdout is a silent run: the sync prints only when it
+   changed something or failed.
+4. On failure it also prints stderr (the `adguard-sync FAILED ...` line) and **exits with the script's exit
+   code**. Without `sys.exit`, a failed sync would be a quiet "success" for Hermes, and `--failure-deliver`
+   would never fire.
+
+Why this is better than copying the script into `~/.hermes/scripts/`:
+
+- **One copy.** A fix merged in the repo is what cron runs next, with no re-copying.
+- **No dependency gamble.** A copied script would run under Hermes' Python, where `pyyaml` may be missing.
+  `--interpreter` only accepts a venv Python path, not `uv`, so it is heavier than the wrapper.
+- **Secrets stay out.** The configs live in `~/.config/...`, outside git and outside the scripts folder.
+
+The cost: the wrapper holds an absolute path to the script, so keep a clone (or a copy) of this folder on
+the Hermes box and update it when the scripts change.
+
 ```sh
-hermes cron create "every 1m" --name adguard-sync --script adguard_sync_run.py --no-agent --deliver local
+hermes cron create "every 1m" --name adguard-sync --script adguard_sync_run.py --no-agent --deliver local --failure-deliver local
 hermes cron create "every monday at 09:00" --name stale-devices --script stale_devices_collect.py --no-agent --deliver telegram
 hermes cron list                # schedule and next run
 hermes cron runs <id>           # what each run printed
 ```
 
-- The sync uses `--deliver local` so a broken run does not message you every minute. The weekly stale job
-  uses Telegram. Check `hermes cron create --help` for the interval syntax and the shortest interval allowed.
+- **Never deliver the every-minute sync to Telegram.** Use `--deliver local --failure-deliver local` and read
+  the runs with `hermes cron runs <id>`. Two things would turn it into spam: the warning about a stale
+  Freebox entry that shares a name with a live AdGuard client is printed on every run until the entry is
+  removed, and an AdGuard outage would produce one failure message per minute. Only consider Telegram for
+  failures after a few days of clean runs. The weekly stale job sends one message a week, so it uses Telegram.
+  Check `hermes cron create --help` for the interval syntax and the shortest interval allowed.
 - Config files (secrets) must sit in a persistent directory of the Hermes box, not one lost on a rebuild.
 - Without Hermes, the sync also runs from a user `crontab -e` on any machine that reaches the LAN. `flock`
   stops a slow run from overlapping the next one:
