@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams, with no addon that needs a URL of your own.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "category": "debrid",
     "tags": [
       "debrid",
@@ -15,7 +15,7 @@
     ],
     "serviceRequired": false,
     "setToSaveInstallMenu": true,
-    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/src/personal_os_setup/config/others/aiostreams-template-essentials.json"
+    "sourceUrl": "https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json"
   },
   "config": {
     "addonName": "AIOStreams",
@@ -83,10 +83,13 @@
       1000
     ],
     "requiredSeederRange": [
-      3,
+      1,
       1000
     ],
-    "seederRangeTypes": ["p2p", "uncached"],
+    "seederRangeTypes": [
+      "p2p",
+      "uncached"
+    ],
     "ageRangeTypes": [
       "usenet"
     ],
@@ -136,6 +139,10 @@
         {
           "key": "cached",
           "direction": "desc"
+        },
+        {
+          "key": "size",
+          "direction": "desc"
         }
       ],
       "movies": [],
@@ -150,9 +157,9 @@
       "cachedAnime": [],
       "uncachedAnime": []
     },
-    "rpdbApiKey": "<template_placeholder>",
-    "posterService": "rpdb",
-    "usePosterRedirectApi": true,
+    "posterService": "custom",
+    "customPosterUrl": "https://postersplus.slokker.cc/poster?tmdb_id={tmdb_id?}&imdb_id={imdb_id?}&stremio_id={id}&type={type}&shape={shape}&pc=stremio_tv_nuvio&tg=off&bgr=off&tst=ribbon&tsc=0.85&tsi=right&ts=opposite&trst=gold&tla=1&bp=top_left&_fr=0&fti=1&irs=fallback&trs=fallback&rdm=4&fr=1&bs=pure_black&bsoo10=1&bhr=0.075&bfsr=0.37&bfo=0.00&rb=imdb,metacriticuser,popcorn&mw=lb:.99,tk:.01&tw=tk:.8,rt:.2&fbs=photoreal&lmhr=0.20&lbr=0.23&lba=1&cg=0&rsco=1&ard=0&stc=FFFFFF&slr=1.26&shr=0.135&sp=default2,-trending_broad,-new_release,-just_added,-new_season,-season_finale,-studio,-director,-cast,-blockbuster,-cult,-foreign,-true_story,-short_film,-mini_series,-binge_ready,-returning,-airing,-premiere,-cancelled,-ended,-physical,-streaming,-production,-renewed,gg_wins%401,gg_noms%405&_sp=watchlist,wins,gg_wins,festival,pic_noms,metacritic,gg_noms,trending,trending_broad,new_release,just_added,new_season,season_finale,studio,director,cast,blockbuster,cult,foreign,true_story,short_film,mini_series,binge_ready,returning,airing,premiere,cancelled,ended,physical,streaming,cinema,production,renewed&bdm=7&bg1=br:4:video,res,audio,cert&bms=3",
+    "usePosterRedirectApi": false,
     "usePosterServiceForMeta": true,
     "formatter": {
       "id": "custom",
@@ -164,7 +171,6 @@
       }
     },
     "proxy": {
-      "enabled": false,
       "id": "mediaflow",
       "proxiedAddons": [],
       "proxiedServices": []
@@ -243,7 +249,7 @@
         "instanceId": "4a0",
         "enabled": true,
         "options": {
-          "name": "Cinemeta (custom)",
+          "name": "Cinemeta",
           "manifestUrl": "https://v3-cinemeta.strem.io/manifest.json",
           "timeout": 5000,
           "resources": [
@@ -362,21 +368,22 @@
       },
       {
         "type": "meteor",
-        "instanceId": "68c",
+        "instanceId": "81b",
         "enabled": true,
         "options": {
           "name": "Meteor",
           "timeout": 5000,
           "resources": [
-            "stream"
+            "stream",
+            "meta"
+          ],
+          "services": [
+            "alldebrid"
           ],
           "mediaTypes": [],
           "includeP2P": false,
           "removeTrash": false,
-          "useMultipleInstances": false,
-          "services": [
-            "alldebrid"
-          ]
+          "useMultipleInstances": false
         }
       }
     ],
@@ -389,8 +396,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": true,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.top",
@@ -400,8 +408,9 @@
         "enabled": true,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": true,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.imdbRating",
@@ -411,8 +420,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.imdbRating",
@@ -422,8 +432,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": true,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.calendar-videos",
@@ -433,8 +444,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": false,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.last-videos",
@@ -444,8 +456,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": false,
+        "genreRequired": false,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.year",
@@ -455,8 +468,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": false,
+        "genreRequired": true,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       },
       {
         "id": "4a0e3b0.year",
@@ -466,8 +480,9 @@
         "enabled": false,
         "usePosterService": true,
         "hideable": false,
+        "genreRequired": true,
         "searchable": false,
-        "addonName": "Cinemeta (custom)"
+        "addonName": "Cinemeta"
       }
     ],
     "mergedCatalogs": [],
