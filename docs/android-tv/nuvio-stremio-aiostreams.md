@@ -66,7 +66,7 @@ Four words are enough to follow the rest of this page:
 
 ### Step 2 — Create your Nuvio account
 
-1. Create your account on [nuvio.tv](https://nuvio.tv) and install the app: [Nuvio](https://nuvioapp.space/) is available on Android, Android TV and desktop. On **iOS** it no longer works: use the AIOStreams web app instead (see [the v2.38 page](aiostreams-whats-new.md#aiostreams-web-app-ios-and-whats-new-in-v238)).
+1. Create your account on [nuvio.tv](https://nuvio.tv) and install the app: [Nuvio](https://nuvioapp.space/) is available on Android, Android TV and desktop, but not on iOS: use the [AIOStreams app](aiostreams-app.md#on-ios) in a browser instead.
 2. Log in with the same account on every device — **addons and settings sync between them**.
 3. Do the rest of the setup on the website or on the app, whichever you prefer; the website has the better overview for accounts, profiles and integrations.
 
@@ -141,7 +141,7 @@ The rest of the advanced material lives on its own pages:
 
 - [Parent configs, child configs and variants](aiostreams-parent-child-variants.md): one base config, several children, per-device switches.
 - [Addons: custom, live sports and posters](aiostreams-addons.md): the custom addons in the full template, live sports addons and the poster setup.
-- [AIOStreams v2.38](aiostreams-whats-new.md): the web app, iOS, Live TV and the other new features.
+- [The AIOStreams app](aiostreams-app.md): a client for every screen, including iOS, where Nuvio is not available.
 
 ### 🧩 What is AIOStreams?
 

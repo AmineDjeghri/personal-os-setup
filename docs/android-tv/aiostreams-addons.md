@@ -34,7 +34,7 @@ The addons below are in the **full** template and need **your own account or man
 
 Live addons have no seeders. The full template includes four of them as **Custom** addons with an empty URL: *🏆 Nuvio Live Sports*, *Sports Streams*, *CNCVerse Bridge · Main* (its five live-event catalogs are merged into one **CNCVerse** TV catalog) and *PenguPlay*. Fill in the manifest URL you get on each addon's own site, or switch the addon off. Other live addons work the same way: add them as a **Custom** addon. [NuvioHub](https://nuviohub.pages.dev/addons#live-sports-tv) lists more.
 
-Since AIOStreams v2.38, channels from your addons also show on the **Live TV** page of the AIOStreams app.
+Channels from your addons also show on the **Live TV** page of the [AIOStreams app](aiostreams-app.md).
 
 ## 🖼️ Custom posters (optional)
 
