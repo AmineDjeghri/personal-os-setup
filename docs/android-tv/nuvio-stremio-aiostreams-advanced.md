@@ -205,16 +205,30 @@ The repo ships a collections file built on Kaptain's collections and wired to th
 
 | Collection              | What it holds                                                                                                                                                                                                                                                                                   |
 |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Trending                | Trending movies and series (IMDb, today) and movies coming to theatres, from *AIOMetadata*                                                                                                                                                                                                      |
 | Streaming Services      | Top 10 rows only. Netflix and Prime Video: France (*Top-streaming (FR)*) then US (*AIOMetadata*); Canal+: France; Disney+, HBO Max, Apple TV+, Paramount+: US (*AIOMetadata*); Starz, AMC+, MGM+, Mubi, Pluto TV, Shudder, Tubi: Kaptain's Top 10 lists. Services without a Top 10 are left out |
-| Genres                  | 25 genres, each with its *Top of the Year* movies and series (Martial Arts, which has none, keeps *Top All Time*)                                                                                                                                                                               |
-| Actors                  | 159 actors, each with their *Popular* movies and, when there is one, *Popular* series                                                                                                                                                                                                           |
-| Awards, Kids and Family | Kaptain's folders, unchanged: Oscars, Cannes and Golden Globes winners, studio and kids' lists                                                                                                                                                                                                  |
 | Live TV                 | A *Football* folder with the live sports catalogs                                                                                                                                                                                                                                               |
+| Genres                  | 25 genres, each with its *Top of the Year* movies and series (Martial Arts, which has none, keeps *Top All Time*)                                                                                                                                                                               |
+| Awards, Kids and Family | Kaptain's folders, unchanged: Oscars, Cannes and Golden Globes winners, studio and kids' lists                                                                                                                                                                                                  |
+| Actors                  | 159 actors, each with their *Popular* movies and, when there is one, *Popular* series                                                                                                                                                                                                           |
 
 Rows that come from AIOStreams name your AIOStreams addon, and that name is personal, so the file holds a placeholder instead:
 
-1. Find your addon ID: open your AIOStreams manifest URL (**Save & Install → Install**, then copy the link) in a browser and copy the `"id"` value. On this instance it is `aiostreamsfortheweebs.midnightignite.me.` followed by the first 12 characters of your UUID.
-2. Download the file, open it in a text editor and replace every `<your-aiostreams-addon-id>` with that ID.
+1. Find your addon ID: open your AIOStreams manifest URL (**Save & Install → Install**, then copy the link) in a browser and copy the `"id"` value. On this instance it is `aiostreamsfortheweebs.midnightignite.me.` followed by the first 12 characters of your UUID:
+
+    ```text
+    UUID:  1234abcd-5e6f-7a8b-…  (first 12 characters: 1234abcd-5e6)
+    ID:    aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6
+    ```
+
+2. Download the file and replace every `<your-aiostreams-addon-id>` with that ID, with *Replace all* in a text editor or with:
+
+    ```bash
+    sed -i 's/<your-aiostreams-addon-id>/aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6/g' nuvio-collections-template.json
+    ```
+
+    Each row then reads `"addonId": "aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6"`.
+
 3. Import the file in the [Nuvio Collections Manager](https://nuvioapp.space/account?tab=collections).
 
 Rows from AIOStreams only fill when the matching addons are filled in: *Top-streaming (FR)* and *AIOMetadata* (see [above](#aiometadata-catalogs-from-mdblist-and-trakt)), and for *Football* the [live sports addons](#37-live-sports-and-live-tv-addons). The other rows are TMDB and Trakt lists that Nuvio reads itself, with no addon.

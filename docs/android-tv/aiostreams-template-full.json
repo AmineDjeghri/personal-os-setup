@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "category": "debrid",
     "tags": [
       "debrid",
@@ -498,18 +498,6 @@
     ],
     "catalogModifications": [
       {
-        "id": "4dae3b0.mdblist.141974",
-        "name": "Upcoming Movies (Theaters)",
-        "type": "movie",
-        "enabled": true,
-        "shuffle": false,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "AIOMetadata"
-      },
-      {
         "id": "4dae3b0.mdblist.136545",
         "name": "Today's Most Popular Shows on iMDB",
         "type": "series",
@@ -524,6 +512,18 @@
       {
         "id": "4dae3b0.mdblist.136546",
         "name": "Today's Most Popular Movies on iMDB",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.141974",
+        "name": "Upcoming Movies (Theaters)",
         "type": "movie",
         "enabled": true,
         "shuffle": false,

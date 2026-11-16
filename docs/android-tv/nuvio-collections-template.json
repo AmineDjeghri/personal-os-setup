@@ -1,5 +1,103 @@
 [
   {
+    "id": "collection-TRENDING",
+    "title": "Trending",
+    "pinToTop": true,
+    "viewMode": "FOLLOW_LAYOUT",
+    "showAllTab": true,
+    "backdropImageUrl": "",
+    "focusGlowEnabled": true,
+    "folders": [
+      {
+        "id": "folder-TRENDMOV",
+        "title": "Trending Movies",
+        "sources": [
+          {
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.136546",
+            "genre": "",
+            "provider": "addon",
+            "type": "movie"
+          }
+        ],
+        "hideTitle": true,
+        "tileShape": "LANDSCAPE",
+        "coverEmoji": "",
+        "focusGifUrl": "",
+        "heroVideoUrl": "",
+        "titleLogoUrl": "",
+        "coverImageUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/trending-movies/v2/trending-movies-cover.png",
+        "catalogSources": [
+          {
+            "type": "movie",
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.136546"
+          }
+        ],
+        "focusGifEnabled": false,
+        "heroBackdropUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/trending-movies/v2/trending-movies-backdrop.jpg"
+      },
+      {
+        "id": "folder-TRENDTV0",
+        "title": "Trending Series",
+        "sources": [
+          {
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.136545",
+            "genre": "",
+            "provider": "addon",
+            "type": "series"
+          }
+        ],
+        "hideTitle": true,
+        "tileShape": "LANDSCAPE",
+        "coverEmoji": "",
+        "focusGifUrl": "",
+        "heroVideoUrl": "",
+        "titleLogoUrl": "",
+        "coverImageUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/trending-tv/v2/trending-tv-cover.png",
+        "catalogSources": [
+          {
+            "type": "series",
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.136545"
+          }
+        ],
+        "focusGifEnabled": false,
+        "heroBackdropUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/trending-tv/v2/trending-tv-backdrop.jpg"
+      },
+      {
+        "id": "folder-UPCOMING",
+        "title": "Upcoming in Theaters",
+        "sources": [
+          {
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.141974",
+            "genre": "",
+            "provider": "addon",
+            "type": "movie"
+          }
+        ],
+        "hideTitle": true,
+        "tileShape": "LANDSCAPE",
+        "coverEmoji": "",
+        "focusGifUrl": "",
+        "heroVideoUrl": "",
+        "titleLogoUrl": "",
+        "coverImageUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/new-movies/v2/new-movies-cover.png",
+        "catalogSources": [
+          {
+            "type": "movie",
+            "addonId": "<your-aiostreams-addon-id>",
+            "catalogId": "4dae3b0.mdblist.141974"
+          }
+        ],
+        "focusGifEnabled": false,
+        "heroBackdropUrl": "https://raw.githubusercontent.com/ImKaptain/nuvio-art/main/art/discover/new-movies/v2/new-movies-backdrop.jpg"
+      }
+    ]
+  },
+  {
     "id": "collection-erfs5gwk-community",
     "title": "Streaming Services",
     "folders": [
