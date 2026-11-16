@@ -66,17 +66,16 @@ Example — deactivate StreamFusion on a single device:
 | Name   | `No StreamFusion`                                      |
 | Script | `disable presets[options.name="Streamfusion (Amine)"]` |
 
-To hide every custom addon that needs your own debrid account or key (Lumio, StreamFusion, Statusio) in one go, use a single variant (Id `no-personal-addons`) with one `disable` line per addon. These addons are tied to your own account, so a child configuration or another person cannot reuse them:
+To hide every custom addon that needs your own debrid account or key (Lumio, StreamFusion, Statusio) in one go, use a single variant (Id `no-personal-addons`) with one line that matches the `(Amine)` suffix they all share. These addons are tied to your own account, so a child configuration or another person cannot reuse them:
 
 ```text
-disable presets[options.name="Lumio (Amine)"]
-disable presets[options.name="Streamfusion (Amine)"]
-disable presets[options.name="statusio (Amine)"]
+disable presets[options.name*="(Amine)"]
 ```
 
-`=` is an exact, case-sensitive match on the addon name, so it disables only the addons with that exact name.
+- `*=` is a substring match: it disables every addon whose name contains `(Amine)`, so a personal addon you add to the parent later is covered without touching the variant.
+- `=` is an exact match on the whole name: use it to disable a single addon, as in the StreamFusion example above.
 
-💡 **Naming tip.** Give the parent's personal-account addons a recognisable suffix such as `(Amine)`, and keep a child's own copy of the same addon under a different name. The short form `*="Lumio"` is a substring match and would disable both. `=` is case-sensitive: copy the name exactly as it appears in the parent configuration (for example `Streamfusion (Amine)` and `statusio (Amine)` keep their own capitalisation). Addons are merged by their internal `instanceId`, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.
+💡 **Naming tip.** Give every personal-account addon in the parent the same suffix, `(Amine)`, and give a child's own copy of the same addon a different one (for example `Lumio (Sarah)`), so `*="(Amine)"` never catches it. Avoid matching on the addon name alone: `*="Lumio"` would disable both copies. Write the suffix exactly `(Amine)` everywhere, with the same capitalisation and brackets. Addons are merged by their internal `instanceId`, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.
 
 Then go to **Save & Install**, select **No StreamFusion** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusion/manifest.json`. Install that URL as the addon on the device that should lose StreamFusion (remove the old one if you replaced it).
 
@@ -120,7 +119,7 @@ The addons below are in the **full** template and need **your own account or man
 
 Live addons have no seeders. The full template includes four of them as **Custom** addons with an empty URL: *🏆 Nuvio Live Sports*, *Sports Streams*, *CNCVerse Bridge · Main* (its five live-event catalogs are merged into one **CNCVerse** TV catalog) and *PenguPlay*. Fill in the manifest URL you get on each addon's own site, or switch the addon off. Other live addons work the same way: add them as a **Custom** addon. [NuvioHub](https://nuviohub.pages.dev/addons#live-sports-tv) lists more.
 
-Channels from your addons also show on the **Live TV** page of the [AIOStreams app](nuvio-stremio-aiostreams.md#other-clients-and-ios).
+Channels from your addons also show on the **Live TV** page of the [AIOStreams app](nuvio-stremio-aiostreams.md#web-and-ios).
 
 ## 3.8 🖼️ Custom posters (optional)
 

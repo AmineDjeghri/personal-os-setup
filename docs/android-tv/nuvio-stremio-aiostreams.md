@@ -15,8 +15,8 @@ Table of contents
         - [Step 6 — Install the addon in Nuvio](#step-6-install-the-addon-in-nuvio)
         - [Step 7 — Test it](#step-7-test-it)
         - [Step 8 — If something doesn't work](#step-8-if-something-doesnt-work)
-        - [📱 Other clients and iOS](#other-clients-and-ios)
         - [💡 Nuvio and Stremio Tips](#nuvio-and-stremio-tips)
+        - [📱 WEB and iOS](#web-and-ios)
     - [Next: advanced setup](#next-advanced-setup)
 <!-- TOC -->
 
@@ -57,7 +57,7 @@ Four words are enough to follow the rest of this page:
 
 ### Step 2 — Create your Nuvio account
 
-1. Create your account on [nuvio.tv](https://nuvio.tv) and install the app: [Nuvio](https://nuvioapp.space/) is available on Android, Android TV and desktop, but not on iOS: see [Other clients and iOS](#other-clients-and-ios).
+1. Create your account on [nuvio.tv](https://nuvio.tv) and install the app: [Nuvio](https://nuvioapp.space/) is available on Android, Android TV and desktop, but not on iOS: see [WEB and iOS](#web-and-ios).
 2. Log in with the same account on every device — **addons and settings sync between them**.
 3. Do the rest of the setup on the website or on the app, whichever you prefer; the website has the better overview for accounts, profiles and integrations.
 
@@ -72,7 +72,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 ### Step 4 — Load a ready-made configuration
 
 1. Open the AIOStreams page: 👉 [https://aiostreamsfortheweebs.midnightignite.me/](https://aiostreamsfortheweebs.midnightignite.me/) — you can also use [AIOStreams (ElfHosted)](https://aiostreams.elfhosted.com/), but it is limited to 10 addons and has no Torrentio support.
-2. Go to **Our Configuration → Browse ready-made setups → the import button** and paste one of these links:
+2. Go to the **Save & Install** page — 👉 [aiostreamsfortheweebs.midnightignite.me/stremio/configure?menu=save-install](https://aiostreamsfortheweebs.midnightignite.me/stremio/configure?menu=save-install) — click **Import → Import template** and paste one of these links:
     - (Recommended) **Amine's default config (essentials)** — nothing to fill in beyond your debrid service:
       `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/aiostreams-template-essentials.json`
     - (Advanced) **Amine's default config (full)** — the same, plus custom addons (Lumio, StreamFusion, live sports, more catalogs…) that need a URL of your own (see [the advanced page](nuvio-stremio-aiostreams-advanced.md#36-custom-addons-you-can-plug-in-optional)):
@@ -110,31 +110,30 @@ The last thing to do is authorise your IP address on the debrid service: since t
 - **The addon does not appear in Nuvio** — the manifest link was not accepted: copy it again from *Save and Install* and re-add it.
 - **You lost your UUID or password** — they belong to your AIOStreams account; recover them from there rather than starting over, otherwise your configuration is orphaned.
 
-### 📱 Other clients and iOS
-
-AIOStreams also has its own app, a good alternative client for every screen: in a browser (your instance's `/web` page or [web.aiostreams.org](https://web.aiostreams.org)), on Android and Android TV, on computers and on LG and Samsung TVs. It shows the catalogs and streams of your configuration, plus Live TV. Get it from [aiostreams.org/download](https://aiostreams.org/download) or read the [app documentation](https://aiostreams.org/apps).
-
-Nuvio is not available on **iOS**, so use the web app there:
-
-1. Open the AIOStreams web app in Safari and sign in to your configuration.
-2. Share → **Add to Home Screen** to install it as a PWA.
-3. Use **VLC** as the external player for streams the browser cannot play.
-
 ### 💡 Nuvio and Stremio Tips
 
 - In Stremio/Nuvio Settings, you can select the preferred 'Audio language' and 'Subtitles'. This will automatically set the audio and subs automatically when you watch something. This is not synced between devices, you need to do it manually on each of your device.
 - All settings & addons will sync between your devices if you use the same account.
 - After making any change to AIOStreams or other addons, you don't need to close the application to synchronize the changes, you can switch between profiles to reload the items.
 
-**(Optional) Trakt** :
+- **(Optional) Trakt**:
+    - Trakt is a media tracking service that helps users sync their TV shows and movies across numerous platforms and devices.
+    - You can enable trakt in Nuvio/Stremio settings. You can download Trakt mobile app or use their website.
+    - The Cinemeta addon is required to sync Trakt properly.
+    - Ratings & history: rate your movies (and series) on Trakt (they are marked as watched automatically if you activate that setting on Trakt's website: Settings → Mark Watched After Rating → Automatically mark unwatched items with today's date).
+    - If you didn't rate some movies & tv shows, you can add them to history in Trakt to avoid being recommended by the 'AI Search' addon.
+    - If you want to synchronize Trakt with IMDB you can use [IMDB-Trakt-Syncer](https://github.com/RileyXX/IMDB-Trakt-Syncer). You can rate what you watch on IMDB or trakt and run the python app to sync everything.
+    - You can also import Netflix and Amazon Prime Video watch history to Trakt using this free opensource Chrome/Firefox extension : <https://github.com/trakt-tools/universal-trakt-scrobbler>
 
-- Trakt is a media tracking service that helps users sync their TV shows and movies across numerous platforms and devices.
-- You can enable trakt in Nuvio/Stremio settings. You can download Trakt mobile app or use their website.
-- The Cinemeta addon is required to sync Trakt properly.
-- Ratings & history: rate your movies (and series) on Trakt (they are marked as watched automatically if you activate that setting on Trakt's website: Settings → Mark Watched After Rating → Automatically mark unwatched items with today's date).
-- If you didn't rate some movies & tv shows, you can add them to history in Trakt to avoid being recommended by the 'AI Search' addon.
-- If you want to synchronize Trakt with IMDB you can use [IMDB-Trakt-Syncer](https://github.com/RileyXX/IMDB-Trakt-Syncer). You can rate what you watch on IMDB or trakt and run the python app to sync everything.
-- You can also import Netflix and Amazon Prime Video watch history to Trakt using this free opensource Chrome/Firefox extension : <https://github.com/trakt-tools/universal-trakt-scrobbler>
+### 📱 WEB and iOS
+
+AIOStreams also has its own app, a good alternative client for every screen: in a browser ([web.aiostreams.org](https://web.aiostreams.org) and select <https://aiostreamsfortheweebs.midnightignite.me/> as a server), on Android and Android TV, on computers and on LG and Samsung TVs. It shows the catalogs and streams of your configuration, plus Live TV. Get it from [aiostreams.org/download](https://aiostreams.org/download) or read the [app documentation](https://aiostreams.org/apps).
+
+Nuvio is not available on **iOS**, so use the web app there:
+
+1. Open the AIOStreams web app in Safari and sign in to your configuration.
+2. Share → **Add to Home Screen** to install it as a PWA.
+3. Use **VLC** as the external player for streams the browser cannot play.
 
 ## Next: advanced setup
 
