@@ -55,7 +55,7 @@ repos:
     rev: v2.4.3
     hooks:
       - id: codespell
-        args: [ '--ignore-words-list', 'hass,shotcut' ]
+        args: [ '--ignore-words-list', 'hass,shotcut,strem' ]
         types: [ markdown ]
         exclude: ^CHANGELOG\.md$
 

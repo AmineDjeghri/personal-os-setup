@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams, with no addon that needs a URL of your own.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.3.0",
+    "version": "1.5.0",
     "category": "debrid",
     "tags": [
       "debrid",

@@ -89,22 +89,22 @@ Notes
 
 ## 3.6 Custom addons you can plug in (optional)
 
-The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.
+The addons below are in the **full** template and need **your own account or manifest URL**: they arrive **enabled with an empty URL**, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (**Addons → Custom → URL**) — or switch that addon off if you do not want it. The **essentials** template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles) needs no account beyond your debrid service.
 
-| Addon                    | What it adds                                                                                                      | Configure it at                                                                 | Resources        | Format Passthrough | Result Passthrough | Stremio Addons page                                                          |
-|--------------------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------|--------------------|--------------------|------------------------------------------------------------------------------|
-| *Cinemeta*               | Base metadata + Popular / New / Featured catalogs — **enabled by default**                                        | —                                                                               | `meta` `catalog` | —                  | —                  | —                                                                            |
-| *Top-Streaming*          | Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US)                                               | <https://top-streaming.stream/configure?lang=en> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)             |
-| *Top-streaming (FR)*     | The same lists for France (Canal+, Netflix FR, Prime FR…)                                                         | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters*      | `catalog`        | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)             |
-| *Trakt lists*            | Your Trakt lists, trending and genre lists                                                                        | <https://trakt.dexter21767.com> — log in with Trakt                             | `catalog`        | —                  | —                  | —                                                                            |
-| *🏆 Nuvio Live Sports*   | Live football, NBA, NFL, NHL, F1                                                                                  | <https://nuvio.moaqeel6679.my.id>                                               | —                | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports)     |
-| *Sports Streams*         | Live and upcoming matches — football, basketball, cricket, UFC, tennis…                                           | Your own manifest URL from the addon's site (private key — don't share)         | —                | —                  | —                  | —                                                                            |
-| *CNCVerse Bridge · Main* | Live sports events and channels, merged into one *CNCVerse* TV catalog                                            | <https://cncverse.dpdns.org/configure> — your manifest URL has a private token  | —                | —                  | —                  | —                                                                            |
-| *PenguPlay*              | Live football and sports channels (Live Now, Upcoming, Channels)                                                  | <https://pengu.uk/> — your manifest URL has a private token                     | —                | —                  | —                  | —                                                                            |
-| *statusio (Amine)*       | Debrid account health card — provider, username, expiry, days left                                                | <https://statusio.elfhosted.com/configure>                                      | —                | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                       |
-| *Lumio (Amine)*          | **Best for French content, with StreamFusion** — French VOD, torrent + direct download                            | <https://mylumio.tv> — manifest URL has a private key, keep it secret           | `stream`         | —                  | —                  | [lumio](https://stremio-addons.net/addons/lumio)                             |
-| *Streamfusion (Amine)*   | **Best for French content, with Lumio** — 4K programs (StreamFusionReborn). Not in the marketplace                | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot | `stream`         | —                  | —                  | [streamfusionstremio](https://stremio-addons.net/addons/streamfusionstremio) |
-| *AI Search*              | Recommendations from natural-language queries (needs an OpenAI-Compatible API Key + TMDB keys; better with Trakt) | <https://stremio.tomz.dev/aisearch/configure>                                   | —                | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                     |
+The full template has **no Cinemeta**: *AIOMetadata* provides the metadata and the catalogs, so fill it in. If you skip AIOMetadata, add Cinemeta back as a **Custom** addon with `https://v3-cinemeta.strem.io/manifest.json`, otherwise titles have no metadata. The essentials template keeps Cinemeta.
+
+| Addon                    | What it adds                                                                                                                                                   | Configure it at                                                                                   | Resources | Format Passthrough | Result Passthrough | Stremio Addons page                                                          |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------|--------------------|--------------------|------------------------------------------------------------------------------|
+| *AIOMetadata*            | Metadata, search and MDBList / Trakt catalogs (Top 10 per service, genres, IMDb popular, upcoming) — see [below](#aiometadata-catalogs-from-mdblist-and-trakt) | <https://aiometadatafortheweebs.midnightignite.me/configure> — your manifest URL has a private ID | —         | —                  | —                  | [aiometadata](https://stremio-addons.net/addons/aiometadata-fortheweebs)     |
+| *Top-streaming (FR)*     | The same lists for France (Canal+, Netflix FR, Prime FR…)                                                                                                      | <https://top-streaming.stream/configure?lang=fr> — pick *Standard Posters*                        | `catalog` | —                  | —                  | [top-streaming](https://stremio-addons.net/addons/top-streaming)             |
+| *🏆 Nuvio Live Sports*   | Live football, NBA, NFL, NHL, F1                                                                                                                               | <https://nuviosports.xyz>                                                                         | —         | ✅                 | ✅                 | [nuvio-live-sports](https://stremio-addons.net/addons/nuvio-live-sports)     |
+| *Sports Streams*         | Live and upcoming matches — football, basketball, cricket, UFC, tennis…                                                                                        | <https://sports.highfly.dev> — your manifest URL has a private key, don't share it                | —         | —                  | —                  | —                                                                            |
+| *CNCVerse Bridge · Main* | Live sports events and channels, merged into one *CNCVerse* TV catalog                                                                                         | <https://cncverse.dpdns.org/configure> — your manifest URL has a private token                    | —         | —                  | —                  | —                                                                            |
+| *PenguPlay*              | Live football and sports channels (Live Now, Upcoming, Channels)                                                                                               | <https://pengu.uk/> — your manifest URL has a private token                                       | —         | —                  | —                  | —                                                                            |
+| *statusio (Amine)*       | Debrid account health card — provider, username, expiry, days left                                                                                             | <https://statusio.elfhosted.com/configure>                                                        | —         | ✅                 | ✅                 | [statusio](https://stremio-addons.net/addons/statusio)                       |
+| *Lumio (Amine)*          | **Best for French content, with StreamFusion** — French VOD, torrent + direct download                                                                         | <https://mylumio.tv> — manifest URL has a private key, keep it secret                             | `stream`  | —                  | —                  | [lumio](https://stremio-addons.net/addons/lumio)                             |
+| *Streamfusion (Amine)*   | **Best for French content, with Lumio** — 4K programs (StreamFusionReborn). Not in the marketplace                                                             | <https://streamfusion.stremio-epsilon.ca> — needs a key from their Telegram bot                   | `stream`  | —                  | —                  | [streamfusionstremio](https://stremio-addons.net/addons/streamfusionstremio) |
+| *AI Search*              | Recommendations from natural-language queries (needs an OpenAI-Compatible API Key + TMDB keys; better with Trakt)                                              | <https://stremio.tomz.dev/aisearch/configure>                                                     | —         | —                  | —                  | [ai-search](https://stremio-addons.net/addons/ai-search)                     |
 
 **Seeders filter** — the template only applies the seeder minimum (≥1) to P2P and uncached torrents. Cached debrid, usenet, and live/HTTP addons (like the sports ones) report no seeders and would otherwise be counted as 0 and filtered out entirely.
 
@@ -113,7 +113,22 @@ The addons below are in the **full** template and need **your own account or man
 **Result Passthrough** — results from this addon are never filtered out; its streams always appear in the list.
 **Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
 
-⚠️ **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (Example: *Trakt lists*, top-streaming)
+⚠️ **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (for example *AIOMetadata* or *Top-streaming (FR)*).
+
+### AIOMetadata: catalogs from MDBList and Trakt
+
+[AIOMetadata](https://docs.elfhosted.com/app/aiometadata/) supplies metadata, search and catalogs built from MDBList and Trakt lists. In the full template it replaces *Cinemeta*, the US *Top-Streaming* addon and *Trakt lists*, which the full template no longer includes. The template already lists its catalogs in the AIOStreams **Catalogs** section, but they only appear once your own AIOMetadata configuration provides the same lists.
+
+1. Open [aiometadatafortheweebs.midnightignite.me/configure](https://aiometadatafortheweebs.midnightignite.me/configure).
+2. In the integrations settings, add your MDBList API key (you find it in your [MDBList](https://mdblist.com/) account settings), and connect Trakt if you use it.
+3. Add the lists you want as catalogs. The full template expects these MDBList lists:
+    - **Top 10 per service (US)**: Netflix, Amazon Prime, Apple TV+, Disney+, Paramount+, HBO Max — movies and shows.
+    - **Popular by genre**: Action, Animated, Animation/Anime, Comedy, Crime, Documentary, Drama, Horror, KDrama, Romance, Sci-Fi, Thriller — movies and shows.
+    - **Others**: *Upcoming Movies (Theaters)*, *Today's Most Popular Movies / Shows on IMDb*.
+4. Save, copy the manifest URL and paste it into the *AIOMetadata* addon in AIOStreams (**Addons → Custom → URL**). Keep that URL private: it contains your configuration ID.
+5. Check that the catalogs show in Nuvio.
+
+The France Top 10 lists still come from *Top-streaming (FR)*, which the template keeps. To use these catalogs in Nuvio [collections](#312-collections), add them to a folder as addon catalogs; they show up under your AIOStreams addon.
 
 ## 3.7 📺 Live sports and live TV addons
 
@@ -127,7 +142,7 @@ Both templates are preconfigured with a **custom poster URL** (poster service *C
 
 Every poster request goes to the host named in the URL, which sees the title IDs, and posters stop loading if that instance is down. To avoid both, switch the poster service to *None* or self-host Posters+.
 
-To change the look, pick another preset on the Posters+ site and paste the URL it generates in the poster settings of your configuration, or switch the poster service to *None* to keep Cinemeta's posters. More poster services are listed on [NuvioHub](https://nuviohub.pages.dev/addons#posters): ExtendedRatings, TopPosters, Pictorium and RatingPosterDB (paid).
+To change the look, pick another preset on the Posters+ site and paste the URL it generates in the poster settings of your configuration, or switch the poster service to *None* to keep the posters of your metadata addon. More poster services are listed on [NuvioHub](https://nuviohub.pages.dev/addons#posters): ExtendedRatings, TopPosters, Pictorium and RatingPosterDB (paid).
 
 ⚠️ A poster URL you generate yourself can embed your own keys (TMDB, MDBList, RPDB). Treat it like a password and never paste it in a public place.
 
@@ -181,6 +196,27 @@ Collections allow you to organize your content into custom categories (Netflix, 
 1. For detailed setup instructions, follow [this community tutorial](https://www.reddit.com/r/Nuvio/s/7bTcL9OcmZ) starting at 2:35
 2. Go to [Nuvio Collections Manager](https://nuvioapp.space/account?tab=collections) (or use the mobile app, which is easier)
 3. Create your custom collections with names like "Netflix", "Apple TV", "My Watchlist", etc and add catalogs and images
+
+### Ready-made collections for the full template
+
+The repo ships a collections file built on Kaptain's collections and wired to the **full** template's catalogs:
+
+`https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/nuvio-collections-template.json`
+
+| Collection                      | What it holds                                                                                                                                                                                                                 |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Streaming Services              | Netflix, Prime Video, Disney+, Canal+, HBO Max, Apple TV+ and Paramount+ open with the France Top 10 (*Top-streaming (FR)*) and the US Top 10 (*AIOMetadata*), then genre rows filtered to what each service offers in France |
+| Genres                          | 12 genres open with the MDBList *Popular* lists from *AIOMetadata*; the others use Nuvio's built-in TMDB rows                                                                                                                 |
+| Live TV                         | A *Football* folder with the live sports catalogs                                                                                                                                                                             |
+| Actors, Awards, Kids and Family | Kaptain's folders, unchanged — they use Nuvio's built-in TMDB and Trakt sources and need no addon                                                                                                                             |
+
+Rows that come from AIOStreams name your AIOStreams addon, and that name is personal, so the file holds a placeholder instead:
+
+1. Find your addon ID: open your AIOStreams manifest URL (**Save & Install → Install**, then copy the link) in a browser and copy the `"id"` value. On this instance it is `aiostreamsfortheweebs.midnightignite.me.` followed by the first 12 characters of your UUID.
+2. Download the file, open it in a text editor and replace every `<your-aiostreams-addon-id>` with that ID.
+3. Import the file in the [Nuvio Collections Manager](https://nuvioapp.space/account?tab=collections).
+
+The rows only fill when the matching addons are filled in AIOStreams: *Top-streaming (FR)* and *AIOMetadata* (see [above](#aiometadata-catalogs-from-mdblist-and-trakt)), and for *Football* the [live sports addons](#37-live-sports-and-live-tv-addons). Folders whose provider is not available in France keep US availability: you can still play everything through your debrid service.
 
 You can customize how your collections look by adding cover images and configuring display settings:
 

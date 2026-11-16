@@ -101,3 +101,36 @@ def test_variant_scripts_in_the_guide_match_template_addon_names():
     }
     assert used
     assert used <= addons, used - addons
+
+
+COLLECTIONS = ANDROID_TV / "nuvio-collections-template.json"
+ADDON_PLACEHOLDER = "<your-aiostreams-addon-id>"
+
+
+def addon_rows() -> list[dict]:
+    collections = json.loads(COLLECTIONS.read_text(encoding="utf-8"))
+    return [
+        source
+        for collection in collections
+        for folder in collection["folders"]
+        for source in folder["sources"] + folder.get("catalogSources", [])
+        if source.get("addonId")
+    ]
+
+
+def test_collections_hold_no_personal_addon_id():
+    text = COLLECTIONS.read_text(encoding="utf-8")
+    assert not UUID.search(text)
+    rows = addon_rows()
+    assert rows
+    assert {row["addonId"] for row in rows} == {ADDON_PLACEHOLDER}
+
+
+def test_collection_catalogs_exist_in_the_full_template():
+    # a row naming a catalog the template lacks shows up empty in Nuvio
+    catalogs = {
+        (c["id"], c["type"]): c["enabled"]
+        for c in load(TEMPLATES[0])["config"]["catalogModifications"]
+    }
+    for row in addon_rows():
+        assert catalogs.get((row["catalogId"], row["type"])), row["catalogId"]

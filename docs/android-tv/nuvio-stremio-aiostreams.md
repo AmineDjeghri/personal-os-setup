@@ -99,7 +99,7 @@ A debrid service is an unrestricted multi-hoster: it fetches the torrent on its 
 
 ### Step 7 — Test it
 
-Open any movie or series in Nuvio: you should see your addons providing streams — Statusio appears in the list only if you installed it — with the decorator emojis described in [Reading the stream list](#reading-the-stream-list).
+Open any movie or series in Nuvio: you should see your addons providing streams — Statusio appears in the list only if you installed it — with the decorator emojis described in [Reading the stream list](nuvio-stremio-aiostreams-advanced.md#32-reading-the-stream-list).
 
 The last thing to do is authorise your IP address on the debrid service: since the addons are hosted on different servers, your debrid account sees a new IP and blocks cached access until you confirm it. Start any stream, go to your debrid account page, accept the prompt — cached streams switch from ⏳ to ⚡️.
 
@@ -119,7 +119,7 @@ The last thing to do is authorise your IP address on the debrid service: since t
 - **(Optional) Trakt**:
     - Trakt is a media tracking service that helps users sync their TV shows and movies across numerous platforms and devices.
     - You can enable trakt in Nuvio/Stremio settings. You can download Trakt mobile app or use their website.
-    - The Cinemeta addon is required to sync Trakt properly.
+    - A metadata addon (Cinemeta with the essentials template, AIOMetadata with the full one) is required to sync Trakt properly.
     - Ratings & history: rate your movies (and series) on Trakt (they are marked as watched automatically if you activate that setting on Trakt's website: Settings → Mark Watched After Rating → Automatically mark unwatched items with today's date).
     - If you didn't rate some movies & tv shows, you can add them to history in Trakt to avoid being recommended by the 'AI Search' addon.
     - If you want to synchronize Trakt with IMDB you can use [IMDB-Trakt-Syncer](https://github.com/RileyXX/IMDB-Trakt-Syncer). You can rate what you watch on IMDB or trakt and run the python app to sync everything.
