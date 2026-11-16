@@ -203,12 +203,13 @@ The repo ships a collections file built on Kaptain's collections and wired to th
 
 `https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/nuvio-collections-template.json`
 
-| Collection                      | What it holds                                                                                                                                                                                                                 |
-|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Streaming Services              | Netflix, Prime Video, Disney+, Canal+, HBO Max, Apple TV+ and Paramount+ open with the France Top 10 (*Top-streaming (FR)*) and the US Top 10 (*AIOMetadata*), then genre rows filtered to what each service offers in France |
-| Genres                          | 12 genres open with the MDBList *Popular* lists from *AIOMetadata*; the others use Nuvio's built-in TMDB rows                                                                                                                 |
-| Live TV                         | A *Football* folder with the live sports catalogs                                                                                                                                                                             |
-| Actors, Awards, Kids and Family | Kaptain's folders, unchanged — they use Nuvio's built-in TMDB and Trakt sources and need no addon                                                                                                                             |
+| Collection              | What it holds                                                                                                                                                                                                                                                                                   |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Streaming Services      | Top 10 rows only. Netflix and Prime Video: France (*Top-streaming (FR)*) then US (*AIOMetadata*); Canal+: France; Disney+, HBO Max, Apple TV+, Paramount+: US (*AIOMetadata*); Starz, AMC+, MGM+, Mubi, Pluto TV, Shudder, Tubi: Kaptain's Top 10 lists. Services without a Top 10 are left out |
+| Genres                  | 25 genres, each with its *Top of the Year* movies and series (Martial Arts, which has none, keeps *Top All Time*)                                                                                                                                                                               |
+| Actors                  | 159 actors, each with their *Popular* movies and, when there is one, *Popular* series                                                                                                                                                                                                           |
+| Awards, Kids and Family | Kaptain's folders, unchanged: Oscars, Cannes and Golden Globes winners, studio and kids' lists                                                                                                                                                                                                  |
+| Live TV                 | A *Football* folder with the live sports catalogs                                                                                                                                                                                                                                               |
 
 Rows that come from AIOStreams name your AIOStreams addon, and that name is personal, so the file holds a placeholder instead:
 
@@ -216,7 +217,7 @@ Rows that come from AIOStreams name your AIOStreams addon, and that name is pers
 2. Download the file, open it in a text editor and replace every `<your-aiostreams-addon-id>` with that ID.
 3. Import the file in the [Nuvio Collections Manager](https://nuvioapp.space/account?tab=collections).
 
-The rows only fill when the matching addons are filled in AIOStreams: *Top-streaming (FR)* and *AIOMetadata* (see [above](#aiometadata-catalogs-from-mdblist-and-trakt)), and for *Football* the [live sports addons](#37-live-sports-and-live-tv-addons). Folders whose provider is not available in France keep US availability: you can still play everything through your debrid service.
+Rows from AIOStreams only fill when the matching addons are filled in: *Top-streaming (FR)* and *AIOMetadata* (see [above](#aiometadata-catalogs-from-mdblist-and-trakt)), and for *Football* the [live sports addons](#37-live-sports-and-live-tv-addons). The other rows are TMDB and Trakt lists that Nuvio reads itself, with no addon.
 
 You can customize how your collections look by adding cover images and configuring display settings:
 
