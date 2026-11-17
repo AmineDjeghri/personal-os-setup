@@ -75,7 +75,8 @@ disable presets[options.name*="(Amine)"]
 - `*=` is a substring match: it disables every addon whose name contains `(Amine)`, so a personal addon you add to the parent later is covered without touching the variant.
 - `=` is an exact match on the whole name: use it to disable a single addon, as in the StreamFusion example above.
 
-💡 **Naming tip.** Give every personal-account addon in the parent the same suffix, `(Amine)`, and give a child's own copy of the same addon a different one (for example `Lumio (Sarah)`), so `*="(Amine)"` never catches it. Avoid matching on the addon name alone: `*="Lumio"` would disable both copies. Write the suffix exactly `(Amine)` everywhere, with the same capitalisation and brackets. Addons are merged by their internal `instanceId`, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.
+> [!TIP]
+> **Naming tip.** Give every personal-account addon in the parent the same suffix, `(Amine)`, and give a child's own copy of the same addon a different one (for example `Lumio (Sarah)`), so `*="(Amine)"` never catches it. Avoid matching on the addon name alone: `*="Lumio"` would disable both copies. Write the suffix exactly `(Amine)` everywhere, with the same capitalisation and brackets. Addons are merged by their internal `instanceId`, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.
 
 Then go to **Save & Install**, select **No StreamFusion** in the variant list and choose the **path** form. When you copy the manifest URL it must show the selection, as in `…/stremio/<uuid>/<password>/v/no-streamfusion/manifest.json`. Install that URL as the addon on the device that should lose StreamFusion (remove the old one if you replaced it).
 
@@ -113,7 +114,8 @@ The full template has **no Cinemeta**: *AIOMetadata* provides the metadata and t
 **Result Passthrough** — results from this addon are never filtered out; its streams always appear in the list.
 **Force To Top** (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.
 
-⚠️ **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (for example *AIOMetadata* or *Top-streaming (FR)*).
+> [!WARNING]
+> **Catalogs won't show up until you fill in your own URL.** These addons ship in the template with a **placeholder/example URL**, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (for example *AIOMetadata* or *Top-streaming (FR)*).
 
 ### AIOMetadata: catalogs from MDBList and Trakt
 
@@ -144,7 +146,8 @@ Every poster request goes to the host named in the URL, which sees the title IDs
 
 To change the look, pick another preset on the Posters+ site and paste the URL it generates in the poster settings of your configuration, or switch the poster service to *None* to keep the posters of your metadata addon. More poster services are listed on [NuvioHub](https://nuviohub.pages.dev/addons#posters): ExtendedRatings, TopPosters, Pictorium and RatingPosterDB (paid).
 
-⚠️ A poster URL you generate yourself can embed your own keys (TMDB, MDBList, RPDB). Treat it like a password and never paste it in a public place.
+> [!WARNING]
+> A poster URL you generate yourself can embed your own keys (TMDB, MDBList, RPDB). Treat it like a password and never paste it in a public place.
 
 ## 3.9 🔌 Proxy (optional)
 

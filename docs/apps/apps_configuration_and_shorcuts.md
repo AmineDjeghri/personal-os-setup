@@ -452,9 +452,10 @@ Code editor:
 
 #### 5.1.4. PyCharm remote deployment
 
-WARNING: project folder needs to be on windows and not WSL to use the remote ssh. Do not host folders outside WSL if you
-are not using a remote interpreter, there
-are  [WSL performance issues](https://github.com/microsoft/WSL/issues/4197?notification_referrer_id=MDE4Ok5vdGlmaWNhdGlvblRocmVhZDUyMzA5ODA3MjozMjcxNTkxMw%3D%3D#issuecomment-1727108838))
+> [!WARNING]
+> project folder needs to be on windows and not WSL to use the remote ssh. Do not host folders outside WSL if you
+> are not using a remote interpreter, there
+> are  [WSL performance issues](https://github.com/microsoft/WSL/issues/4197?notification_referrer_id=MDE4Ok5vdGlmaWNhdGlvblRocmVhZDUyMzA5ODA3MjozMjcxNTkxMw%3D%3D#issuecomment-1727108838))
 
 Defining a server as default:
 A deployment server is considered default if its settings apply by default during automatic upload of changed files. To

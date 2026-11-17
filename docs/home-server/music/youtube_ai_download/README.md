@@ -71,6 +71,7 @@ uv run --no-project yt_dl.py "https://youtube.com/playlist?list=..." --overrides
 #    it, Navidrome picks the files up on its own scan schedule.
 ```
 
+> [!IMPORTANT]
 > **`--no-project` is important**: this folder may sit inside a uv project (personal-os-setup has its own `pyproject.toml`) — bare `uv run` would bind to that project's environment instead of the script's own deps.
 
 Helpers: `--max N` (limit downloads, testing), `--urls-file file.txt` (many URLs, one per line), `--log FILE` (tee output to a log file). Interrupted runs resume: leftover `.staging/` files are moved into the library on the next start, and the archive skips already-done videos.

@@ -105,8 +105,7 @@ Whenever you run `beet import /music` with this config, it will:
 
 **Importing** means scanning music files and adding them to the **Beets library database** (`library.db`).
 
-Important:
-
+> [!IMPORTANT]
 > Importing does **not necessarily modify the music files**.
 > It primarily registers them in the Beets database. Modifying the files is controlled by other settings like `write`, `copy`, `move`, etc.
 
@@ -137,6 +136,7 @@ What I advise to play with is:
 - finally full auto silently: `autotag: yes` and  `timid: no` and `quiet: yes`.  Quiet will skip (check quiet_fallback) tracks below the threshold.
 - You can also play with  incremental and incremental_skip_later to skip some albums and tracks
 
+> [!NOTE]
 > The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:
 
 Add these commands to your crontab with `crontab -e`  to run it:

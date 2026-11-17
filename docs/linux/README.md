@@ -2,6 +2,7 @@
 
 If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.
 
+> [!NOTE]
 > **Using CachyOS?** This project also has a dedicated [CachyOS Hyprland workstation setup guide](CachyOS.md).
 > Learn more about the distro itself at [cachyos.org](https://cachyos.org).
 
@@ -86,7 +87,8 @@ sudo usermod -aG docker $USER # add your user to the group
 newgrp docker                 # activate the change in the current shell
 ```
 
-> **Pro Tip:** `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
+> [!TIP]
+> `newgrp docker` only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.
 
 ### Testing the Ubuntu flow in a VM
 
