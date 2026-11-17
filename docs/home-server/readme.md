@@ -794,7 +794,12 @@ Who hands out the addresses, and who publishes the names:
 * Don't touch the IPV6 settings during this DHCP switch (the IPv6 DNS is set separately, see the AdGuard Home notes above).
 * ⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.
 * Forget stale LAN devices in the Freebox web interface (<http://mafreebox.freebox.fr/> → **Périphériques réseau** → forget the device), e.g. after a bridge/MAC change, a new VM or a replaced phone, so the router re-detects them with their current MAC/IP instead of keeping the old entry.
-    * This also keeps Home Assistant clean: the **Freebox** integration creates a `device_tracker` for every device the box lists, so a stale entry on the Freebox stays as a stale tracker in Home Assistant. While the integration still provides it, Home Assistant only offers disable/hide, not delete. So forget the device on the Freebox first, reload the Freebox integration, then remove the leftover entity (Settings → Devices & services → Entities → select → Remove selected).
+    * This also keeps Home Assistant clean: the **Freebox** integration creates a `device_tracker` for every device the box lists, so a stale entry on the Freebox stays as a stale tracker in Home Assistant. While the integration still provides it, Home Assistant only offers disable/hide, not delete. Deleting it on the Freebox alone is not enough, and restarting the Freebox does not help: the leftover lives in Home Assistant's entity registry. In order:
+        1. Forget the device in the Freebox web interface (see above). Skipping this brings the entity back on the next reload.
+        2. In Home Assistant: Settings → Devices & services → **Freebox** → ⋮ → **Reload**.
+        3. Settings → Devices & services → **Entities**, search `freebox`. The orphaned trackers show a red exclamation icon; hovering says *not provided* (the integration no longer provides them). Entities without it are still reported by the Freebox: forget them there first.
+        4. Click the entity → **Settings** (gear) → **Delete** (bottom left of the dialog). To clear several at once: select them in the list → **Remove selected**.
+        5. If the device page still offers no Delete, check that none of its entities is left and that the Freebox no longer lists the device.
 * Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)
 
 ### Sync the names from the Freebox (script + cron)
@@ -833,7 +838,7 @@ The Freebox keeps every device it has ever seen, and so do the AdGuard clients a
   hermes cron create "every monday at 09:00" --name stale-devices --script stale_devices_collect.py --no-agent --deliver telegram
   ```
 
-* **What the message tells you to do, in order:** forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then remove the leftover entities (Settings -> Devices & services -> Entities -> select -> Remove selected). Skipping the first step brings the entities back on the next reload.
+* **What the message tells you to do, in order:** forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then delete the entities marked *not provided* (red exclamation icon; steps in [the router notes above](#adguard-home-address-naming-resolution-using-the-router-freebox)). Skipping the first step brings the entities back on the next reload.
 
 ### Check that AdGuard Home and the Freebox agree (script + Hermes cron)
 
