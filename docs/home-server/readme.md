@@ -144,7 +144,7 @@ A network bridge in KVM allows your virtual machines to appear directly on the s
 
 * This works only with Ethernet, not with Wi-Fi.
 
->> Important:
+> [!IMPORTANT]
 > The bridge will create new Mac Addresses. So if you had a DHCP with devices that used static IP through the bridge, you will need to update it.
 > For adguard, you will need to go to DHCP settings, delete the old client and create a new one in DHCP leases after it detects the new IP address.
 
@@ -213,7 +213,8 @@ sudo mv haos_ova-16.3.qcow2.xz /var/lib/libvirt/images/
 sudo xz -d /var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 ```
 
->> Important: we will use sudo so with all the commands later like `virsh list --all` should use sudo ``sudo virsh list --all`` otherwise it will show nothing.
+> [!IMPORTANT]
+> we will use sudo so with all the commands later like `virsh list --all` should use sudo ``sudo virsh list --all`` otherwise it will show nothing.
 
 * HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt
 *

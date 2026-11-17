@@ -34,6 +34,7 @@ dev = [
 docs = [
     "properdocs==1.6.7",
     "mkdocs-material==9.7.7",
+    "markdown-callouts==0.4.0",
     "mkdocstrings==1.0.8",
     "mkdocs-gen-files==0.6.1",
     "mkdocstrings-python==2.0.10",
