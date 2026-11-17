@@ -39,8 +39,8 @@ CLEANUP_STEPS = """\
 Clean up, in this order:
 1. Forget the device in the Freebox web interface: Periphériques réseau (http://mafreebox.freebox.fr/).
 2. In Home Assistant, reload the Freebox integration: Settings > Devices & services > Freebox > ... > Reload.
-3. Remove the leftover entities: Settings > Devices & services > Entities, search the device name,
-   select it, Remove selected.
+3. Delete the leftover entities: Settings > Devices & services > Entities, search the device name. Orphaned ones
+   show a red exclamation icon ("not provided"): click it > Settings > Delete (bottom left).
 To keep a device off this list, add its MAC address to ignore_macs in the config file."""
 
 
