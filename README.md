@@ -7,6 +7,7 @@
 ![Arch](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
 
 [![CI](https://github.com/AmineDjeghri/personal-os-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/AmineDjeghri/personal-os-setup/actions/workflows/ci.yml)
+[![python](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FAmineDjeghri%2Fpersonal-os-setup%2Fmain%2Fpyproject.toml&logo=python)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/github/license/AmineDjeghri/personal-os-setup)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-website-blue)](http://personal-os-setup.aminedjeghri.com/)
 [![Stars](https://img.shields.io/github/stars/AmineDjeghri/personal-os-setup?style=social)](https://github.com/AmineDjeghri/personal-os-setup)
