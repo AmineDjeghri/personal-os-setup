@@ -241,7 +241,8 @@ shell, install Miniconda, CUDA, and more:
 
 #### CUDA on WSL2
 
-> **Important:** You must have the NVIDIA GPU driver already installed on Windows. Verify with `nvidia-smi` in PowerShell.
+> [!IMPORTANT]
+> You must have the NVIDIA GPU driver already installed on Windows. Verify with `nvidia-smi` in PowerShell.
 > **Do NOT install any NVIDIA GPU Linux driver inside WSL 2** — the Windows host driver is used directly.
 
 Follow the official CUDA WSL guide:

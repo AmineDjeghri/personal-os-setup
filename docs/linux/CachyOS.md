@@ -1,5 +1,6 @@
 # CachyOS Hyprland Developer Workstation Setup
 
+> [!NOTE]
 > Work in progress.
 >
 > This document tracks a migration from Windows to a native Linux development
