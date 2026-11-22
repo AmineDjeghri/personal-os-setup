@@ -48,7 +48,7 @@ youtube_ai_download/
 
 ## Install (nothing to install)
 
-Dependencies live in the script itself (PEP 723 inline metadata — `# /// script` header with `requires-python = ">=3.11"` and `dependencies = ["yt-dlp", "mutagen"]`). `uv` builds a cached environment on first run (~1 min the first time, instant after). No `requirements.txt`, no manual venv.
+Dependencies live in the script itself (PEP 723 inline metadata — the `# /// script` header of `yt_dl.py` declares `requires-python` and `dependencies`). `uv` builds a cached environment on first run (~1 min the first time, instant after). No `requirements.txt`, no manual venv.
 
 Requires: a container/host with `/media` rw (the Hermes agent addon qualifies), `ffmpeg`, `uv`.
 

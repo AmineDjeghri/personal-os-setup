@@ -46,15 +46,11 @@ body:
   - type: markdown
     attributes:
       value: "## Environment"
-  - type: dropdown
+  - type: input
     id: python_version
     attributes:
       label: Python version
-      options:
-        - "3.12"
-        - "3.13"
-        - "3.14"
-        - "Other"
+      description: Output of `python --version`
     validations:
       required: true
 
