@@ -30,42 +30,21 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - `.env` is access-denied to `read_file` (credential store) — audit keys from memory/session context instead.
 - web_extract caches of big GitHub API JSON are ONE giant line: `read_file` cannot page them (no `next_offset`). Use `search_files` with context, or fetch a single release/tag endpoint (~60KB, fits one read).
 
-## Inventory — key paths (`~/.hermes` = `$HERMES_HOME`)
-| Path                                              | Meaning                                                                                                                  |
-|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `skills/.bundled_manifest`                        | `name:hash` of every bundled skill synced from `<install>/skills/` (v2)                                                  |
-| `skills/.usage.json`                              | per-skill `use_count`, `state` (active/stale), `created_by` ("agent" = agent-created)                                    |
-| `skills/.curator_state` / `.curator_ledger.jsonl` | last curator run summary / per-patch audit trail (actor, action, skill, evidence session)                                |
-| `skills/.curator_backups/<ts>/`                   | weekly pre-run snapshots (`manifest.json` + `skills.tar.gz`)                                                             |
-| `skills/.curator_suppressed`                      | curator-banned builtins — sync will NOT re-seed these (absent = nothing blocked)                                         |
-| `.no-bundled-skills`                              | opt-out marker (installer `--no-skills`); absent = seeding active                                                        |
-| `config.yaml`                                     | protected: `skills.disabled`, `plugins.enabled/disabled`, `platform_toolsets`, `approvals`, `curator`, `agent.max_turns` |
-| `.update_check`                                   | `{ver, behind}` — `behind: 0` = up to date                                                                               |
-| `channel_directory.json` / `gateway_state.json`   | registered channels / live platform states + gateway pid                                                                 |
-| `plugins/`                                        | USER plugins only — bundled plugin code lives in `<install>/plugins/` (state-only leftovers are cleanable)               |
-| `hermes-agent/`                                   | the git checkout: version in `pyproject.toml`, tags under `.git/refs/tags/`                                              |
+## Inventory — key paths
 
-- The repo ships TWO skill zones: `<install>/skills/` (bundled, manifest-synced on install/update) and `<install>/optional-skills/` (100+, on demand, never synced). Bundled plugins load from `<install>/plugins/` and are ADDED, not removed, by upgrades.
-- Upstream "debloats" by MOVING skills bundled → optional-skills, never by silently deleting → "they removed the default stuff" is usually relocation.
+`~/.hermes` = `$HERMES_HOME`. Path table (manifest, usage, curator files, `config.yaml`, `.update_check`, gateway state, `plugins/`, checkout) and the two skill zones (bundled vs optional; upstream "debloats" by relocation, not deletion): `references/inventory-and-paths.md`.
 
 ## Version & release comparison
-- Local first: `.update_check` (`behind`) + `<install>/pyproject.toml` `version =` — the install is often already current.
-- git install (cheapest "latest vs mine"): `git fetch origin && git rev-list --count HEAD..origin/main` (`0` = the checkout IS main tip), `git tag --sort=-creatordate | head -5`, `git rev-list --count <tag>..HEAD`. HEAD can be AHEAD of the newest tag (main tip) — report both.
-- Tag ↔ version: check `git tag --sort=-creatordate | head` rather than assuming a scheme; patch notes may be rolled into the next minor.
-- **A new version in `pyproject.toml`/`--version` does NOT mean the new code is live.** `hermes update` never restarts the gateway or dashboard: `hermes status` prints "manual restart still pending" for the stale owner and that process keeps serving pre-update code. Compare `ps -o lstart` of the gateway pid against the install mtime before explaining any post-upgrade behaviour. Procedure + per-feature evidence: `references/release-verification.md`.
-- Manifest vs repo: `.bundled_manifest` should equal `<install>/skills/**/SKILL.md` 1:1.
+
+Local first (`.update_check` `behind`, `pyproject.toml` version), then git (`rev-list --count HEAD..origin/main`, tags). **A new version on disk does NOT mean the new code is live**: `hermes update` never restarts the gateway/dashboard — compare `ps -o lstart` of the gateway pid against the install mtime. Recipes: `references/version-comparison.md`, `references/release-verification.md`.
 
 ## Commands to advise, never run unasked
 - `hermes skills reset <name>` = un-mark user-modified so updates apply again; `hermes skills reset <name> --restore` = ALSO deletes the local copy and re-seeds current stock (the fix for STALE stock — it destroys user content if there was any). Reset is per-skill: there is no global reset.
 - Restore a deleted bundled skill: `hermes skills reset <name>` + `hermes update`, or copy the dir from `<install>/skills/`. Optional skills: `hermes skills repair-official <name> --restore` (backs up first). Nothing blocks re-seeding unless `.curator_suppressed` exists.
 
 ## Skills: what's on disk vs what actually loads
-- Tiers: builtin + local (`~/.hermes/skills/**`) + hub + **external** (`external_dirs`, e.g. `~/.claude/skills`). The external ones ARE listed (`source` column = `external`, `origin` = `local`) and the footer counts them (`N local`). `trusted_project_dirs` skills still only appear in a session rooted at that repo.
-- Probe accordingly: `hermes skills list | grep -i <name>` is the reliable check (the table truncates names, so match a prefix and ignore the ellipsis). **`hermes skills inspect <name>` does not resolve `external_dirs`** — it answers "No skill named 'x' found in any source" for a skill that is loaded and listed, so never read that error as absence for an external skill. `hermes config check` validates NOTHING about skill dirs (a non-existent entry is skipped SILENTLY): `ls -d <every entry>`.
 
-- A trusted repo that still loads nothing is ROOT RESOLUTION, not trust: root = nearest `.git` ancestor of the *surface* cwd (`TERMINAL_CWD` / `terminal.cwd` — a global value overrides the session's own cwd), one root per session, fixed at session start, exact-path match, no globs.
-- **The agent cannot write `config.yaml`** (the write tool refuses: "use 'hermes config'") and `hermes config set` takes ONE key + value with unverified list semantics → hand the user the exact copy-paste block: **only the fenced YAML, no preamble and no per-line explanation** (the user interrogates the reasoning afterwards if they want it), plus the post-edit proof (`hermes skills list --source local | grep -c '<known-shared-skill>'`, `hermes skills inspect <name>` from the repo). Skills load at session start — a corrected dir takes effect in the NEXT session; never claim immediate effect.
-- Full chain, root-resolution internals, upstream issue/PR handles, probes and the working config block: `references/skill-loading-resolution.md`.
+Tiers (builtin/local/hub/external), reliable probes, the config-write limitation and root resolution: `references/skills-on-disk-vs-loaded.md` (chain internals: `references/skill-loading-resolution.md`). Rules a caller must not miss: **`hermes skills inspect` does not resolve `external_dirs`** (never read its "not found" as absence), and **the agent cannot write `config.yaml`** — hand the user a bare fenced YAML block; a corrected dir takes effect in the NEXT session.
 
 ## Skills sync rules (manifest-based; restore is always safe)
 - Missing bundled skills are NOT corruption → report "removed on your side". User deletions and curator prunes look identical on disk: disambiguate with `.curator_suppressed` + `.curator_backups/<ts>/manifest.json` (curator `prune_builtins: true` CAN prune bundled skills after `stale_after_days`) and by asking the user.
@@ -78,42 +57,25 @@ Agent installation without changing it. Read-only unless the user explicitly ask
 - Bundled + hub-installed skills are OFF-LIMITS to the LLM pass (`tools/skill_usage.py`: `off_limits = bundled | hub_installed`) — it only marks them stale/reactivates; only agent-created skills get consolidated.
 - **Pinned = off-limits to BOTH writers.** `hermes curator pin <name>` skips lifecycle transitions and the autonomous background-review pass; only a foreground user edit can change a pinned skill. Details: `agent-skills-architecture/references/store-writers-curator-and-pins.md`.
 
-## Skill-library & memory hygiene (agent-created skills only)
-- Split agent-created vs bundled BEFORE opining on cleanup: agent-created = on disk under `$HERMES_HOME/skills` minus `<install>/skills/` (join the two glob lists). Bundled skills are re-seeded by sync — never propose touching them.
-- `.usage.json` and `skills.disabled` can both name skills that no longer exist — harmless dead state (check frontmatter `name:` before calling a config entry stale).
+## Config checklist, log triage, library hygiene
+
+Details: `references/config-log-hygiene.md`. Must-not-miss: split agent-created vs bundled BEFORE opining on cleanup (never propose touching bundled skills); an explicit old `agent.max_turns` silently caps runs; **attribute a pasted log to a surface (name the add-on slug in the FIRST line) and lead with the defect**; `SystemExit` 75 is a normal update restart; Telegram "polling conflict" = two gateways at once. Boot-log depth: `references/addon-boot-log-triage.md`.
 
 ## Plugins / platforms / channels + dashboard toggles
-- `plugins.enabled` = opt-in allow-list, **`plugins.disabled` = the REAL deny-list** ("never load, even if in enabled"). Bundled `platform`/`backend` plugins auto-load regardless, so a dashboard "enable" only appends a name (cosmetic for bundled) while "disable" is real. Confirm runtime truth in `gateway_state.json`, never the dashboard.
-- Disabling `telegram-platform` stops the bot polling — flag that before advising it. Restricting what a platform may do is a different lever: `platform_toolsets.<platform>` (absent = implicit fallback to the platform default composite = ALL standard tools; clicking enable FREEZES an explicit list).
-- Home Assistant is BOTH a platform adapter (WebSocket event bus in, persistent notifications out) AND the `ha_*` toolset (core, gated on `HASS_TOKEN`).
-- Web search backend is separate from the plugin toggle: `web.search_backend: ''` = auto → the provider whose key is in `.env` wins; change with `hermes config set web.search_backend <name>`.
-- **Bundled ≠ catalog, and there is usually nothing to clean up.** Everything shipped reports `Source: bundled`; `hermes plugins list` has THREE statuses: `enabled`, `disabled` (explicit deny, wins over enabled) and `not enabled` (inert, no weight). Never propose a cleanup pass over bundled plugins.
-- **Bundled plugins cannot be removed** (`hermes plugins remove` resolves names under `$HERMES_HOME/plugins/` only). Hand-deleting from `<install>/plugins/` is undone by `hermes update` and can strip LIVE capability: several kinds (e.g. `plugins/model-providers/*`) are found by directory scan and are NOT gated by `plugins.enabled`.
-- Code quotes, plugin kinds, per-platform toolset internals, web backends, the bundled-vs-catalog boundary, the three statuses, removal rules and the documented way to digest the docs catalog page: `references/plugins-platforms-channels.md`.
 
-## Config audit checklist (what goes stale across upgrades)
-- `agent.max_turns`: an explicit old value silently caps runs — compare against `hermes_cli/config_defaults.py`, the source of truth for current defaults.
-- `approvals.mode: manual` = the user opted OUT of the smart-approvals default.
-- `dashboard.basic_auth` / `oauth` empty = dashboard open if exposed (fine behind HA Supervisor).
-- `config.yaml.bak.*` / `config.yaml.corrupt.*.bak` = historical corruption events; report, no action.
-
-## Log triage
-- **Attribute the log to a surface before diagnosing, and lead with the defect.** A pasted log is not necessarily from the install you are running in: two add-ons can share one `HERMES_HOME` with different run scripts, ports and banners. Name the add-on (and its slug) in the FIRST line, then the chain with each link marked verified (log / code / disk) vs inferred, then the remedy — and name any probe that approval-blocked instead of dropping it from the answer.
-- `logs/gateway-exit-diag.log`: `SystemExit` code 75 = NORMAL scheduled restart (update), not a crash.
-- `logs/gateway.log*`: Telegram "polling conflict … only one bot instance" = TWO gateways ran at once → "ensure only one gateway runs". DNS / `httpx.ReadError` with "fallback IP" is transient/self-healing — mention, no action.
-- `plugins/<name>/` holding only state files is normal for a bundled dashboard plugin (code lives in `<install>/plugins/`).
-- Source-update failures, the `/dev/null` patched-home class and a dead `/dashboard/` (`connection refused`): `references/addon-boot-log-triage.md`.
+Allow/deny-list semantics, platform toolsets, web backend, bundled-vs-catalog and removal rules: `references/plugins-and-dashboard-toggles.md` (taxonomy: `references/plugins-platforms-channels.md`). Key rule: `plugins.disabled` is the real deny-list; bundled plugins cannot be removed, so never propose a cleanup pass over them.
 
 ## Pitfalls
-- `skills_list` ≠ on-disk inventory: a session shows only ACTIVE skills. Glob `**/SKILL.md` for the real set — EXCLUDING `.archive/`, whose archived skills still match and inflate the count — then subtract `skills.disabled` and frontmatter `platforms:` gating (`platforms: [macos]` is excluded on Linux). For a "how many skills do I have" question, count per tier (`find <dir> -name SKILL.md` per tier, plus the `.bundled_manifest` line count) and report the tiers separately; a single number for the whole box is always wrong because bundled, agent-authored, `external_dirs` and repo-local sets overlap.
-- A stale `.bundled_manifest` (older addon build) makes `hermes skills list-modified` OVER-REPORT — harmless when installed content matches the latest repo; prove it with the recursive diff sweep.
-- Missing bundled skills are NOT corruption (see sync rules) — never report "broken" for a respected deletion.
-- `reset --restore` on a skill that DOES carry user content destroys that content — read the diff first.
-- `hermes plugins info <name>` → "not found" does NOT prove absence: kind-specific discovery (`plugins/model-providers/*`, `dashboard_auth/*`) is invisible to the general plugin scanner, so a live, active plugin reads as missing. Open the kind directory's `plugin.yaml` before calling an entry in `plugins.enabled` stale or dead.
-- **Prove absence against a CONTROL, never from one probe's silence.** Put a known-good input in every multi-item absence check (dir entries, hostnames, skills before declaring one missing) and name the control in the report.
-- **A missing `make` / `hermes` / `npx` is the CONTAINER, not a broken install.** One Hermes brain runs in two HA add-on containers over the same `/config`, and a session can be served by EITHER. Check `hostname` first — `<slug>-hermes-agent` is the agent container; the webui side has no Node.js and no `make` by design, and its Hermes CLI fails the dependency preflight (`no dependency environment is committed for this install; run hermes pm repair`).
+
+Full list: `references/audit-pitfalls.md`. Most-missed: `skills_list` is not the on-disk inventory (count per tier, exclude `.archive/`); "not found" from a probe is not absence (prove against a CONTROL); a missing `make`/`hermes`/`npx` is the container, not a broken install (check `hostname`); `reset --restore` destroys user content — read the diff first.
 
 ## References
+- `references/inventory-and-paths.md` — key-path table, skill zones
+- `references/version-comparison.md` — local/git version checks, live-code caveat
+- `references/skills-on-disk-vs-loaded.md` — tiers, probes, config-write limitation
+- `references/plugins-and-dashboard-toggles.md` — allow/deny lists, toolsets, removal rules
+- `references/audit-pitfalls.md` — full pitfall list
+- `references/config-log-hygiene.md` — config checklist, log triage, library hygiene
 - `references/storage-and-cache-map.md` — where add-on space goes, probe recipe
 - `references/release-verification.md` — after-upgrade checklist, probe recipes, per-feature evidence
 - `references/update-lifecycle.md` — `hermes update` phases, markers, checks
