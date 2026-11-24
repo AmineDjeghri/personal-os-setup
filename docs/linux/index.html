@@ -3501,10 +3501,11 @@
 
 <h1 id="linux-setup">Linux setup<a class="headerlink" href="#linux-setup" title="Permanent link">&para;</a></h1>
 <p>If you are using a headless server (ubuntu-server for example), prefer to use a client with a GUI and connect to the server via SSH so you can copy-paste the commands and use Personal-OS-Setup with a mouse.</p>
-<blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p><strong>Using CachyOS?</strong> This project also has a dedicated <a href="CachyOS/">CachyOS Hyprland workstation setup guide</a>.
 Learn more about the distro itself at <a href="https://cachyos.org">cachyos.org</a>.</p>
-</blockquote>
+</div>
 <h2 id="installation-process">Installation Process<a class="headerlink" href="#installation-process" title="Permanent link">&para;</a></h2>
 <p>The Personal OS Setup provides a <strong>Terminal UI (TUI) application</strong> that guides you through the installation process. Once you run the one-liner installer, you'll see an interactive interface with the following steps:</p>
 <p>Use <a href="../../#linux-and-wsl2-and-macos">README.md</a> as it automatically handles the OS setup with the interactive TUI application.</p>
@@ -3567,9 +3568,10 @@ stale.</p>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span><span class="nv">$USER</span><span class="w"> </span><span class="c1"># add your user to the group</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>newgrp<span class="w"> </span>docker<span class="w">                 </span><span class="c1"># activate the change in the current shell</span>
 </span></code></pre></div>
-<blockquote>
-<p><strong>Pro Tip:</strong> <code>newgrp docker</code> only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.</p>
-</blockquote>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code>newgrp docker</code> only applies to the current terminal window. For a permanent, system-wide effect, log out of your SSH session and log back in.</p>
+</div>
 <h3 id="testing-the-ubuntu-flow-in-a-vm">Testing the Ubuntu flow in a VM<a class="headerlink" href="#testing-the-ubuntu-flow-in-a-vm" title="Permanent link">&para;</a></h3>
 <p>Rehearse the whole flow (installer one-liner → TUI) in a disposable KVM/QEMU VM on any Linux host before touching your
 real machine. Host setup (<code>make vm-deps</code>, cleanup, the firewall fix) is on the shared

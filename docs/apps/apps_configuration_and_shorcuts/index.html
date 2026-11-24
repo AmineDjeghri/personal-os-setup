@@ -5447,9 +5447,12 @@ for both since i use the name of the key and not the real inverted key. <strong>
 <li>This gives you a listing where you can get rid of old virtualenvs that PyCharm thinks are still around</li>
 </ul>
 <h4 id="514-pycharm-remote-deployment">5.1.4. PyCharm remote deployment<a class="headerlink" href="#514-pycharm-remote-deployment" title="Permanent link">&para;</a></h4>
-<p>WARNING: project folder needs to be on windows and not WSL to use the remote ssh. Do not host folders outside WSL if you
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>project folder needs to be on windows and not WSL to use the remote ssh. Do not host folders outside WSL if you
 are not using a remote interpreter, there
 are  <a href="https://github.com/microsoft/WSL/issues/4197?notification_referrer_id=MDE4Ok5vdGlmaWNhdGlvblRocmVhZDUyMzA5ODA3MjozMjcxNTkxMw%3D%3D#issuecomment-1727108838">WSL performance issues</a>)</p>
+</div>
 <p>Defining a server as default:
 A deployment server is considered default if its settings apply by default during automatic upload of changed files. To
 define a deployment server as the default one, follow these steps:</p>

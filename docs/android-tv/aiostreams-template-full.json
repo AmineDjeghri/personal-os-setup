@@ -5,7 +5,7 @@
     "description": "Streaming-platform catalogs plus 4K-first French and English streams.",
     "source": "external",
     "author": "personal-os-setup",
-    "version": "1.3.0",
+    "version": "1.5.1",
     "category": "debrid",
     "tags": [
       "debrid",
@@ -246,25 +246,6 @@
     "presets": [
       {
         "type": "custom",
-        "instanceId": "4a0",
-        "enabled": true,
-        "options": {
-          "name": "Cinemeta",
-          "manifestUrl": "https://v3-cinemeta.strem.io/manifest.json",
-          "timeout": 5000,
-          "resources": [
-            "meta",
-            "catalog",
-            "addon_catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false,
-          "forceToTop": false
-        }
-      },
-      {
-        "type": "custom",
         "instanceId": "127",
         "enabled": true,
         "options": {
@@ -366,23 +347,6 @@
       },
       {
         "type": "custom",
-        "instanceId": "c9a",
-        "enabled": true,
-        "options": {
-          "name": "Top-Streaming",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 5000,
-          "resources": [
-            "catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false,
-          "forceToTop": false
-        }
-      },
-      {
-        "type": "custom",
         "instanceId": "2e0",
         "enabled": true,
         "options": {
@@ -430,22 +394,6 @@
           "sources": "all",
           "includeAiTranslated": true,
           "movieHashPlusAutoAdjustment": true
-        }
-      },
-      {
-        "type": "custom",
-        "instanceId": "84a",
-        "enabled": true,
-        "options": {
-          "name": "Trakt lists",
-          "manifestUrl": "<optional_template_placeholder>",
-          "timeout": 15000,
-          "resources": [
-            "catalog"
-          ],
-          "mediaTypes": [],
-          "libraryAddon": false,
-          "resultPassthrough": false
         }
       },
       {
@@ -533,32 +481,57 @@
           "libraryAddon": false,
           "resultPassthrough": false
         }
+      },
+      {
+        "type": "custom",
+        "instanceId": "4da",
+        "enabled": true,
+        "options": {
+          "name": "AIOMetadata",
+          "manifestUrl": "<optional_template_placeholder>",
+          "timeout": 5000,
+          "mediaTypes": [],
+          "libraryAddon": false,
+          "resultPassthrough": false
+        }
       }
     ],
     "catalogModifications": [
       {
-        "id": "4a0e3b0.top",
-        "type": "movie",
-        "name": "Popular",
-        "shuffle": false,
+        "id": "4dae3b0.mdblist.136545",
+        "name": "Today's Most Popular Shows on iMDB",
+        "type": "series",
         "enabled": true,
+        "shuffle": false,
         "usePosterService": true,
         "hideable": true,
         "genreRequired": false,
-        "searchable": true,
-        "addonName": "Cinemeta"
+        "searchable": false,
+        "addonName": "AIOMetadata"
       },
       {
-        "id": "4a0e3b0.top",
-        "type": "series",
-        "name": "Popular",
-        "shuffle": false,
+        "id": "4dae3b0.mdblist.136546",
+        "name": "Today's Most Popular Movies on iMDB",
+        "type": "movie",
         "enabled": true,
+        "shuffle": false,
         "usePosterService": true,
         "hideable": true,
         "genreRequired": false,
-        "searchable": true,
-        "addonName": "Cinemeta"
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.141974",
+        "name": "Upcoming Movies (Theaters)",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
       },
       {
         "id": "bc0e3b0.nuvio_sports_live",
@@ -608,18 +581,6 @@
         "addonName": "PenguPlay"
       },
       {
-        "id": "c9ae3b0.netflix-movie-united-states",
-        "type": "movie",
-        "name": "🔴 Netflix - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
         "id": "2e0e3b0.netflix-movie-france",
         "type": "movie",
         "name": "🔴 Netflix - Top 10 France",
@@ -630,18 +591,6 @@
         "genreRequired": false,
         "searchable": false,
         "addonName": "Top-streaming (FR)"
-      },
-      {
-        "id": "c9ae3b0.netflix-series-united-states",
-        "type": "series",
-        "name": "🔴 Netflix - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.netflix-series-france",
@@ -656,18 +605,6 @@
         "addonName": "Top-streaming (FR)"
       },
       {
-        "id": "c9ae3b0.amazon-prime-movie-united-states",
-        "type": "movie",
-        "name": "📦 Amazon Prime Video - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
         "id": "2e0e3b0.amazon-prime-movie-france",
         "type": "movie",
         "name": "📦 Amazon Prime Video - Top 10 France",
@@ -680,18 +617,6 @@
         "addonName": "Top-streaming (FR)"
       },
       {
-        "id": "c9ae3b0.amazon-prime-series-united-states",
-        "type": "series",
-        "name": "📦 Amazon Prime Video - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
         "id": "2e0e3b0.amazon-prime-series-france",
         "type": "series",
         "name": "📦 Amazon Prime Video - Top 10 France",
@@ -702,78 +627,6 @@
         "genreRequired": false,
         "searchable": false,
         "addonName": "Top-streaming (FR)"
-      },
-      {
-        "id": "c9ae3b0.apple-tv-movie-united-states",
-        "type": "movie",
-        "name": "🍎 Apple TV - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.apple-tv-series-united-states",
-        "type": "series",
-        "name": "🍎 Apple TV - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.hbo-max-movie-united-states",
-        "type": "movie",
-        "name": "🎭 HBO Max - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.hbo-max-series-united-states",
-        "type": "series",
-        "name": "🎭 HBO Max - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.paramount-plus-movie-united-states",
-        "type": "movie",
-        "name": "🗻 Paramount+ - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.paramount-plus-series-united-states",
-        "type": "series",
-        "name": "🗻 Paramount+ - Top 10 United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
       },
       {
         "id": "2e0e3b0.canal-movie-france",
@@ -798,114 +651,6 @@
         "genreRequired": false,
         "searchable": false,
         "addonName": "Top-streaming (FR)"
-      },
-      {
-        "id": "c9ae3b0.disney-overall-united-states",
-        "type": "series",
-        "name": "Disney+ - 🏆 Overall United States",
-        "shuffle": false,
-        "enabled": true,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.popular-movie-global",
-        "type": "movie",
-        "name": "🔥 Popular - Top 10 Global",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "c9ae3b0.popular-series-global",
-        "type": "series",
-        "name": "🔥 Popular - Top 10 Global",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Top-Streaming"
-      },
-      {
-        "id": "4a0e3b0.imdbRating",
-        "type": "movie",
-        "name": "Featured",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Cinemeta"
-      },
-      {
-        "id": "4a0e3b0.imdbRating",
-        "type": "series",
-        "name": "Featured",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": true,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Cinemeta"
-      },
-      {
-        "id": "4a0e3b0.calendar-videos",
-        "type": "series",
-        "name": "Calendar videos",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Cinemeta"
-      },
-      {
-        "id": "4a0e3b0.last-videos",
-        "type": "series",
-        "name": "Last videos",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "genreRequired": false,
-        "searchable": false,
-        "addonName": "Cinemeta"
-      },
-      {
-        "id": "4a0e3b0.year",
-        "type": "series",
-        "name": "New",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "genreRequired": true,
-        "searchable": false,
-        "addonName": "Cinemeta"
-      },
-      {
-        "id": "4a0e3b0.year",
-        "type": "movie",
-        "name": "New",
-        "shuffle": false,
-        "enabled": false,
-        "usePosterService": true,
-        "hideable": false,
-        "genreRequired": true,
-        "searchable": false,
-        "addonName": "Cinemeta"
       },
       {
         "id": "0d1e3b0.sports_today",
@@ -1062,6 +807,522 @@
         "genreRequired": false,
         "searchable": true,
         "addonName": "🏆 Nuvio Live Sports"
+      },
+      {
+        "id": "4dae3b0.mdblist.215303",
+        "name": "Top 10 Netflix Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215212",
+        "name": "Top 10 Netflix Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215210",
+        "name": "Top 10 Amazon Prime Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215211",
+        "name": "Top 10 Amazon Prime Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215216",
+        "name": "Top 10 Apple TV+ Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215217",
+        "name": "Top 10 Apple TV+ Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215218",
+        "name": "Top 10 Disney+ Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215219",
+        "name": "Top 10 Disney+ Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215225",
+        "name": "Top 10 Paramount+ Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215226",
+        "name": "Top 10 Paramount+ Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215242",
+        "name": "Top 10 HBO Max Movies in the US",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.215244",
+        "name": "Top 10 HBO Max Shows in the US",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91211",
+        "name": "Popular Action Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91213",
+        "name": "Popular Action Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.116037",
+        "name": "Popular Animated Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.116038",
+        "name": "Popular Animated Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.121922",
+        "name": "Popular Animation/Anime Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.121921",
+        "name": "Popular Animation/Anime Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91223",
+        "name": "Popular Comedy Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91224",
+        "name": "Popular Comedy Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.167312",
+        "name": "Popular Crime Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.167314",
+        "name": "Popular Crime Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.128051",
+        "name": "Popular Documentary Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.128052",
+        "name": "Popular Documentary Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91296",
+        "name": "Popular Drama Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91297",
+        "name": "Popular Drama Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91215",
+        "name": "Popular Horror Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91217",
+        "name": "Popular Horror Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.130778",
+        "name": "Popular KDrama Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.130775",
+        "name": "Popular KDrama Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.128262",
+        "name": "Popular Romance Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.128265",
+        "name": "Popular Romance Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91220",
+        "name": "Popular Sci-Fi Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91221",
+        "name": "Popular Sci-Fi Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91893",
+        "name": "Popular Thriller Movies",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.mdblist.91894",
+        "name": "Popular Thriller Shows",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": true,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.search.movie",
+        "name": "Movies Search",
+        "type": "movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.search.series",
+        "name": "Series Search",
+        "type": "series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.search.anime_series",
+        "name": "Anime Series Search",
+        "type": "anime.series",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.search.anime_movie",
+        "name": "Anime Movies Search",
+        "type": "anime.movie",
+        "enabled": true,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.calendar-videos",
+        "name": "Calendar videos",
+        "type": "series",
+        "enabled": false,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.aiom.similar",
+        "name": "More Like This",
+        "type": "movie",
+        "enabled": false,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
+      },
+      {
+        "id": "4dae3b0.aiom.similar",
+        "name": "More Like This",
+        "type": "series",
+        "enabled": false,
+        "shuffle": false,
+        "usePosterService": true,
+        "hideable": false,
+        "genreRequired": false,
+        "searchable": false,
+        "addonName": "AIOMetadata"
       }
     ],
     "mergedCatalogs": [

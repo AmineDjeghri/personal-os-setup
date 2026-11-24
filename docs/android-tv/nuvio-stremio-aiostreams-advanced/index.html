@@ -845,6 +845,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="3.6 Custom addons you can plug in (optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aiometadata-catalogs-from-mdblist-and-trakt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AIOMetadata: catalogs from MDBList and Trakt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -910,6 +927,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="3.12 Collections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ready-made-collections-for-the-full-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ready-made collections for the full template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3573,6 +3607,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="3.6 Custom addons you can plug in (optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aiometadata-catalogs-from-mdblist-and-trakt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AIOMetadata: catalogs from MDBList and Trakt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3638,6 +3689,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="3.12 Collections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ready-made-collections-for-the-full-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ready-made collections for the full template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3839,7 +3907,10 @@
 <li><code>*=</code> is a substring match: it disables every addon whose name contains <code>(Amine)</code>, so a personal addon you add to the parent later is covered without touching the variant.</li>
 <li><code>=</code> is an exact match on the whole name: use it to disable a single addon, as in the StreamFusion example above.</li>
 </ul>
-<p>💡 <strong>Naming tip.</strong> Give every personal-account addon in the parent the same suffix, <code>(Amine)</code>, and give a child's own copy of the same addon a different one (for example <code>Lumio (Sarah)</code>), so <code>*="(Amine)"</code> never catches it. Avoid matching on the addon name alone: <code>*="Lumio"</code> would disable both copies. Write the suffix exactly <code>(Amine)</code> everywhere, with the same capitalisation and brackets. Addons are merged by their internal <code>instanceId</code>, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Naming tip.</strong> Give every personal-account addon in the parent the same suffix, <code>(Amine)</code>, and give a child's own copy of the same addon a different one (for example <code>Lumio (Sarah)</code>), so <code>*="(Amine)"</code> never catches it. Avoid matching on the addon name alone: <code>*="Lumio"</code> would disable both copies. Write the suffix exactly <code>(Amine)</code> everywhere, with the same capitalisation and brackets. Addons are merged by their internal <code>instanceId</code>, not by name, so a hand-added addon never replaces the inherited one and both stay in the list. Variants are not inherited either: create them in the configuration you install from.</p>
+</div>
 <p>Then go to <strong>Save &amp; Install</strong>, select <strong>No StreamFusion</strong> in the variant list and choose the <strong>path</strong> form. When you copy the manifest URL it must show the selection, as in <code>…/stremio/&lt;uuid&gt;/&lt;password&gt;/v/no-streamfusion/manifest.json</code>. Install that URL as the addon on the device that should lose StreamFusion (remove the old one if you replaced it).</p>
 <p>The same variant also disables an addon in a <strong>child configuration</strong> that inherited it from a <strong>parent configuration</strong> — the preview may report that the instruction matched nothing, and it still takes effect when you play.</p>
 <p>Notes</p>
@@ -3849,7 +3920,8 @@
 <li>Select <strong>Base config</strong> on the Save &amp; Install page to keep installing the unchanged configuration.</li>
 </ul>
 <h2 id="36-custom-addons-you-can-plug-in-optional">3.6 Custom addons you can plug in (optional)<a class="headerlink" href="#36-custom-addons-you-can-plug-in-optional" title="Permanent link">&para;</a></h2>
-<p>The addons below are in the <strong>full</strong> template and need <strong>your own account or manifest URL</strong>: they arrive <strong>enabled with an empty URL</strong>, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (<strong>Addons → Custom → URL</strong>) — or switch that addon off if you do not want it. The <strong>essentials</strong> template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles, Cinemeta) needs no account beyond your debrid service.</p>
+<p>The addons below are in the <strong>full</strong> template and need <strong>your own account or manifest URL</strong>: they arrive <strong>enabled with an empty URL</strong>, and AIOStreams highlights those unfilled placeholders before you save. To use one: configure it on its own site, copy its manifest URL and paste it into that addon in AIOStreams (<strong>Addons → Custom → URL</strong>) — or switch that addon off if you do not want it. The <strong>essentials</strong> template leaves all of them out. Everything else the template enables (Torrentio, Comet, MediaFusion, Meteor, StremThru Store/Torz, OpenSubtitles) needs no account beyond your debrid service.</p>
+<p>The full template has <strong>no Cinemeta</strong>: <em>AIOMetadata</em> provides the metadata and the catalogs, so fill it in. If you skip AIOMetadata, add Cinemeta back as a <strong>Custom</strong> addon with <code>https://v3-cinemeta.strem.io/manifest.json</code>, otherwise titles have no metadata. The essentials template keeps Cinemeta.</p>
 <table>
 <thead>
 <tr>
@@ -3864,22 +3936,13 @@
 </thead>
 <tbody>
 <tr>
-<td><em>Cinemeta</em></td>
-<td>Base metadata + Popular / New / Featured catalogs — <strong>enabled by default</strong></td>
-<td>—</td>
-<td><code>meta</code> <code>catalog</code></td>
-<td>—</td>
+<td><em>AIOMetadata</em></td>
+<td>Metadata, search and MDBList / Trakt catalogs (Top 10 per service, genres, IMDb popular, upcoming) — see <a href="#aiometadata-catalogs-from-mdblist-and-trakt">below</a></td>
+<td><a href="https://aiometadatafortheweebs.midnightignite.me/configure">https://aiometadatafortheweebs.midnightignite.me/configure</a> — your manifest URL has a private ID</td>
 <td>—</td>
 <td>—</td>
-</tr>
-<tr>
-<td><em>Top-Streaming</em></td>
-<td>Netflix, Prime Video, Disney+, HBO Max, Apple TV… Top 10 lists (US)</td>
-<td><a href="https://top-streaming.stream/configure?lang=en">https://top-streaming.stream/configure?lang=en</a> — pick <em>Standard Posters</em></td>
-<td><code>catalog</code></td>
 <td>—</td>
-<td>—</td>
-<td><a href="https://stremio-addons.net/addons/top-streaming">top-streaming</a></td>
+<td><a href="https://stremio-addons.net/addons/aiometadata-fortheweebs">aiometadata</a></td>
 </tr>
 <tr>
 <td><em>Top-streaming (FR)</em></td>
@@ -3891,18 +3954,9 @@
 <td><a href="https://stremio-addons.net/addons/top-streaming">top-streaming</a></td>
 </tr>
 <tr>
-<td><em>Trakt lists</em></td>
-<td>Your Trakt lists, trending and genre lists</td>
-<td><a href="https://trakt.dexter21767.com">https://trakt.dexter21767.com</a> — log in with Trakt</td>
-<td><code>catalog</code></td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
 <td><em>🏆 Nuvio Live Sports</em></td>
 <td>Live football, NBA, NFL, NHL, F1</td>
-<td><a href="https://nuvio.moaqeel6679.my.id">https://nuvio.moaqeel6679.my.id</a></td>
+<td><a href="https://nuviosports.xyz">https://nuviosports.xyz</a></td>
 <td>—</td>
 <td>✅</td>
 <td>✅</td>
@@ -3911,7 +3965,7 @@
 <tr>
 <td><em>Sports Streams</em></td>
 <td>Live and upcoming matches — football, basketball, cricket, UFC, tennis…</td>
-<td>Your own manifest URL from the addon's site (private key — don't share)</td>
+<td><a href="https://sports.highfly.dev">https://sports.highfly.dev</a> — your manifest URL has a private key, don't share it</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -3978,15 +4032,36 @@
 <strong>Format Passthrough</strong> — whether to pass through the stream formatting. This means your formatting will not be applied and the original stream formatting is retained.
 <strong>Result Passthrough</strong> — results from this addon are never filtered out; its streams always appear in the list.
 <strong>Force To Top</strong> (Advanced, per addon) — pins this addon's results above everything else, overriding your sorting.</p>
-<p>⚠️ <strong>Catalogs won't show up until you fill in your own URL.</strong> These addons ship in the template with a <strong>placeholder/example URL</strong>, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (Example: <em>Trakt lists</em>, top-streaming)</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Catalogs won't show up until you fill in your own URL.</strong> These addons ship in the template with a <strong>placeholder/example URL</strong>, not yours. Nuvio will not display their catalogs until you replace that URL with the manifest link generated from your own account (for example <em>AIOMetadata</em> or <em>Top-streaming (FR)</em>).</p>
+</div>
+<h3 id="aiometadata-catalogs-from-mdblist-and-trakt">AIOMetadata: catalogs from MDBList and Trakt<a class="headerlink" href="#aiometadata-catalogs-from-mdblist-and-trakt" title="Permanent link">&para;</a></h3>
+<p><a href="https://docs.elfhosted.com/app/aiometadata/">AIOMetadata</a> supplies metadata, search and catalogs built from MDBList and Trakt lists. In the full template it replaces <em>Cinemeta</em>, the US <em>Top-Streaming</em> addon and <em>Trakt lists</em>, which the full template no longer includes. The template already lists its catalogs in the AIOStreams <strong>Catalogs</strong> section, but they only appear once your own AIOMetadata configuration provides the same lists.</p>
+<ol>
+<li>Open <a href="https://aiometadatafortheweebs.midnightignite.me/configure">aiometadatafortheweebs.midnightignite.me/configure</a>.</li>
+<li>In the integrations settings, add your MDBList API key (you find it in your <a href="https://mdblist.com/">MDBList</a> account settings), and connect Trakt if you use it.</li>
+<li>Add the lists you want as catalogs. The full template expects these MDBList lists:<ul>
+<li><strong>Top 10 per service (US)</strong>: Netflix, Amazon Prime, Apple TV+, Disney+, Paramount+, HBO Max — movies and shows.</li>
+<li><strong>Popular by genre</strong>: Action, Animated, Animation/Anime, Comedy, Crime, Documentary, Drama, Horror, KDrama, Romance, Sci-Fi, Thriller — movies and shows.</li>
+<li><strong>Others</strong>: <em>Upcoming Movies (Theaters)</em>, <em>Today's Most Popular Movies / Shows on IMDb</em>.</li>
+</ul>
+</li>
+<li>Save, copy the manifest URL and paste it into the <em>AIOMetadata</em> addon in AIOStreams (<strong>Addons → Custom → URL</strong>). Keep that URL private: it contains your configuration ID.</li>
+<li>Check that the catalogs show in Nuvio.</li>
+</ol>
+<p>The France Top 10 lists still come from <em>Top-streaming (FR)</em>, which the template keeps. To use these catalogs in Nuvio <a href="#312-collections">collections</a>, add them to a folder as addon catalogs; they show up under your AIOStreams addon.</p>
 <h2 id="37-live-sports-and-live-tv-addons">3.7 📺 Live sports and live TV addons<a class="headerlink" href="#37-live-sports-and-live-tv-addons" title="Permanent link">&para;</a></h2>
 <p>Live addons have no seeders. The full template includes four of them as <strong>Custom</strong> addons with an empty URL: <em>🏆 Nuvio Live Sports</em>, <em>Sports Streams</em>, <em>CNCVerse Bridge · Main</em> (its five live-event catalogs are merged into one <strong>CNCVerse</strong> TV catalog) and <em>PenguPlay</em>. Fill in the manifest URL you get on each addon's own site, or switch the addon off. Other live addons work the same way: add them as a <strong>Custom</strong> addon. <a href="https://nuviohub.pages.dev/addons#live-sports-tv">NuvioHub</a> lists more.</p>
 <p>Channels from your addons also show on the <strong>Live TV</strong> page of the <a href="../nuvio-stremio-aiostreams/#web-and-ios">AIOStreams app</a>.</p>
 <h2 id="38-custom-posters-optional">3.8 🖼️ Custom posters (optional)<a class="headerlink" href="#38-custom-posters-optional" title="Permanent link">&para;</a></h2>
 <p>Both templates are preconfigured with a <strong>custom poster URL</strong> (poster service <em>Custom</em>) that points at a <a href="https://postersplus.elfhosted.com/">Posters+</a> instance: <strong>open source</strong> and self-hostable, with ratings, awards and quality badges drawn on the poster. The URL carries only style settings and the <code>{tmdb_id}</code>, <code>{imdb_id}</code>, <code>{id}</code>, <code>{type}</code> and <code>{shape}</code> placeholders that AIOStreams fills in, and no key.</p>
 <p>Every poster request goes to the host named in the URL, which sees the title IDs, and posters stop loading if that instance is down. To avoid both, switch the poster service to <em>None</em> or self-host Posters+.</p>
-<p>To change the look, pick another preset on the Posters+ site and paste the URL it generates in the poster settings of your configuration, or switch the poster service to <em>None</em> to keep Cinemeta's posters. More poster services are listed on <a href="https://nuviohub.pages.dev/addons#posters">NuvioHub</a>: ExtendedRatings, TopPosters, Pictorium and RatingPosterDB (paid).</p>
-<p>⚠️ A poster URL you generate yourself can embed your own keys (TMDB, MDBList, RPDB). Treat it like a password and never paste it in a public place.</p>
+<p>To change the look, pick another preset on the Posters+ site and paste the URL it generates in the poster settings of your configuration, or switch the poster service to <em>None</em> to keep the posters of your metadata addon. More poster services are listed on <a href="https://nuviohub.pages.dev/addons#posters">NuvioHub</a>: ExtendedRatings, TopPosters, Pictorium and RatingPosterDB (paid).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>A poster URL you generate yourself can embed your own keys (TMDB, MDBList, RPDB). Treat it like a password and never paste it in a public place.</p>
+</div>
 <h2 id="39-proxy-optional">3.9 🔌 Proxy (optional)<a class="headerlink" href="#39-proxy-optional" title="Permanent link">&para;</a></h2>
 <p>Some links only play through a proxy: the source needs a specific header, your ISP blocks it, or the debrid service refuses the direct link. AIOStreams can route streams through a proxy you configure, and you have two ways to get one: the proxy offered by the AIOStreams instance itself, or one you host yourself (for example MediaFlow).</p>
 <p>If you host your own, AIOStreams asks for two addresses:</p>
@@ -4037,6 +4112,62 @@
 <li>Go to <a href="https://nuvioapp.space/account?tab=collections">Nuvio Collections Manager</a> (or use the mobile app, which is easier)</li>
 <li>Create your custom collections with names like "Netflix", "Apple TV", "My Watchlist", etc and add catalogs and images</li>
 </ul>
+<h3 id="ready-made-collections-for-the-full-template">Ready-made collections for the full template<a class="headerlink" href="#ready-made-collections-for-the-full-template" title="Permanent link">&para;</a></h3>
+<p>The repo ships a collections file built on Kaptain's collections and wired to the <strong>full</strong> template's catalogs:</p>
+<p><code>https://raw.githubusercontent.com/AmineDjeghri/personal-os-setup/main/docs/android-tv/nuvio-collections-template.json</code></p>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trending</td>
+<td>Trending movies and series (IMDb, today) and movies coming to theatres, from <em>AIOMetadata</em></td>
+</tr>
+<tr>
+<td>Streaming Services</td>
+<td>Top 10 rows only. Netflix and Prime Video: France (<em>Top-streaming (FR)</em>) then US (<em>AIOMetadata</em>); Canal+: France; Disney+, HBO Max, Apple TV+, Paramount+: US (<em>AIOMetadata</em>); Starz, AMC+, MGM+, Mubi, Pluto TV, Shudder, Tubi: Kaptain's Top 10 lists. Services without a Top 10 are left out</td>
+</tr>
+<tr>
+<td>Live TV</td>
+<td>A <em>Football</em> folder with the live sports catalogs</td>
+</tr>
+<tr>
+<td>Genres</td>
+<td>25 genres, each with its <em>Top of the Year</em> movies and series (Martial Arts, which has none, keeps <em>Top All Time</em>)</td>
+</tr>
+<tr>
+<td>Awards, Kids and Family</td>
+<td>Kaptain's folders, unchanged: Oscars, Cannes and Golden Globes winners, studio and kids' lists</td>
+</tr>
+<tr>
+<td>Actors</td>
+<td>159 actors, each with their <em>Popular</em> movies and, when there is one, <em>Popular</em> series</td>
+</tr>
+</tbody>
+</table>
+<p>Rows that come from AIOStreams name your AIOStreams addon, and that name is personal, so the file holds a placeholder instead:</p>
+<ol>
+<li>
+<p>Find your addon ID: open your AIOStreams manifest URL (<strong>Save &amp; Install → Install</strong>, then copy the link) in a browser and copy the <code>"id"</code> value. On this instance it is <code>aiostreamsfortheweebs.midnightignite.me.</code> followed by the first 12 characters of your UUID:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>UUID:  1234abcd-5e6f-7a8b-…  (first 12 characters: 1234abcd-5e6)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ID:    aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6
+</span></code></pre></div>
+</li>
+<li>
+<p>Download the file and replace every <code>&lt;your-aiostreams-addon-id&gt;</code> with that ID, with <em>Replace all</em> in a text editor or with:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/&lt;your-aiostreams-addon-id&gt;/aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6/g'</span><span class="w"> </span>nuvio-collections-template.json
+</span></code></pre></div>
+<p>Each row then reads <code>"addonId": "aiostreamsfortheweebs.midnightignite.me.1234abcd-5e6"</code>.</p>
+</li>
+<li>
+<p>Import the file in the <a href="https://nuvioapp.space/account?tab=collections">Nuvio Collections Manager</a>.</p>
+</li>
+</ol>
+<p>Rows from AIOStreams only fill when the matching addons are filled in: <em>Top-streaming (FR)</em> and <em>AIOMetadata</em> (see <a href="#aiometadata-catalogs-from-mdblist-and-trakt">above</a>), and for <em>Football</em> the <a href="#37-live-sports-and-live-tv-addons">live sports addons</a>. The other rows are TMDB and Trakt lists that Nuvio reads itself, with no addon.</p>
 <p>You can customize how your collections look by adding cover images and configuring display settings:</p>
 <p><strong>Cover Images (Logos)</strong>:</p>
 <ul>

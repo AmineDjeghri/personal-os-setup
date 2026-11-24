@@ -3782,11 +3782,11 @@ Understanding these terms helps clarify how Beets works internally.</p>
 <li>Imports can resume if interrupted</li>
 </ul>
 <p><strong>Importing</strong> means scanning music files and adding them to the <strong>Beets library database</strong> (<code>library.db</code>).</p>
-<p>Important:</p>
-<blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
 <p>Importing does <strong>not necessarily modify the music files</strong>.
 It primarily registers them in the Beets database. Modifying the files is controlled by other settings like <code>write</code>, <code>copy</code>, <code>move</code>, etc.</p>
-</blockquote>
+</div>
 <p><strong>Tagging</strong> means assigning metadata to music files.</p>
 <p>Typical metadata fields:</p>
 <ul>
@@ -3811,9 +3811,10 @@ What I advise to play with is:</li>
 <li>finally full auto silently: <code>autotag: yes</code> and  <code>timid: no</code> and <code>quiet: yes</code>.  Quiet will skip (check quiet_fallback) tracks below the threshold.</li>
 <li>You can also play with  incremental and incremental_skip_later to skip some albums and tracks</li>
 </ul>
-<blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The add-on replaces these host cronjobs (it has a built-in watcher, a daily sweep, and a periodic duplicates job). Kept below for reference if you run Beets on the host instead:</p>
-</blockquote>
+</div>
 <p>Add these commands to your crontab with <code>crontab -e</code>  to run it:
 <strong>Run every day (incremental import)</strong>
 <code>0 3 * * * flock -n /tmp/beets.lock ~/.venv/bin/beet -vv import ~/haos_media/music --incremental &gt; ~/beets-cron.log 2&gt;&amp;1</code></p>

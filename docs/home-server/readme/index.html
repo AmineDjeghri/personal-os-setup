@@ -4488,13 +4488,11 @@ If this server was your DHCP Server, activate temporarily the DHCP of your route
 <p>This works only with Ethernet, not with Wi-Fi.</p>
 </li>
 </ul>
-<blockquote>
-<blockquote>
-<p>Important:
-The bridge will create new Mac Addresses. So if you had a DHCP with devices that used static IP through the bridge, you will need to update it.
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The bridge will create new Mac Addresses. So if you had a DHCP with devices that used static IP through the bridge, you will need to update it.
 For adguard, you will need to go to DHCP settings, delete the old client and create a new one in DHCP leases after it detects the new IP address.</p>
-</blockquote>
-</blockquote>
+</div>
 <p>How to:</p>
 <ul>
 <li>Identify your network interface with <code>ip addr</code>, it should look like <code>enp0s31f6</code> or <code>enx001</code>  It is where you can see eth0.</li>
@@ -4551,11 +4549,10 @@ To connect to the server via SSH, you will need to use the <code>br0</code> addr
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>xz<span class="w"> </span>-d<span class="w"> </span>/var/lib/libvirt/images/haos_ova-16.3.qcow2.xz
 </span></code></pre></div>
-<blockquote>
-<blockquote>
-<p>Important: we will use sudo so with all the commands later like <code>virsh list --all</code> should use sudo <code>sudo virsh list --all</code> otherwise it will show nothing.</p>
-</blockquote>
-</blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>we will use sudo so with all the commands later like <code>virsh list --all</code> should use sudo <code>sudo virsh list --all</code> otherwise it will show nothing.</p>
+</div>
 <ul>
 <li>HAOS runs under system libvirt  and needs to be managed by root and uses /var/lib/libvirt
 *</li>
@@ -5319,7 +5316,14 @@ headers — Symfonium, Amperfy and Nautiline can; Narjo, Substreamer and Feishin
 <li>Don't touch the IPV6 settings during this DHCP switch (the IPv6 DNS is set separately, see the AdGuard Home notes above).</li>
 <li>⚠️ A bridge reset changes the MAC addresses: re-check them in the AdGuard leases, recreate the affected static leases, then restart the network / devices.</li>
 <li>Forget stale LAN devices in the Freebox web interface (<a href="http://mafreebox.freebox.fr/">http://mafreebox.freebox.fr/</a> → <strong>Périphériques réseau</strong> → forget the device), e.g. after a bridge/MAC change, a new VM or a replaced phone, so the router re-detects them with their current MAC/IP instead of keeping the old entry.<ul>
-<li>This also keeps Home Assistant clean: the <strong>Freebox</strong> integration creates a <code>device_tracker</code> for every device the box lists, so a stale entry on the Freebox stays as a stale tracker in Home Assistant. While the integration still provides it, Home Assistant only offers disable/hide, not delete. So forget the device on the Freebox first, reload the Freebox integration, then remove the leftover entity (Settings → Devices &amp; services → Entities → select → Remove selected).</li>
+<li>This also keeps Home Assistant clean: the <strong>Freebox</strong> integration creates a <code>device_tracker</code> for every device the box lists, so a stale entry on the Freebox stays as a stale tracker in Home Assistant. While the integration still provides it, Home Assistant only offers disable/hide, not delete. Deleting it on the Freebox alone is not enough, and restarting the Freebox does not help: the leftover lives in Home Assistant's entity registry. In order:<ol>
+<li>Forget the device in the Freebox web interface (see above). Skipping this brings the entity back on the next reload.</li>
+<li>In Home Assistant: Settings → Devices &amp; services → <strong>Freebox</strong> → ⋮ → <strong>Reload</strong>.</li>
+<li>Settings → Devices &amp; services → <strong>Entities</strong>, search <code>freebox</code>. The orphaned trackers show a red exclamation icon; hovering says <em>not provided</em> (the integration no longer provides them). Entities without it are still reported by the Freebox: forget them there first.</li>
+<li>Click the entity → <strong>Settings</strong> (gear) → <strong>Delete</strong> (bottom left of the dialog). To clear several at once: select them in the list → <strong>Remove selected</strong>.</li>
+<li>If the device page still offers no Delete, check that none of its entities is left and that the Freebox no longer lists the device.</li>
+</ol>
+</li>
 </ul>
 </li>
 <li>Restart the router. (Make sure the router DHCP is off and the DNS is pointing to the AdGuard Home)</li>
@@ -5365,7 +5369,7 @@ headers — Symfonium, Amperfy and Nautiline can; Narjo, Substreamer and Feishin
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>hermes<span class="w"> </span>cron<span class="w"> </span>create<span class="w"> </span><span class="s2">"every monday at 09:00"</span><span class="w"> </span>--name<span class="w"> </span>stale-devices<span class="w"> </span>--script<span class="w"> </span>stale_devices_collect.py<span class="w"> </span>--no-agent<span class="w"> </span>--deliver<span class="w"> </span>telegram
 </span></code></pre></div>
 <ul>
-<li><strong>What the message tells you to do, in order:</strong> forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then remove the leftover entities (Settings -&gt; Devices &amp; services -&gt; Entities -&gt; select -&gt; Remove selected). Skipping the first step brings the entities back on the next reload.</li>
+<li><strong>What the message tells you to do, in order:</strong> forget the device in the Freebox web interface (Périphériques réseau), reload the Freebox integration in Home Assistant, then delete the entities marked <em>not provided</em> (red exclamation icon; steps in <a href="#adguard-home-address-naming-resolution-using-the-router-freebox">the router notes above</a>). Skipping the first step brings the entities back on the next reload.</li>
 </ul>
 <h3 id="check-that-adguard-home-and-the-freebox-agree-script-hermes-cron">Check that AdGuard Home and the Freebox agree (script + Hermes cron)<a class="headerlink" href="#check-that-adguard-home-and-the-freebox-agree-script-hermes-cron" title="Permanent link">&para;</a></h3>
 <p>The sync only touches clients that match a Freebox device, and the DHCP static leases are never synced at all, so the two sides drift: a device with no name in the Freebox becomes a client named by its MAC, a static lease keeps an old MAC after a bridge reset, a client outlives the device it was made for. <a href="../adguard_freebox/network_audit.py">network_audit.py</a> compares both and reports what needs a decision. It never changes anything.</p>

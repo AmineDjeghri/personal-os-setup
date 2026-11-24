@@ -3614,7 +3614,7 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>└── downloads.log             # tee'd run log (--log) — progress/resume debugging
 </span></code></pre></div>
 <h2 id="install-nothing-to-install">Install (nothing to install)<a class="headerlink" href="#install-nothing-to-install" title="Permanent link">&para;</a></h2>
-<p>Dependencies live in the script itself (PEP 723 inline metadata — <code># /// script</code> header with <code>requires-python = "&gt;=3.11"</code> and <code>dependencies = ["yt-dlp", "mutagen"]</code>). <code>uv</code> builds a cached environment on first run (~1 min the first time, instant after). No <code>requirements.txt</code>, no manual venv.</p>
+<p>Dependencies live in the script itself (PEP 723 inline metadata — the <code># /// script</code> header of <code>yt_dl.py</code> declares <code>requires-python</code> and <code>dependencies</code>). <code>uv</code> builds a cached environment on first run (~1 min the first time, instant after). No <code>requirements.txt</code>, no manual venv.</p>
 <p>Requires: a container/host with <code>/media</code> rw (the Hermes agent addon qualifies), <code>ffmpeg</code>, <code>uv</code>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>/config/workspace/personal-os-setup/docs/home-server/music/youtube_ai_download
@@ -3632,9 +3632,10 @@
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># 4. (optional) Beets takes over automatically (~300s watch debounce); without</span>
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1">#    it, Navidrome picks the files up on its own scan schedule.</span>
 </span></code></pre></div>
-<blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
 <p><strong><code>--no-project</code> is important</strong>: this folder may sit inside a uv project (personal-os-setup has its own <code>pyproject.toml</code>) — bare <code>uv run</code> would bind to that project's environment instead of the script's own deps.</p>
-</blockquote>
+</div>
 <p>Helpers: <code>--max N</code> (limit downloads, testing), <code>--urls-file file.txt</code> (many URLs, one per line), <code>--log FILE</code> (tee output to a log file). Interrupted runs resume: leftover <code>.staging/</code> files are moved into the library on the next start, and the archive skips already-done videos.</p>
 <h2 id="overrides-the-whole-decision-layer">Overrides — the whole decision layer<a class="headerlink" href="#overrides-the-whole-decision-layer" title="Permanent link">&para;</a></h2>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span><span class="nt">"VIDEO_ID"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
