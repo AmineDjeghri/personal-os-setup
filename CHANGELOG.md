@@ -2,6 +2,55 @@
 
 <!-- version list -->
 
+## v1.3.0 (2026-11-24)
+
+### Documentation
+
+- Adguard hermes cron (#170) ([#170](https://github.com/AmineDjeghri/personal-os-setup/pull/170),
+  [`67239ea`](https://github.com/AmineDjeghri/personal-os-setup/commit/67239ea1bc21919062d796cbc929e0d55760ff41))
+
+- Clarify deleting stale Freebox entities in Home Assistant (#172)
+  ([#172](https://github.com/AmineDjeghri/personal-os-setup/pull/172),
+  [`fe323d5`](https://github.com/AmineDjeghri/personal-os-setup/commit/fe323d5f5054ecd7b109a41d853f639f783f64e8))
+
+- Render GitHub-style alerts with markdown-callouts (#173)
+  ([#173](https://github.com/AmineDjeghri/personal-os-setup/pull/173),
+  [`3d81f33`](https://github.com/AmineDjeghri/personal-os-setup/commit/3d81f3367b9e64e882dd48a04565a38aba1082f4))
+
+- Update (#169) ([#169](https://github.com/AmineDjeghri/personal-os-setup/pull/169),
+  [`2437b31`](https://github.com/AmineDjeghri/personal-os-setup/commit/2437b316da058d9d0723f3c2f9342236e70ecdcc))
+
+- Update docs
+  ([`c8c779d`](https://github.com/AmineDjeghri/personal-os-setup/commit/c8c779dc4f836b35b3848c16df4e6bd6369ad575))
+
+- Update docs
+  ([`b0b4783`](https://github.com/AmineDjeghri/personal-os-setup/commit/b0b47837a8e6ab1c741f6c7e866f5305d57a23fd))
+
+- **aiostreams**: Bump essentials template to 1.4.0
+  ([`d26defe`](https://github.com/AmineDjeghri/personal-os-setup/commit/d26defe600c1641ab69f8c43f1dc8ec6cae8973d))
+
+- **aiostreams**: Bump essentials template to 1.4.0
+  ([`26c299f`](https://github.com/AmineDjeghri/personal-os-setup/commit/26c299fe951b06293fcfdd1dd1fa9996131492d1))
+
+- **aiostreams**: Sync templates with the live config, split the guide, add checks (#171)
+  ([#171](https://github.com/AmineDjeghri/personal-os-setup/pull/171),
+  [`b79af26`](https://github.com/AmineDjeghri/personal-os-setup/commit/b79af264823766953985395d6636e256818d3e33))
+
+- **aiostreams**: Update config
+  ([`469321e`](https://github.com/AmineDjeghri/personal-os-setup/commit/469321e5a91d058634aa96ba2d3f1cee259dcc96))
+
+- **nuvio**: Update docs
+  ([`c6c4a01`](https://github.com/AmineDjeghri/personal-os-setup/commit/c6c4a0180617ca18958a66083e7dec37b3df0db0))
+
+### Features
+
+- Add HTML presentation and diagram skills with reusable templates
+  ([`ad7f2bd`](https://github.com/AmineDjeghri/personal-os-setup/commit/ad7f2bd8157b9dc65540ae5ced28ed0f3c7ccc43))
+
+- Add HTML presentation and diagram skills with reusable templates
+  ([`027db78`](https://github.com/AmineDjeghri/personal-os-setup/commit/027db783d19a705eaa4a310af02c1556b9e42124))
+
+
 ## v1.2.0 (2026-11-14)
 
 ### Bug Fixes
