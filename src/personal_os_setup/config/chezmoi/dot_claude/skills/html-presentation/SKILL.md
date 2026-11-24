@@ -72,7 +72,8 @@ Use the first source that has the logo:
 1. `simple:<slug>`: [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0), brand colors added.
 2. `aws:<service>` / `logos:<slug>`: [gilbarbara/logos](https://github.com/gilbarbara/logos) (CC0), full-color, incl. AWS services.
 3. `devicon:<slug>`: [devicon](https://github.com/devicons/devicon) (MIT).
-4. `url:<name>=<raw.githubusercontent.com URL>`: another repo with thousands of stars, recent
+4. `lucide:<slug>`: [Lucide](https://github.com/lucide-icons/lucide) (ISC), neutral line icons for components without a public logo (`lucide:database`, `lucide:server`).
+5. `url:<name>=<raw.githubusercontent.com URL>`: another repo with thousands of stars, recent
    commits and a reusable license (check with `gh api repos/<owner>/<repo>`), pinned to a commit.
 
 A component without a public logo gets a neutral line icon on a colored tile. Logos stay

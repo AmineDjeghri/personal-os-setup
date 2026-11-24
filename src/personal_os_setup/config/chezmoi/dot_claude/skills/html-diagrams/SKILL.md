@@ -52,7 +52,10 @@ Use the first source that has the logo:
    `aws:logo` for the AWS mark. `logos:<slug>` takes any file name from its `logos/` folder.
 3. `devicon:<slug>`: [devicon](https://github.com/devicons/devicon) (11.9k stars, MIT, pinned to a
    commit), original variant.
-4. Still missing: look in another **popular, maintained** repository and pass its raw file with
+4. `lucide:<slug>`: [Lucide](https://github.com/lucide-icons/lucide) (26k stars, ISC, pinned to a
+   release). Neutral line icons for a component with no public logo (`lucide:database`,
+   `lucide:server`, `lucide:globe`, `lucide:user`). Saved as `lucide-<slug>.svg`.
+5. Still missing: look in another **popular, maintained** repository and pass its raw file with
    `url:<name>=https://raw.githubusercontent.com/<owner>/<repo>/<commit>/<path>.svg`. Popular means
    thousands of stars and recent commits, with a license that allows reuse. Check both with
    `gh api repos/<owner>/<repo>`. Do not use a small or abandoned repository, even if it has the
@@ -60,7 +63,7 @@ Use the first source that has the logo:
    commit, never a branch.
 
 Do not draw or approximate a logo. A component with no public logo (an internal API, a client,
-an unnamed service) gets a neutral line icon from the sprite in the starter, on a colored tile.
+an unnamed service) gets a neutral line icon (`lucide:<slug>`, or the starter sprite) on a colored tile.
 Logos remain trademarks of their owners (AWS icons follow the AWS trademark guidelines). Keep
 `SOURCES.md` next to the diagram.
 

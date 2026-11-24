@@ -24,6 +24,8 @@ LOGOS_COMMIT = "875d71c5a8e4aa90a33f8b3ea15b8945de9cc183"  # pragma: allowlist s
 LOGOS_URL = "https://raw.githubusercontent.com/gilbarbara/logos/{commit}/logos/{slug}.svg"
 DEVICON_COMMIT = "32fe1d3b3f36ad11f90ab94f7db59738139c2bf6"  # pragma: allowlist secret
 DEVICON_URL = "https://raw.githubusercontent.com/devicons/devicon/{commit}/icons/{slug}/{slug}-{variant}.svg"
+LUCIDE_TAG = "1.79.0"
+LUCIDE_URL = "https://raw.githubusercontent.com/lucide-icons/lucide/{tag}/icons/{slug}.svg"
 RAW_HOST = "https://raw.githubusercontent.com/"
 # Colour applied to the monochrome Simple Icons so the logos keep their brand identity.
 BRAND_COLORS = {
@@ -62,6 +64,7 @@ def resolve_icon(spec):
     logos:<slug>       gilbarbara/logos (full-color logos, many products and AWS services)
     aws:<service>      shortcut for logos:aws-<service>; aws:logo is the AWS mark
     devicon:<slug>     devicons/devicon (original variant)
+    lucide:<slug>      lucide-icons/lucide (neutral line icons for components without a logo)
     url:<name>=<url>   any raw.githubusercontent.com file, for a popular repo not listed above
     """
     kind, _, name = spec.partition(":")
@@ -82,6 +85,11 @@ def resolve_icon(spec):
         svg = fetch(DEVICON_URL.format(commit=DEVICON_COMMIT, slug=name, variant="original"))
         source = f"devicons/devicon {DEVICON_COMMIT[:7]} icons/{name}/{name}-original.svg (MIT; logos remain trademarks of their owners)"
         return name, svg, source
+    if kind == "lucide" and name:
+        svg = fetch(LUCIDE_URL.format(tag=LUCIDE_TAG, slug=name))
+        svg = svg.replace('stroke="currentColor"', f'stroke="#{DEFAULT_COLOR}"', 1)
+        source = f"lucide-icons/lucide {LUCIDE_TAG} icons/{name}.svg (ISC, stroke #{DEFAULT_COLOR} set)"
+        return f"lucide-{name}", svg, source
     if kind == "url" and "=" in name:
         file, _, url = name.partition("=")
         if not url.startswith(RAW_HOST) or not re.fullmatch(r"[\w.-]+", file):
@@ -91,7 +99,7 @@ def resolve_icon(spec):
         return file, svg, source
     raise SystemExit(
         f"Invalid icon '{spec}'. Use simple:<slug>, logos:<slug>, aws:<service>, aws:logo, "
-        "devicon:<slug> or url:<name>=<raw.githubusercontent.com URL>."
+        "devicon:<slug>, lucide:<slug> or url:<name>=<raw.githubusercontent.com URL>."
     )
 
 
