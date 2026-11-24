@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<meta name="diagram-size" content="1500x520">
+<style>
+:root{
+  --ink:#171a3b; --muted:#62697c; --paper:#f7f8fc;
+  --blue:#2f54d4; --red:#dc2626; --grey:#6b7390;
+  --platform:#1d4ed8;   --platform-bg:#eaf0ff; --platform-line:#b9c9f5;
+  --cloud:#d97706;   --cloud-bg:#fff4e2; --cloud-line:#f2cf94;
+  --workload:#7c3aed;   --workload-bg:#f3edff; --workload-line:#cdb9f5;
+  --data:#0f8a6a;  --ext:#6b7390;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+#canvas{position:relative;width:1500px;height:520px;background:var(--paper);overflow:hidden}
+svg.edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+
+.zone{position:absolute;border-radius:26px;border:2px solid}
+.zone .tag{position:absolute;top:14px;left:26px;display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;letter-spacing:-.3px}
+.zone .tag svg{width:34px;height:34px}
+.zone.platform{background:var(--platform-bg);border-color:var(--platform-line)} .zone.platform .tag{color:var(--platform)}
+.zone.cloud{background:var(--cloud-bg);border-color:var(--cloud-line)} .zone.cloud .tag{color:var(--cloud)}
+.zone.workload{background:var(--workload-bg);border-color:var(--workload-line)} .zone.workload .tag{color:var(--workload)}
+
+.node{position:absolute;display:flex;align-items:center;gap:18px;padding:0 22px;background:#fff;border:2.5px solid var(--c);border-radius:16px;box-shadow:0 8px 20px #1b1e4a1a;overflow:hidden}
+.node:before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;background:var(--c)}
+.node .ic{flex:none;width:58px;height:58px;border-radius:15px;background:var(--c);display:grid;place-items:center;margin-left:4px}
+.node .ic svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.node b{display:block;white-space:nowrap;font-size:29px;line-height:1.08;letter-spacing:-.6px}
+.node small{display:block;margin-top:5px;font-size:22px;color:var(--muted)}
+.node.col{flex-direction:column;justify-content:center;gap:8px;text-align:center;padding:14px 10px 0}
+.node.col .ic{margin:0}
+.node.col:before{width:auto;height:9px;right:0;bottom:auto}
+.node.dashed{border-style:dashed;background:#fbfbfe;box-shadow:none}
+.node.dashed:before{display:none}
+.node.dashed .ic{margin-left:0}
+.platform-c{--c:var(--platform)} .cloud-c{--c:var(--cloud)} .workload-c{--c:var(--workload)} .data-c{--c:var(--data)} .ext-c{--c:var(--ext)} .client-c{--c:var(--blue)}
+
+.node .ic.logo{background:#fff;border:2px solid #e3e6f0}
+.node .ic.logo img{width:40px;height:40px}
+.node .ic.brand{background:none;width:60px;height:60px;border-radius:12px;overflow:hidden}
+.node .ic.brand img{width:60px;height:60px;display:block}
+.zone .tag img{width:34px;height:34px}
+.chip{position:absolute;display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #e3d3f7;border-radius:999px;padding:8px 20px 8px 12px;font-size:21px;color:#5b3a8c}
+.chip img{width:30px;height:30px}
+.badge{position:absolute;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;color:#fff;font-weight:700;font-size:23px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 3px 8px #0003}
+.badge.req{background:var(--blue)} .badge.ans{background:var(--red)}
+
+.legend{position:absolute;left:700px;top:716px;display:flex;gap:46px;align-items:center;font-size:24px;background:#fff;border:2px solid #dfe3f0;border-radius:16px;padding:16px 28px}
+.legend span{display:flex;align-items:center;gap:14px}
+.legend i{display:block;width:62px;height:0;border-top:5px solid}
+.legend .r{border-color:var(--blue)} .legend .a{border-color:var(--red)} .legend .d{border-top:5px dashed var(--grey)}
+</style>
+</head>
+<body>
+<!-- Neutral starter: a client calls a service that stores data and calls an external API. Replace zones, nodes, edges and badges
+     with your own system. The canvas size must match the meta tag above. Every .node box (left/top/width/height in px) anchors
+     its edges: an edge path starts or ends on a box side. Delete what the story does not need (badges, answers, legend lines).
+     This starter needs no icon files: logos are optional and fetched with diagram.py icons. -->
+<div id="canvas">
+
+<!-- icon sprites: 24x24 stroke icons -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="3"/><path d="M4.5 5.5v13c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-13M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h4M12 12h8"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/><circle cx="10" cy="12" r="2"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M12 4h.01M9 14v1M15 14v1M2 13v3M22 13v3"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-bucket" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="2.6"/><path d="M4 6l2 13c.2 1.2 2.7 2 6 2s5.8-.8 6-2l2-13"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3c.6 4.6 3.4 7.4 9 9-5.6 1.6-8.4 4.4-9 9-.6-4.6-3.4-7.4-9-9 5.6-1.6 8.4-4.4 9-9z"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4.2 4.2 0 0 0 5.4 5.4l-.1-.1L10.2 21.5a2.1 2.1 0 0 1-3-3L17.1 8.8a4.2 4.2 0 0 0-2.4-2.5z"/></symbol>
+    <symbol id="i-os" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6M20 12a8 8 0 0 1-13.7 5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol>
+  </defs>
+</svg>
+
+<!-- zones -->
+<div class="zone platform" style="left:300px;top:6px;width:760px;height:380px"><div class="tag">System</div></div>
+
+<!-- edges -->
+<svg class="edges" viewBox="0 0 1500 520">
+  <defs>
+    <marker id="ah-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2f54d4"/></marker>
+    <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+    <marker id="ah-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#6b7390"/></marker>
+  </defs>
+  <g fill="none" stroke-width="4.5" stroke-linejoin="round">
+    <!-- dashed lookups and data -->
+    <g stroke="#6b7390" stroke-width="3" stroke-dasharray="9 8" marker-end="url(#ah-g)">
+      <path d="M670 255H800"/>
+      <path d="M505 200V120H1295V200"/>
+    </g>
+    <!-- requests -->
+    <g stroke="#2f54d4" marker-end="url(#ah-b)">
+      <path d="M250 230H340"/>
+    </g>
+    <!-- answers -->
+    <g stroke="#dc2626" marker-end="url(#ah-r)">
+      <path d="M340 285H250"/>
+    </g>
+  </g>
+</svg>
+
+<!-- nodes -->
+<div class="node client-c" style="left:20px;top:200px;width:230px;height:110px"><div class="ic"><svg><use href="#i-monitor"/></svg></div><div><b>Client</b></div></div>
+<div class="node platform-c" style="left:340px;top:200px;width:330px;height:110px"><div class="ic"><svg><use href="#i-doc"/></svg></div><div><b>Service</b><small>application</small></div></div>
+<div class="node col data-c" style="left:800px;top:180px;width:200px;height:150px"><div class="ic"><svg><use href="#i-db"/></svg></div><div><b style="font-size:27px">Database</b><small>data store</small></div></div>
+<div class="node dashed ext-c" style="left:1130px;top:200px;width:330px;height:110px"><div class="ic" style="background:#eceef6"><svg style="stroke:#6b7390"><use href="#i-spark"/></svg></div><div><b>External API</b><small>third party</small></div></div>
+
+<!-- step badges, in the order the flow happens -->
+<div class="badge req" style="left:295px;top:230px">1</div>
+<div class="badge ans" style="left:295px;top:285px">2</div>
+
+<div class="legend" style="left:300px;top:426px">
+  <span><i class="r"></i>Request</span>
+  <span><i class="a"></i>Answer</span>
+  <span><i class="d"></i>Lookup and data</span>
+</div>
+</div>
+</body>
+</html>
