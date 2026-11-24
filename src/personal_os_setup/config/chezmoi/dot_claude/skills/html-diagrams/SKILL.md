@@ -76,13 +76,17 @@ python3 scripts/diagram.py render /path/to/diagram -o /path/to/diagram.png
 
 `check` is offline: icons referenced exist, no remote URLs, nodes inside the canvas and not
 overlapping, arrow markers defined, step badges unique. `render` runs the check, then takes the
-screenshot with the first Chromium-based browser found (Chrome, Edge, Brave, Chromium;
-`--browser` or `CHROME_BIN` to choose). It needs no Playwright and installs nothing. Scale
+screenshot with the first Chromium-based browser found: `CHROME_BIN`, then well-known names
+(Chrome, Edge, Brave, Chromium, Helium, Vivaldi, Opera, Thorium), then any executable on `PATH`
+named like a Chromium fork. Choose one with `--browser /path` or `CHROME_BIN`. If it finds none,
+look yourself before giving up (`ls /usr/bin /opt | grep -i -E 'chrom|helium|brave|edge|vivaldi'`,
+`flatpak list`, `.desktop` files) and pass the path, e.g. `--browser /usr/bin/helium-browser`.
+It needs no Playwright and installs nothing. Scale
 defaults to 2 (a 2000x830 canvas gives a 4000x1660 PNG).
 
 Always open the PNG and look at it: `check` does not catch a wrapped title, an arrow that
-crosses a card or a badge sitting on a label. Fix, re-render, look again. If no browser is
-available, say the PNG was not rendered.
+crosses a card or a badge sitting on a label. Fix, re-render, look again. Say the PNG was
+not rendered only after searching for a browser as above.
 
 ## Deliver
 

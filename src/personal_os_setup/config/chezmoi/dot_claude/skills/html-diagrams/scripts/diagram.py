@@ -44,8 +44,29 @@ BROWSERS = (
     "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
     "/Applications/Chromium.app/Contents/MacOS/Chromium",
     "google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "microsoft-edge",
-    "chrome", "msedge",
+    "microsoft-edge-stable", "brave", "brave-browser", "helium", "helium-browser", "vivaldi",
+    "vivaldi-stable", "opera", "thorium-browser", "ungoogled-chromium", "chrome", "msedge",
 )
+# Any other Chromium fork on PATH is found by name, e.g. helium-browser, ungoogled-chromium.
+BROWSER_NAME_HINTS = ("chrom", "helium", "brave", "edge", "vivaldi", "opera", "thorium")
+NOT_BROWSERS = ("chromedriver", "chrome-gnome-shell", "chrome-remote", "crashpad")
+
+
+def scan_path_for_browsers():
+    """Executables on PATH whose name looks like a Chromium-based browser (fallback)."""
+    seen = []
+    for folder in os.environ.get("PATH", "").split(os.pathsep):
+        try:
+            names = sorted(os.listdir(folder))
+        except OSError:
+            continue
+        for name in names:
+            low = name.lower()
+            if any(h in low for h in BROWSER_NAME_HINTS) and not any(n in low for n in NOT_BROWSERS):
+                full = os.path.join(folder, name)
+                if os.access(full, os.X_OK) and not os.path.isdir(full) and full not in seen:
+                    seen.append(full)
+    return seen
 
 
 def fetch(url):
@@ -252,9 +273,15 @@ def find_browser(explicit):
         found = shutil.which(candidate) or (candidate if Path(candidate).exists() else None)
         if found:
             return found
+    if not explicit:
+        for found in scan_path_for_browsers():
+            print(f"browser: {found} (found by scanning PATH)")
+            return found
     raise SystemExit(
-        "No Chromium-based browser found (Chrome, Edge, Brave, Chromium). "
-        "Pass --browser /path/to/browser or set CHROME_BIN. The PNG was not rendered."
+        "No Chromium-based browser found (Chrome, Edge, Brave, Chromium, Helium, Vivaldi...). "
+        "Pass --browser /path/to/browser or set CHROME_BIN "
+        "(find one with: ls /usr/bin /opt | grep -i -E 'chrom|helium|brave|edge|vivaldi'). "
+        "The PNG was not rendered."
     )
 
 
