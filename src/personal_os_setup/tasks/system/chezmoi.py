@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import re
 import shutil
-from datetime import datetime
 from importlib import resources
 from pathlib import Path
 
-from personal_os_setup.tasks.commands import run
+from personal_os_setup.tasks.backups import backup_file, backup_root, new_stamp
+from personal_os_setup.tasks.commands import QUIET_ENV, run, strip_terminal_noise
 from personal_os_setup.tasks.task import TaskResult
 
 
@@ -68,104 +68,140 @@ def chezmoi_diff(targets: list[Path] | None = None) -> TaskResult:
     )
 
 
-def _backup_before_overwrite(targets: list[Path]) -> list[Path]:
-    """Copy each existing target aside before chezmoi overwrites it.
+def _status_entries(chezmoi_path: str, targets: list[Path]) -> list[tuple[str, Path]]:
+    """Return `(status, path)` for entries an apply would touch: A=create, M=overwrite, R=run script.
 
-    Uses the same "<name>_<timestamp>_backup<suffix>" convention as the frontend's
-    `backup_target` mechanism (`app.py::_run_action_worker`). Scripts/symlinks (which
-    chezmoi reports as managed paths but don't correspond to a plain destination file)
-    are skipped via the `is_file()` check, not treated as errors.
+    Status is the second column of `chezmoi status` (actual state vs target state).
     """
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    res = run(
+        [
+            chezmoi_path,
+            "--source",
+            str(chezmoi_source_dir()),
+            "status",
+            "--include=files,scripts",
+            "--path-style=absolute",
+            *(str(t) for t in targets),
+        ],
+        check=False,
+    )
+    if res.returncode != 0:
+        return []
+    entries: list[tuple[str, Path]] = []
+    for line in res.stdout.splitlines():
+        if len(line) > 3 and line[1] in "AMR" and line[2] == " ":
+            entries.append((line[1], Path(line[3:])))
+    return entries
+
+
+def chezmoi_preview(targets: list[Path] | None = None) -> str:
+    """Summarize what applying `targets` would do, for the confirm dialog ("" if unknown)."""
+    chezmoi_path = _chezmoi_path()
+    if chezmoi_path is None:
+        return ""
+    entries = _status_entries(chezmoi_path, targets or [])
+    created = sum(1 for status, _ in entries if status == "A")
+    changed = sum(1 for status, _ in entries if status == "M")
+    scripts = [path for status, path in entries if status == "R"]
+    if not entries:
+        return "Nothing to change."
+    lines = [f"{created} file(s) to create, {changed} to overwrite."]
+    if scripts:
+        lines.append(f"{len(scripts)} script(s) will run: " + ", ".join(p.name for p in scripts))
+    return "\n".join(lines)
+
+
+def _backup_before_overwrite(chezmoi_path: str, targets: list[Path]) -> list[Path]:
+    """Copy every file the apply will overwrite into one timestamped backup directory.
+
+    Only files whose content chezmoi would actually change are copied (see `backups.backup_file`
+    for where they go); a file that cannot be copied is skipped, not treated as an error.
+    """
+    stamp = new_stamp()
     backed_up: list[Path] = []
-    for target in targets:
-        if not target.is_file():
+    for status, path in _status_entries(chezmoi_path, targets):
+        if status != "M":
             continue
-        backup_path = (
-            target.with_name(f"{target.stem}_{ts}_backup{target.suffix}")
-            if target.suffix
-            else target.with_name(f"{target.name}_{ts}_backup")
-        )
         try:
-            shutil.copy2(target, backup_path)
+            destination = backup_file(path, stamp)
         except OSError:
             continue
-        backed_up.append(backup_path)
+        if destination is not None:
+            backed_up.append(destination)
     return backed_up
 
 
+_SCRIPT_FAILURE_RE = re.compile(r"chezmoi: (?P<script>.+?): exit status (?P<code>\d+)")
+
+
+def _apply_phase(chezmoi_path: str, selector: str, targets: list[Path]):  # type: ignore[no-untyped-def]
+    return run(
+        [
+            chezmoi_path,
+            "--source",
+            str(chezmoi_source_dir()),
+            "apply",
+            "-v",
+            "--force",
+            "--parent-dirs",
+            "--refresh-externals=never",
+            selector,
+            *(str(t) for t in targets),
+        ],
+        check=False,
+        env=QUIET_ENV,
+    )
+
+
+def _output_of(res) -> str:  # type: ignore[no-untyped-def]
+    return strip_terminal_noise((res.stdout + "\n" + res.stderr).strip())
+
+
+def _last_lines(text: str, count: int = 6) -> str:
+    return "\n".join(text.splitlines()[-count:])
+
+
 def chezmoi_apply(targets: list[Path] | None = None) -> TaskResult:
-    """Apply the selected dotfile(s) to the home directory without refreshing git-repo externals."""
+    """Apply the selected dotfile(s) to the home directory without refreshing git-repo externals.
+
+    Files are applied first and scripts second, in two chezmoi calls, because chezmoi stops at
+    the first failing entry: a failing `run_*` script must never keep the files from deploying.
+    A script failure after the files landed is reported as a warning, not as a failed apply.
+    """
     chezmoi_path = _chezmoi_path()
     if chezmoi_path is None:
         return TaskResult(ok=False, summary="chezmoi not found on PATH")
 
-    backed_up = _backup_before_overwrite(targets or [])
-
-    argv = [
-        chezmoi_path,
-        "--source",
-        str(chezmoi_source_dir()),
-        "apply",
-        "-v",
-        "--force",
-        "--parent-dirs",
-        "--refresh-externals=never",
-    ]
-    argv.extend(str(t) for t in targets or [])
-    res = run(argv, check=False)
-    details = (res.stdout + "\n" + res.stderr).strip()
+    targets = targets or []
+    backed_up = _backup_before_overwrite(chezmoi_path, targets)
+    header = ""
     if backed_up:
-        backup_note = "Backed up before applying:\n" + "\n".join(str(p) for p in backed_up)
-        details = f"{backup_note}\n\n{details}".strip()
-    if res.returncode == 0:
-        return TaskResult(ok=True, summary="chezmoi apply: ok", details=details)
-    return TaskResult(ok=False, summary="chezmoi apply: failed", details=details)
+        header = f"Backed up {len(backed_up)} file(s) before overwriting, under {backup_root()}\n\n"
 
-
-def _backup_name_pattern(path: Path) -> re.Pattern[str]:
-    """Match the backup names `_backup_before_overwrite`/`backup_target` give a copy of `path`."""
-    return re.compile(rf"^{re.escape(path.stem)}_\d{{8}}_\d{{6}}_backup{re.escape(path.suffix)}$")
-
-
-def chezmoi_clean_backups() -> TaskResult:
-    """Delete every "<name>_<timestamp>_backup<suffix>" copy sitting next to a managed file.
-
-    Only names that match a currently managed file are removed, so an unrelated file that
-    happens to contain "_backup" is never touched. The live (managed) files are not modified.
-    """
-    managed = chezmoi_managed_paths()
-    if not managed:
-        return TaskResult(ok=False, summary="chezmoi clean backups: no managed files found")
-
-    patterns_by_dir: dict[Path, list[re.Pattern[str]]] = {}
-    for path in managed:
-        patterns_by_dir.setdefault(path.parent, []).append(_backup_name_pattern(path))
-
-    removed: list[Path] = []
-    failed: list[str] = []
-    for directory, patterns in sorted(patterns_by_dir.items()):
-        if not directory.is_dir():
-            continue
-        for candidate in sorted(directory.iterdir()):
-            if not candidate.is_file() or not any(p.match(candidate.name) for p in patterns):
-                continue
-            try:
-                candidate.unlink()
-            except OSError as e:
-                failed.append(f"{candidate}: {e}")
-            else:
-                removed.append(candidate)
-
-    details = "\n".join([*(str(p) for p in removed), *(f"FAILED {f}" for f in failed)])
-    if failed:
+    files = _apply_phase(chezmoi_path, "--exclude=scripts", targets)
+    files_output = _output_of(files)
+    if files.returncode != 0:
         return TaskResult(
             ok=False,
-            summary=f"chezmoi clean backups: removed {len(removed)}, {len(failed)} failed",
-            details=details,
+            summary="chezmoi apply: failed while writing files (nothing ran after it)",
+            details=f"{header}Failed step: write files\nLast output:\n{_last_lines(files_output)}"
+            f"\n\nFull output:\n{files_output}".strip(),
         )
+
+    scripts = _apply_phase(chezmoi_path, "--include=scripts", targets)
+    scripts_output = _output_of(scripts)
+    full = "\n".join(part for part in (files_output, scripts_output) if part)
+    if scripts.returncode == 0:
+        return TaskResult(ok=True, summary="chezmoi apply: ok", details=f"{header}{full}".strip())
+
+    match = _SCRIPT_FAILURE_RE.search(scripts_output)
+    script = f"{match['script']} (exit {match['code']})" if match else "a script"
     return TaskResult(
-        ok=True, summary=f"chezmoi clean backups: removed {len(removed)} file(s)", details=details
+        ok=True,
+        warning=True,
+        summary=f"chezmoi apply: files applied, but {script} failed",
+        details=f"{header}Failed step: {script}\nLast output:\n{_last_lines(scripts_output)}"
+        f"\n\nFull output:\n{full}".strip(),
     )
 
 

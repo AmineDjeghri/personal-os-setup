@@ -9,10 +9,8 @@ This module wires together:
 from __future__ import annotations
 
 import itertools
-import shutil
-from datetime import datetime
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Literal
 
 from textual import work
 from textual.app import App, ComposeResult
@@ -41,6 +39,7 @@ from personal_os_setup.frontend.dialogs import ConfirmScreen, PromptScreen
 from personal_os_setup.frontend.dotfiles_tree import DotfileTreeNode, build_dotfiles_tree
 from personal_os_setup.settings import logger
 from personal_os_setup.tasks import commands
+from personal_os_setup.tasks.backups import backup_file
 from personal_os_setup.tasks.factory import (
     SystemAction,
     get_package_manager,
@@ -51,6 +50,7 @@ from personal_os_setup.tasks.system.chezmoi import (
     chezmoi_diff,
     chezmoi_forget,
     chezmoi_managed_paths,
+    chezmoi_preview,
     chezmoi_re_add,
 )
 from personal_os_setup.tasks.task import TaskResult
@@ -59,6 +59,15 @@ _CSS_PATH = Path(__file__).with_name("app.tcss")
 _LOGS_TAB_LABEL = "📋 Logs"
 _START_SECTION_NAME = "🚀 Start"
 _DOTFILES_SECTION_NAME = "Sync dotfiles"
+
+
+def _result_severity(res: TaskResult) -> Literal["information", "warning", "error"]:
+    """Toast severity: failures are errors, "ok but not clean" results are warnings."""
+    if not res.ok:
+        return "error"
+    return "warning" if res.warning else "information"
+
+
 _DOTFILES_TREE_ID = "dotfiles-selection-list"
 _CHECKED_GLYPH = "☑"
 _UNCHECKED_GLYPH = "☐"
@@ -388,17 +397,10 @@ class PersonalOsSetupApp(App[None]):
 
             target = action.backup_target
             if target is not None:
-                ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-                default_backup = (
-                    target.with_name(f"{target.stem}_{ts}_backup{target.suffix}")
-                    if target.suffix
-                    else target.with_name(f"{target.name}_{ts}_backup")
-                )
                 try:
-                    if target.exists():
-                        default_backup.parent.mkdir(parents=True, exist_ok=True)
-                        shutil.copy2(target, default_backup)
-                        self.call_from_thread(self._log, f"backup created: {default_backup}")
+                    backup = backup_file(target)
+                    if backup is not None:
+                        self.call_from_thread(self._log, f"backup created: {backup}")
                 except Exception as e:  # noqa: BLE001
                     self.call_from_thread(self._log, f"backup: failed ({e})")
 
@@ -410,9 +412,7 @@ class PersonalOsSetupApp(App[None]):
             self.call_from_thread(self._log, res.summary)
             if res.details:
                 self.call_from_thread(self._log, res.details)
-            self.call_from_thread(
-                self.notify, res.summary, severity="information" if res.ok else "error"
-            )
+            self.call_from_thread(self.notify, res.summary, severity=_result_severity(res))
         except Exception as e:  # noqa: BLE001
             self.call_from_thread(self._log, f"{name}: failed")
             self.call_from_thread(self._log, str(e))
@@ -460,6 +460,10 @@ class PersonalOsSetupApp(App[None]):
         if not selected:
             self.notify("No dotfiles selected", severity="warning")
             return
+
+        if confirm and run_with_targets is chezmoi_apply:
+            preview = chezmoi_preview(selected)
+            confirm_message = f"{preview}\n\n{confirm_message}" if preview else confirm_message
 
         action = SystemAction(
             label=label,

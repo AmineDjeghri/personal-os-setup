@@ -7,6 +7,7 @@ from typing import Callable
 from pydantic import BaseModel, ConfigDict
 
 from personal_os_setup.detect_os import PackageRef, _is_wsl
+from personal_os_setup.tasks.backups import clean_backups
 from personal_os_setup.tasks.managers.arch_pacman import ArchPacmanManager
 from personal_os_setup.tasks.managers.arch_paru import ArchParuManager
 from personal_os_setup.tasks.managers.base import PackageManager
@@ -18,7 +19,6 @@ from personal_os_setup.tasks.managers.windows_msstore import WindowsMSStoreManag
 from personal_os_setup.tasks.managers.windows_winget import WindowsWingetManager
 from personal_os_setup.tasks.system.chezmoi import (
     chezmoi_add,
-    chezmoi_clean_backups,
     chezmoi_refresh_zsh_externals,
 )
 from personal_os_setup.tasks.system.docker_tasks import docker_post_install_linux
@@ -37,6 +37,13 @@ from personal_os_setup.tasks.system.nvidia_tasks import (
     setup_nvidia_ubuntu,
     setup_nvidia_windows,
     setup_nvidia_wsl_instructions,
+)
+from personal_os_setup.tasks.system.skills import (
+    skills_deploy,
+    skills_save_live,
+    skills_status,
+    skills_thirdparty_install,
+    skills_thirdparty_save_lock,
 )
 from personal_os_setup.tasks.system.windows_tasks import (
     apply_windows_terminal_ui_defaults,
@@ -295,13 +302,83 @@ def _dotfiles_section(distro: str, packages: list[PackageRef]) -> Section:
                 prompt_initial="~/.",
             ),
             SystemAction(
-                label="chezmoi: clean backups",
-                run=chezmoi_clean_backups,
+                label="clean backups",
+                run=clean_backups,
                 confirm=True,
                 confirm_message=(
-                    "Delete every '<name>_<timestamp>_backup' copy ? The live files are not touched. "
+                    "Delete every backup made before a file was changed "
+                    "(~/.local/state/personal-os-setup/backups)? The live files are not touched. "
                     "Proceed?"
                 ),
+            ),
+        ],
+    )
+
+
+# Section: "Skills" — manage authored + third-party agent skills (repo <-> live), like `make skills-*`.
+def _skills_section() -> Section:
+    return (
+        "Skills",
+        [
+            SystemAction(label="status: repo vs live", run=skills_status, group="status"),
+            SystemAction(
+                label="deploy skills: repo -> live",
+                run=skills_deploy,
+                confirm=True,
+                confirm_message=(
+                    "Copy the repo's authored skills into ~/.claude/skills and link them for "
+                    "Codex? Refuses when a live skill was edited after the repo's version."
+                ),
+                group="personal",
+            ),
+            SystemAction(
+                label="force deploy (overwrite live edits)",
+                run=lambda: skills_deploy(force=True),
+                confirm=True,
+                confirm_message=(
+                    "Overwrite ~/.claude/skills with the repo's versions, DISCARDING any live "
+                    "edits that are not in the repo. Run 'status' first. Proceed?"
+                ),
+                group="personal",
+            ),
+            SystemAction(
+                label="save live skills to repo",
+                run=lambda: skills_save_live(""),
+                run_with_prompt=skills_save_live,
+                prompt_label="Live skill name to save into the repo (empty or 'all': every unlisted one)",
+                prompt_initial="all",
+                group="personal",
+            ),
+            SystemAction(
+                label="third-party: install / repair (npx)",
+                run=skills_thirdparty_install,
+                confirm=True,
+                confirm_message=(
+                    "Run `npx skills add` for every third-party skill that is missing or out of "
+                    "step with the repo lock? This downloads and installs packages from the "
+                    "network. Proceed?"
+                ),
+                group="third",
+            ),
+            SystemAction(
+                label="third-party: force reinstall all",
+                run=lambda: skills_thirdparty_install(force=True),
+                confirm=True,
+                confirm_message=(
+                    "Reinstall EVERY third-party skill with `npx skills add`, overwriting any "
+                    "hand edits to the installed copies? Proceed?"
+                ),
+                group="third",
+            ),
+            SystemAction(
+                label="third-party: save live lock to repo",
+                run=skills_thirdparty_save_lock,
+                confirm=True,
+                confirm_message=(
+                    "Overwrite third-party-skills.lock.json in the repo with your live npx lock? "
+                    "Review upstream first: this changes the pinned skill versions."
+                ),
+                group="third",
             ),
         ],
     )
@@ -556,6 +633,7 @@ def get_system_action_sections(
     #################
     if system in {"darwin", "linux"}:
         sections.append(_dotfiles_section(distro, packages or []))
+        sections.append(_skills_section())
 
     ########
     ## System (NVIDIA/CUDA, docker post-install, vicinae)

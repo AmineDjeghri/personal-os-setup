@@ -52,14 +52,14 @@ GitHub:
 
 Skills and the Hermes box:
 
-| Skill                           | Use it for                                                                 |
-|---------------------------------|----------------------------------------------------------------------------|
-| `agent-skills-architecture`     | Organizing, deploying, installing, auditing and retiring skills            |
-| `skill-deployment`              | Deploying the shared skills with chezmoi, and fixing "not managed" errors  |
-| `claude-code-ops`               | Install, auth and model defaults for the Claude Code CLI on the Hermes box |
-| `hermes-instance-audit`         | Auditing a live Hermes install: skills, plugins, config                    |
-| `hermes-session-recall`         | Recalling past or continued Hermes sessions                                |
-| `hermes-cron-automations`       | Building a recurring automation on the Hermes box                          |
+| Skill                       | Use it for                                                                 |
+|-----------------------------|----------------------------------------------------------------------------|
+| `agent-skills-architecture` | Organizing, deploying, installing, auditing and retiring skills            |
+| `skill-deployment`          | Deploying the shared skills with chezmoi, and fixing "not managed" errors  |
+| `claude-code-ops`           | Install, auth and model defaults for the Claude Code CLI on the Hermes box |
+| `hermes-instance-audit`     | Auditing a live Hermes install: skills, plugins, config                    |
+| `hermes-session-recall`     | Recalling past or continued Hermes sessions                                |
+| `hermes-cron-automations`   | Building a recurring automation on the Hermes box                          |
 
 Media:
 
@@ -116,12 +116,12 @@ Runbooks for working on this repo. They are not deployed to `~/.claude/skills`.
 
 Open the **Sync dotfiles** tab, expand `.claude`, and select the **whole `.claude` folder** (not single files).
 
-| Button                 | What it does                                                                                                                                                         |
-|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| diff selected          | Shows what would change in `~/.claude`                                                                                                                               |
-| apply selected         | Copies authored skills, links them for Codex, replays third-party skills (one `npx` call per skill, both agents)                                                     |
-| re-add selected        | Pulls a skill you edited live back into the repo's source tree                                                                                                       |
-| chezmoi: clean backups | (action button above the list) Deletes the `<name>_<timestamp>_backup` copies that earlier applies left next to managed files, including those in `~/.claude/skills` |
+| Button          | What it does                                                                                                                                                                              |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| diff selected   | Shows what would change in `~/.claude`                                                                                                                                                    |
+| apply selected  | Writes the files first, then runs scripts: links authored skills for Codex and replays third-party skills (one `npx` call per skill, both agents). The confirm dialog previews the counts |
+| re-add selected | Pulls a skill you edited live back into the repo's source tree                                                                                                                            |
+| clean backups   | (action button above the list) Deletes every backup the app made before changing a file (all under `~/.local/state/personal-os-setup/backups`); live files are untouched                  |
 
 Things to know:
 
@@ -129,15 +129,32 @@ Things to know:
   (`run_after_replay-third-party-skills.sh`) only run when their own entries are selected. Selecting a
   single file applies that file and skips both scripts. Linking uses Python 3; replay also needs Node (`npx`) and `jq`.
   Optional replay logs `SKIPPED` if tooling is missing and records no successful install.
-- **Settings come along.** The `.claude` folder also carries `settings.json` (theme, `syncClaudeAiSkills`); applying it overwrites the live file, so keep any local-only key (such as `model`) in the repo source first.
+- **Settings come along.** The `.claude` folder also carries `settings.json` (theme, `syncClaudeAiSkills`); applying it
+  overwrites the live file, so keep any local-only key (such as `model`) in the repo source first.
 - **It never deletes.** A skill removed from the repo stays in `~/.claude/skills` until you delete it by hand.
-- **Each apply leaves backups.** Before overwriting, it copies every selected file to
-  `<name>_<timestamp>_backup<ext>` in the same folder, and `make skills-status` then reports `DIFFERS`. Use **chezmoi:
-  clean backups** to remove them.
+- **Each apply leaves backups, never next to the live file.** Before overwriting, it copies the files that will change
+  to
+  `~/.local/state/personal-os-setup/backups/<timestamp>/<path under ~>`, so `make skills-status` never sees them. Every
+  action that backs up a file first (including the Windows Terminal settings edits) uses the same place. Use **clean
+  backups** to remove them.
 - **It does not check for drift.** Apply overwrites a live skill that was edited and not yet pulled back with
   re-add. Run `make skills-status` first if an agent may have edited a live skill.
 - **Re-add only handles files already tracked.** For a brand-new live-only skill, use
   `make skills-personal-live-to-repo`.
+
+### The Skills tab
+
+For skills only, the **Skills** tab (Linux/macOS) does what the `make skills-*` targets do, without the dotfile tree:
+
+| Button                              | Equivalent                                    | Notes                                                                                 |
+|-------------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------|
+| status: repo vs live                | `make skills-status`                          | Read-only: in sync / repo newer / not deployed / live newer, Codex links, third-party |
+| deploy skills: repo -> live         | `make skills-personal-repo-to-live`           | Refuses while a live skill is newer than the repo's                                   |
+| force deploy (overwrite live edits) | `FORCE=1 make skills-personal-repo-to-live`   | Confirm first                                                                         |
+| save live skills to repo            | `make skills-personal-live-to-repo`           | Prompt: a name, or `all` for every unlisted non-third-party skill                     |
+| third-party: install / repair (npx) | `make skills-thirdparty-repo-to-live`         | Network install; lock drift ends as a warning                                         |
+| third-party: force reinstall all    | `FORCE=1 make skills-thirdparty-repo-to-live` | Overwrites hand edits                                                                 |
+| third-party: save live lock to repo | `make skills-thirdparty-live-to-repo`         | Review upstream first: changes the pinned versions                                    |
 
 ### Setting up a new machine
 
@@ -204,7 +221,10 @@ not.
 
 ### What `skills-thirdparty-repo-to-live` does
 
-The replay installs each locked skill with ONE `npx skills add … -a claude-code -a codex` call. Naming both agents in a single call is what makes npx keep one canonical copy in `~/.agents/skills` (read by Codex) and link `~/.claude/skills/<name>` (read by Claude Code and Hermes) to it; a call naming one agent writes an independent copy and replaces an existing link. This setup targets Linux and macOS.
+The replay installs each locked skill with ONE `npx skills add … -a claude-code -a codex` call. Naming both agents in a
+single call is what makes npx keep one canonical copy in `~/.agents/skills` (read by Codex) and link
+`~/.claude/skills/<name>` (read by Claude Code and Hermes) to it; a call naming one agent writes an independent copy and
+replaces an existing link. This setup targets Linux and macOS.
 Use `AGENT=codex` or `AGENTS="claude-code codex"` to select the agents explicitly. Hermes is never a
 separate target. Python 3 and Node (`npx`) are required; explicit Make replay fails when a tool
 is missing. A packaged chezmoi source without the repository lock still links authored skills,
@@ -214,13 +234,13 @@ Windows Git Bash follows the same path and reports failures instead of silently 
 The replay is idempotent. It installs only the skills that are missing, broken (dangling link, no valid
 `SKILL.md`), unlinked (an independent copy where the Claude link should be, which it turns back into a link) or
 whose live-lock entry differs from the committed one; `FORCE=1` reinstalls everything.
-After each install it checks the result, because `npx` exits 0 even when it cancels. Verification
-(`make skills-status`) checks the lock identities, that each agent has a usable `SKILL.md` and, when both agents
+After each install it checks the result, because `npx` exits 0 even when it cancels. Verification (`make skills-status`)
+checks the lock identities, that each agent has a usable `SKILL.md` and, when both agents
 are selected, that the Claude entry links to the Codex-side copy (`UNLINKED` otherwise). With `AGENT=codex` or
 `AGENT=claude-code` only that agent is installed and no link is expected.
 
-Hand edits are detected without any extra state file: the npx lock records when each skill was installed
-(`updatedAt`), so installed files that are newer than that are reported as `DIFFERS`, with both dates.
+Hand edits are detected without any extra state file: the npx lock records when each skill was installed (`updatedAt`),
+so installed files that are newer than that are reported as `DIFFERS`, with both dates.
 `make skills-thirdparty-repo-to-live` refuses to run over such edits unless `FORCE=1` is given, like the
 personal gate. `FORCE=1` applies to both classes, including `skills-all-repo-to-live`.
 

@@ -24,5 +24,6 @@ def isolated_frontend(monkeypatch, tmp_path):
         pytest.fail("frontend test attempted a real manager/system action")
 
     monkeypatch.setattr(frontend, "get_package_manager", unexpected)
+    monkeypatch.setattr(frontend, "chezmoi_preview", lambda targets: "")
     for name in ("chezmoi_apply", "chezmoi_diff", "chezmoi_forget", "chezmoi_re_add"):
         monkeypatch.setattr(frontend, name, unexpected)

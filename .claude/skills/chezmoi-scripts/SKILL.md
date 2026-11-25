@@ -16,7 +16,7 @@ files (or any `~/.config/*`).
 
 ## The core gotcha: a targeted `chezmoi apply` does not run sibling scripts
 
-The "Sync dotfiles" tab's `apply selected`/`diff selected` buttons never run a bare `chezmoi apply` — `chezmoi_apply()` in `tasks/system/chezmoi.py` always passes the selected paths as explicit targets: `chezmoi apply --force --parent-dirs <target1> <target2> ...`. A `run_`/`run_once_`/`run_onchange_` script only executes if **its own managed path** is in that target list — being in the *same directory* as a targeted file is not enough:
+The "Sync dotfiles" tab's `apply selected`/`diff selected` buttons never run a bare `chezmoi apply` — `chezmoi_apply()` in `tasks/system/chezmoi.py` always passes the selected paths as explicit targets, in two calls — files first (`--exclude=scripts`), then scripts (`--include=scripts`) — because chezmoi stops at the first failing entry: `chezmoi apply --force --parent-dirs <target1> <target2> ...`. A script failure after the files landed is a *warning* `TaskResult` (`warning=True`), never a failed apply; every backup (`chezmoi_apply` and `SystemAction.backup_target`, via `tasks/backups.py`) goes to `~/.local/state/personal-os-setup/backups/<timestamp>/`, not next to the live files. All scripts must stay `run_*after*`: the two-phase apply runs files first (a unit test enforces it). A `run_`/`run_once_`/`run_onchange_` script only executes if **its own managed path** is in that target list — being in the *same directory* as a targeted file is not enough:
 
 - `chezmoi apply <only .zshrc>` → noctalia/hypr untouched, scripts don't run.
 - `chezmoi apply <only noctalia/config.toml>` (a **sibling** of the script in the same dir) → the script still does **not** run.
