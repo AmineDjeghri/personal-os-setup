@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v1.4.0 (2026-11-25)
+
+### Documentation
+
+- Update docs
+  ([`a688554`](https://github.com/AmineDjeghri/personal-os-setup/commit/a688554e982174a96f706cd9b26fd9f6a7306d35))
+
+### Features
+
+- **nvidia**: Add support for enabling NVIDIA suspend/resume services to preserve GPU memory
+  ([`aa5ba29`](https://github.com/AmineDjeghri/personal-os-setup/commit/aa5ba29f702cdcb52b6be307062f02329a6467d7))
+
+### Refactoring
+
+- **skills**: Trim oversized skills into references and add proactive guardrails (#174)
+  ([#174](https://github.com/AmineDjeghri/personal-os-setup/pull/174),
+  [`d9c0e70`](https://github.com/AmineDjeghri/personal-os-setup/commit/d9c0e70db82576d3d8902b2395c7ff25613fa400))
+
+
 ## v1.3.0 (2026-11-24)
 
 ### Documentation
