@@ -50,6 +50,7 @@ minimum_brightness = 0.5
     type = "nightlight"
 [dock]
 auto_hide = true
+auto_hide_reveal_delay_ms = 100
 enabled = true
 pinned = [ "helium", "com.mitchellh.ghostty", "org.gnome.Nautilus", "pycharm" ]
 reserve_space = false

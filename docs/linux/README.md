@@ -64,6 +64,10 @@ Additional system configuration options (only if you have NVIDIA GPU):
 
 - **Detect NVIDIA**: Check if NVIDIA GPU is available
 - **Setup NVIDIA (WSL)**: Configure NVIDIA drivers for WSL2
+- **NVIDIA: fix suspend/resume** (native Linux): enables `nvidia-suspend`, `nvidia-resume` and
+  `nvidia-hibernate` so GPU memory survives sleep. Without them, drivers configured with
+  `NVreg_PreserveVideoMemoryAllocations=1` lose VRAM on suspend and Wayland compositors such as
+  Hyprland crash shortly after resume.
 - **Detect CUDA**: Check CUDA installation
 - **Setup CUDA (Advanced)**: Configure CUDA for GPU computing
 

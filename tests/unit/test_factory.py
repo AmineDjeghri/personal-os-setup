@@ -270,6 +270,16 @@ class TestNvidiaSection:
             labels = _actions_in("linux", "debian", "system")
         assert "setup nvidia (debian)" in labels
 
+    def test_native_linux_gets_suspend_fix(self):
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=False):
+            action = _action_in("linux", "cachyos", "system", "nvidia: fix suspend/resume")
+        assert action.confirm
+
+    def test_wsl_and_windows_have_no_suspend_fix(self):
+        with patch("personal_os_setup.tasks.factory._is_wsl", return_value=True):
+            assert "nvidia: fix suspend/resume" not in _actions_in("linux", "ubuntu", "system")
+        assert "nvidia: fix suspend/resume" not in _actions_in("windows", "windows", "system")
+
     def test_darwin_has_no_nvidia_section(self):
         assert "system" not in _section_names("darwin", "darwin")
 
