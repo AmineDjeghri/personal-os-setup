@@ -3553,6 +3553,10 @@ stale.</p>
 <ul>
 <li><strong>Detect NVIDIA</strong>: Check if NVIDIA GPU is available</li>
 <li><strong>Setup NVIDIA (WSL)</strong>: Configure NVIDIA drivers for WSL2</li>
+<li><strong>NVIDIA: fix suspend/resume</strong> (native Linux): enables <code>nvidia-suspend</code>, <code>nvidia-resume</code> and
+  <code>nvidia-hibernate</code> so GPU memory survives sleep. Without them, drivers configured with
+  <code>NVreg_PreserveVideoMemoryAllocations=1</code> lose VRAM on suspend and Wayland compositors such as
+  Hyprland crash shortly after resume.</li>
 <li><strong>Detect CUDA</strong>: Check CUDA installation</li>
 <li><strong>Setup CUDA (Advanced)</strong>: Configure CUDA for GPU computing</li>
 </ul>

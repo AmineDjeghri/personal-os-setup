@@ -4920,6 +4920,12 @@ add-on READMEs: <a href="https://github.com/AmineDjeghri/ha-addons/tree/main/add
 <li>Give the router the <strong>IPv4 and the IPv6</strong> address of AdGuard Home, and make the IPv6 one <strong>static</strong> (Home Assistant: Settings → System → Network, IPv6 from auto to static, and use the global address, not <code>fe80::</code>). An IPv6 DNS that changes or no longer answers makes dual-stack devices fall back to the next DNS, and they are no longer filtered. Android / Google TV has no DHCPv6, so it only learns the IPv6 DNS from the router advertisement.</li>
 <li>A public DNS (Google, Cloudflare) as 2nd or 3rd entry only keeps the network alive if AdGuard Home breaks, and devices that fail over to it stay unfiltered. When AdGuard Home is also the DHCP server, that fallback buys little: putting AdGuard's address in both IPv6 fields is the stricter choice.</li>
 <li>Check a device is really filtered: <code>resolvectl status</code> (Linux) should list AdGuard as the current DNS server, <code>nslookup pagead2.googlesyndication.com</code> (a typical ad domain) should answer <code>0.0.0.0</code>, and the device must appear in AdGuard's Query Log. Private DNS on Android TV must stay "Automatic": a hostname there bypasses AdGuard.</li>
+<li><strong>Settings → DNS settings:</strong><ul>
+<li><strong>Upstreams: only resolvers that answer.</strong> A broken upstream (Quad9 returned <code>REFUSED</code> from my connection) wins the <em>Parallel requests</em> race and breaks lookups at random. Check each one first: <code>dig @9.9.9.9 example.com</code> must say <code>NOERROR</code>. Keep a doubtful one in the fallbacks, never in the main list.</li>
+<li><strong>Rate limit: IPv4 subnet prefix <code>32</code>, limit <code>100</code>.</strong> The default prefix <code>24</code> makes the whole LAN share one 20 queries/s bucket, and AdGuard silently drops the excess.</li>
+<li>Check: 100 parallel <code>dig @&lt;adguard-ip&gt; zz-$RANDOM.example.com</code> must all answer, with no <code>REFUSED</code>.</li>
+</ul>
+</li>
 <li>Make heavy tests (Restart the server, restart HA, restart the router, cut the power off...) after setting AdGuard Home because if something breaks, you will not be able to access your home assistant.</li>
 </ul>
 </li>
@@ -5304,6 +5310,13 @@ headers — Symfonium, Amperfy and Nautiline can; Narjo, Substreamer and Feishin
 <li><strong>The published name is the DHCP hostname</strong>, appended to the local domain: <code>&lt;hostname&gt;.&lt;local_domain_name&gt;</code> (<code>lan</code> by default, configurable in <code>AdGuardHome.yaml</code>), answered only from inside the LAN.</li>
 <li>⚠️ AdGuard does not tell clients which suffix to use (it sends no DHCP option 15), so only the full <code>&lt;name&gt;.&lt;local-domain&gt;</code> resolves — a bare <code>&lt;name&gt;</code> works only where a search domain is set on the client.</li>
 <li><strong>IPv6 has no reservations yet</strong>: the Freebox still assigns IPv6 addresses (RA / SLAAC), so there is nothing to freeze in the DHCP table. Keep the DNS server the router advertises over IPv6 pointed at AdGuard, and let the sync script keep adding each MAC's IPv6 addresses to its AdGuard client — identifying a client by MAC only works while AdGuard is the DHCP server.</li>
+<li>⚠️ <strong>Phones and laptops change their MAC address, which breaks static leases and client entries.</strong> iPhone/iPad (Private Wi-Fi Address), Android (randomized MAC) and recent macOS/Windows use a different MAC per network, and some rotate it. A static lease and an AdGuard client are matched by MAC, so a new MAC means a new device: new IP, new client entry, and the old lease or client stays behind.<ul>
+<li>Fix it on the device, for the home network only: iPhone/iPad → Settings → Wi-Fi → (i) → <strong>Private Wi-Fi Address → Off</strong>; Android → Wi-Fi → network → Privacy → <strong>Use device MAC</strong>; macOS → Wi-Fi details → <strong>Private Wi-Fi address → Off</strong>.</li>
+<li><strong>Do not use "Fixed" on iOS as a permanent answer</strong>: it is stable only until you <em>forget the network</em>, which generates a new MAC. Only "Off" (the real hardware MAC) survives it.</li>
+<li>Switch to Off <strong>before</strong> creating the static lease, then reconnect once, so the lease uses the real MAC.</li>
+<li>If the MAC already changed: delete the old static lease and the stale AdGuard client, then add the lease for the new MAC with the same IP.</li>
+</ul>
+</li>
 <li><strong>A rename reaches DNS only.</strong> Renaming a device in the router or in AdGuard does not rename it in Home Assistant (device and entity names come from the integration — rename in Settings → Devices) nor in the Matter/Alexa exposure (re-sync the controller afterwards).</li>
 <li>
 <p>While AdGuard owns DHCP + DNS, the Freebox's own local-domain setting stays unused; it counts again only if the Freebox takes that role back, in which case the reservations move to Paramètres (mode avancé) → DHCP → baux permanents.</p>
