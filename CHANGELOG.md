@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.4.1 (2026-11-26)
+
+### Bug Fixes
+
+- **binds**: Update fullscreen bindings for improved window management
+  ([`31e4676`](https://github.com/AmineDjeghri/personal-os-setup/commit/31e4676b9e205185d462879a5051ceb78dc983b3))
+
+### Refactoring
+
+- **skills**: Move Hermes-box skills to the private vault (#175)
+  ([#175](https://github.com/AmineDjeghri/personal-os-setup/pull/175),
+  [`930db9b`](https://github.com/AmineDjeghri/personal-os-setup/commit/930db9bc07c13caf490d89245661749a1d6f6dcb))
+
+
 ## v1.4.0 (2026-11-25)
 
 ### Documentation
