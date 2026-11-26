@@ -30,7 +30,7 @@ The Claude account skill sync is turned off: `dot_claude/settings.json` sets `sy
 
 ## Skill catalog
 
-### Authored skills (19)
+### Authored skills (15)
 
 General workflow:
 
@@ -56,10 +56,6 @@ Skills and the Hermes box:
 |---------------------------------|----------------------------------------------------------------------------|
 | `agent-skills-architecture`     | Organizing, deploying, installing, auditing and retiring skills            |
 | `skill-deployment`              | Deploying the shared skills with chezmoi, and fixing "not managed" errors  |
-| `claude-code-ops`               | Install, auth and model defaults for the Claude Code CLI on the Hermes box |
-| `hermes-instance-audit`         | Auditing a live Hermes install: skills, plugins, config                    |
-| `hermes-session-recall`         | Recalling past or continued Hermes sessions                                |
-| `hermes-cron-automations`       | Building a recurring automation on the Hermes box                          |
 
 Media:
 

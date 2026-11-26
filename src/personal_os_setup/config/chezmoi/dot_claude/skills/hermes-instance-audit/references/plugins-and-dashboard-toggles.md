@@ -1,9 +1,0 @@
-# Plugins / platforms / channels + dashboard toggles
-
-- `plugins.enabled` = opt-in allow-list, **`plugins.disabled` = the REAL deny-list** ("never load, even if in enabled"). Bundled `platform`/`backend` plugins auto-load regardless, so a dashboard "enable" only appends a name (cosmetic for bundled) while "disable" is real. Confirm runtime truth in `gateway_state.json`, never the dashboard.
-- Disabling `telegram-platform` stops the bot polling — flag that before advising it. Restricting what a platform may do is a different lever: `platform_toolsets.<platform>` (absent = implicit fallback to the platform default composite = ALL standard tools; clicking enable FREEZES an explicit list).
-- Home Assistant is BOTH a platform adapter (WebSocket event bus in, persistent notifications out) AND the `ha_*` toolset (core, gated on `HASS_TOKEN`).
-- Web search backend is separate from the plugin toggle: `web.search_backend: ''` = auto → the provider whose key is in `.env` wins; change with `hermes config set web.search_backend <name>`.
-- **Bundled ≠ catalog, and there is usually nothing to clean up.** Everything shipped reports `Source: bundled`; `hermes plugins list` has THREE statuses: `enabled`, `disabled` (explicit deny, wins over enabled) and `not enabled` (inert, no weight). Never propose a cleanup pass over bundled plugins.
-- **Bundled plugins cannot be removed** (`hermes plugins remove` resolves names under `$HERMES_HOME/plugins/` only). Hand-deleting from `<install>/plugins/` is undone by `hermes update` and can strip LIVE capability: several kinds (e.g. `plugins/model-providers/*`) are found by directory scan and are NOT gated by `plugins.enabled`.
-- Code quotes, plugin kinds, per-platform toolset internals, web backends, the bundled-vs-catalog boundary, the three statuses, removal rules and the documented way to digest the docs catalog page: `plugins-platforms-channels.md`.
