@@ -44,7 +44,8 @@ end
 hl.bind(mainMod .. " + Q",           hl.dsp.window.close(), { description = "Close window" }) -- graceful close; freed up once terminal moved to ALT+T
 -- ALT+C left unbound on purpose (see note below)
 -- hl.bind(mainMod .. " + D",           hl.dsp.window.fullscreen({ mode = 1 }), { description = "Toggle maximize" })
-hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
+hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }), { description = "Toggle maximize" })
+hl.bind(mainMod .. " + SHIFT + F",   hl.dsp.window.fullscreen(), { description = "Toggle true fullscreen (games/video)" })
 -- hl.bind(mainMod .. " + J",           hl.dsp.layout("togglesplit"), { description = "Toggle split orientation" }) -- dwindle only
 
 -- ALT+Tab: Noctalia window switcher (hold ALT, Tab to cycle)
