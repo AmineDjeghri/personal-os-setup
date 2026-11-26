@@ -13,6 +13,8 @@ class TaskResult(BaseModel):
     ok: bool
     summary: str
     details: str = ""
+    # ok but not clean (e.g. files deployed, a follow-up script failed): shown as a warning.
+    warning: bool = False
 
 
 class Task(BaseModel):

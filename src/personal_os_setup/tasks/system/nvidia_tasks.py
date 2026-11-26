@@ -5,14 +5,7 @@ import shutil
 
 from personal_os_setup.detect_os import _is_wsl
 from personal_os_setup.tasks.commands import run
-from personal_os_setup.tasks.sudo import sudo_non_interactive_ok, sudo_required_details
 from personal_os_setup.tasks.task import TaskResult
-
-NVIDIA_SLEEP_SERVICES = (
-    "nvidia-suspend.service",
-    "nvidia-resume.service",
-    "nvidia-hibernate.service",
-)
 
 
 def _command_exists(cmd: str) -> bool:
@@ -171,27 +164,3 @@ def setup_nvidia_ubuntu() -> TaskResult:
 def setup_nvidia_windows() -> TaskResult:
     """Setup NVIDIA driver on Windows."""
     return TaskResult(ok=False, summary="NVIDIA setup for Windows not implemented yet")
-
-
-def setup_nvidia_suspend() -> TaskResult:
-    """Enable the NVIDIA suspend/resume/hibernate services so VRAM survives sleep.
-
-    `NVreg_PreserveVideoMemoryAllocations=1` relies on these services; without them, compositors
-    such as Hyprland crash on resume. `systemctl enable` is a no-op for already-enabled services.
-    """
-    if not _command_exists("nvidia-smi"):
-        return TaskResult(ok=False, summary="nvidia-smi not found: no NVIDIA driver to configure")
-    if not sudo_non_interactive_ok():
-        return TaskResult(
-            ok=False, summary="NVIDIA suspend fix requires sudo", details=sudo_required_details()
-        )
-
-    res = run(["sudo", "-n", "systemctl", "enable", *NVIDIA_SLEEP_SERVICES], check=False)
-    details = (res.stdout + "\n" + res.stderr).strip()
-    if res.returncode == 0:
-        return TaskResult(
-            ok=True, summary="NVIDIA suspend/resume services enabled", details=details
-        )
-    return TaskResult(
-        ok=False, summary="NVIDIA suspend fix: systemctl enable failed", details=details
-    )
