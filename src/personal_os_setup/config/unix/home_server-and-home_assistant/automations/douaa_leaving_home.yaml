@@ -10,24 +10,29 @@ description: >-
   (notification sur son propre téléphone).
 triggers:
   - trigger: state
-    entity_id:
-      - person.amine
-      - person.hannah
+    id: amine
+    entity_id: person.amine
     from: home
     to: not_home
+  - trigger: state
+    id: hannah
+    entity_id: person.hannah
+    from: home
+    to: not_home
+conditions: []
 actions:
   - choose:
       - conditions:
-          - condition: template
-            value_template: "{{ trigger.entity_id == 'person.amine' }}"
+          - condition: trigger
+            id: amine
         sequence:
           - action: notify.mobile_app_iphone_damine
             data:
               title: 🤲 Douaa
               message: "{{ trigger.to_state.name }}, récite la douaa en sortant de la maison"
       - conditions:
-          - condition: template
-            value_template: "{{ trigger.entity_id == 'person.hannah' }}"
+          - condition: trigger
+            id: hannah
         sequence:
           - action: notify.mobile_app_iphone_dhana
             data:
