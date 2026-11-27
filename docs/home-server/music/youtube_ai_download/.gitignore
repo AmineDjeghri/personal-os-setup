@@ -1,6 +1,0 @@
-.venv/
-.staging/
-.archive.txt
-overrides.json
-__pycache__/
-*.pyc

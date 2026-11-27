@@ -1,0 +1,36 @@
+# Douaa en quittant la maison.
+#
+# Déclencheur sur les entités person (pas sur les device_tracker) : une person
+# regroupe le téléphone et le tracker routeur, donc un seul changement d'état
+# par départ. Chaque personne reçoit la notification sur son propre téléphone.
+# mode: parallel pour que deux départs rapprochés ne s'écrasent pas.
+alias: 🤲 Douaa
+description: >-
+  Rappelle de réciter la douaa quand une personne quitte la maison
+  (notification sur son propre téléphone).
+triggers:
+  - trigger: state
+    entity_id:
+      - person.amine
+      - person.hannah
+    from: home
+    to: not_home
+actions:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'person.amine' }}"
+        sequence:
+          - action: notify.mobile_app_iphone_damine
+            data:
+              title: 🤲 Douaa
+              message: "{{ trigger.to_state.name }}, récite la douaa en sortant de la maison"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == 'person.hannah' }}"
+        sequence:
+          - action: notify.mobile_app_iphone_dhana
+            data:
+              title: 🤲 Douaa
+              message: "{{ trigger.to_state.name }}, récite la douaa en sortant de la maison"
+mode: parallel

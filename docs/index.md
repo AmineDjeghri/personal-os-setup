@@ -7,7 +7,6 @@ Explore the documentation using the vertical navbar, or jump straight to a secti
 - **macOS**: [docs/macos_darwin](macos_darwin/README.md)
 - **TV setup** (Google TV hardware & apps): [docs/android-tv](android-tv/readme.md)
 - **Streaming setup** (Nuvio/Stremio + AIOStreams): [docs/android-tv](android-tv/nuvio-stremio-aiostreams.md)
-- **Home server / Home Assistant**: [docs/home-server](home-server/readme.md)
 - **Apps setup & shortcuts**: [docs/apps](apps/apps_configuration_and_shorcuts.md)
 - **Websites & browser extensions**: [docs/apps](apps/awesome_websites_browser_extensions.md)
 - **Agent skills** (TUI and `make` workflows): [docs/agent-skills](agent-skills.md)

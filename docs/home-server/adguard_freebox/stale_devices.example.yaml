@@ -1,8 +1,0 @@
-# Created by: freebox_auth.py fr.homeassistant.stale_devices ~/.config/stale-devices/config.yaml \
-#   --url http://192.168.1.254   (it writes the three keys below; keep the file OUT of git)
-freebox_url: http://192.168.1.254
-app_id: fr.homeassistant.stale_devices
-app_token: "TOKEN_SAVED_BY_freebox_auth.py"  # pragma: allowlist secret
-# Optional, the defaults are shown:
-threshold_days: 14
-ignore_macs: []   # devices that are off on purpose, e.g. ["aa:bb:cc:dd:ee:ff"]
