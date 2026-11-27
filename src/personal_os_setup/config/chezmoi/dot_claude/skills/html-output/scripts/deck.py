@@ -13,7 +13,7 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 
-TEMPLATE = Path(__file__).resolve().parent.parent / "assets" / "template"
+TEMPLATE = Path(__file__).resolve().parent.parent / "assets" / "deck-template"
 RUNTIME = ("theme.css", "player.js")
 CONTROLS = {
     "deck", "viewport", "overview", "toolbar", "counter", "previous", "next",

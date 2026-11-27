@@ -1,21 +1,13 @@
----
-name: html-presentation
-description: Create or edit offline HTML slide decks with editable architecture schemas and real product icons sourced from popular GitHub repos. Use for browser presentations, or when a slide needs an architecture/flow schema with logos, rather than PowerPoint or Google Slides files.
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
+# Decks: offline HTML slide presentations
 
-# HTML presentation
-
-Reuse the approved visual system in [the layout starter](assets/template/index.html):
+Reuse the approved visual system in [the layout starter](../assets/deck-template/index.html):
 Blue, restrained red accents, spacious 16:9 slides, configurable branding, editable text
 and diagrams. Keep the topic and slide count appropriate to the new request.
 The starter's sample content is placeholder text, not a requirement for future presentations.
 
 ## Create or edit
 
-Resolve paths below relative to this skill directory. For a new presentation:
+Resolve paths below relative to the skill directory (the parent of `references/`). For a new presentation:
 
 ```bash
 python3 scripts/deck.py new /path/to/new-deck --title "Presentation title"
@@ -26,7 +18,7 @@ Optional `--team`, `--footer` and `--logo` flags customize branding. The output 
 with no build step or CDN. Copy the complete output directory when sharing.
 
 Edit the new deck's slide sections and `deck.css`. Choose examples from the
-starter or read [layout guidance](references/layouts.md). Maintain the existing
+starter or read [layout guidance](deck-layouts.md). Maintain the existing
 appearance when editing an approved deck. Source claims from the user's materials
 and add source links inside each slide's `.notes` element. Illustrative starter
 text is not factual source material.
@@ -34,7 +26,7 @@ text is not factual source material.
 For a deck covering several stages, consider section-divider slides at major
 transitions. Show the overall flow and highlight the segment being discussed,
 with the other stages de-emphasized. Add these only when they help orientation,
-and respect requested positions. See [section dividers](references/layouts.md#section-dividers).
+and respect requested positions. See [section dividers](deck-layouts.md#section-dividers).
 
 Set shared branding once on `#deck`: `data-team`, `data-logo`, `data-logo-alt`,
 `data-footer`, and `data-min-scale`. The player creates logos, footers, accessible
@@ -43,7 +35,7 @@ Give slides unique stable ids so shared links keep working after reordering.
 
 ## Shared code and assets
 
-The canonical `theme.css` and `player.js` live in `assets/template/`. Generated
+The canonical `theme.css` and `player.js` live in `assets/deck-template/`. Generated
 decks contain independent copies so they work outside this repository. Refresh
 those copies explicitly after a shared improvement:
 
@@ -60,11 +52,11 @@ The skill bundles no icons or logos. When a slide needs an architecture or flow 
 real product icons from popular, maintained GitHub repositories, downloaded into the deck so
 it stays offline. Never draw or approximate a logo.
 
-Fetch icons with the sibling [html-diagrams](../html-diagrams/SKILL.md) helper, which pins
+Fetch icons with the diagram helper (`scripts/diagram.py icons`), which pins
 each source and records it in `icons/SOURCES.md` inside the deck:
 
 ```bash
-python3 ../html-diagrams/scripts/diagram.py icons /path/to/deck simple:postgresql aws:lambda simple:kubernetes
+python3 scripts/diagram.py icons /path/to/deck simple:postgresql aws:lambda simple:kubernetes
 ```
 
 Use the first source that has the logo:
@@ -82,11 +74,9 @@ logo or an authorized brand asset through `--logo`; a logo is optional and the d
 shows the team name.
 
 For a full schema (zones, node cards, request/answer/lookup arrows, numbered badges, legend),
-follow the [html-diagrams design rules](../html-diagrams/references/design-rules.md) and place
+follow the [diagram design rules](design-rules.md) and place
 the diagram markup in a slide's `.content` using the deck's 1440px coordinate space and unique
-SVG marker ids. For a standalone schema image, use the html-diagrams skill directly.
-
-The schema and icon workflow needs `html-diagrams` deployed next to this skill.
+SVG marker ids. For a standalone schema image, follow [diagrams](diagram.md) instead.
 
 ## Verify and deliver
 

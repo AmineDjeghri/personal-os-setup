@@ -1,6 +1,6 @@
 # Layouts and authoring
 
-Open `assets/template/index.html` for seven rendered examples. The canvas is
+Open `assets/deck-template/index.html` for seven rendered examples. The canvas is
 1600 × 900 and scales as one composition. Keep each slide focused on one topic.
 
 ## Slide contract
