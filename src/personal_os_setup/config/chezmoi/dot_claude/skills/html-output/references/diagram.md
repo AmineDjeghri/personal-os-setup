@@ -1,12 +1,4 @@
----
-name: html-diagrams
-description: Create any architecture, infrastructure, deployment, data-pipeline, CI/CD or request-flow diagram as a self-contained HTML page with real product logos where they exist, then screenshot it to a PNG. Use when asked for an architecture schema, "what runs where" diagram or flow picture for docs, READMEs or slides, or to restyle an existing diagram image with colors and icons. Technology-neutral: cloud, on-prem, Kubernetes, SaaS or mixed.
-metadata:
-  hermes:
-    origin: repo:personal-os-setup
----
-
-# HTML diagrams
+# Diagrams: architecture and flow, rendered to PNG
 
 Build the diagram as HTML, then render it to PNG with a headless browser. The HTML is the
 source: edit it and re-render instead of redrawing an image. The look is the approved one:
@@ -17,7 +9,7 @@ drop the arrow kinds, badges or chip your diagram does not need.
 
 ## Create
 
-Resolve paths relative to this skill directory.
+Resolve paths relative to the skill directory (the parent of `references/`).
 
 ```bash
 python3 scripts/diagram.py new /path/to/diagram --title "Diagram title"
@@ -28,7 +20,7 @@ uses only built-in line icons, so nothing is downloaded. Add logos for your comp
 `--icons simple:postgresql aws:lambda` or later with the `icons` command below.
 
 Edit `index.html`: replace the sample zones, nodes, edges and badges. Read
-[design rules](references/design-rules.md) first: it lists the classes, colors, the layout
+[design rules](design-rules.md) first: it lists the classes, colors, the layout
 recipe per diagram type (request flow, deployment topology, pipeline, C4 context) and the
 geometry rules for edges.
 
@@ -76,11 +68,7 @@ python3 scripts/diagram.py render /path/to/diagram -o /path/to/diagram.png
 
 `check` is offline: icons referenced exist, no remote URLs, nodes inside the canvas and not
 overlapping, arrow markers defined, step badges unique. `render` runs the check, then takes the
-screenshot with the first Chromium-based browser found: `CHROME_BIN`, then well-known names
-(Chrome, Edge, Brave, Chromium, Helium, Vivaldi, Opera, Thorium), then any executable on `PATH`
-named like a Chromium fork. Choose one with `--browser /path` or `CHROME_BIN`. If it finds none,
-look yourself before giving up (`ls /usr/bin /opt | grep -i -E 'chrom|helium|brave|edge|vivaldi'`,
-`flatpak list`, `.desktop` files) and pass the path, e.g. `--browser /usr/bin/helium-browser`.
+screenshot with a Chromium-based browser (lookup: Browser in [SKILL.md](../SKILL.md)).
 It needs no Playwright and installs nothing. Scale
 defaults to 2 (a 2000x830 canvas gives a 4000x1660 PNG).
 

@@ -1,6 +1,6 @@
 # Design rules
 
-The starter `assets/template/index.html` is the reference. A diagram is a fixed canvas
+The starter `assets/diagram-template/index.html` is the reference. A diagram is a fixed canvas
 (`#canvas`, size also in `<meta name="diagram-size">`) with absolutely positioned elements.
 
 ## Elements

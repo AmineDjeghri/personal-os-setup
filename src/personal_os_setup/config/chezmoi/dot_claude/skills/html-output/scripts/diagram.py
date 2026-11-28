@@ -3,20 +3,19 @@
 
 import argparse
 from html.parser import HTMLParser
-import json
-import os
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
+from browser import find_browser
+
 
 SKILL = Path(__file__).resolve().parent.parent
-TEMPLATE = SKILL / "assets" / "template" / "index.html"
+TEMPLATE = SKILL / "assets" / "diagram-template" / "index.html"
 
 SIMPLE_ICONS_TAG = "16.38.1"
 SIMPLE_ICONS_URL = "https://raw.githubusercontent.com/simple-icons/simple-icons/{tag}/icons/{slug}.svg"
@@ -38,39 +37,8 @@ BRAND_COLORS = {
     "jfrog": "40BE46", "helm": "0F1689", "argo": "EF7B4D", "keycloak": "4D4D4D",
 }
 DEFAULT_COLOR = "171A3B"
-BROWSERS = (
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
-    "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    "google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "microsoft-edge",
-    "microsoft-edge-stable", "brave", "brave-browser", "helium", "helium-browser", "vivaldi",
-    "vivaldi-stable", "opera", "thorium-browser", "ungoogled-chromium", "chrome", "msedge",
-)
-# Any other Chromium fork on PATH is found by name, e.g. helium-browser, ungoogled-chromium.
-BROWSER_NAME_HINTS = ("chrom", "helium", "brave", "edge", "vivaldi", "opera", "thorium")
-NOT_BROWSERS = ("chromedriver", "chrome-gnome-shell", "chrome-remote", "crashpad")
-
-
-def scan_path_for_browsers():
-    """Executables on PATH whose name looks like a Chromium-based browser (fallback)."""
-    seen = []
-    for folder in os.environ.get("PATH", "").split(os.pathsep):
-        try:
-            names = sorted(os.listdir(folder))
-        except OSError:
-            continue
-        for name in names:
-            low = name.lower()
-            if any(h in low for h in BROWSER_NAME_HINTS) and not any(n in low for n in NOT_BROWSERS):
-                full = os.path.join(folder, name)
-                if os.access(full, os.X_OK) and not os.path.isdir(full) and full not in seen:
-                    seen.append(full)
-    return seen
-
-
 def fetch(url):
-    request = Request(url, headers={"User-Agent": "html-diagrams-skill"})
+    request = Request(url, headers={"User-Agent": "html-output-skill"})
     try:
         with urlopen(request, timeout=30) as response:
             return response.read().decode("utf-8")
@@ -265,24 +233,6 @@ def command_check(args):
         print(f"FAIL {problem}")
     print(f"{nodes} nodes, canvas {size[0]}x{size[1]}: {'OK' if not problems else str(len(problems)) + ' problem(s)'}")
     return 1 if problems else 0
-
-
-def find_browser(explicit):
-    candidates = [explicit] if explicit else [os.environ.get("CHROME_BIN")] + list(BROWSERS)
-    for candidate in filter(None, candidates):
-        found = shutil.which(candidate) or (candidate if Path(candidate).exists() else None)
-        if found:
-            return found
-    if not explicit:
-        for found in scan_path_for_browsers():
-            print(f"browser: {found} (found by scanning PATH)")
-            return found
-    raise SystemExit(
-        "No Chromium-based browser found (Chrome, Edge, Brave, Chromium, Helium, Vivaldi...). "
-        "Pass --browser /path/to/browser or set CHROME_BIN "
-        "(find one with: ls /usr/bin /opt | grep -i -E 'chrom|helium|brave|edge|vivaldi'). "
-        "The PNG was not rendered."
-    )
 
 
 def command_render(args):

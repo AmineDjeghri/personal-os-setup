@@ -59,8 +59,7 @@ Media:
 
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `report-pdf`                  | Creating PDF reports with the shared report workflow                                                                                                |
-| `html-diagrams`               | Architecture/flow diagrams as HTML with real logos, rendered to PNG                                                                                 |
+| `html-output`                 | Reports (PDF/HTML/PNG from one JSON spec), architecture diagrams with real logos (PNG) and offline HTML slide decks                                 |
 | `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
 ### Third-party skills (18)
