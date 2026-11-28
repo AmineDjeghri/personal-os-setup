@@ -30,7 +30,7 @@ The Claude account skill sync is turned off: `dot_claude/settings.json` sets `sy
 
 ## Skill catalog
 
-### Authored skills (13)
+### Authored skills (11)
 
 General workflow:
 
@@ -60,8 +60,6 @@ Media:
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `report-pdf`                  | Creating PDF reports with the shared report workflow                                                                                                |
-| `report-html`                 | Opening a report in the Hermes Webapp as HTML (same spec as `report-pdf`)                                                                           |
-| `html-presentation`           | Offline HTML slide decks with schemas and real product icons                                                                                        |
 | `html-diagrams`               | Architecture/flow diagrams as HTML with real logos, rendered to PNG                                                                                 |
 | `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
