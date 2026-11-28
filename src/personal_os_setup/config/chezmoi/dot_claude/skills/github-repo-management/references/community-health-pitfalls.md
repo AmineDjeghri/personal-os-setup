@@ -1,12 +1,8 @@
 # Community health files — pitfalls
 
 - **Privacy rule: NEVER put a personal email in any public repo file or commit metadata.** Contact = GitHub private
-  vulnerability reporting, plus a dedicated public email only if the user supplies one; commit as
-  `<id>+<login>@users.noreply.github.com` (id/login from `gh api user`). If one leaked, removing it is urgent.
-  ```bash
-  git config user.name "Your Name"
-  git config user.email "12345678+your-username@users.noreply.github.com"
-  ```
+  vulnerability reporting, plus a dedicated public email only if the user supplies one; commit identity per
+  `coding-workflow` § 5. If one leaked, removing it is urgent.
 - **"Match another repo's templates" = adapt, don't verbatim-copy.** The other repo's CONTRIBUTING often references tooling the target lacks
   (make/uv/pyproject.toml, a `dev` branch, gh-pages docs); adapt to the target's actual stack, same structure. The LICENSE can be copied.
 - **Removing an email trace from a pushed PR.** Contents AND commit author carry it:

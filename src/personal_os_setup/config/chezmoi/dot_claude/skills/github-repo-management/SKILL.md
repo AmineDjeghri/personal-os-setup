@@ -33,7 +33,7 @@ gh repo fork owner/repo-name --clone
 gh repo sync $GH_USER/repo-name                                      # keep a fork in sync
 gh repo edit --enable-auto-merge                                     # the rest: gh repo view|list|edit --help
 gh release create v1.0.0 --title "v1.0.0" --generate-notes           # others: gh release --help
-gh run view <RUN_ID> --log-failed
+gh run view --job <JOB_ID> --log                                     # whole log (--log-failed hides composite steps)
 gh workflow run ci.yml --ref main                                    # others: gh run|workflow --help
 ```
 
@@ -87,7 +87,7 @@ Tailor the repo-specific bits (maintainer email, repo URL, commit conventions,
 release tooling) to the actual project — read README / repository.yaml / CI first.
 
 - **Privacy rule: NEVER put a personal email in any public repo file or commit metadata** — contact = GitHub private
-  vulnerability reporting; commit as `<id>+<login>@users.noreply.github.com` (from `gh api user`).
+  vulnerability reporting; commit identity per `coding-workflow` § 5.
 - Template content: `references/community-health-files.md`. Pitfalls (matching another repo's templates, removing a
   leaked email from a pushed PR, FUNDING.yml, monorepos, issue-template health check, consent-gated git ops):
   `references/community-health-pitfalls.md`.

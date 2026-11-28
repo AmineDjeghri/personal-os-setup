@@ -2,16 +2,12 @@
 # Authored skills deliberately saved in the repo (one name per line; # comments ok).
 agent-skills-architecture
 coding-workflow
-git-line-endings
-github-actions-trigger-gotchas
 github-auth
 github-code-review
 github-pr-workflow
 github-repo-management
-html-diagrams
-html-presentation
-report-html
-report-pdf
+html-output
+pre-install-audit
 skill-deployment
 template-adoption
 youtube-download-automation

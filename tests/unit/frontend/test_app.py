@@ -24,6 +24,7 @@ from textual.widgets import (
     Tree,
 )
 
+from personal_os_setup.frontend import app as frontend_app
 from personal_os_setup.frontend.app import PersonalOsSetupApp
 from personal_os_setup.frontend.dotfiles_tree import DotfileTreeNode
 from personal_os_setup.tasks.factory import SystemAction
@@ -315,6 +316,46 @@ async def test_dotfiles_apply_selected_requires_confirmation():
             fake_apply.assert_called_once()
             assert set(fake_apply.call_args.args[0]) == set(_FAKE_MANAGED_PATHS)
             assert app.is_busy is False
+
+
+async def test_dotfiles_apply_confirm_dialog_previews_what_will_change():
+    with patch(
+        "personal_os_setup.frontend.app.chezmoi_managed_paths",
+        return_value=_FAKE_MANAGED_PATHS,
+    ):
+        app = PersonalOsSetupApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            await _activate_dotfiles_tab(app, pilot)
+            _check_all_dotfiles(app)
+            await pilot.pause()
+
+            with (
+                patch(
+                    "personal_os_setup.frontend.app.chezmoi_preview",
+                    return_value="3 file(s) to create, 1 to overwrite.\n1 script(s) will run: x.sh",
+                ),
+                patch("personal_os_setup.frontend.app.chezmoi_apply") as fake_apply,
+            ):
+                await pilot.click("#btn-dotfiles-apply")
+                await pilot.pause(0.2)
+                text = str(app.screen.query_one("#confirm-text").render())
+                await pilot.click("#confirm-no")
+                await pilot.pause(0.2)
+            fake_apply.assert_not_called()
+            assert "3 file(s) to create" in text and "script(s) will run: x.sh" in text
+
+
+@pytest.mark.parametrize(
+    ("result", "severity"),
+    [
+        (TaskResult(ok=True, summary="s"), "information"),
+        (TaskResult(ok=True, warning=True, summary="s"), "warning"),
+        (TaskResult(ok=False, summary="s"), "error"),
+    ],
+)
+async def test_result_severity_distinguishes_warning_from_failure(result, severity):
+    assert frontend_app._result_severity(result) == severity
 
 
 async def test_dotfiles_forget_selected_refreshes_the_list():

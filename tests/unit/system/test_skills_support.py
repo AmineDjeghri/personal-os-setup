@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
+import subprocess
 
 import pytest
 
@@ -92,13 +93,54 @@ def test_matching_locks_do_not_prove_skill_is_installed(support, installation):
         support.verify_installations(lock, live, agents, roots)
 
 
-def test_verify_refuses_lock_drift(support, installation):
-    lock, live, agents, roots = installation
+def drift_live_lock(live):
     data = json.loads(live.read_text())
     data["skills"]["example"]["skillFolderHash"] = "changed-tree"
     live.write_text(json.dumps(data))
-    with pytest.raises(ValueError, match="live lock differs"):
+
+
+def test_verify_refuses_lock_drift_with_a_distinct_error(support, installation, tmp_path):
+    lock, live, agents, roots = installation
+    npx_style_install(roots, tmp_path)
+    drift_live_lock(live)
+    with pytest.raises(support.DriftError, match="live lock differs"):
         support.verify_installations(lock, live, agents, roots)
+
+
+def test_extra_live_entries_are_advisory_drift(support, installation, tmp_path):
+    lock, live, agents, roots = installation
+    npx_style_install(roots, tmp_path)
+    data = json.loads(live.read_text())
+    data["skills"]["other"] = {"source": "o/r", "skillFolderHash": "x"}
+    live.write_text(json.dumps(data))
+    with pytest.raises(support.DriftError, match="EXTRA"):
+        support.verify_installations(lock, live, agents, roots)
+
+
+def test_broken_installation_outranks_advisory_drift(support, installation):
+    lock, live, agents, roots = installation
+    drift_live_lock(live)
+    with pytest.raises(ValueError, match="UNLINKED") as raised:
+        support.verify_installations(lock, live, agents, roots)
+    assert not isinstance(raised.value, support.DriftError)
+
+
+def test_main_exits_2_for_drift_and_1_for_a_broken_install(
+    support, installation, tmp_path, monkeypatch
+):
+    lock, live, agents, roots = installation
+
+    def run_verify():
+        argv = ["skills_support.py", "verify", "--lock", str(lock), "--live-lock", str(live)]
+        argv += ["--agents", " ".join(agents)]
+        argv += ["--claude", str(roots["claude-code"]), "--codex", str(roots["codex"])]
+        monkeypatch.setattr("sys.argv", argv)
+        return support.main()
+
+    drift_live_lock(live)
+    assert run_verify() == support.EXIT_FAILED  # not linked: a real failure
+    npx_style_install(roots, tmp_path)
+    assert run_verify() == support.EXIT_DRIFT
 
 
 def test_manifest_name_must_match_directory(support, installation):
@@ -200,3 +242,45 @@ def test_lock_path_traversal_is_rejected(support, tmp_path):
     path.write_text(json.dumps({"version": 3, "skills": {"../escape": {}}}))
     with pytest.raises(ValueError, match="invalid skill name"):
         support.load_skills(path)
+
+
+REPLAY = (
+    Path(__file__).resolve().parents[3]
+    / "src/personal_os_setup/config/chezmoi/dot_claude/run_after_replay-third-party-skills.sh"
+)
+
+
+@pytest.mark.parametrize(
+    ("strict", "expected"),
+    [("0", 0), ("1", 2)],
+    ids=["chezmoi-replay-warns-and-succeeds", "strict-reports-drift"],
+)
+def test_replay_script_treats_lock_drift_as_advisory(tmp_path, strict, expected):
+    """Drift (verify exit 2) must not fail the chezmoi replay, or authored files never deploy."""
+    stub = tmp_path / "python-stub"
+    stub.write_text(
+        "#!/bin/sh\n"
+        'case "$1" in\n'
+        "  *skills_support.py) shift ;;\n"
+        "esac\n"
+        'case "$1" in\n'
+        '  agents) echo "claude-code codex" ;;\n'
+        '  todo) printf "x\\to/r\\n" ;;\n'
+        "  verify) echo 'skills: DRIFT x' >&2; exit 2 ;;\n"
+        "esac\n"
+    )
+    stub.chmod(0o755)
+    (tmp_path / "npx").write_text("#!/bin/sh\nexit 0\n")
+    (tmp_path / "npx").chmod(0o755)
+    lock = tmp_path / "lock.json"
+    lock.write_text("{}")
+    env = {
+        "PATH": f"{tmp_path}:/usr/bin:/bin",
+        "HOME": str(tmp_path),
+        "SKILLS_PYTHON": str(stub),
+        "LOCK": str(lock),
+        "LIVE_SKILLS_LOCK": str(tmp_path / "live.json"),
+        "STRICT": strict,
+    }
+    result = subprocess.run(["bash", str(REPLAY)], env=env, capture_output=True, text=True)
+    assert result.returncode == expected, result.stdout + result.stderr

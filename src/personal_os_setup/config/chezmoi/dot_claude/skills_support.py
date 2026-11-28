@@ -22,6 +22,13 @@ import sys
 EDIT_SLACK_SECONDS = 2
 # The agents whose entries npx links together (Claude's entry points at the Codex-side copy).
 LINKED_AGENTS = {"claude-code", "codex"}
+# Exit codes: a real failure stops callers, while lock drift is advisory and callers may continue.
+EXIT_FAILED = 1
+EXIT_DRIFT = 2
+
+
+class DriftError(ValueError):
+    """The live npx lock and the repo lock disagree: needs a human review, nothing is broken."""
 
 
 def selected_agents(value):
@@ -185,19 +192,24 @@ def verify_installations(lock, live_lock, agents, roots):
     """Require matching lock identities and a usable installation per agent and skill."""
     expected = load_skills(lock)
     live = load_skills(live_lock)
+    drift = None
     for name, entry in expected.items():
         have = live.get(name, {})
         if any(have.get(key) != entry[key] for key in ("source", "skillFolderHash")):
-            raise ValueError(
+            drift = DriftError(
                 f"DRIFT {name}: live lock differs ({newer_note(entry, have)}); "
                 "review upstream and save the lock"
             )
-    if set(live) - set(expected):
-        raise ValueError(
+            break
+    if drift is None and set(live) - set(expected):
+        drift = DriftError(
             "EXTRA skills in live lock: review and run make skills-thirdparty-live-to-repo"
         )
+    # A broken installation is a real failure and outranks advisory drift.
     for name in expected:
         check_installation(roots, agents, name)
+    if drift is not None:
+        raise drift
     print(f"OK installed skills for {', '.join(agents)} ({len(expected)} skills each)")
 
 
@@ -275,9 +287,12 @@ def main():
             if args.live_lock is None:
                 raise ValueError("--live-lock is required")
             verify_installations(args.lock, args.live_lock, agents, roots)
+    except DriftError as error:
+        print(f"skills: {error}", file=sys.stderr)
+        return EXIT_DRIFT
     except (OSError, ValueError) as error:
         print(f"skills: {error}", file=sys.stderr)
-        return 1
+        return EXIT_FAILED
     return 0
 
 

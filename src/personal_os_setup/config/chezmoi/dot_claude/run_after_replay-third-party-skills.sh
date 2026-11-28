@@ -5,6 +5,8 @@
 # canonical copy under ~/.agents/skills and link ~/.claude/skills/<name> to it (a single-agent call
 # writes an independent copy and replaces an existing link). STRICT=1 (make) fails on missing
 # tooling, the optional chezmoi replay SKIPs instead. Every install is checked afterwards.
+# Lock drift (verify exits 2) is advisory: the chezmoi replay warns and succeeds so it never blocks
+# the deployment of authored files; STRICT=1 (make, the TUI Skills tab) reports exit 2 instead.
 set -eu
 set -o pipefail
 
@@ -83,4 +85,10 @@ done <<< "$pending"
 [ "$rc" -eq 0 ] || exit "$rc"
 # The CLI writes its live lock during install; locate it again on a fresh machine.
 [ -n "${LIVE_SKILLS_LOCK:-}" ] || find_live
-helper_run verify
+rc=0
+helper_run verify || rc=$?
+if [ "$rc" -eq 2 ] && [ "${STRICT:-0}" != 1 ]; then
+    log "WARNING lock drift (see above); run the Skills tab or make skills-status to review" >&2
+    exit 0
+fi
+exit "$rc"

@@ -83,6 +83,6 @@ Run `make help` for all targets. Agent instructions are in `AGENTS.md`; project 
 [Documentation site](http://personal-os-setup.aminedjeghri.com/) ·
 [Linux](docs/linux/README.md) · [CachyOS](docs/linux/CachyOS.md) ·
 [macOS](docs/macos_darwin/README.md) · [Windows and WSL](docs/windows_workflow/README.md) ·
-[Home server](docs/home-server/readme.md) · [Android TV](docs/android-tv/readme.md).
+[Android TV](docs/android-tv/readme.md).
 
 [![Star History Chart](https://star-history.dera.page/svg?repos=AmineDjeghri/personal-os-setup)](https://star-history.dera.page/#AmineDjeghri/personal-os-setup)

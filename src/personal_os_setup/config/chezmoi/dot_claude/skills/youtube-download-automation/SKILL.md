@@ -21,7 +21,7 @@ This pipeline writes into the user's music library and its script is a repo file
 2. **Before any download — a single link included** — run `--plan`, show `artist | title | album | year | genre | folder`, and wait for the go-ahead. No "small enough to skip" case: a one-video link is where a wrong `folder` or guessed artist is cheapest to prevent.
 3. **Before editing `yt_dl.py`, its README or the overrides format**, say what changes, why and what it affects, then wait. A link that exposes a pipeline gap is a proposal, not a mandate to patch it.
 4. **Before deleting state** (`.archive.txt`, a library folder), warn that it decides whether a re-run downloads or no-ops, then confirm.
-5. **Git:** commit/push/PR need explicit per-action approval (repo `AGENTS.md`). A download run never commits.
+5. **Git:** approvals per `coding-workflow` § 2. A download run never commits.
 6. A timed-out prompt is not consent. Stop; the user re-triggers.
 
 Close every reply with one line naming what governed the run and what you did *not* do (no download / no edit / no git).

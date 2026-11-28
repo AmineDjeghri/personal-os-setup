@@ -1,6 +1,6 @@
 ---
 name: template-adoption
-description: "Use when starting a NEW app/package/project (pick the right forkable house template) or aligning an existing repo with one."
+description: "Use when starting a NEW app/package/project (pick the right forkable house template), aligning an existing repo with one, repairing its shared lint/pre-commit/release tooling, or fixing CRLF/LF churn."
 version: 1.0.0
 author: Hermes Curator
 license: MIT
@@ -8,7 +8,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [Template, Repo-Audit, Refactor, CI, Line-Endings, Delegation]
-    related_skills: [coding-workflow]
+    related_skills: [coding-workflow, github-pr-workflow]
 ---
 
 # House templates — start a new project, or align an existing repo
@@ -85,7 +85,7 @@ Every in-repo edit belongs to the coding delegate; this skill plans and verifies
    recommend the first option in each.
 3. **Phase 2 — resume the SAME session** with a short decisions brief (`--resume <session_id>`), so the analysis
    already paid for is kept. Budget `--max-turns 120`.
-   - **Commits need their own explicit yes, separate from push** ("go ahead" is not commit approval); the brief is the delegate's only brake (`--permission-mode acceptEdits` prompts nothing) — name what is forbidden, not only what is allowed; push only after you verified the artifact yourself.
+   - **Commit and push approvals follow `coding-workflow` § 2**; the brief is the delegate's only brake (`--permission-mode acceptEdits` prompts nothing) — name what is forbidden, not only what is allowed; push only after you verified the artifact yourself.
 
 ## 4. Verify the result yourself — and keep the write with the delegate
 
@@ -102,11 +102,8 @@ Every in-repo edit belongs to the coding delegate; this skill plans and verifies
   branch unchanged while changing only its nature (deletion conflicts become textual ones). State the measured
   sets and let the user pick the merge order.
 - **Exception to the delegate rule:** a fix the user hands you in the moment ("yes, add that small style commit") — do exactly that one thing, then re-run the hooks yourself and report the CI state.
-- **Check attribution before pushing anything.** `git log --format='%an <%ae>'` over the new commits must show the
-  user's identity (set `user.name`/`user.email` in the clone first — an unset identity silently leaves whatever
-  the repo had), and a coding agent stamps a `Co-Authored-By:` trailer by default: the author field reads clean
-  while GitHub still lists the agent as a co-author on every commit and in the PR's contributors. Surface it to the
-  user instead of letting them find it.
+- **Check attribution before pushing anything** (`coding-workflow` § 5): `git log --format='%an <%ae>'` over the
+  delegate's commits, plus its default `Co-Authored-By:` trailer, which the author field does not show.
 
 ## 5. Porting the lint/format and dependency tooling
 
@@ -114,3 +111,21 @@ Every in-repo edit belongs to the coding delegate; this skill plans and verifies
 - **A hook's `rev` and the dev-group pin must be the same version** — re-run `pre-commit run --all-files` until a clean second pass and include the reformat in the bump commit.
 - **A dependency refresh is ONE commit** — `uv.lock`, pins and the `src/` compatibility fixes together.
 - **A pin raise is verified only by CI's service-backed job** — locally skipped tests are unverified.
+- **Repairing the shared stack** (release blocked by a stale `uv.lock`, MD060 tables, ruff/markdownlint bumps,
+  Renovate opt-ins, gates that pass having run nothing, porting between the three repos):
+  `references/tooling-stack-repair.md`. Scripts: `scripts/align_md_tables.py` (pad tables by display width,
+  `--check` to report), `scripts/cross_repo_drift.py` (read-only blob-SHA drift table across the sibling clones).
+  A shared actions repo or helper package was decided against: CI is a thin wrapper over per-repo `make` targets,
+  the templates must stay forkable standalone, and Renovate already handles version drift. Don't re-propose it.
+
+## 6. Line endings (CRLF/LF churn)
+
+All repos are normalized; this is for a new repo or a one-line edit that diffs the whole file.
+
+- Diagnose with `git ls-files --eol` (`i/crlf` or `i/mixed` = bad blobs). A clean `git status` proves nothing.
+- `.gitattributes` only governs future commits: `* text=auto`, `eol=lf` for shell scripts and workflows,
+  `eol=crlf` only for Windows-runtime files (it forces CRLF on every platform).
+- Normalize once on `chore/normalize-line-endings` (`chore:` cuts no release): `git add --renormalize .`, then
+  `git checkout-index -f --all` so the worktree is LF too; `git ls-files --eol | grep -E 'i/(crlf|mixed)'` must be
+  empty. Evidence of no content change: symmetric N/N insertions/deletions in `--stat`.
+- Other clones self-heal on `git pull`; no manual renormalize there.

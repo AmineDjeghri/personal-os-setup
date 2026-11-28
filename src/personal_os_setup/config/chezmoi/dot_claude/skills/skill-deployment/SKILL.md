@@ -117,4 +117,4 @@ exception) see `agent-skills-architecture` → `references/installing-and-vettin
 
 Never edit a bundled skill (a modified copy is skipped by the sync forever). Local additions go in a skill we own; the
 `hermes skills diff/reset/repair-official` workflow and its two traps (backup dir inside the scanned tree, interactive
-prompt) are in `hermes-instance-audit` → `references/skills-sync-and-bundling.md` § "Bundled skills are read-only".
+prompt) are in `hermes-instance-audit` → `references/skills-loading-and-sync.md` § 6 "Bundled skills are read-only".
