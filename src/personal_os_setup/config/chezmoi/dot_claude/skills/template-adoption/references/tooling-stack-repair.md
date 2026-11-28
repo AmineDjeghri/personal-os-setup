@@ -97,8 +97,8 @@ emoji presentation sequences and East-Asian W/F codepoints take 2 columns, varia
 
 ## Porting the stack between the repos
 
-0. **Measure first** with `scripts/cross_repo_drift.py` (blob SHAs on committed refs). Whether to share instead of
-   copy was decided: `references/cross-repo-sharing-decision.md` — don't re-propose a shared actions repo.
+0. **Measure first** with `scripts/cross_repo_drift.py` (blob SHAs on committed refs). Sharing instead of copying was
+   decided against (`SKILL.md` §5) — don't re-propose a shared actions repo.
 1. Presence matrix across repos (`.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `pyproject.toml [tool.*]`,
    workflows, actions, `renovate.json`, `properdocs.yml`, makefiles, developer docs); diff only differing cells.
 2. Never port template-only machinery into the real repo (Python matrices, Ollama/docker jobs, publishing,

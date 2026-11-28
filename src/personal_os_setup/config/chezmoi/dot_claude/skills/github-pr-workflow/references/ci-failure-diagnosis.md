@@ -1,7 +1,7 @@
 # CI failure diagnosis — commands and rules
 
 Depth for `SKILL.md` §5. Repair of the shared lint/pre-commit/release tooling lives in `template-adoption`
-(`references/tooling-stack-repair.md`); trigger questions in `github-actions-trigger-gotchas`.
+(`references/tooling-stack-repair.md`).
 
 ## Runs, jobs, annotations
 
@@ -108,3 +108,21 @@ uv tool run pre-commit run <hook-id> --files <path>     # the pinned rev, as CI 
   model/`max_tokens`/marker, not the rerun count.
 - Rebasing a PR needs `git push --force-with-lease` with its own approval; if the user edited the branch in the
   browser, the lease fails with `stale info` — fetch, re-apply on `origin/<branch>`, push normally.
+
+## Triggers firing wrong or not at all
+
+```bash
+gh run list --branch <branch> --limit 20 --json workflowName,event,headBranch,createdAt,conclusion
+gh api repos/O/R/actions/runs/<run-id>/jobs --jq '.jobs[]|select(.name|test("X"))|.steps[]|"\(.number) \(.name) -> \(.conclusion)"'
+gh api repos/O/R/branches/main/protection ; gh api repos/O/R/rulesets   # what actually gates merges
+```
+
+- **`push` + `paths` fires on unrelated diffs after a force-push** (Renovate rebases): the filter sees everything the
+  branch gained, including what `main` picked up. Scope `push` to `branches: [main]` and validate on `pull_request`.
+  The same pair causes double CI on every PR (duplicate check names); keep one trigger unless rulesets need both.
+- **Job-level `concurrency` cancels sibling jobs**: a group holds one running + one pending, so N jobs started together
+  lose all but ~2. Use a `needs:` chain + `if: always()`; `queue: max` works but an unsupported key kills the file.
+- **`if: steps.<id>.outputs...` with no matching `id:`** is false forever: the step shows `skipped` in every run under a
+  green workflow. `grep -n 'id:'` the file and check a run where the condition had to be true.
+- Read the triggers, `if:` guards and step ids, never the intent comments. A silent nightly fix must also fail loudly
+  (`::error::`) and be proven with a `workflow_dispatch` run after merge.

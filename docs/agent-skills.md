@@ -30,7 +30,7 @@ The Claude account skill sync is turned off: `dot_claude/settings.json` sets `sy
 
 ## Skill catalog
 
-### Authored skills (15)
+### Authored skills (13)
 
 General workflow:
 
@@ -38,7 +38,6 @@ General workflow:
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `coding-workflow`   | Any coding task: plan, confirm, implement, verify, open a PR. Also the pre-push checklist and how to find a repo's own conventions |
 | `template-adoption` | Starting a new project from a house template, or aligning an existing repo with one                                                |
-| `git-line-endings`  | CRLF/LF churn breaking git diffs                                                                                                   |
 
 GitHub:
 
@@ -48,7 +47,6 @@ GitHub:
 | `github-pr-workflow`             | Issues and the PR lifecycle: file and triage issues, branch, commit, open, CI, merge |
 | `github-code-review`             | Reviewing a local diff or a PR, with inline comments via `gh` or REST                |
 | `github-repo-management`         | Clone, create, fork; remotes and releases; adding missing community health files     |
-| `github-actions-trigger-gotchas` | Workflows that fire wrong or not at all                                              |
 
 Skills and the Hermes box:
 

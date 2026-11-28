@@ -3,7 +3,7 @@
 - Approval gates: `AGENTS.md`/`CLAUDE.md` and `config.yaml` writes come back BLOCKED on timeout → STOP, report, and
   let the user say "prompt me again" to re-fire the exact patch; never retry it and never route the same edit
   through terminal or another file. Name any blocked call instead of quietly substituting.
-- `git commit`/`git push` need per-action approval every time (also in `AGENTS.md`); commit email must match existing commits, never invented.
+- Commit/push approvals and commit identity: `coding-workflow` § 2 and § 5.
 - Keep shell calls single-purpose — no `$(…)`, `for`, `;`/`&&` chains or `python3 -c …` bundles: one gated link takes the
   whole sequence down, so split a verification bundle into separate calls UP FRONT. Run multi-source research as direct
   `web_extract`/`terminal` calls, not a batch through `execute_code`.

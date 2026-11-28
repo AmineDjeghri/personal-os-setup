@@ -62,7 +62,7 @@ Run BEFORE every push.
 2. **Run pre-commit on changed files** (if `.pre-commit-config.yaml` exists): `pre-commit run --files <files...>`. Hooks must pass; if one auto-fixes, re-add and re-commit.
    **Stage before you trust a green gate.** `pre-commit run --all-files` only covers files git already tracks, so a newly created file passes that run and then fails the commit hook. Gate the staged paths, or stage first, or the gate is answering about a different set of files than the commit will contain.
 3. **Conventional commit + conventional PR title.** Squash-merge makes the PR title the commit on main; CI often validates it against `(feat|fix|docs|chore|ci|...)(scope)?: ...`.
-4. **Line endings:** see `git-line-endings`.
+4. **Line endings:** see `template-adoption` § 6.
 5. **Force-push etiquette.** NEVER force-push without explicit user approval. Prefer `--force-with-lease` over `--force`. Force-pushing an OPEN PR fixes attribution; a merged PR is frozen.
 
 ### Find the repo's OWN conventions FIRST

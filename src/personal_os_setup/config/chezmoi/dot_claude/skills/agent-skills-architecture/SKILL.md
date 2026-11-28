@@ -108,7 +108,7 @@ Never answer from the leaderboard. Vetting, exclusion patterns and the pre-fligh
 
 ## Pitfalls
 
-- Approval gates: a timed-out prompt is not consent → STOP and report; never retry or re-route the same edit. `git commit`/`git push` need per-action approval every time.
+- Approval gates: a timed-out prompt is not consent → STOP and report; never retry or re-route the same edit. Commit/push approvals: `coding-workflow` § 2.
 - **Name collisions:** keep every skill name in exactly one root. Check with `find -L <every root> -path "*<name>/SKILL.md"` (exactly one hit).
 - Copied scripts/templates must pass the target repo's hooks before commit; a staged copy is a snapshot — re-copy if live moved.
 - Everything else (shell-call hygiene, destructive cleanup, container facts, source-vs-live lessons): `references/pitfalls.md`.

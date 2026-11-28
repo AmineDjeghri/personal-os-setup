@@ -1,6 +1,6 @@
 ---
 name: github-pr-workflow
-description: "GitHub issues and PR lifecycle: file/triage issues, carry an issue to a verified PR, branch, commit, open, CI, merge."
+description: "GitHub issues and PR lifecycle: file/triage issues, carry an issue to a verified PR, branch, commit, open, CI (incl. Actions triggers firing wrong), merge."
 version: 2.0.0
 author: Hermes Agent
 license: MIT
@@ -46,7 +46,7 @@ ends with a "done when".
 4. **Define acceptance and risk**: criteria, interfaces, migrations/state, compatibility, security/privacy, rollout, rollback; map every criterion to a test or explicit verification. Done when review has a finite contract.
 5. **Implement the smallest complete change — and fix the class.** Isolated branch or worktree; regression tests first (load `diagnosing-bugs` / `tdd` when the bug class calls for them). Then search sibling call sites for the same bug shape and fix the whole class in this PR — an incomplete fix leaving known siblings broken is worse than none. Every changed line traces to the issue; no drive-by cleanup. Done when targeted tests pass, the original failure no longer reproduces, and siblings are fixed or ruled out.
 6. **Prove the regression test bites (sabotage run).** Temporarily restore the old behavior of the function under test, confirm the new test FAILS, restore the fix, confirm it passes. A test that passes with and without the fix proves nothing.
-7. **Run the repo's gates, then open the PR immediately.** Formatter, lint, typecheck, canonical test entrypoint on affected areas; a self-review of the diff (`code-review` skill). Push and open the PR right away (CI latency is the long pole) — **once the user has approved the push and the PR** (a yes to the task is not a yes to push; never bundle `commit && push`). Body: problem, approach, tests, risk, exclusions, issue link. Read the PR back: head SHA, base, title, files. Done when the PR exists with the intended diff and CI is running.
+7. **Run the repo's gates, then open the PR immediately.** Formatter, lint, typecheck, canonical test entrypoint on affected areas; a self-review of the diff (`code-review` skill). Push and open the PR right away (CI latency is the long pole) — **once the user has approved the push and the PR** (`coding-workflow` § 2). Body: problem, approach, tests, risk, exclusions, issue link. Read the PR back: head SHA, base, title, files. Done when the PR exists with the intended diff and CI is running.
 8. **Shepherd CI honestly and close the loop.** Inspect live checks and failure logs (§5). Separate failures your diff introduced from baseline/infra failures — reproduce on the default branch when unsure, rerun once only for genuine infra flakes. Never say "green", "merged" or "released" without live evidence of that exact state. When the PR lands, comment on the issue with the PR link and a one-line explanation.
 
 Checklist: full thread read · duplicate sweep (issue number + 2 variants) · premise reproduced + design intent checked ·
@@ -63,7 +63,7 @@ git commit -m "feat: add JWT-based user authentication"
 
 Branch prefixes: `feat/` · `fix/` · `refactor/` · `docs/` · `ci/`. Conventional Commits (`type(scope): short
 description`, body wrapped at 72); types `feat fix refactor docs test ci chore perf`; `!` or a `BREAKING CHANGE:`
-footer for majors. Mandatory pre-push checklist: `coding-workflow` § 5 (line endings: `git-line-endings`).
+footer for majors. Mandatory pre-push checklist: `coding-workflow` § 5 (line endings: `template-adoption` § 6).
 
 ## 4. Push and open the PR
 
@@ -88,7 +88,7 @@ gh run list --branch $(git branch --show-current) --limit 5     # recent runs on
 gh run view --job <JOB_ID> --log > /tmp/job.log                 # WHOLE job log, then grep it
 ```
 
-Loop: check CI → read failure logs → fix → **ask for approval to commit, and separately to push** (never fold `git add`/`commit`/`push` into one command) → re-check. After 3 failed attempts, stop and ask.
+Loop: check CI → read failure logs → fix → **ask for approval to commit, and separately to push** (`coding-workflow` § 2) → re-check. After 3 failed attempts, stop and ask.
 
 Diagnose in this order; each step rules out a class of cause cheaply. Commands and the full rule set:
 `references/ci-failure-diagnosis.md`.
@@ -109,7 +109,7 @@ Diagnose in this order; each step rules out a class of cause cheaply. Commands a
 
 Also check: a missing `permissions:` block, or secrets fork PRs never get (by design) — needs the user; a hung job →
 `timeout-minutes:`; `ModuleNotFoundError` in CI = dependency missing in CI. Triggers firing wrong or not at all →
-`github-actions-trigger-gotchas`. Repairing the shared lint/pre-commit/release tooling → `template-adoption`
+`references/ci-failure-diagnosis.md` § Triggers. Repairing the shared lint/pre-commit/release tooling → `template-adoption`
 (`references/tooling-stack-repair.md`).
 
 ## 6. Merging
