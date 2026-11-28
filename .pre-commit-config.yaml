@@ -43,7 +43,7 @@ repos:
         args: [ '--exclude-files', '^src/personal_os_setup/config/chezmoi/dot_glzr/zebar/(amine-zebar|starter)/with-glazewm\.html$',
                 '--exclude-files', '\.(png|gif|zip|jpg|jpeg|ico)$',
                 '--exclude-files', '^uv\.lock$',
-                '--exclude-lines','"skillFolderHash": "[0-9a-f]{40,}"',
+                '--exclude-lines','"(skillFolderHash|commit)": "[0-9a-f]{40,}"',
         ]
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2

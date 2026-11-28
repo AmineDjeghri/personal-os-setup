@@ -220,10 +220,10 @@ class TestDotfilesTrackNewFile:
             action.run_with_prompt("~/.config/foo/config.toml")
         mock_add.assert_called_once_with(Path.home() / ".config/foo/config.toml")
 
-    def test_clean_backups_action_is_confirmed_and_runs_chezmoi_clean_backups(self):
-        action = _action_in("darwin", "darwin", "Sync dotfiles", "chezmoi: clean backups")
+    def test_clean_backups_action_is_confirmed_and_runs_clean_backups(self):
+        action = _action_in("darwin", "darwin", "Sync dotfiles", "clean backups")
         assert action.confirm is True
-        assert action.run.__name__ == "chezmoi_clean_backups"
+        assert action.run.__name__ == "clean_backups"
 
 
 class TestSystemSectionExtras:
@@ -326,3 +326,21 @@ class TestGitCredentialsAction:
             action = _action_in(system, distro, "git", "use gh login for GitHub HTTPS")
             assert action.confirm is True
             assert action.run.__name__ == "setup_gh_git_credentials"
+
+
+class TestSkillsSection:
+    def test_unix_systems_get_a_skills_tab_with_confirmed_mutations(self):
+        for system, distro in (("linux", "ubuntu"), ("darwin", "darwin")):
+            actions = dict(get_system_action_sections(system=system, distro=distro, info=None))[
+                "Skills"
+            ]
+            by_label = {a.label: a for a in actions}
+            assert by_label["status: repo vs live"].confirm is False  # read-only
+            for label, action in by_label.items():
+                if label != "status: repo vs live" and label != "save live skills to repo":
+                    assert action.confirm is True, label
+            assert by_label["save live skills to repo"].run_with_prompt is not None
+
+    def test_windows_has_no_skills_tab(self):
+        sections = get_system_action_sections(system="windows", distro="windows", info=None)
+        assert "Skills" not in [name for name, _ in sections]

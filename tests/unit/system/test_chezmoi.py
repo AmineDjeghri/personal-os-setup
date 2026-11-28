@@ -5,16 +5,45 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+from personal_os_setup.tasks.backups import backup_root
 from personal_os_setup.tasks.system.chezmoi import (
     chezmoi_add,
     chezmoi_apply,
-    chezmoi_clean_backups,
     chezmoi_diff,
     chezmoi_forget,
     chezmoi_managed_paths,
+    chezmoi_preview,
     chezmoi_re_add,
     chezmoi_source_dir,
 )
+
+_RUN = "personal_os_setup.tasks.system.chezmoi.run"
+
+
+@pytest.fixture(autouse=True)
+def _isolated_state(tmp_path, monkeypatch):
+    """Keep backups (and clean-backups) away from the real ~/.local/state."""
+    monkeypatch.setenv("XDG_STATE_HOME", str(tmp_path / "state"))
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path / "home"))
+
+
+def _fake_chezmoi(*, status="", files_rc=0, scripts_rc=0, scripts_err=""):
+    """A `run` stand-in: answers `status`, then the files phase, then the scripts phase."""
+    calls: list[list[str]] = []
+
+    def fake(argv, **kwargs):
+        calls.append(list(argv))
+        if "status" in argv:
+            return MagicMock(returncode=0, stdout=status, stderr="")
+        if "--exclude=scripts" in argv:
+            return MagicMock(
+                returncode=files_rc, stdout="wrote files", stderr="boom" * (files_rc > 0)
+            )
+        return MagicMock(returncode=scripts_rc, stdout="", stderr=scripts_err)
+
+    return fake, calls
 
 
 class TestChezmoiSourceDir:
@@ -122,6 +151,88 @@ class TestChezmoiApply:
             chezmoi_apply()
         argv = mock_run.call_args[0][0]
         assert "--force" in argv
+
+
+class TestChezmoiApplyPhases:
+    """chezmoi_apply() applies files first and scripts second so a script cannot block files."""
+
+    def test_files_then_scripts_in_two_calls(self):
+        fake, calls = _fake_chezmoi()
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            result = chezmoi_apply([Path("/h/.claude")])
+        applies = [c for c in calls if "apply" in c]
+        assert "--exclude=scripts" in applies[0] and "--include=scripts" in applies[1]
+        assert all(c[-1] == "/h/.claude" for c in applies)
+        assert result.ok is True and result.warning is False
+
+    def test_script_failure_after_files_is_a_warning_naming_the_script(self):
+        err = "skills: DRIFT hermes-agent\nchezmoi: .claude/replay.sh: exit status 1"
+        fake, _ = _fake_chezmoi(scripts_rc=1, scripts_err=err)
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            result = chezmoi_apply()
+        assert result.ok is True and result.warning is True
+        assert ".claude/replay.sh (exit 1)" in result.summary
+        assert result.details.startswith("Failed step: .claude/replay.sh (exit 1)")
+        assert "DRIFT hermes-agent" in result.details
+
+    def test_file_failure_is_an_error_and_skips_scripts(self):
+        fake, calls = _fake_chezmoi(files_rc=1)
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            result = chezmoi_apply()
+        assert result.ok is False
+        assert not any("--include=scripts" in c for c in calls)
+        assert "Failed step: write files" in result.details
+
+    def test_spinner_noise_is_removed_from_details(self):
+        noisy = "\x1b[?25l\r◐  Cloning repository…\r◓  Cloning repository…\n│\nreal error line"
+        fake, _ = _fake_chezmoi(scripts_rc=1, scripts_err=noisy)
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            result = chezmoi_apply()
+        assert "real error line" in result.details
+        assert "\x1b" not in result.details and "◐" not in result.details
+
+
+class TestChezmoiApplyBackups:
+    """Backups go to the state dir, only for files the apply would actually overwrite."""
+
+    def test_backs_up_only_modified_files_outside_the_managed_tree(self, tmp_path):
+        home = tmp_path / "home"
+        changed = home / ".claude" / "skills" / "a" / "SKILL.md"
+        same = home / ".claude" / "skills" / "b" / "SKILL.md"
+        for f in (changed, same):
+            f.parent.mkdir(parents=True)
+            f.write_text("live")
+        status = f" M {changed}\n A {home}/.claude/new.md\n"
+        fake, _ = _fake_chezmoi(status=status)
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            result = chezmoi_apply([home / ".claude"])
+
+        backups = [p for p in backup_root().rglob("*") if p.is_file()]
+        assert [b.relative_to(backup_root()).parts[1:] for b in backups] == [
+            (".claude", "skills", "a", "SKILL.md")
+        ]
+        assert backups[0].read_text() == "live"
+        assert list(changed.parent.glob("*backup*")) == []  # nothing next to the live file
+        assert "Backed up 1 file(s)" in result.details
+
+
+class TestChezmoiPreview:
+    def test_counts_creates_overwrites_and_scripts(self):
+        status = " A /h/a\n M /h/b\n M /h/c\n R /h/.claude/replay.sh\n"
+        fake, _ = _fake_chezmoi(status=status)
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            text = chezmoi_preview([Path("/h")])
+        assert "1 file(s) to create, 2 to overwrite" in text
+        assert "1 script(s) will run: replay.sh" in text
+
+    def test_nothing_to_change(self):
+        fake, _ = _fake_chezmoi(status="")
+        with patch("shutil.which", return_value="/usr/bin/chezmoi"), patch(_RUN, fake):
+            assert chezmoi_preview() == "Nothing to change."
+
+    def test_empty_without_chezmoi(self):
+        with patch("shutil.which", return_value=None):
+            assert chezmoi_preview() == ""
 
 
 class TestChezmoiReAdd:
@@ -239,52 +350,8 @@ class TestChezmoiForget:
         assert result.ok is False
 
 
-class TestChezmoiCleanBackups:
-    """Tests for chezmoi_clean_backups()."""
-
-    _MANAGED = "personal_os_setup.tasks.system.chezmoi.chezmoi_managed_paths"
-
-    def test_removes_only_backups_of_managed_files(self, tmp_path):
-        zshrc = tmp_path / ".zshrc"
-        skill = tmp_path / "skills" / "SKILL.md"
-        skill.parent.mkdir()
-        for f in (zshrc, skill):
-            f.write_text("live")
-        gone = [
-            tmp_path / ".zshrc_20261019_013924_backup",
-            skill.with_name("SKILL_20261019_013924_backup.md"),
-            skill.with_name("SKILL_20261019_013954_backup.md"),
-        ]
-        keep = [
-            tmp_path / "notes_20261019_013924_backup.txt",  # not a managed file's backup
-            tmp_path / ".zshrc_backup",  # no timestamp
-        ]
-        for f in (*gone, *keep):
-            f.write_text("x")
-
-        with patch(self._MANAGED, return_value=[zshrc, skill]):
-            result = chezmoi_clean_backups()
-
-        assert result.ok is True
-        assert "removed 3" in result.summary
-        assert not any(f.exists() for f in gone)
-        assert all(f.exists() for f in keep)
-        assert zshrc.read_text() == "live" and skill.read_text() == "live"
-
-    def test_fails_when_nothing_is_managed(self):
-        with patch(self._MANAGED, return_value=[]):
-            result = chezmoi_clean_backups()
-        assert result.ok is False
-
-    def test_reports_files_it_could_not_delete(self, tmp_path):
-        managed = tmp_path / "a.toml"
-        managed.write_text("live")
-        backup = tmp_path / "a_20261019_013924_backup.toml"
-        backup.write_text("x")
-        with (
-            patch(self._MANAGED, return_value=[managed]),
-            patch.object(Path, "unlink", side_effect=PermissionError("denied")),
-        ):
-            result = chezmoi_clean_backups()
-        assert result.ok is False
-        assert "1 failed" in result.summary
+def test_every_script_runs_after_files_so_the_two_phase_apply_keeps_chezmoi_ordering():
+    """`chezmoi_apply` applies files, then scripts: a run_before_ script would run too late."""
+    scripts = [p.name for p in chezmoi_source_dir().rglob("run_*")]
+    assert scripts, "expected chezmoi scripts in the source dir"
+    assert [n for n in scripts if "_before_" in n or n.startswith("run_before")] == []
