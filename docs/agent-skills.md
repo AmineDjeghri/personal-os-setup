@@ -30,7 +30,7 @@ The Claude account skill sync is turned off: `dot_claude/settings.json` sets `sy
 
 ## Skill catalog
 
-### Authored skills (11)
+### Authored skills (10)
 
 General workflow:
 
@@ -60,7 +60,6 @@ Media:
 | Skill                         | Use it for                                                                                                                                          |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `html-output`                 | Reports (PDF/HTML/PNG from one JSON spec), architecture diagrams with real logos (PNG) and offline HTML slide decks                                 |
-| `youtube-download-automation` | Ingesting a YouTube link or playlist into the music library: what's new, genre sourcing, yt-dlp download. Plans first, then asks before downloading |
 
 ### Third-party skills (18)
 

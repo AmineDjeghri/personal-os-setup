@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -250,6 +251,7 @@ REPLAY = (
 )
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX shell harness (Windows `bash` is WSL)")
 @pytest.mark.parametrize(
     ("strict", "expected"),
     [("0", 0), ("1", 2)],

@@ -162,7 +162,7 @@ class TestChezmoiApplyPhases:
             result = chezmoi_apply([Path("/h/.claude")])
         applies = [c for c in calls if "apply" in c]
         assert "--exclude=scripts" in applies[0] and "--include=scripts" in applies[1]
-        assert all(c[-1] == "/h/.claude" for c in applies)
+        assert all(c[-1] == str(Path("/h/.claude")) for c in applies)
         assert result.ok is True and result.warning is False
 
     def test_script_failure_after_files_is_a_warning_naming_the_script(self):
