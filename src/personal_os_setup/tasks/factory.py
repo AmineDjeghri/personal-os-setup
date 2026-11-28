@@ -34,6 +34,7 @@ from personal_os_setup.tasks.system.nvidia_tasks import (
     detect_nvidia,
     setup_cuda,
     setup_nvidia_arch,
+    setup_nvidia_suspend,
     setup_nvidia_ubuntu,
     setup_nvidia_windows,
     setup_nvidia_wsl_instructions,
@@ -434,6 +435,21 @@ def _system_section(*, system: str, distro: str) -> Section:
     actions = [
         SystemAction(label="detect nvidia", run=detect_nvidia, group="nvidia"),
         _nvidia_setup_action(system=system, distro=distro),
+    ]
+    if system == "linux" and not _is_wsl():
+        actions.append(
+            SystemAction(
+                label="nvidia: fix suspend/resume",
+                run=setup_nvidia_suspend,
+                confirm=True,
+                confirm_message=(
+                    "This will run 'sudo systemctl enable nvidia-suspend nvidia-resume "
+                    "nvidia-hibernate' so GPU memory survives sleep. Proceed?"
+                ),
+                group="nvidia",
+            )
+        )
+    actions += [
         SystemAction(label="detect cuda", run=detect_cuda, group="cuda"),
         SystemAction(label="setup cuda (advanced)", run=setup_cuda, group="cuda"),
     ]

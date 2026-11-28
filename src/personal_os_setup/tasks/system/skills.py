@@ -9,13 +9,14 @@ chezmoi and Make) does the link/verify/drift work; this module orchestrates it a
 
 from __future__ import annotations
 
+import filecmp
 import json
 import os
 import shutil
 import sys
 from pathlib import Path
 
-from personal_os_setup.tasks.commands import QUIET_ENV, run, strip_terminal_noise
+from personal_os_setup.tasks.commands import QUIET_ENV, CommandResult, run, strip_terminal_noise
 from personal_os_setup.tasks.system.chezmoi import chezmoi_source_dir
 from personal_os_setup.tasks.task import TaskResult
 
@@ -24,6 +25,12 @@ _KEEP_NAME = "skills.keep"
 _IGNORED = (".DS_Store", "__pycache__")
 _AGENTS = "claude-code codex"
 _EXIT_DRIFT = 2  # mirrors skills_support.EXIT_DRIFT (advisory: the lock needs a review)
+_STATE_LABELS = {
+    "ok": "OK          ",
+    "missing": "NOT DEPLOYED",
+    "repo-newer": "REPO NEWER  ",
+    "live-newer": "LIVE NEWER  ",
+}
 
 
 def _dot_claude() -> Path:
@@ -60,12 +67,24 @@ def live_lock_path() -> Path:
     return legacy if not modern.is_file() and legacy.is_file() else modern
 
 
-def _support(*args: str, extra_env: dict[str, str] | None = None):  # type: ignore[no-untyped-def]
+def _support(*args: str, extra_env: dict[str, str] | None = None) -> CommandResult:
     return run(
         [sys.executable, "-I", str(_dot_claude() / "skills_support.py"), *args],
         check=False,
         env={**QUIET_ENV, **(extra_env or {})},
     )
+
+
+def _link_args() -> list[str]:
+    return [
+        "link",
+        "--source",
+        str(authored_dir()),
+        "--claude",
+        str(live_dir()),
+        "--codex",
+        str(codex_dir()),
+    ]
 
 
 def _third_party_args(lock: Path) -> list[str]:
@@ -86,15 +105,47 @@ def _third_party_args(lock: Path) -> list[str]:
 def _files(root: Path) -> dict[str, float]:
     """Relative path -> mtime of every real file under `root`, ignoring tool litter."""
     found: dict[str, float] = {}
-    for path in root.resolve().rglob("*"):
-        relative = path.relative_to(root.resolve())
+    base = root.resolve()
+    for path in base.rglob("*"):
+        relative = path.relative_to(base)
         if path.is_file() and not any(part in _IGNORED for part in relative.parts):
             found[relative.as_posix()] = path.stat().st_mtime
     return found
 
 
+def _newest_dir(root: Path) -> float:
+    """Newest directory mtime under `root`: a deleted file shows only here, not in `_files`."""
+    base = root.resolve()
+    dirs = [base, *(p for p in base.rglob("*") if p.is_dir())]
+    return max(
+        d.stat().st_mtime
+        for d in dirs
+        if not any(part in _IGNORED for part in d.relative_to(base).parts)
+    )
+
+
 def _same_content(left: Path, right: Path) -> bool:
-    return left.read_bytes() == right.read_bytes()
+    return filecmp.cmp(left, right, shallow=False)
+
+
+def _mirror(source: Path, target: Path) -> None:
+    """Make `target` an exact copy of `source` (tool litter excluded), deletions included.
+
+    The copy goes to a sibling staging dir first, so a failed copy leaves `target` untouched.
+    """
+    staging = target.with_name(f".{target.name}.staging")
+    if staging.exists():
+        shutil.rmtree(staging)
+    try:
+        shutil.copytree(source, staging, ignore=shutil.ignore_patterns(*_IGNORED))
+    except OSError:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+    if target.is_symlink() or target.is_file():
+        target.unlink()
+    elif target.exists():
+        shutil.rmtree(target)
+    staging.rename(target)
 
 
 def _compare(name: str) -> tuple[str, str]:
@@ -118,13 +169,17 @@ def _compare(name: str) -> tuple[str, str]:
     note = ", ".join(differing[:3]) + (
         f" (+{len(differing) - 3} more)" if len(differing) > 3 else ""
     )
-    live_newest = max(live_files.values(), default=0)
-    repo_newest = max(repo_files.values(), default=0)
+    live_newest = max([*live_files.values(), _newest_dir(live)])
+    repo_newest = max([*repo_files.values(), _newest_dir(source)])
     return ("live-newer" if live_newest > repo_newest else "repo-newer"), note
 
 
 def _authored_names() -> list[str]:
-    return sorted(p.parent.name for p in authored_dir().glob("*/SKILL.md"))
+    return sorted(
+        p.parent.name
+        for p in authored_dir().glob("*/SKILL.md")
+        if not p.parent.name.startswith(".")
+    )
 
 
 def skills_status() -> TaskResult:
@@ -134,26 +189,11 @@ def skills_status() -> TaskResult:
     for name in _authored_names():
         state, note = _compare(name)
         counts[state] += 1
-        labels = {
-            "ok": "OK        ",
-            "missing": "NOT DEPLOYED",
-            "repo-newer": "REPO NEWER ",
-            "live-newer": "LIVE NEWER ",
-        }
-        lines.append(f"{labels[state]} {name}" + (f"  [{note}]" if note else ""))
+        lines.append(f"{_STATE_LABELS[state]} {name}" + (f"  [{note}]" if note else ""))
 
     problems: list[str] = []
     warning = False
-    link = _support(
-        "link",
-        "--source",
-        str(authored_dir()),
-        "--claude",
-        str(live_dir()),
-        "--codex",
-        str(codex_dir()),
-        "--check",
-    )
+    link = _support(*_link_args(), "--check")
     if link.returncode != 0:
         problems.append(strip_terminal_noise(link.stderr or link.stdout))
 
@@ -208,16 +248,7 @@ def skills_deploy(*, force: bool = False) -> TaskResult:
             ),
         )
 
-    link_args = [
-        "link",
-        "--source",
-        str(authored_dir()),
-        "--claude",
-        str(live_dir()),
-        "--codex",
-        str(codex_dir()),
-    ]
-    preflight = _support(*link_args, "--preflight")
+    preflight = _support(*_link_args(), "--preflight")
     if preflight.returncode != 0:
         return TaskResult(
             ok=False,
@@ -227,15 +258,10 @@ def skills_deploy(*, force: bool = False) -> TaskResult:
     try:
         live_dir().mkdir(parents=True, exist_ok=True)
         for name in names:
-            shutil.copytree(
-                authored_dir() / name,
-                live_dir() / name,
-                dirs_exist_ok=True,
-                ignore=shutil.ignore_patterns(*_IGNORED),
-            )
+            _mirror(authored_dir() / name, live_dir() / name)
     except OSError as e:
         return TaskResult(ok=False, summary="skills deploy: copy failed", details=str(e))
-    linked = _support(*link_args)
+    linked = _support(*_link_args())
     if linked.returncode != 0:
         return TaskResult(
             ok=False,
@@ -276,7 +302,14 @@ def skills_save_live(name: str = "") -> TaskResult:
         names = sorted(
             p.name
             for p in live_dir().glob("*")
-            if p.is_dir() and not p.is_symlink() and p.name not in listed | third_party
+            if p.is_dir()
+            and not p.is_symlink()
+            and not p.name.startswith(".")
+            and p.name not in listed | third_party
+        )
+    elif Path(name).name != name or name.startswith("."):
+        return TaskResult(
+            ok=False, summary=f"skills save: {name!r} is not a skill name (no paths or dot-names)"
         )
     else:
         names = [name]
@@ -291,12 +324,7 @@ def skills_save_live(name: str = "") -> TaskResult:
             skipped.append(f"{skill}: not a live skill at {source}")
             continue
         try:
-            shutil.copytree(
-                source,
-                authored_dir() / skill,
-                dirs_exist_ok=True,
-                ignore=shutil.ignore_patterns(*_IGNORED),
-            )
+            _mirror(source, authored_dir() / skill)
         except OSError as e:
             skipped.append(f"{skill}: {e}")
             continue

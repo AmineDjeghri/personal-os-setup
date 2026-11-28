@@ -5,7 +5,7 @@
 
 pre-commit-install: ## Install the git hooks once after install-dev
 	@echo "${YELLOW}=========> Installing pre-commit...${NC}"
-	$(UV) run --no-sync pre-commit install --hook-type pre-commit --hook-type commit-msg
+	$(UV) run --no-sync prek install --hook-type pre-commit --hook-type commit-msg
 
 _pre-commit-install-auto: # Used by install-dev: install the Git hooks in a real checkout only (not in CI or Docker)
 	@if [ -z "$$CI" ] && git rev-parse --git-dir >/dev/null 2>&1; then \
@@ -24,7 +24,7 @@ pre-commit-status: ## Warn when the Git hooks are not installed (non-fatal; skip
 
 pre-commit: ## Run checks using the prepared development environment
 	@echo "${YELLOW}=========> Running pre-commit...${NC}"
-	$(UV) run --no-sync pre-commit run $(if $(strip $(FILES)),--files $(FILES),--all-files) $(ARGS)
+	$(UV) run --no-sync prek run $(if $(strip $(FILES)),--files $(FILES),--all-files) $(ARGS)
 
 lint: ## Lint code with Ruff
 	@echo "Linting code..."
