@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v1.5.0 (2026-11-28)
+
+### Features
+
+- Add pre-install-audit skill (#176)
+  ([#176](https://github.com/AmineDjeghri/personal-os-setup/pull/176),
+  [`f80888d`](https://github.com/AmineDjeghri/personal-os-setup/commit/f80888d16d5fad9ea347a29b9825b7a598294010))
+
+- Add tab skills and fix windows (#178)
+  ([#178](https://github.com/AmineDjeghri/personal-os-setup/pull/178),
+  [`f9c162e`](https://github.com/AmineDjeghri/personal-os-setup/commit/f9c162eb706c7f403c5f2cee23b8b1882149e694))
+
+
 ## v1.4.1 (2026-11-26)
 
 ### Bug Fixes
