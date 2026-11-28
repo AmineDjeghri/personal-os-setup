@@ -33,7 +33,7 @@ gh repo fork owner/repo-name --clone
 gh repo sync $GH_USER/repo-name                                      # keep a fork in sync
 gh repo edit --enable-auto-merge                                     # the rest: gh repo view|list|edit --help
 gh release create v1.0.0 --title "v1.0.0" --generate-notes           # others: gh release --help
-gh run view <RUN_ID> --log-failed
+gh run view --job <JOB_ID> --log                                     # whole log (--log-failed hides composite steps)
 gh workflow run ci.yml --ref main                                    # others: gh run|workflow --help
 ```
 

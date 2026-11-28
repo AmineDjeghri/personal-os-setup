@@ -1,6 +1,6 @@
 ---
 name: template-adoption
-description: "Use when starting a NEW app/package/project (pick the right forkable house template) or aligning an existing repo with one."
+description: "Use when starting a NEW app/package/project (pick the right forkable house template), aligning an existing repo with one, or repairing its shared lint/pre-commit/release tooling."
 version: 1.0.0
 author: Hermes Curator
 license: MIT
@@ -8,7 +8,7 @@ metadata:
   hermes:
     origin: repo:personal-os-setup
     tags: [Template, Repo-Audit, Refactor, CI, Line-Endings, Delegation]
-    related_skills: [coding-workflow]
+    related_skills: [coding-workflow, github-pr-workflow, github-actions-trigger-gotchas]
 ---
 
 # House templates — start a new project, or align an existing repo
@@ -114,3 +114,8 @@ Every in-repo edit belongs to the coding delegate; this skill plans and verifies
 - **A hook's `rev` and the dev-group pin must be the same version** — re-run `pre-commit run --all-files` until a clean second pass and include the reformat in the bump commit.
 - **A dependency refresh is ONE commit** — `uv.lock`, pins and the `src/` compatibility fixes together.
 - **A pin raise is verified only by CI's service-backed job** — locally skipped tests are unverified.
+- **Repairing the shared stack** (release blocked by a stale `uv.lock`, MD060 tables, ruff/markdownlint bumps,
+  Renovate opt-ins, gates that pass having run nothing, porting between the three repos):
+  `references/tooling-stack-repair.md`. Scripts: `scripts/align_md_tables.py` (pad tables by display width,
+  `--check` to report), `scripts/cross_repo_drift.py` (read-only blob-SHA drift table across the sibling clones).
+  Whether to extract a shared actions repo was already decided against: `references/cross-repo-sharing-decision.md`.

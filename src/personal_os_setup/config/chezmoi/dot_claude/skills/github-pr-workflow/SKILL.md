@@ -85,14 +85,32 @@ Follow-up commits: confirm where the open PR's branch is checked out first (`gh 
 ```bash
 gh pr checks [--watch]                                          # one-shot / poll until done
 gh run list --branch $(git branch --show-current) --limit 5     # recent runs on this branch
-gh run view <RUN_ID> --log-failed
+gh run view --job <JOB_ID> --log > /tmp/job.log                 # WHOLE job log, then grep it
 ```
 
-Loop: check CI → read failure logs → fix → **ask for approval to commit, and separately to push** (never fold `git add`/`commit`/`push` into one command) → re-check. After 3 failed attempts, stop and ask. Facts worth checking:
-- a missing `permissions:` block, or secrets fork PRs never get (by design) — needs the user;
-- a hung job → add `timeout-minutes:` to the step;
-- `ModuleNotFoundError` in CI = a dependency missing in CI; compare local vs CI Python/Node version;
-- triggers firing wrong or not at all → `github-actions-trigger-gotchas`.
+Loop: check CI → read failure logs → fix → **ask for approval to commit, and separately to push** (never fold `git add`/`commit`/`push` into one command) → re-check. After 3 failed attempts, stop and ask.
+
+Diagnose in this order; each step rules out a class of cause cheaply. Commands and the full rule set:
+`references/ci-failure-diagnosis.md`.
+
+1. **Inventory, don't guess.** `gh pr checks <n> --json name,state,link`: `state` is UPPERCASE (`FAILURE`), so a
+   lowercase filter finds nothing. Cancelled jobs show as `fail`: only the newest run for the current head SHA counts.
+2. **Failed in 0 s with no jobs = GitHub rejected the workflow file** (the run is named after the file path; every
+   caller of a broken reusable workflow fails too). Run `actionlint` from the repo root; a typical cause is
+   `${{ runner.temp }}` in job-level `env:`.
+3. **Read the whole job log.** `--log-failed` shows only post-step cleanup (`UNKNOWN STEP`) for composite actions.
+4. **Triage the SHA GitHub ran** (`gh api repos/O/R/actions/jobs/<id> --jq .head_sha`), never local remote-tracking
+   refs. A `pull_request` run uses the workflow file from the PR ref, so an old bot branch keeps failing on a bug
+   already fixed on main: rebase, don't patch the branch.
+5. **Classify before fixing:** interpreter vs `requires-python` cap, unresolvable dependency (upstream, not CI),
+   stale `uv.lock` after a squash merge, lint drift from a hook bump, flaky test. Never blame code without the
+   failing log line.
+6. **Verify on the PR, not locally**: "fixed" is a PR run that reaches the jobs and passes. Say what is still running.
+
+Also check: a missing `permissions:` block, or secrets fork PRs never get (by design) — needs the user; a hung job →
+`timeout-minutes:`; `ModuleNotFoundError` in CI = dependency missing in CI. Triggers firing wrong or not at all →
+`github-actions-trigger-gotchas`. Repairing the shared lint/pre-commit/release tooling → `template-adoption`
+(`references/tooling-stack-repair.md`).
 
 ## 6. Merging
 
